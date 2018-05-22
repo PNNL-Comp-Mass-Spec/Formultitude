@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2018
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Formularity", "CIA\Formularity.csproj", "{1A6F50EE-62C2-4C53-B311-7F5AE6908687}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormularityUi", "CiaUi\FormularityUi.csproj", "{4D710796-2709-44F7-8D58-96BD69746D6A}"
@@ -68,7 +70,6 @@ Global
 		{99EDA476-65AC-4B94-9DC7-40F3E845F261}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
 		{99EDA476-65AC-4B94-9DC7-40F3E845F261}.Debug|Mixed Platforms.Build.0 = Debug|x64
 		{99EDA476-65AC-4B94-9DC7-40F3E845F261}.Debug|x64.ActiveCfg = Debug|x64
-		{99EDA476-65AC-4B94-9DC7-40F3E845F261}.Debug|x64.Build.0 = Debug|x64
 		{99EDA476-65AC-4B94-9DC7-40F3E845F261}.Debug|x86.ActiveCfg = Debug|x86
 		{99EDA476-65AC-4B94-9DC7-40F3E845F261}.Debug|x86.Build.0 = Debug|x86
 		{99EDA476-65AC-4B94-9DC7-40F3E845F261}.Release|Any CPU.ActiveCfg = Release|x64
@@ -93,5 +94,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2EDD0674-BC42-41EA-83C2-A768C121DA7C}
 	EndGlobalSection
 EndGlobal
