@@ -1040,12 +1040,12 @@ namespace CiaUi {
             Microsoft.Office.Interop.Excel.Application MyApp = new Microsoft.Office.Interop.Excel.Application();
             MyApp.Visible = false;
             Microsoft.Office.Interop.Excel.Workbook MyBook = MyApp.Workbooks.Add( 1);
-            Microsoft.Office.Interop.Excel.Worksheet MySheet = MyBook.Sheets [ 1 ];
-            MySheet.Cells [ 1, 1].Value = "mz";
-            MySheet.Cells [ 1, 2].Value = "i";
-            MySheet.Cells [ 1, 3].Value = "sn";
-            MySheet.Cells [ 1, 4].Value = "res";
-            MySheet.Cells [ 1, 5].Value = "rel_ab";
+            Microsoft.Office.Interop.Excel.Worksheet MySheet = (Microsoft.Office.Interop.Excel.Worksheet)MyBook.Sheets [ 1 ];
+            ((Microsoft.Office.Interop.Excel.Range)MySheet.Cells [ 1, 1]).Value = "mz";
+            ((Microsoft.Office.Interop.Excel.Range)MySheet.Cells [ 1, 2]).Value = "i";
+            ((Microsoft.Office.Interop.Excel.Range)MySheet.Cells [ 1, 3]).Value = "sn";
+            ((Microsoft.Office.Interop.Excel.Range)MySheet.Cells [ 1, 4]).Value = "res";
+            ((Microsoft.Office.Interop.Excel.Range)MySheet.Cells [ 1, 5]).Value = "rel_ab";
 
             Microsoft.Office.Interop.Excel.Range MyRange = MySheet.get_Range( "A2", "E" + Peaks.ToString() ) ;
             MyRange.Value = myArray;

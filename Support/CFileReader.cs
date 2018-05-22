@@ -49,7 +49,7 @@ namespace Support {
                         ExcelApp = new Microsoft.Office.Interop.Excel.Application();
                         ExcelApp.Visible = false;
                         ExcelBook = ExcelApp.Workbooks.Open( Filename );
-                        ExcelSheet = ExcelBook.Sheets [ 1 ];
+                        ExcelSheet = (Microsoft.Office.Interop.Excel.Worksheet)ExcelBook.Sheets [ 1 ];
                         ExcelRange = ExcelSheet.UsedRange;
                         object RangeArray = ExcelRange.Value;
                         int PeakCount = ExcelRange.Rows.Count - 1;
