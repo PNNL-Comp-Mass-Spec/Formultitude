@@ -726,10 +726,16 @@ namespace CIA {
             }
         }
         public static EDelimiters OutputFileDelimiterToEnum( string oo ) {
-            switch ( oo ) {
-                case ",": return EDelimiters.Comma;
-                case "\t": return EDelimiters.Tab;
-                case " ": return EDelimiters.Space;
+            switch ( oo.ToLower() ) {
+                case ",":
+                case "comma":
+                    return EDelimiters.Comma;
+                case "\t":
+                case "tab":
+                    return EDelimiters.Tab;
+                case " ":
+                case "space":
+                    return EDelimiters.Space;
                 default: throw new Exception( "Delimeter error. [" + oo + "]");
             }
         }
