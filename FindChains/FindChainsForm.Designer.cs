@@ -52,8 +52,17 @@
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.numericUpDownMinRelAbundance = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownS2N = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
+            this.checkBoxUseRelAbundance = new System.Windows.Forms.CheckBox();
+            this.checkBoxS2N = new System.Windows.Forms.CheckBox();
             this.checkBoxPPMProcess = new System.Windows.Forms.CheckBox();
             this.checkBoxAmuProcess = new System.Windows.Forms.CheckBox();
+            this.textBoxChainBlockMasses = new System.Windows.Forms.TextBox();
+            this.textBoxSpectraFile = new System.Windows.Forms.TextBox();
+            this.checkBoxUseKnownChainBlocks = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAbsError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRangeMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRangeMax)).BeginInit();
@@ -66,6 +75,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxPeakToStartChain)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinRelAbundance)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownS2N)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -292,7 +303,7 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.checkBoxBinLinks);
-            this.groupBox2.Location = new System.Drawing.Point(348, 275);
+            this.groupBox2.Location = new System.Drawing.Point(343, 337);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(179, 96);
             this.groupBox2.TabIndex = 11;
@@ -351,20 +362,20 @@
             0,
             0,
             0});
-            this.numericUpDownPpmError.Location = new System.Drawing.Point(150, 64);
+            this.numericUpDownPpmError.Location = new System.Drawing.Point(183, 47);
             this.numericUpDownPpmError.Name = "numericUpDownPpmError";
             this.numericUpDownPpmError.Size = new System.Drawing.Size(74, 20);
             this.numericUpDownPpmError.TabIndex = 17;
             this.numericUpDownPpmError.Value = new decimal(new int[] {
-            1,
+            2,
             0,
             0,
-            0});
+            65536});
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(2, 68);
+            this.label8.Location = new System.Drawing.Point(2, 51);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(55, 13);
             this.label8.TabIndex = 16;
@@ -373,7 +384,7 @@
             // numericUpDownMaxPeakToStartChain
             // 
             this.numericUpDownMaxPeakToStartChain.DecimalPlaces = 3;
-            this.numericUpDownMaxPeakToStartChain.Location = new System.Drawing.Point(150, 21);
+            this.numericUpDownMaxPeakToStartChain.Location = new System.Drawing.Point(183, 21);
             this.numericUpDownMaxPeakToStartChain.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -383,7 +394,7 @@
             this.numericUpDownMaxPeakToStartChain.Size = new System.Drawing.Size(74, 20);
             this.numericUpDownMaxPeakToStartChain.TabIndex = 19;
             this.numericUpDownMaxPeakToStartChain.Value = new decimal(new int[] {
-            500,
+            2000,
             0,
             0,
             0});
@@ -416,16 +427,98 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.checkBoxUseKnownChainBlocks);
+            this.groupBox4.Controls.Add(this.textBoxChainBlockMasses);
+            this.groupBox4.Controls.Add(this.label12);
+            this.groupBox4.Controls.Add(this.numericUpDownMinRelAbundance);
+            this.groupBox4.Controls.Add(this.numericUpDownS2N);
+            this.groupBox4.Controls.Add(this.label11);
+            this.groupBox4.Controls.Add(this.checkBoxUseRelAbundance);
+            this.groupBox4.Controls.Add(this.checkBoxS2N);
             this.groupBox4.Controls.Add(this.numericUpDownMaxPeakToStartChain);
             this.groupBox4.Controls.Add(this.label9);
             this.groupBox4.Controls.Add(this.numericUpDownPpmError);
             this.groupBox4.Controls.Add(this.label8);
-            this.groupBox4.Location = new System.Drawing.Point(303, 82);
+            this.groupBox4.Location = new System.Drawing.Point(303, 80);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(256, 119);
+            this.groupBox4.Size = new System.Drawing.Size(269, 172);
             this.groupBox4.TabIndex = 21;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "PPM process";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(176, 107);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(24, 13);
+            this.label12.TabIndex = 28;
+            this.label12.Text = "Min";
+            // 
+            // numericUpDownMinRelAbundance
+            // 
+            this.numericUpDownMinRelAbundance.DecimalPlaces = 1;
+            this.numericUpDownMinRelAbundance.Increment = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericUpDownMinRelAbundance.Location = new System.Drawing.Point(206, 101);
+            this.numericUpDownMinRelAbundance.Name = "numericUpDownMinRelAbundance";
+            this.numericUpDownMinRelAbundance.Size = new System.Drawing.Size(47, 20);
+            this.numericUpDownMinRelAbundance.TabIndex = 29;
+            this.numericUpDownMinRelAbundance.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
+            // 
+            // numericUpDownS2N
+            // 
+            this.numericUpDownS2N.DecimalPlaces = 1;
+            this.numericUpDownS2N.Increment = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericUpDownS2N.Location = new System.Drawing.Point(212, 73);
+            this.numericUpDownS2N.Name = "numericUpDownS2N";
+            this.numericUpDownS2N.Size = new System.Drawing.Size(42, 20);
+            this.numericUpDownS2N.TabIndex = 27;
+            this.numericUpDownS2N.Value = new decimal(new int[] {
+            7,
+            0,
+            0,
+            0});
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(158, 76);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(42, 13);
+            this.label11.TabIndex = 26;
+            this.label11.Text = "S/N >=";
+            // 
+            // checkBoxUseRelAbundance
+            // 
+            this.checkBoxUseRelAbundance.AutoSize = true;
+            this.checkBoxUseRelAbundance.Location = new System.Drawing.Point(7, 103);
+            this.checkBoxUseRelAbundance.Name = "checkBoxUseRelAbundance";
+            this.checkBoxUseRelAbundance.Size = new System.Drawing.Size(119, 17);
+            this.checkBoxUseRelAbundance.TabIndex = 24;
+            this.checkBoxUseRelAbundance.Text = "Use rel. abundance";
+            this.checkBoxUseRelAbundance.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxS2N
+            // 
+            this.checkBoxS2N.AutoSize = true;
+            this.checkBoxS2N.Location = new System.Drawing.Point(7, 76);
+            this.checkBoxS2N.Name = "checkBoxS2N";
+            this.checkBoxS2N.Size = new System.Drawing.Size(68, 17);
+            this.checkBoxS2N.TabIndex = 25;
+            this.checkBoxS2N.Text = "Use S/N";
+            this.checkBoxS2N.UseVisualStyleBackColor = true;
             // 
             // checkBoxPPMProcess
             // 
@@ -449,12 +542,47 @@
             this.checkBoxAmuProcess.Text = "AMU process";
             this.checkBoxAmuProcess.UseVisualStyleBackColor = true;
             // 
+            // textBoxChainBlockMasses
+            // 
+            this.textBoxChainBlockMasses.AllowDrop = true;
+            this.textBoxChainBlockMasses.Location = new System.Drawing.Point(7, 146);
+            this.textBoxChainBlockMasses.Name = "textBoxChainBlockMasses";
+            this.textBoxChainBlockMasses.ReadOnly = true;
+            this.textBoxChainBlockMasses.Size = new System.Drawing.Size(213, 20);
+            this.textBoxChainBlockMasses.TabIndex = 24;
+            this.textBoxChainBlockMasses.Text = "Drag&Drop chain block mass file";
+            this.textBoxChainBlockMasses.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxChainBlockMasses_DragDrop);
+            this.textBoxChainBlockMasses.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxChainBlockMasses_DragEnter);
+            // 
+            // textBoxSpectraFile
+            // 
+            this.textBoxSpectraFile.AllowDrop = true;
+            this.textBoxSpectraFile.Location = new System.Drawing.Point(359, 270);
+            this.textBoxSpectraFile.Name = "textBoxSpectraFile";
+            this.textBoxSpectraFile.ReadOnly = true;
+            this.textBoxSpectraFile.Size = new System.Drawing.Size(213, 20);
+            this.textBoxSpectraFile.TabIndex = 25;
+            this.textBoxSpectraFile.Text = "Drag&Drop spectra file";
+            this.textBoxSpectraFile.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxSpectraFile_DragDrop);
+            this.textBoxSpectraFile.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxSpectraFile_DragEnter);
+            // 
+            // checkBoxUseKnownChainBlocks
+            // 
+            this.checkBoxUseKnownChainBlocks.AutoSize = true;
+            this.checkBoxUseKnownChainBlocks.Location = new System.Drawing.Point(7, 126);
+            this.checkBoxUseKnownChainBlocks.Name = "checkBoxUseKnownChainBlocks";
+            this.checkBoxUseKnownChainBlocks.Size = new System.Drawing.Size(143, 17);
+            this.checkBoxUseKnownChainBlocks.TabIndex = 30;
+            this.checkBoxUseKnownChainBlocks.Text = "Use known chain blocks";
+            this.checkBoxUseKnownChainBlocks.UseVisualStyleBackColor = true;
+            // 
             // FindChainsForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(595, 492);
+            this.Controls.Add(this.textBoxSpectraFile);
             this.Controls.Add(this.checkBoxAmuProcess);
             this.Controls.Add(this.checkBoxPPMProcess);
             this.Controls.Add(this.groupBox4);
@@ -469,8 +597,6 @@
             this.Controls.Add(this.label4);
             this.Name = "FindChainsForm";
             this.Text = "Find chains";
-            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.FindChainsForm_DragDrop);
-            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.FindChainsForm_DragEnter);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAbsError)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRangeMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRangeMax)).EndInit();
@@ -487,6 +613,8 @@
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinRelAbundance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownS2N)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -525,6 +653,15 @@
         private System.Windows.Forms.CheckBox checkBoxFrequency;
         protected internal System.Windows.Forms.NumericUpDown numericUpDownFrequencyError;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label12;
+        protected internal System.Windows.Forms.NumericUpDown numericUpDownMinRelAbundance;
+        protected internal System.Windows.Forms.NumericUpDown numericUpDownS2N;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.CheckBox checkBoxUseRelAbundance;
+        private System.Windows.Forms.CheckBox checkBoxS2N;
+        private System.Windows.Forms.TextBox textBoxChainBlockMasses;
+        private System.Windows.Forms.TextBox textBoxSpectraFile;
+        private System.Windows.Forms.CheckBox checkBoxUseKnownChainBlocks;
     }
 }
 

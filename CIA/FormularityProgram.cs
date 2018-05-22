@@ -16,18 +16,173 @@ using System.Xml;
 using System.Globalization;
 
 using TestFSDBSearch;
-using FileReader;
+using FindChains;
+using Support;
 
 namespace CIA {
     class FormularityProgram {
-        static void Main( string [] args ) {
-            //CCia oCCia = new CCia( null);
-            //string [] Files = Directory.GetFiles( "C:\\Nikola\\DOM_Working_Individual_Spectra_Analysis" );
-            //foreach( string Filename in Files ) {
-            //    if( Path.GetExtension( Filename ) != ".csv" ) { continue; }
-            //    oCCia.Process( Filename );
-            //}
-            //oCCia.Process( Files );
+        static int Main( string [] args ) {
+            try {
+                System.Console.WriteLine( "Started." );
+                if ( ( args.Length == 1 ) && ( ( args [ 0 ] == "\\h" ) || ( args [ 0 ] == "/h" ) || ( args [ 0 ] == "-h" ) ) ) {
+                    throw new Exception( "Incorrect Help argument." );
+                }
+                if ( args.Length != 4 ) {
+                    if ( args.Length != 5 ) {
+                        throw new Exception ("Application uses 4 or 5 arguments." );
+                    }
+                }
+
+                //args[0] - CIA or IPA method
+                bool CiaOrIpa = false;
+                if ( args [ 0 ].ToLower() == "cia") {
+                    CiaOrIpa = false;
+                } else if ( args [ 0 ].ToLower() == "ipa" ) {
+                    CiaOrIpa = true;
+                } else {
+                    throw new Exception( "Argument 1 [" + args[0] + " is not CIA ot IPA." );
+                }
+
+                //args[1] - data
+                bool FileOrDirectory = false;
+                try {
+                    FileOrDirectory = ( File.GetAttributes( args [ 1 ] ) & FileAttributes.Directory ) == FileAttributes.Directory;
+                    //File.GetAttributes() also check File.Exists();
+                } catch ( Exception ex ) {
+                    throw new Exception( "Argument 2 exception: " + ex.Message );
+                }               
+                List<string> DatasetsList = new List<string>();
+                if ( FileOrDirectory == false ) {
+                    if ( ( Path.GetExtension( args [ 1 ] ) == ".csv" )
+                        || ( Path.GetExtension( args [ 1 ] ) == ".txt" )
+                        || ( Path.GetExtension( args [ 1 ] ) == ".xml" ) ) {
+                        DatasetsList.Add( args [ 1 ] );
+                    } else {
+                        throw new Exception( "File in argument 2 must be xml, csv or txt type file" );
+
+                    }
+                } else {
+                    DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.csv" ) );
+                    DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.txt" ) );
+                    DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.xml" ) );
+                    if ( DatasetsList.Count == 0 ) {
+                        throw new Exception( "Folder in argument 2 doesn't have xml, csv or txt file extension" );
+                    }
+                }
+
+                //args[2] - xml parameter file
+                if ( File.Exists( args [ 2 ] ) == false ) {
+                    throw new Exception( "Argument 3 XML parameter file " + args [ 2 ] + " is not exist" );
+                } else if ( Path.GetExtension( args [ 2 ] ) != ".xml" ) {
+                    throw new Exception( "Argument 3 XML parameter file " + args [ 2 ] + " doesn't have XML file extension" );
+                }
+
+                //args[ 3] - bin db file
+                if ( File.Exists( args [ 3 ] ) == false ) {
+                    throw new Exception( "Argument 4 BIN db file " + args [ 3 ] + " is not exist" );
+                } else if ( Path.GetExtension( args [ 3 ] ) != ".bin" ) {
+                    throw new Exception( "Argument 4 BIN db file " + args [ 3 ] + " doesn't have BIN file extension" );
+                }
+
+                //args[ 4] - ref calibration file
+                if ( args.Length == 5 ) {
+                    if ( File.Exists( args [ 4 ] ) == false ) {
+                        throw new Exception( "Argument 5 REF calibration file " + args [ 4 ] + " is not exist" );
+                    } else if ( Path.GetExtension( args [ 4 ] ) != ".ref" ) {
+                        throw new Exception( "Argument 5 REF calibration file  " + args [ 4 ] + " doesn't have ref file extension" );
+                    }
+                }
+
+                System.Console.WriteLine( "Checked arguments." );
+                CCia oCCia = new CCia();
+                oCCia.LoadParameters( args [ 2 ] );
+                System.Console.WriteLine( "Loaded parameters." );
+                if ( CiaOrIpa == false ) {
+                    oCCia.LoadDBs( new string [] { args [ 3 ] } );
+                } else {
+                    oCCia.Ipa.LoadTabulatedDB( args [ 3 ] );
+                }
+                System.Console.WriteLine( "Loaded DB." );
+                if ( oCCia.oTotalCalibration.ttl_cal_regression != TotalCalibration.ttlRegressionType.none ) {
+                    oCCia.oTotalCalibration.Load( args [ 4 ] );
+                    System.Console.WriteLine( "Loaded calibration." );
+                }
+
+                string [] Filenames = DatasetsList.ToArray();
+                //log file
+                string LogFileName = DateTime.Now.ToString();
+                LogFileName = Path.GetDirectoryName( Filenames [ 0 ] ) + "\\" + "Report" + LogFileName.Replace( "/", "" ).Replace( ":", "" ).Replace( " ", "" ) + ".log";
+                StreamWriter oStreamLogWriter = new StreamWriter( LogFileName );
+
+                int FileCount = Filenames.Length;
+                double [] [] Masses = new double [ FileCount ] [];
+                double [] [] Abundances = new double [ FileCount ] [];
+                double [] [] SNs = new double [ FileCount ] [];
+                double [] [] Resolutions = new double [ FileCount ] [];
+                double [] [] RelAbundances = new double [ FileCount ] [];
+                double [] MaxAbundances = new double [ FileCount ];
+                double [] [] CalMasses = new double [ FileCount ] [];
+                for ( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
+                    //read files
+                    Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses [ FileIndex ], out Abundances [ FileIndex ], out SNs [ FileIndex ], out Resolutions [ FileIndex ], out RelAbundances [ FileIndex ] );
+                    MaxAbundances [ FileIndex ] = Support.CArrayMath.Max( Abundances [ FileIndex ] );
+                    //Calibration
+                    if ( oCCia.oTotalCalibration.ttl_cal_regression == TotalCalibration.ttlRegressionType.none ) {
+                        CalMasses [ FileIndex ] = new double [ Masses [ FileIndex ].Length ];
+                        for ( int PeakIndex = 0; PeakIndex < CalMasses.Length; PeakIndex++ ) {
+                            CalMasses [ PeakIndex ] = Masses [ PeakIndex ];
+                        }
+                    } else {
+                        oCCia.oTotalCalibration.cal_log.Clear();
+                        double MaxAbundance = Support.CArrayMath.Max( Abundances [ FileIndex ] );
+                        CalMasses [ FileIndex ] = oCCia.oTotalCalibration.ttl_LQ_InternalCalibration( ref Masses [ FileIndex ], ref Abundances [ FileIndex ], ref SNs [ FileIndex ], MaxAbundances [ FileIndex ] );
+                        oStreamLogWriter.WriteLine();
+                        oStreamLogWriter.WriteLine( "Calibration of " + Path.GetFileName( Filenames [ FileIndex ] ) );
+                        oStreamLogWriter.WriteLine();
+                        oStreamLogWriter.Write( oCCia.oTotalCalibration.cal_log );
+                    }
+                }
+                if ( CiaOrIpa == false ) {
+                    oCCia.Process( Filenames, Masses, Abundances, SNs, Resolutions, RelAbundances, CalMasses, oStreamLogWriter );
+                } else {
+                    bool b = oCCia.Ipa.SetCalculation();
+
+                    //oCCia.Ipa.m_ppm_tol = ( double ) numericUpDownIpaMassTolerance.Value;
+                    //oCCia.Ipa.m_min_major_sn = ( double ) numericUpDownIpaMajorPeaksMinSN.Value;
+                    //oCCia.Ipa.m_min_minor_sn = ( double ) numericUpDownIpaMinorPeaksMinSN.Value;
+
+                    //oCCia.Ipa.m_min_major_pa_mm_abs_2_report = ( double ) numericUpDownIpaMinMajorPeaksToAbsToReport.Value;
+                    //oCCia.Ipa.m_matched_peaks_report = checkBoxIpaMatchedPeakReport.Checked;
+
+                    //oCCia.Ipa.m_min_p_to_score = ( double ) numericUpDownIpaMinPeakProbabilityToScore.Value;
+
+                   // oCCia.Ipa.m_IPDB_ec_filter = textBoxIpaFilter.Text;
+
+                    for ( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
+                        oCCia.Ipa.IPDB_log.Clear();
+                        oCCia.Ipa.ttlSearch( ref CalMasses [ FileIndex ], ref Abundances [ FileIndex ], ref SNs [ FileIndex ], ref MaxAbundances [ FileIndex ], Filenames [ FileIndex ] );
+                        oStreamLogWriter.Write( oCCia.Ipa.IPDB_log );
+                    }
+                }
+                oStreamLogWriter.Flush();
+                oStreamLogWriter.Close();  
+                System.Console.WriteLine( "Finished." );
+                return 0;
+            } catch ( Exception ex ) {
+                System.Console.WriteLine( "Error: " + ex.Message );
+                PrintHelp();
+                return -1;
+            }
+        }
+        static void PrintHelp() {
+            System.Console.WriteLine( "Help:" );
+            System.Console.WriteLine( "Command line: cia.exe arg1 arg2 arg3 arg4 arg5" );
+            System.Console.WriteLine( "where" );
+            System.Console.WriteLine( "   arg1 is CAI or IPA" );
+            System.Console.WriteLine( "   arg2 is dataset or folder with dataset(s)" );
+            System.Console.WriteLine( "   arg3 is xml parameter file" );
+            System.Console.WriteLine( "   arg4 is bin db file" );
+            System.Console.WriteLine( "   arg5 (optional) is ref calibration file" );
         }
     }
     class Data {
@@ -49,7 +204,7 @@ namespace CIA {
         public double [] [] PPMErrors;
         public short [] [] Candidates;
     }
-    class AlignData{
+    public class AlignData{
         public double [] AlignMasses;
         public double [] NeutralMasses;
         public int [] [] Indexes;
@@ -59,36 +214,22 @@ namespace CIA {
     }
     public class CCia{        
         //Elements
-        public const double elec = 0.00054857990945;
-        public const double proton = 1.00727646688;
-        public const double H = 1.0078250321;
-        public const double C = 12;
-        public const double C13 = 13.0033548378;
-        public const double N = 14.0030740052;
-        public const double N15 = 15.0001088984;
-        public const double O = 15.9949146221;
-        public const double Na = 22.98976967;
-        public const double P = 30.97376151;
-        public const double S = 31.97207069;
-        public const double Cl = 34.96885271;
-        public const double Br = 78.9183376;
-        public const double K = 38.9637069;
-        public const int Elements = 8;
-        public enum EElemNumber { C = 0, H, O, N, C13, S, P, Na};
-        double [] ElementMasses = new double [ Elements ] { C, H, O, N, C13, S, P, Na };
+        public const int ElementCount = 8;
+        public enum EElemIndex { C = 0, H, O, N, C13, S, P, Na};
+        double [] ElementMasses = new double [ ElementCount ] { CElements.C, CElements.H, CElements.O, CElements.N, CElements.C13, CElements.S, CElements.P, CElements.Na };
         short [] ElemValences = { 4, 1, 2, 3, 4, 2, 3, 1};
 
         //Formula
-        short [] NullFormula = new short[ Elements];
+        short [] NullFormula = new short[ ElementCount];
         public double FormulaToNeutralMass( short [] Formula ) {
             if( Formula == null ) {
                 throw new Exception( "Formula array is null" );
             }
-            if( Formula.Length != Elements ) {
-                throw new Exception( "Formula array length (" + Formula.Length + ") must be " + Elements );
+            if( Formula.Length != ElementCount ) {
+                throw new Exception( "Formula array length (" + Formula.Length + ") must be " + ElementCount );
             }
             double NeutralMass = 0;
-            for( int Element = 0; Element < Elements; Element++ ) {
+            for( int Element = 0; Element < ElementCount; Element++ ) {
                 NeutralMass = NeutralMass + Formula [ Element ] * ElementMasses [ Element ];
             }
             return NeutralMass;
@@ -108,7 +249,7 @@ namespace CIA {
             string FormulaName = string.Empty;
             for( int Element = 0; Element < Formula.Length; Element++ ) {
                 if( Formula [ Element ] == 0 ) { continue; }
-                FormulaName += Enum.GetName( typeof( CCia.EElemNumber ), Element );
+                FormulaName += Enum.GetName( typeof( CCia.EElemIndex ), Element );
                 if( Formula [ Element ] == 1 ) { continue; }
                 FormulaName += Formula [ Element ];
             }
@@ -128,8 +269,8 @@ namespace CIA {
                     //Maybe Element name consists of 2 letters
                     ElementName = FormulaName.Substring( CurrentSymbol, 2 );
                     //check that is not like CH2
-                    EElemNumber oEElemNumber;
-                    if( Enum.TryParse<EElemNumber>( ElementName, out oEElemNumber ) == false ) {
+                    EElemIndex oEElemNumber;
+                    if( Enum.TryParse<EElemIndex>( ElementName, out oEElemNumber ) == false ) {
                         ElementName = FormulaName.Substring( CurrentSymbol, 1 );
                     }
                 } else {
@@ -155,17 +296,18 @@ namespace CIA {
                 if( Negative == true ) {
                     ElementNumber = (short) -ElementNumber;
                 }
-                Formula [ ( int) Enum.Parse( typeof( EElemNumber ), ElementName ) ] = ElementNumber;
+                Formula [ ( int) Enum.Parse( typeof( EElemIndex ), ElementName ) ] = ElementNumber;
                 CurrentSymbol = CurrentSymbol + DigitCount;
             }
             return Formula;
         }
 
         //error
-        const double PPM = 1e6;//parts per million
-        public double PpmToError( double Mass, double ErrorPPM ) { return Mass * ErrorPPM / PPM; }
-        public double SignedMassErrorPPM( double ReferenceMass, double Mass ) { return ( Mass - ReferenceMass ) / ReferenceMass * PPM; }
-        public double AbsMassErrorPPM( double ReferenceMass, double Mass ) { return Math.Abs( ( Mass - ReferenceMass ) / ReferenceMass * PPM ); }
+        //const double PPM = 1e6;//parts per million
+        //public double PpmToError( double Mass, double ErrorPPM ) { return Mass * ErrorPPM / PPM; }
+        //public static double ErrorToPpm( double Mass, Double Error ) { return Error * PPM / Mass; }
+        //public double SignedMassErrorPPM( double ReferenceMass, double Mass ) { return ( Mass - ReferenceMass ) / ReferenceMass * PPM; }
+        //public double AbsMassErrorPPM( double ReferenceMass, double Mass ) { return Math.Abs( ( Mass - ReferenceMass ) / ReferenceMass * PPM ); }
 
         //***********
         //Input files
@@ -253,7 +395,7 @@ namespace CIA {
             //align peaks
             //look on left and right peaks; group the nearest peak if error is < Alignment
             for( int Peak = 1; Peak < TotalPeakCount - 1; ) {
-                double PeakError = PpmToError( MassesL [ Peak ], AlignmentPPMTolerance );//it strange but it is correct to Matlab code
+                double PeakError = CPpmError.PpmToError( MassesL [ Peak ], AlignmentPPMTolerance );//it strange but it is correct to Matlab code
                 double LeftDistance = MassesL [ Peak ] - MassesL [ Peak - 1 ];
                 double RightDistance = MassesL [ Peak + 1 ] - MassesL [ Peak ];
                 int [] CurrentIndexes = IndexesL [ Peak ];
@@ -321,10 +463,10 @@ namespace CIA {
             oAlignData.Candidates = new short [ oAlignData.AlignMasses.Length ];
             oAlignData.PPMErrors = new double [ oAlignData.AlignMasses.Length ];
         }
-        class Line {
-            public short [] Formulas;
-            public int [] Indexes;
-        }
+        //class Line {
+        //    public short [] Formulas;
+        //    public int [] Indexes;
+        //}
         /*
         void AlignmentByFormula (){
             int [] IndexesTemplate = new int [ oData.FileCount];//extra last row for weight counting
@@ -403,7 +545,7 @@ namespace CIA {
         public bool GetUseBackward() { return UseBackward; }
         public void SetUseBackward( bool UseBackward ) { this.UseBackward = UseBackward; }
 
-        short [] [] RelationBuildingFormulaBlocks = { 
+        public static short [] [] RelationBuildingBlockFormulas = { 
                 new short [] { 1, 2, 0, 0, 0, 0, 0, 0 },//CH2
                 new short [] { 1, 4, -1, 0, 0, 0, 0, 0},//CH4O- or CH4O-1
                 new short [] { 0, 2, 0, 0, 0, 0, 0, 0 },//H2
@@ -415,21 +557,40 @@ namespace CIA {
                 new short [] { 0, 1, 0, 1, 0, 0, 0, 0 },//HN
                 new short [] { 0, 0, 3, 0, 0, 0, 1, 0 }//O3P
         };
-        public short [][] GetRelationFormulaBuildingBlocks() { return RelationBuildingFormulaBlocks; }
+        bool [] ActiveRelationBuildingBlocks = new bool [] { true, false, true, false, false, false, true, false, false, false};//, [ RelationBuildingBlockFormulas.Length ];
+        public bool [] GetActiveRelationFormulaBuildingBlocks() { return ActiveRelationBuildingBlocks; }
+        public void SetActiveRelationFormulaBuildingBlocks( bool [] ActiveBlocks ) {
+            ListActiveRelationFormulaBuildingBlocks = new List<short []>();
+            List<double> ActiveRelationFormulaBuildingBlockMassesList = new List<double>();
+            //ActiveRelationFormulaBuildingBlockMasses = new double [ ListActiveRelationFormulaBuildingBlocks.Count ];
+            for ( int ActiveBlock = 0; ActiveBlock < ActiveBlocks.Length; ActiveBlock++ ) {                
+                if ( ActiveBlocks [ ActiveBlock ] == false ) { continue; }
+                double Mass = 0;
+                for ( int Element = 0; Element < ElementCount; Element++ ) {
+                    Mass = Mass + RelationBuildingBlockFormulas [ ActiveBlock ] [ Element ] * ElementMasses [ Element ];
+                }
+                ActiveRelationFormulaBuildingBlockMassesList.Add( Mass );
+                ListActiveRelationFormulaBuildingBlocks.Add( RelationBuildingBlockFormulas [ ActiveBlock ] );
+            }
+            ActiveRelationFormulaBuildingBlockMasses = ActiveRelationFormulaBuildingBlockMassesList.ToArray();
+            ActiveRelationBuildingBlocks = ( bool []) ActiveBlocks.Clone();
+        }
         List<short []> ListActiveRelationFormulaBuildingBlocks;
-        public short [] [] GetActiveRelationFormulaBuildingBlocks() { return ListActiveRelationFormulaBuildingBlocks.ToArray(); }
+        //public short [] [] GetActiveRelationFormulaBuildingBlocks() { return ListActiveRelationFormulaBuildingBlocks.ToArray(); }
         double [] ActiveRelationFormulaBuildingBlockMasses;
+        /*
         public void SetRelationFormulaBuildingBlocks( short [][] ActiveBlocks ) {
             ListActiveRelationFormulaBuildingBlocks = new List<short []>( ActiveBlocks );
             ActiveRelationFormulaBuildingBlockMasses = new double [ ListActiveRelationFormulaBuildingBlocks.Count];
             for( int Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++ ) {
                 ActiveRelationFormulaBuildingBlockMasses [ Relation ] = 0;
-                for( int Element = 0; Element < Elements; Element++ ) {
-                    ActiveRelationFormulaBuildingBlockMasses [ Relation ] = ActiveRelationFormulaBuildingBlockMasses [ Relation ] + ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] * ElementMasses [ Element ];
+                for( int Element = 0; Element < ElementCount; Element++ ) {
+                    ActiveRelationFormulaBuildingBlockMasses [ Relation ] = ActiveRelationFormulaBuildingBlockMasses [ Relation ] + 
+                            ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] * ElementMasses [ Element ];
                 }
             }
         }
-
+        */
         //Mass limit to search in DB
         double MassLimit = 500;
         public double GetMassLimit() { return MassLimit; }
@@ -482,7 +643,6 @@ namespace CIA {
                 this.GoldenRuleFilters [ Filter ] = GoldenRuleFilters [ Filter ];
             }
         }
-
         //Special filters
         System.Data.DataTable DataTableSpecialFilter;
         public enum ESpecialFilters { None, Air, Water, Earth};
@@ -498,7 +658,7 @@ namespace CIA {
             this.oESpecialFilter = oESpecialFilter;
             DataTableSpecialFilter = new System.Data.DataTable();
             DataTableSpecialFilter.Columns.Add( "Mass", typeof( double ) );
-            foreach( string Name in Enum.GetNames( typeof( EElemNumber ) ) ) {
+            foreach( string Name in Enum.GetNames( typeof( EElemIndex ) ) ) {
                 DataTableSpecialFilter.Columns.Add( Name, typeof( short ) );
             }
             if( oESpecialFilter != ESpecialFilters.None ) {
@@ -507,19 +667,22 @@ namespace CIA {
             DataTableSpecialFilter.Rows.Add( DataTableSpecialFilter.NewRow() );           
         }
         //User-defined filters
-        System.Data.DataTable UserDefinedFilter;
-        public void SetUserDefinedFilter( string NewUserDefinedFilter ) {
-            if( NewUserDefinedFilter.Length == 0 ) {
-                UserDefinedFilter = null;
+        string UserDefinedFilter = "";
+        System.Data.DataTable UserDefinedFilterTable;
+        public string GetUserDefinedFilter(){ return UserDefinedFilter;}
+        public void SetUserDefinedFilter( string UserDefinedFilter ) {
+            if( UserDefinedFilter.Length == 0 ) {
+                UserDefinedFilterTable = null;
                 return;
             }
-            UserDefinedFilter = new System.Data.DataTable();
-            UserDefinedFilter.Columns.Add( "Mass", typeof( double ) );
-            foreach( string Name in Enum.GetNames( typeof( EElemNumber ) ) ) {
-                UserDefinedFilter.Columns.Add( Name, typeof( short ) );
+            UserDefinedFilterTable = new System.Data.DataTable();
+            UserDefinedFilterTable.Columns.Add( "Mass", typeof( double ) );
+            foreach( string Name in Enum.GetNames( typeof( EElemIndex ) ) ) {
+                UserDefinedFilterTable.Columns.Add( Name, typeof( short ) );
             }
-            UserDefinedFilter.Columns.Add( "UserDefinedFilter", typeof( bool ), NewUserDefinedFilter );
-            UserDefinedFilter.Rows.Add( UserDefinedFilter.NewRow() );
+            UserDefinedFilterTable.Columns.Add( "UserDefinedFilter", typeof( bool ), UserDefinedFilter );
+            UserDefinedFilterTable.Rows.Add( UserDefinedFilterTable.NewRow() );
+            this.UserDefinedFilter = UserDefinedFilter;
         }
 
         bool UseFormulaFilters = true;
@@ -537,39 +700,54 @@ namespace CIA {
         public bool GetGenerateIndividualFileReports(){ return GenerateIndividualFileReports;}
         public void SetGenerateIndividualFileReports( bool GenerateIndividualFileReports ) { this.GenerateIndividualFileReports = GenerateIndividualFileReports; }
 
+        int MinPeaksPerChain = 5;
+        public int GetMinPeaksPerChain() { return MinPeaksPerChain; }
+        public void SetMinPeaksPerChain( int MinPeaksPerChain ) { this.MinPeaksPerChain = MinPeaksPerChain; }
+
         //bool LogReportStatus = false;
         //public bool GetLogReportStatus() { return LogReportStatus; }
         //public void SetLogReportStatus( bool LogReportStatus ) { this.LogReportStatus = LogReportStatus; }
         //public StreamWriter oStreamLogWriter;
 
-        bool GenerateChainReport = false;
-        public bool GetGenerateChainReport() { return GenerateChainReport; }
-        public void SetGenerateChainReport( bool GenerateChainReport ) { this.GenerateChainReport = GenerateChainReport; }
+        bool AddChain = false;
+        public bool GetGenerateChainReport() { return AddChain; }
+        public void SetAddChains( bool AddChain ) { this.AddChain = AddChain; }
+        public bool GetAddChains(){ return AddChain;}
 
         //Output file delimiter
         public enum EDelimiters { Comma, Tab, Space};
         EDelimiters oEOutputFileDelimiter = EDelimiters.Comma;
+        public static string OutputFileDelimiterToString( EDelimiters oo){
+            switch ( oo ) {
+                case EDelimiters.Comma: return ",";
+                case EDelimiters.Tab: return "\t";
+                case EDelimiters.Space: return " ";
+                default: throw new Exception( "Delimeter error. [" + oo.ToString() + "]");
+            }
+        }
+        public static EDelimiters OutputFileDelimiterToEnum( string oo ) {
+            switch ( oo ) {
+                case ",": return EDelimiters.Comma;
+                case "\t": return EDelimiters.Tab;
+                case " ": return EDelimiters.Space;
+                default: throw new Exception( "Delimeter error. [" + oo + "]");
+            }
+        }
         string OutputFileDelimiter = ",";
         public EDelimiters GetOutputFileDelimiterType() { return oEOutputFileDelimiter; }
         public string GetOutputFileDelimiter() { return OutputFileDelimiter; }
         public void SetOutputFileDelimiterType( EDelimiters Delimiter ) {
             this.oEOutputFileDelimiter = Delimiter;
-            switch( this.oEOutputFileDelimiter ) {
-                case EDelimiters.Comma: OutputFileDelimiter = ","; break;
-                case EDelimiters.Tab: OutputFileDelimiter = "\t"; break;
-                case EDelimiters.Space: OutputFileDelimiter = " "; break;
-                //default: new 
-            }
+            OutputFileDelimiter = OutputFileDelimiterToString( Delimiter );
         }
 
         Data oData = new Data();
-        AlignData oAlignData = new AlignData();
+        public AlignData oAlignData = new AlignData();
         public TotalIPDBSearch Ipa;
         public CCia() {
             Ipa = new TotalIPDBSearch();
             foreach( short Element in NullFormula ) { NullFormula [ Element ] = 0; }
-            SetRelationFormulaBuildingBlocks( RelationBuildingFormulaBlocks );           
-            //LoadDB( "C:\\Nikola\\Table\\lokufuco_db.bin" );
+            //SetRelationFormulaBuildingBlocks( RelationBuildingBlockFormulas );           
         }
         public void Process( string [] Filenames, double [] [] Masses, double [] [] Abundances, double [] [] SNs, double [] [] Resolutions, double [] [] RelAbundances, double [] [] CalMasses, StreamWriter oStreamLogWriter ) {
             try {
@@ -594,11 +772,6 @@ namespace CIA {
                     oData.PPMErrors [ FileIndex ] = new double [ oData.Masses [ FileIndex ].Length ];
                     oData.Candidates [ FileIndex ] = new short [ oData.Masses [ FileIndex ].Length ];
                 }
-
-                //Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture( "ja-JP" );
-                //string LogFileName = DateTime.Now.ToString();
-                //LogFileName = Path.GetDirectoryName( Filenames [ 0 ] ) + "\\" + "Report" + LogFileName.Replace( "/", "" ).Replace( ":", "" ).Replace( " ", "" ) + ".log";
-                //oStreamLogWriter = new StreamWriter( LogFileName );
 
                 //Alignment + Formula finding
                 if( Alignment == true ) {
@@ -661,8 +834,8 @@ namespace CIA {
                         short [] Candidates = oData.Candidates [ FileIndex ];
 
                         string HeaderLine = "Mass" + OutputFileDelimiter + "Abundance";
-                        for( int Element = 0; Element < Elements; Element++ ) {
-                            HeaderLine = HeaderLine + OutputFileDelimiter + Enum.GetName( typeof( EElemNumber ), Element );
+                        for( int Element = 0; Element < ElementCount; Element++ ) {
+                            HeaderLine = HeaderLine + OutputFileDelimiter + Enum.GetName( typeof( EElemIndex ), Element );
                         }
                         HeaderLine = HeaderLine + OutputFileDelimiter + "Error_ppm" + OutputFileDelimiter + "Candidates";
                         HeaderLine = HeaderLine + OutputFileDelimiter + "CalMass" + OutputFileDelimiter + "AlignMasses" + OutputFileDelimiter + "NeutralMass";
@@ -674,7 +847,7 @@ namespace CIA {
                         for( int Peak = 0; Peak < Masses1.Length; Peak++ ) {
                             string Line = Masses1 [ Peak ].ToString();
                             Line = Line + OutputFileDelimiter + Abundances1 [ Peak ].ToString();
-                            for( int Element = 0; Element < Elements; Element++ ) {
+                            for( int Element = 0; Element < ElementCount; Element++ ) {
                                 Line = Line + OutputFileDelimiter + Formulas [ Peak ] [ Element ].ToString();
                             }
                             if( oEErrorType == EErrorType.CIA ) {
@@ -683,7 +856,7 @@ namespace CIA {
                                 if( IsFormula( Formulas [ Peak ] ) == false ) {
                                     Line = Line + OutputFileDelimiter + "0";
                                 } else {
-                                    Line = Line + OutputFileDelimiter + SignedMassErrorPPM( NeutralMasses [ Peak ], FormulaToNeutralMass( Formulas [ Peak ] ) ).ToString();
+                                    Line = Line + OutputFileDelimiter + CPpmError.SignedMassErrorPPM( NeutralMasses [ Peak ], FormulaToNeutralMass( Formulas [ Peak ] ) ).ToString();
                                 }
                             }
                             Line = Line + OutputFileDelimiter + Candidates [ Peak ].ToString();
@@ -703,6 +876,55 @@ namespace CIA {
                 }
                 //AlignmentReport
                 if( Alignment == true ) {
+                    //Chain report
+                    int [] [] PeaksChainIndexes = null;
+                    if ( AddChain == true ) {
+                        //Nikola 8/15/2017
+                        List<int> PowerfulPeakIndexes = new List<int>();
+                        int [] [] FilePeakIndexes = oAlignData.Indexes;
+                        
+                        for ( int PeakIndex = 0; PeakIndex< FilePeakIndexes.Length; PeakIndex++ ) {
+                            int [] FileIndexes = FilePeakIndexes [ PeakIndex ];
+                            int PowerfulPeakCount = 0;
+                            foreach ( int bb in FileIndexes ) {
+                                if ( bb >= 0 ) { PowerfulPeakCount++; }
+                            }
+                            if ( ( PowerfulPeakCount * 2.0 > FileIndexes.Length ) || ( FileIndexes.Length == 1)) {
+                                PowerfulPeakIndexes.Add( PeakIndex );
+                            }
+                        }
+                        double [] PowerfulPeakMasses = new double [ PowerfulPeakIndexes.Count ];
+                        for ( int PeakIndex = 0; PeakIndex < PowerfulPeakMasses.Length; PeakIndex++ ) {
+                            PowerfulPeakMasses [ PeakIndex ] = oAlignData.NeutralMasses [ PowerfulPeakIndexes [ PeakIndex ] ];
+                        }
+                        Support.InputData Data = new Support.InputData();
+                        Data.Masses = PowerfulPeakMasses;
+                        double PpmError = GetFormulaPPMTolerance();
+                        double MaxMass = PowerfulPeakMasses [ PowerfulPeakMasses.Length - 1 ];
+
+                        PeaksChainIndexes = new int [ oAlignData.AlignMasses.Length ] [];
+                        int [] tt = new int [ ActiveRelationFormulaBuildingBlockMasses.Length];
+                        for ( int BlockIndex = 0; BlockIndex < tt.Length; BlockIndex++ ) {
+                            tt [ BlockIndex ] = -1;
+                        }
+                        for ( int PeakIndex = 0; PeakIndex < PeaksChainIndexes.Length; PeakIndex++ ) {
+                            PeaksChainIndexes [ PeakIndex ] = (int []) tt.Clone();
+                        }
+
+                        CChainBlocks oCChainBlocks = new CChainBlocks();
+                        for ( int ActiveBlock = 0; ActiveBlock < ActiveRelationFormulaBuildingBlockMasses.Length; ActiveBlock++ ) {
+                            double MinChainMass = Support.CPpmError.LeftPpmMass( ActiveRelationFormulaBuildingBlockMasses [ ActiveBlock ], PpmError );
+                            double MaxChainMass = Support.CPpmError.RightPpmMass( ActiveRelationFormulaBuildingBlockMasses [ ActiveBlock ], PpmError );
+                            oCChainBlocks.FindChains( Data, 5, PpmError, PpmError, MaxMass, MinChainMass, MaxChainMass, false );
+                            oCChainBlocks.CreateUniqueChains( Data, PpmError );
+                            Chain [] Chains = Data.Chains;
+                            for ( int ChainIndex = 0; ChainIndex < Chains.Length; ChainIndex++ ) {
+                                foreach ( int PeakIndex in Chains [ ChainIndex ].PeakIndexes ) {
+                                    PeaksChainIndexes [ PeakIndex ] [ ActiveBlock ] = ChainIndex;
+                                }
+                            }
+                        }
+                    }
                     StreamWriter oStreamWriter;
                     if( oEOutputFileDelimiter == EDelimiters.Comma ) {
                         oStreamWriter = new StreamWriter( Path.GetDirectoryName( Filenames [ 0 ] ) + "\\Report.csv" );
@@ -710,7 +932,7 @@ namespace CIA {
                         oStreamWriter = new StreamWriter( Path.GetDirectoryName( Filenames [ 0 ] ) + "\\Report.txt" );
                     }
                     string HeaderLine = "Mass";
-                    foreach( string Element in Enum.GetNames( typeof( CCia.EElemNumber ) ) ) {
+                    foreach( string Element in Enum.GetNames( typeof( CCia.EElemIndex ) ) ) {
                         HeaderLine = HeaderLine + OutputFileDelimiter + Element;
                     }
                     HeaderLine = HeaderLine + OutputFileDelimiter + "El_comp" + OutputFileDelimiter + "Class";
@@ -718,22 +940,27 @@ namespace CIA {
                     foreach( string File in Filenames ) {
                         HeaderLine = HeaderLine + OutputFileDelimiter + Path.GetFileNameWithoutExtension( File );
                     }
+                    if ( AddChain == true ) {
+                        for ( int ActiveBlock = 0; ActiveBlock < ActiveRelationFormulaBuildingBlockMasses.Length; ActiveBlock++ ) {
+                            HeaderLine = HeaderLine + OutputFileDelimiter + ActiveRelationFormulaBuildingBlockMasses [ ActiveBlock ].ToString( "F6" );
+                        }
+                    }
                     oStreamWriter.WriteLine( HeaderLine );
 
                     for( int Peak = 0; Peak < oAlignData.NeutralMasses.Length; Peak++ ) {
                         string Line = Ipa.GetChargedMass( oAlignData.NeutralMasses [ Peak ] ).ToString();
                         short [] Formula = oAlignData.Formulas [ Peak ];
-                        for( int Element = 0; Element < Elements; Element++ ) {
+                        for( int Element = 0; Element < ElementCount; Element++ ) {
                             Line = Line + OutputFileDelimiter + Formula [ Element ].ToString();
                         }
                         Line = Line + OutputFileDelimiter;
-                        if( Formula [ ( int ) EElemNumber.C ] > 0 ) {
-                            foreach( EElemNumber Element in Enum.GetValues( typeof( EElemNumber ) ) ) {
-                                if( Element == EElemNumber.C ) {
-                                    if( Formula [ ( int ) EElemNumber.C ] + Formula [ ( int ) EElemNumber.C13 ] > 0 ) {
-                                        Line = Line + EElemNumber.C.ToString();
+                        if( Formula [ ( int ) EElemIndex.C ] > 0 ) {
+                            foreach( EElemIndex Element in Enum.GetValues( typeof( EElemIndex ) ) ) {
+                                if( Element == EElemIndex.C ) {
+                                    if( Formula [ ( int ) EElemIndex.C ] + Formula [ ( int ) EElemIndex.C13 ] > 0 ) {
+                                        Line = Line + EElemIndex.C.ToString();
                                     }
-                                } else if( Element == EElemNumber.C13 ) {
+                                } else if( Element == EElemIndex.C13 ) {
                                     continue;
                                 } else {
                                     if( Formula [ ( int ) Element ] > 0 ) {
@@ -752,12 +979,12 @@ namespace CIA {
                         //carb	        >=0.7	    <1.05	    >=1.5	    <2.2
                         //lignin	    >=0.125    	<0.65	    >=0.8	    <1.5
                         //tannin	    >=0.65	    <1.1	    >=0.8	    <1.5
-                        double TotalC = Formula [ ( int ) EElemNumber.C ] + Formula [ ( int ) EElemNumber.C13 ];//must be double!
+                        double TotalC = Formula [ ( int ) EElemIndex.C ] + Formula [ ( int ) EElemIndex.C13 ];//must be double!
                         if( TotalC == 0 ) {
                             Line = Line + OutputFileDelimiter + "None";
                         } else {
-                            double HToC = Formula [ ( int ) EElemNumber.H ] / TotalC;
-                            double OToC = Formula [ ( int ) EElemNumber.O ] / TotalC;
+                            double HToC = Formula [ ( int ) EElemIndex.H ] / TotalC;
+                            double OToC = Formula [ ( int ) EElemIndex.O ] / TotalC;
                             if( ( ( OToC >= 0 ) && ( OToC < 0.3 ) && ( HToC >= 1.5 ) && ( HToC < 2.5 ) ) == true ) {//Lipid
                                 Line = Line + OutputFileDelimiter + "Lipid";
                             } else if( ( ( OToC >= 0 ) && ( OToC < 0.125 ) && ( HToC >= 0.8 ) && ( HToC < 1.5 ) ) == true ) {//UnsatHC
@@ -778,7 +1005,6 @@ namespace CIA {
                                 Line = Line + OutputFileDelimiter + "Other";
                             }
                         }
-
                         Line = Line + OutputFileDelimiter + oAlignData.NeutralMasses [ Peak ].ToString();
                         if( oEErrorType == EErrorType.CIA ) {
                             Line = Line + OutputFileDelimiter + oAlignData.PPMErrors [ Peak ].ToString();
@@ -786,8 +1012,7 @@ namespace CIA {
                             if( IsFormula( Formula ) == false ) {
                                 Line = Line + OutputFileDelimiter + "0";
                             } else {
-                                //Line = Line + OutputFileDelimiter + ( oAlignData.NeutralMasses [ Peak ] - FormulaToNeutralMass( Formula ) ).ToString();
-                                Line = Line + OutputFileDelimiter + SignedMassErrorPPM( oAlignData.NeutralMasses [ Peak ], FormulaToNeutralMass( Formula ) ).ToString();
+                                Line = Line + OutputFileDelimiter + CPpmError.SignedMassErrorPPM( oAlignData.NeutralMasses [ Peak ], FormulaToNeutralMass( Formula ) ).ToString();
                             }
                         }
                         Line = Line + OutputFileDelimiter + oAlignData.Candidates [ Peak ].ToString();
@@ -797,6 +1022,11 @@ namespace CIA {
                                 Line = Line + OutputFileDelimiter + "0";
                             } else {
                                 Line = Line + OutputFileDelimiter + oData.Abundances [ FileIndex ] [ Indexes [ FileIndex ] ];
+                            }
+                        }
+                        if ( AddChain == true ) {
+                            for ( int ActiveBlock = 0; ActiveBlock < ActiveRelationFormulaBuildingBlockMasses.Length; ActiveBlock++ ) {
+                                Line = Line + OutputFileDelimiter + PeaksChainIndexes[Peak] [ ActiveBlock ];
                             }
                         }
                         oStreamWriter.WriteLine( Line );
@@ -809,10 +1039,6 @@ namespace CIA {
                     oStreamLogWriter.Write( ex.Message );
                 }
             }
-            //if( oStreamLogWriter != null ) {
-            //    oStreamLogWriter.Flush();
-            //    oStreamLogWriter.Close();
-            //}
         }
         public void CleanComObject( object o ) {
             try {
@@ -917,12 +1143,12 @@ namespace CIA {
                                 GrpMinNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp - RelationErrorAMU);
                                 GrpMaxNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp + RelationErrorAMU);                              
                             } else if( oRelationshipErrorType == RelationshipErrorType.GapPPM ) {
-                                double GapPPMError = PpmToError( ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp, RelationErrorAMU);                                
+                                double GapPPMError = CPpmError.PpmToError( ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp, RelationErrorAMU );                                
                                 GrpMinNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp - GapPPMError);
                                 GrpMaxNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp + GapPPMError);
                             } else {
                                 double GapNeutralMass =  NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp;
-                                double PPMError = PpmToError( GapNeutralMass, RelationErrorAMU); 
+                                double PPMError = CPpmError.PpmToError( GapNeutralMass, RelationErrorAMU ); 
                                 GrpMinNeutralMass = GapNeutralMass - PPMError;
                                 GrpMaxNeutralMass = GapNeutralMass + PPMError;
                             }
@@ -955,7 +1181,7 @@ namespace CIA {
                     double DBFormulaMass = 0;
                     double DBFormulaMassError = 0;
                     DBFormulaMass = FormulaToNeutralMass( DBFormula );
-                    DBFormulaMassError = AbsMassErrorPPM( DBFormulaMass, NeutralMasses [ Peak ] );
+                    DBFormulaMassError = CPpmError.AbsMassErrorPPM( DBFormulaMass, NeutralMasses [ Peak ] );
                     if( GrpdiffK [ Peak ].IsEmpty == true ) {
                         //StartFormula = PickDBFormula( NeutralMasses [ Peak ], out Candidates[ Peak ]);
                         //if( IsFormula( DBFormula ) == true ) {
@@ -991,7 +1217,7 @@ namespace CIA {
                             //} else {
                             if( UseCIAFormulaScore == true ) {
                                 //if( tempform [ ( int ) EElemNumber.S ] + tempform [ ( int ) EElemNumber.P ] < Formulas [ Peak ] [ ( int ) EElemNumber.S ] + Formulas [ Peak ] [ ( int ) EElemNumber.P ]
-                                if( DBFormula [ ( int ) EElemNumber.S ] + DBFormula [ ( int ) EElemNumber.P ] < Formulas [ Peak ] [ ( int ) EElemNumber.S ] + Formulas [ Peak ] [ ( int ) EElemNumber.P ]
+                                if( DBFormula [ ( int ) EElemIndex.S ] + DBFormula [ ( int ) EElemIndex.P ] < Formulas [ Peak ] [ ( int ) EElemIndex.S ] + Formulas [ Peak ] [ ( int ) EElemIndex.P ]
                                         && Math.Abs( DBFormulaMassError/*errornew*/ ) < FormulaErrorPPM / 2 ) {
                                     //KL adding this last line 1/20/09 - only keep brute force if it 'really' improves the formula (much smaller error)                                                                         
                                     Formulas [ Peak ] = ( short [] ) DBFormula/*tempform*/.Clone();
@@ -1014,18 +1240,18 @@ namespace CIA {
                                     double diff1 = NeutralMasses [ relpk ] - NeutralMasses [ Peak ];
                                     int numGps = ( int ) ( Math.Round( ( NeutralMasses [ relpk ] - NeutralMasses [ Peak ] ) / ActiveRelationFormulaBuildingBlockMasses [ Relation ] ) );
                                     if( numGps > 0 ) {
-                                        short [] newform = new short [ Elements ];
-                                        for( int Element = 0; Element < Elements; Element++ ) {
+                                        short [] newform = new short [ ElementCount ];
+                                        for( int Element = 0; Element < ElementCount; Element++ ) {
                                             newform [ Element ] = ( short ) ( DBFormula [ Element ] + numGps * ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] );
                                         }
                                         double newmass = FormulaToNeutralMass( newform );
-                                        double errornew = AbsMassErrorPPM( newmass, NeutralMasses [ relpk ] );
+                                        double errornew = CPpmError.AbsMassErrorPPM( newmass, NeutralMasses [ relpk ] );
                                         bool checknew = CheckFormulaByFilters( newform, NeutralMasses [ relpk ] );
                                         bool checkold = CheckFormulaByFilters( Formulas [ relpk ], NeutralMasses [ relpk ] );
                                         if( checknew == true ) {
                                             if( checkold == true ){
                                                 if( UseCIAFormulaScore == true ) {
-                                                    if( ( newform [ ( int ) EElemNumber.S ] + newform [ ( int ) EElemNumber.P ] < Formulas [ relpk ] [ ( int ) EElemNumber.S ] + Formulas [ relpk ] [ ( int ) EElemNumber.P ] )
+                                                    if( ( newform [ ( int ) EElemIndex.S ] + newform [ ( int ) EElemIndex.P ] < Formulas [ relpk ] [ ( int ) EElemIndex.S ] + Formulas [ relpk ] [ ( int ) EElemIndex.P ] )
                                                             && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) {
                                                         Formulas [ relpk ] = ( short [] ) newform.Clone();
                                                         PPMErrors [ relpk ] = errornew;
@@ -1059,16 +1285,16 @@ namespace CIA {
                                     short [] newform = ( short [] ) startform.Clone();
                                     int RelationshipGaps = ( int ) Math.Round( ( NeutralMasses [ relpk ] - NeutralMasses [ Peak ]) / ActiveRelationFormulaBuildingBlockMasses [ Relation ] );
                                     if( Math.Abs( RelationshipGaps ) > MaxRelationGaps ) { continue; }
-                                    for( int Element = 0; Element < Elements; Element++ ) {
+                                    for( int Element = 0; Element < ElementCount; Element++ ) {
                                         newform [ Element ] = ( short ) ( newform [ Element ] + RelationshipGaps * ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] );
                                     }
                                     bool checknew = CheckFormulaByFilters( newform, NeutralMasses [ relpk ]);
                                     double newmass = FormulaToNeutralMass( newform );
-                                    double errornew = AbsMassErrorPPM( newmass, NeutralMasses [ relpk ] );
+                                    double errornew = CPpmError.AbsMassErrorPPM( newmass, NeutralMasses [ relpk ] );
                                     if( ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) {
                                         if( checkold == true ) {
                                             if( UseCIAFormulaScore == true) {
-                                                if( newform [ ( int ) EElemNumber.S ] + newform [ ( int ) EElemNumber.P ] < Formulas [ relpk ] [ ( int ) EElemNumber.S ] + Formulas [ relpk ] [ ( int ) EElemNumber.P ] ) {
+                                                if( newform [ ( int ) EElemIndex.S ] + newform [ ( int ) EElemIndex.P ] < Formulas [ relpk ] [ ( int ) EElemIndex.S ] + Formulas [ relpk ] [ ( int ) EElemIndex.P ] ) {
                                                     Formulas [ relpk ] = ( short [] ) newform.Clone();
                                                     PPMErrors [ relpk ] = errornew;
                                                 }
@@ -1097,13 +1323,13 @@ namespace CIA {
                                                 int RelationshipGaps = ( int ) Math.Round( Math.Abs( NeutralMasses [ low_m ] - NeutralMasses [ Peak ] ) / ActiveRelationFormulaBuildingBlockMasses [ Relation ] );
                                                 if( Math.Abs( RelationshipGaps ) > MaxRelationGaps ) { continue; }
                                                 short [] newform = ( short [] ) startform.Clone();
-                                                for( int Element = 0; Element < Elements; Element++ ) {
+                                                for( int Element = 0; Element < ElementCount; Element++ ) {
                                                     newform [ Element ] = ( short ) ( newform [ Element ] + RelationshipGaps * ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] );
                                                 }
                                                 bool checknew = CheckFormulaByFilters( newform, NeutralMasses [ Peak ] );
                                                 if( checknew == false ) { continue; }
                                                 double newmass = FormulaToNeutralMass( newform );
-                                                double errornew = AbsMassErrorPPM( newmass, NeutralMasses [ Peak ] );
+                                                double errornew = CPpmError.AbsMassErrorPPM( newmass, NeutralMasses [ Peak ] );
                                                 //if( Math.Abs( numGps ) <= MaxNumGps && checknew == true && errornew <= FormulaError ) {
                                                 bool bIsFormula = IsFormula( Formulas [ Peak ] );
                                                 if( ( ( bIsFormula == false ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) || ( ( bIsFormula == true ) && ( errornew < PPMErrors [ Peak ] ) ) ) {
@@ -1128,7 +1354,7 @@ namespace CIA {
                     //AKendrick_matrix [ Peak ] = new KendrickParameters();
                     //AKendrick_matrix [ Peak ].peak_mass = NeutralMasses [ Peak ];
                     //AKendrick_matrix [ Peak ].KenMass = NeutralMasses [ Peak ] / ( C + 2 * H ) * 14;
-                    double KendrickMass = NeutralMasses [ Peak ] / ( C + 2 * H ) * 14;
+                    double KendrickMass = NeutralMasses [ Peak ] / ( CElements.C + 2 * CElements.H ) * 14;
                     int NomIUPACMass = ( int ) Math.Floor( NeutralMasses [ Peak ] );
                     //AKendrick_matrix [ Peak ].KMD = ( int ) Math.Floor( ( NomIUPACMass - KendrickMass ) * 1000 );
                     KMD[ Peak ] = ( int ) Math.Floor( ( NomIUPACMass - KendrickMass ) * 1000 );
@@ -1152,14 +1378,14 @@ namespace CIA {
                         int numCH2 = ( int ) Math.Floor( ( NeutralMasses [ relpk ] - NeutralMasses[ FirstRelpk ]) / 14 );                        
                         short [] newform = ( short [] ) startform.Clone();
                         //KL change this to be more general
-                        newform [ ( int ) EElemNumber.C ] = ( short ) ( newform [ ( int ) EElemNumber.C ] + 1 * numCH2 );
-                        newform [ ( int ) EElemNumber.H ] = ( short ) ( newform [ ( int ) EElemNumber.H ] + 2 * numCH2 );
+                        newform [ ( int ) EElemIndex.C ] = ( short ) ( newform [ ( int ) EElemIndex.C ] + 1 * numCH2 );
+                        newform [ ( int ) EElemIndex.H ] = ( short ) ( newform [ ( int ) EElemIndex.H ] + 2 * numCH2 );
                         bool checknew = CheckFormulaByFilters( newform, NeutralMasses [ relpk ] );
                         bool checkold = CheckFormulaByFilters( Formulas [ relpk ], NeutralMasses [ relpk ] );
-                        double errornew = AbsMassErrorPPM( FormulaToNeutralMass( newform ), NeutralMasses [ relpk ] );
+                        double errornew = CPpmError.AbsMassErrorPPM( FormulaToNeutralMass( newform ), NeutralMasses [ relpk ] );
                         if( ( checkold == true ) && ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM / 2 ) ){
                             if( UseCIAFormulaScore == true ) {
-                                if( ( newform [ ( int ) EElemNumber.S ] + newform [ ( int ) EElemNumber.P ] ) < ( Formulas [ relpk ] [ ( int ) EElemNumber.S ] + Formulas [ relpk ] [ ( int ) EElemNumber.P ] ) ) {
+                                if( ( newform [ ( int ) EElemIndex.S ] + newform [ ( int ) EElemIndex.P ] ) < ( Formulas [ relpk ] [ ( int ) EElemIndex.S ] + Formulas [ relpk ] [ ( int ) EElemIndex.P ] ) ) {
                                     Formulas [ relpk ] = ( short [] ) newform.Clone();
                                     PPMErrors [ relpk ] = errornew;
                                 }
@@ -1201,7 +1427,7 @@ namespace CIA {
                 //}
                 double DBMass = DBMasses [ DBIndex ];
                 short [] DBFormula = DBFormulas [ DBIndex ];
-                double ErrorPPMToDBMass = Math.Abs( AbsMassErrorPPM( DBMass, peak_mass ) );
+                double ErrorPPMToDBMass = Math.Abs( CPpmError.AbsMassErrorPPM( DBMass, peak_mass ) );
                 bool Change = false;
                 if( IsFormula( BestFormula) == false ) {
                     Change = true;
@@ -1225,8 +1451,8 @@ namespace CIA {
                     //1/20/09: change to test if only sort based on S and P 
                     //KL 1/2/09 addition - if multiple with the same, low, # of non-oxygen heteroatoms, sort based on the lowest error AND
                     //lowest number of non-oyxgen heteroatoms (S and P only here).
-                    int SPlusP = Formula [ ( int ) EElemNumber.S ] + Formula [ ( int ) EElemNumber.P ];
-                    int NewSPlusP = NewFormula [ ( int ) EElemNumber.S ] + NewFormula [ ( int ) EElemNumber.P ];
+                    int SPlusP = Formula [ ( int ) EElemIndex.S ] + Formula [ ( int ) EElemIndex.P ];
+                    int NewSPlusP = NewFormula [ ( int ) EElemIndex.S ] + NewFormula [ ( int ) EElemIndex.P ];
                     if( NewSPlusP < SPlusP) { return true;}
                     break;
                 case EFormulaScore.lowestError:
@@ -1237,15 +1463,15 @@ namespace CIA {
                     //public enum EElemNumber { C = 0, H, O, N, C13, S, P, Na};
                     //added 4/15/09 by KL cap the number of S and P atoms, after selecting based on the lowest number of N, S, and P
                     //4/15/09 by KL cap the number of S and P atoms, after selecting based on the lowest number of N, S, and P added 2/24/14 by NT; for masses under 350 limit number of N to 3 calculate the # of non-oxygen heteroatoms
-                    int NonOxyHeteroAtoms = Formula [ ( int ) EElemNumber.N ] + Formula [ ( int ) EElemNumber.S ] + Formula [ ( int ) EElemNumber.P ];
-                    int NewNonOxyHeteroAtoms = NewFormula [ ( int ) EElemNumber.N ] + NewFormula [ ( int ) EElemNumber.S ] + NewFormula [ ( int ) EElemNumber.P ];
+                    int NonOxyHeteroAtoms = Formula [ ( int ) EElemIndex.N ] + Formula [ ( int ) EElemIndex.S ] + Formula [ ( int ) EElemIndex.P ];
+                    int NewNonOxyHeteroAtoms = NewFormula [ ( int ) EElemIndex.N ] + NewFormula [ ( int ) EElemIndex.S ] + NewFormula [ ( int ) EElemIndex.P ];
                     if( NewNonOxyHeteroAtoms < NonOxyHeteroAtoms ) {
                         //only consider the formulas with the low # non-oxy HA
                         return true;
                     } else if( NonOxyHeteroAtoms == NewNonOxyHeteroAtoms ) {
                         //then only consider formulas with P <= 1 or S <= 3
-                        bool Sle3AndPle1 = ( Formula [ ( int ) EElemNumber.S ] <= 3 ) & ( Formula [ ( int ) EElemNumber.P ] <= 1 );
-                        bool NewSle3AndPle1 = ( NewFormula [ ( int ) EElemNumber.S ] <= 3 ) & ( NewFormula [ ( int ) EElemNumber.P ] <= 1 );
+                        bool Sle3AndPle1 = ( Formula [ ( int ) EElemIndex.S ] <= 3 ) & ( Formula [ ( int ) EElemIndex.P ] <= 1 );
+                        bool NewSle3AndPle1 = ( NewFormula [ ( int ) EElemIndex.S ] <= 3 ) & ( NewFormula [ ( int ) EElemIndex.P ] <= 1 );
                         if( ( Sle3AndPle1 == false ) && ( NewSle3AndPle1 == true ) ) {
                             return true;
                         } else if( ( Sle3AndPle1 == NewSle3AndPle1 ) && ( FormulaError > NewFormulaError ) ) {
@@ -1257,6 +1483,393 @@ namespace CIA {
                     throw new Exception( "Wrong SortType : " + FormulaScore.ToString() );
             }
             return false;
+        }
+        public void SaveParameters( string Filename ) {
+            XmlWriter xmlWriter = XmlWriter.Create( Filename );
+
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement( "DefaultParameters" );
+            xmlWriter.WriteStartElement( "InputFilesTab" );
+            xmlWriter.WriteStartElement( "Adduct" );
+            xmlWriter.WriteString( Ipa.Adduct );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "Ionization" );
+            xmlWriter.WriteString( Ipa.Ionization.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "Charge" );
+            xmlWriter.WriteString( Ipa.CS.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "Calibration" );
+            xmlWriter.WriteStartElement( "Regression" );
+            xmlWriter.WriteString( oTotalCalibration.ttl_cal_regression.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "RelFactor" );
+            xmlWriter.WriteString( oTotalCalibration.ttl_cal_rf.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "StartTolerance" );
+            xmlWriter.WriteString( oTotalCalibration.ttl_cal_start_ppm.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "EndTolerance" );
+            xmlWriter.WriteString( oTotalCalibration.ttl_cal_target_ppm.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "PeakFilters" );
+            xmlWriter.WriteStartElement( "MinSToN" );
+            xmlWriter.WriteString( oTotalCalibration.ttl_cal_min_sn.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "MinRelAbun" );
+            xmlWriter.WriteString( oTotalCalibration.ttl_cal_min_abu_pct.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "MaxRelAbun" );
+            xmlWriter.WriteString( oTotalCalibration.ttl_cal_max_abu_pct.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndElement();//InputFilesTab
+            xmlWriter.WriteStartElement( "CiaTab" );
+            xmlWriter.WriteStartElement( "UseAlignment" );
+            xmlWriter.WriteString( GetAlignment().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "AlignmentTolerance" );
+            xmlWriter.WriteString( GetAlignmentPpmTolerance().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "FormulaTolerance" );
+            xmlWriter.WriteString( GetFormulaPPMTolerance().ToString() );
+            xmlWriter.WriteEndElement();   
+            xmlWriter.WriteStartElement( "DBMassLimit" );
+            xmlWriter.WriteString( GetMassLimit().ToString() );
+            xmlWriter.WriteEndElement();         
+            xmlWriter.WriteStartElement( "AddChains" );
+            xmlWriter.WriteString( GetAddChains().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "MinPeaksPerChain" );
+            xmlWriter.WriteString( GetMinPeaksPerChain().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "FormulaScore" );
+            xmlWriter.WriteString( GetFormulaScore().ToString() );
+            xmlWriter.WriteEndElement();
+            //xmlWriter.WriteStartElement( "UseCiaFormulaScore" );
+            //xmlWriter.WriteString( checkBoxUseCIAFormulaScore.Checked.ToString() );
+            //xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "UseKendrick" );
+            xmlWriter.WriteString( GetUseKendrick().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "UseC13" );
+            xmlWriter.WriteString( GetUseC13().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "C13Tolerance" );
+            xmlWriter.WriteString( GetC13Tolerance().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "UseFormulaFilters" );
+            xmlWriter.WriteString( GetUseFormulaFilter().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "ElementalCounts" );
+            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 0 ].ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "ValenceRules" );
+            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 1 ].ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "ElementalRatios" );
+            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 2 ].ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "HeteroatomCounts" );
+            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 3 ].ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "PositiveAtoms" );
+            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 4 ].ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "IntegerDBE" );
+            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 5 ].ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "SpecialFilter" );
+            xmlWriter.WriteString( GetSpecialFilter().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "UserDefinedFilter" );
+            xmlWriter.WriteString( GetUserDefinedFilter() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "UseRelationship" );
+            xmlWriter.WriteString( GetUseRelation().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "MaxRelationshipGaps" );
+            xmlWriter.WriteString( GetMaxRelationGaps().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "UseBackward" );
+            xmlWriter.WriteString( GetUseBackward().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "RelationError" );
+            xmlWriter.WriteString( GetRelationErrorAMU().ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "FormulaBuildingBlocks" );
+            for ( int BlockIndex = 0; BlockIndex < RelationBuildingBlockFormulas.Length; BlockIndex++ ) {
+                xmlWriter.WriteStartElement( FormulaToName( RelationBuildingBlockFormulas [ BlockIndex ] ) );
+                xmlWriter.WriteString( ActiveRelationBuildingBlocks [ BlockIndex ].ToString() );
+                xmlWriter.WriteEndElement();
+            }
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement( "Output" );
+            xmlWriter.WriteStartElement( "IndividualFileReports" );
+            xmlWriter.WriteString( GetGenerateIndividualFileReports().ToString() );
+            xmlWriter.WriteEndElement();
+            //xmlWriter.WriteStartElement( "LogReports" );
+            //xmlWriter.WriteString( oCiaAdvancedForm.checkBoxLogReport.Checked.ToString() );
+            //xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "Delimiters" );
+            xmlWriter.WriteString( OutputFileDelimiter );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "Error" );
+            xmlWriter.WriteString( oEErrorType.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndElement();
+            //end CiaTab
+            xmlWriter.WriteStartElement( "IpaTab" );
+            xmlWriter.WriteStartElement( "MassTol" );
+            xmlWriter.WriteString( Ipa.m_ppm_tol.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "MajorPeaksMinSToN" );
+            xmlWriter.WriteString( Ipa.m_min_major_sn.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "MinorPeaksMinSToN" );
+            xmlWriter.WriteString( Ipa.m_min_minor_sn.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "MatchedPeakReport" );
+            xmlWriter.WriteString( Ipa.m_matched_peaks_report.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "MinPeakProbabilityToScore" );
+            xmlWriter.WriteString( Ipa.m_min_p_to_score.ToString() );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteStartElement( "DbFilter" );
+            xmlWriter.WriteString( Ipa.m_IPDB_ec_filter );
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndElement();//IpaTab
+            xmlWriter.WriteEndDocument();
+            xmlWriter.Close();
+        }
+        public void LoadParameters( string Filename ) {
+            XmlDocument XmlDoc = new XmlDocument();
+            XmlDoc.Load( Filename );
+            XmlNode XmlDocRoot = XmlDoc.DocumentElement;
+            XmlNode XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Adduct" );
+            if ( XmlNode != null ) {
+                Ipa.Adduct = XmlNode.InnerText;
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Ionization" );
+            if ( XmlNode != null ) {
+                Ipa.Ionization = ( TestFSDBSearch.TotalSupport.IonizationMethod ) Enum.Parse( typeof( TestFSDBSearch.TotalSupport.IonizationMethod ), XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Charge" );
+            if ( XmlNode != null ) {
+                Ipa.CS = int.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Calibration/Regression" );
+            if ( XmlNode != null ) {
+                oTotalCalibration.ttl_cal_regression = ( TestFSDBSearch.TotalCalibration.ttlRegressionType ) Enum.Parse( typeof( TestFSDBSearch.TotalCalibration.ttlRegressionType ), XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Calibration/RelFactor" );
+            if ( XmlNode != null ) {
+                oTotalCalibration.ttl_cal_rf = double.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Calibration/StartTolerance" );
+            if ( XmlNode != null ) {
+                oTotalCalibration.ttl_cal_start_ppm = double.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Calibration/EndTolerance" );
+            if ( XmlNode != null ) {
+                oTotalCalibration.ttl_cal_target_ppm = double.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Calibration/PeakFilters/MinSToN" );
+            if ( XmlNode != null ) {
+                oTotalCalibration.ttl_cal_min_sn = double.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Calibration/PeakFilters/MinRelAbun" );
+            if ( XmlNode != null ) {
+                oTotalCalibration.ttl_cal_min_abu_pct = double.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Calibration/PeakFilters/MaxRelAbun" );
+            if ( XmlNode != null ) {
+                oTotalCalibration.ttl_cal_max_abu_pct = double.Parse( XmlNode.InnerText );
+            }
+
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UseAlignment" );
+            if ( XmlNode != null ) {
+                SetAlignment( bool.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/AlignmentTolerance" );
+            if ( XmlNode != null ) {
+                SetAlignmentPpmTolerance( double.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/AddChains" );
+            if ( XmlNode != null ) {
+                SetAddChains( bool.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/MinPeaksPerChain" );
+            if ( XmlNode != null ) {
+                SetMinPeaksPerChain( int.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaTolerance" );
+            if ( XmlNode != null ) {
+                SetFormulaPPMTolerance( double.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/DbMassLimit" );
+            if ( XmlNode != null ) {
+                SetMassLimit( double.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaScore" );
+            if ( XmlNode != null ) {
+                SetFormulaScore( ( CCia.EFormulaScore ) Enum.Parse( typeof( CCia.EFormulaScore ), XmlNode.InnerText ) );
+                //SetFormulaScore( ttt );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UseKendrick" );
+            if ( XmlNode != null ) {
+                SetUseKendrick( bool.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UseC13" );
+            if ( XmlNode != null ) {
+                SetUseC13( bool.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/C13Tolerance" );
+            if ( XmlNode != null ) {
+                SetC13Tolerance( double.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UseFormulaFilters" );
+            if ( XmlNode != null ) {
+                SetUseFormulaFilter( bool.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/ElementalCounts" );
+            bool [] GoldenRules = new bool [ 6 ];
+            if ( XmlNode != null ) {
+                GoldenRules [ 0 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/ValenceRules" );
+            if ( XmlNode != null ) {
+                GoldenRules [ 1 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/ElementalRatios" );
+            if ( XmlNode != null ) {
+                GoldenRules [ 2 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/HeteroatomCounts" );
+            if ( XmlNode != null ) {
+                GoldenRules [ 3 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/PositiveAtoms" );
+            if ( XmlNode != null ) {
+                GoldenRules [ 4 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/IntegerDBE" );
+            if ( XmlNode != null ) {
+                GoldenRules [ 5 ] = bool.Parse( XmlNode.InnerText );
+            }
+            SetGoldenRuleFilterUsage( GoldenRules );
+
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/SpecialFilter" );
+            if ( XmlNode != null ) {
+                SetSpecialFilter( ( CCia.ESpecialFilters ) Enum.Parse( typeof( CCia.ESpecialFilters ), XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UserDefinedFilter" );
+            if ( XmlNode != null ) {
+                SetUserDefinedFilter( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UseRelationship" );
+            if ( XmlNode != null ) {
+                SetUseRelation( bool.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UseBackward" );
+            if ( XmlNode != null ) {
+                SetUseBackward( bool.Parse( XmlNode.InnerText ) );
+            } 
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/MaxRelationshipGaps" );
+            if ( XmlNode != null ) {
+                SetMaxRelationGaps( int.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/RelationError" );
+            if ( XmlNode != null ) {
+                SetRelationErrorAMU( double.Parse( XmlNode.InnerText ) );
+                //numericUpDownRelationErrorValue.Value = ( decimal ) oCCia.GetRelationErrorAMU();
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH2" );
+            if ( XmlNode != null ) {
+                ActiveRelationBuildingBlocks [ 0 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH4O-1" );
+            if ( XmlNode != null ) {
+                ActiveRelationBuildingBlocks [ 1 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/H2" );
+            if ( XmlNode != null ) {
+                ActiveRelationBuildingBlocks [ 2 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/C2H4O" );
+            if ( XmlNode != null ) {
+                ActiveRelationBuildingBlocks [ 3 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/CO2" );
+            if ( XmlNode != null ) {
+                ActiveRelationBuildingBlocks [ 4 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/C2H2O" );
+            if ( XmlNode != null ) {
+                ActiveRelationBuildingBlocks [ 5 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/O" );
+            if ( XmlNode != null ) {
+                ActiveRelationBuildingBlocks [ 6 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH" );
+            if ( XmlNode != null ) {
+                ActiveRelationBuildingBlocks [ 7 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/HN" );
+            if ( XmlNode != null ) {
+                ActiveRelationBuildingBlocks [ 8 ] = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/O3P" );
+            if ( XmlNode != null ) {
+                ActiveRelationBuildingBlocks [ 9 ] = bool.Parse( XmlNode.InnerText );
+            }
+            SetActiveRelationFormulaBuildingBlocks( ActiveRelationBuildingBlocks );
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/IndividualFileReports" );
+            if ( XmlNode != null ) {
+                SetGenerateIndividualFileReports( bool.Parse( XmlNode.InnerText ) );
+            }
+            //XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/LogReports" );
+            //if( XmlNode != null ) {
+            //    oCCia.SetLogReportStatus( bool.Parse( XmlNode.InnerText ) );
+            //}
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/Delimiters" );
+            if ( XmlNode != null ) {
+                SetOutputFileDelimiterType( OutputFileDelimiterToEnum( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/Error" );
+            if ( XmlNode != null ) {
+                SetErrorType( ( CCia.EErrorType ) Enum.Parse( typeof( CCia.EErrorType ), XmlNode.InnerText ) );
+            }
+
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/IpaTab/MassTol" );
+            if ( XmlNode != null ) {
+                Ipa.m_ppm_tol = double.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/IpaTab/MajorPeaksMinSToN" );
+            if ( XmlNode != null ) {
+                Ipa.m_min_major_sn = double.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/IpaTab/MinorPeaksMinSToN" );
+            if ( XmlNode != null ) {
+                Ipa.m_min_minor_sn = double.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/IpaTab/MatchedPeakReport" );
+            if ( XmlNode != null ) {
+                Ipa.m_matched_peaks_report = bool.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/IpaTab/MinPeakProbabilityToScore" );
+            if ( XmlNode != null ) {
+                Ipa.m_min_p_to_score = double.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/IpaTab/DbFilter" );
+            if ( XmlNode != null ) {
+                Ipa.m_IPDB_ec_filter = XmlNode.InnerText;
+            }
         }
 
         //Filter 1: check number of elements possible within mass range
@@ -1280,7 +1893,7 @@ namespace CIA {
                 short [] UpLimit500Formula = { 39, 72, 20, 20, 0, 10, 9, 0 };
                 short [] UpLimit500_1000Formula = { 78, 126, 27, 25, 0, 14, 9, 0 };
                 short [] UpLimit_1000Formula = { 156, 180, 63, 32, 0, 14, 9, 0 };
-                if( Formula [ ( int ) EElemNumber.C ] < LowLimitFormula [ ( int ) EElemNumber.C ] || Formula [ ( int ) EElemNumber.H ] < LowLimitFormula [ ( int ) EElemNumber.H ] ) {
+                if( Formula [ ( int ) EElemIndex.C ] < LowLimitFormula [ ( int ) EElemIndex.C ] || Formula [ ( int ) EElemIndex.H ] < LowLimitFormula [ ( int ) EElemIndex.H ] ) {
                     return false;
                 }
                 short [] UpLimitFormula;
@@ -1291,12 +1904,12 @@ namespace CIA {
                 } else {
                     UpLimitFormula = UpLimit_1000Formula;
                 }
-                bool result = ( Formula [ ( int ) EElemNumber.C ] + Formula [ ( int ) EElemNumber.C13 ] < UpLimitFormula [ ( int ) EElemNumber.C ] )
-                        & ( Formula [ ( int ) EElemNumber.H ] < UpLimitFormula [ ( int ) EElemNumber.H ] )
-                        & ( Formula [ ( int ) EElemNumber.O ] < UpLimitFormula [ ( int ) EElemNumber.O ] )
-                        & ( Formula [ ( int ) EElemNumber.N ] < UpLimitFormula [ ( int ) EElemNumber.N ] )
-                        & ( Formula [ ( int ) EElemNumber.S ] < UpLimitFormula [ ( int ) EElemNumber.S ] )
-                        & ( Formula [ ( int ) EElemNumber.P ] < UpLimitFormula [ ( int ) EElemNumber.P ] );
+                bool result = ( Formula [ ( int ) EElemIndex.C ] + Formula [ ( int ) EElemIndex.C13 ] < UpLimitFormula [ ( int ) EElemIndex.C ] )
+                        & ( Formula [ ( int ) EElemIndex.H ] < UpLimitFormula [ ( int ) EElemIndex.H ] )
+                        & ( Formula [ ( int ) EElemIndex.O ] < UpLimitFormula [ ( int ) EElemIndex.O ] )
+                        & ( Formula [ ( int ) EElemIndex.N ] < UpLimitFormula [ ( int ) EElemIndex.N ] )
+                        & ( Formula [ ( int ) EElemIndex.S ] < UpLimitFormula [ ( int ) EElemIndex.S ] )
+                        & ( Formula [ ( int ) EElemIndex.P ] < UpLimitFormula [ ( int ) EElemIndex.P ] );
 
                 if( result == false ) { return false; } 
             }
@@ -1309,15 +1922,15 @@ namespace CIA {
             //public enum EElemNumber { C, H, O, N, C13, S, P, Na};
             //short [] ElemValences = { 4, 1, 2, 3, 4, 2, 3, 1 };
             if( GoldenRuleFilters [ 1 ] == true ) {
-                if( ( ( Formula [ ( int ) EElemNumber.H ] + Formula [ ( int ) EElemNumber.N ] + Formula [ ( int ) EElemNumber.P ] ) % 2 ) != 0 ) {
+                if( ( ( Formula [ ( int ) EElemIndex.H ] + Formula [ ( int ) EElemIndex.N ] + Formula [ ( int ) EElemIndex.P ] ) % 2 ) != 0 ) {
                     return false;
                 }
                 //sum of valences greater than or equal to twice the maximum valence of one element
                 int FormulaValences = 0;
-                for( int Element = 0; Element < Elements; Element++ ) {
+                for( int Element = 0; Element < ElementCount; Element++ ) {
                     FormulaValences = FormulaValences + Formula [ Element ] * ElemValences [ Element ];
                 }
-                for( int Element = 0; Element < Elements; Element++ ) {
+                for( int Element = 0; Element < ElementCount; Element++ ) {
                     if( Formula [ Element ] > 0 ) {
                         if( ElemValences [ Element ] * 2 > FormulaValences ) {
                             return false;
@@ -1327,7 +1940,7 @@ namespace CIA {
                 //sum of valences greater than or equal to 2 * atom # - 1 (incorrect. Nikola)
                 //sum of valences greater than or equal to 2 * (atom # - 1)
                 int TotalAtoms = 0;
-                for( int Element = 0; Element < Elements; Element++ ) {
+                for( int Element = 0; Element < ElementCount; Element++ ) {
                     TotalAtoms = TotalAtoms + Formula [ Element ];
                 }
                 //if( FormulaValences < 2 * TotalAtoms - 1 ) {
@@ -1337,12 +1950,12 @@ namespace CIA {
             }
             //Godlen rule 3 "Elemental ratios"
             if( GoldenRuleFilters [ 2 ] == true ) {
-                double TotalC = Formula [ ( int ) EElemNumber.C ] + Formula [ ( int ) EElemNumber.C13 ];
-                double HC = 1.0 * Formula [ ( int ) EElemNumber.H ] / TotalC;
-                double NC = 1.0 * Formula [ ( int ) EElemNumber.N ] / TotalC;
-                double OC = 1.0 * Formula [ ( int ) EElemNumber.O ] / TotalC;
-                double PC = 1.0 * Formula [ ( int ) EElemNumber.P ] / TotalC;
-                double SC = 1.0 * Formula [ ( int ) EElemNumber.S ] / TotalC;
+                double TotalC = Formula [ ( int ) EElemIndex.C ] + Formula [ ( int ) EElemIndex.C13 ];
+                double HC = 1.0 * Formula [ ( int ) EElemIndex.H ] / TotalC;
+                double NC = 1.0 * Formula [ ( int ) EElemIndex.N ] / TotalC;
+                double OC = 1.0 * Formula [ ( int ) EElemIndex.O ] / TotalC;
+                double PC = 1.0 * Formula [ ( int ) EElemIndex.P ] / TotalC;
+                double SC = 1.0 * Formula [ ( int ) EElemIndex.S ] / TotalC;
                 bool GoldenRule3 = ( HC >= 0.2 ) & ( HC <= 3.1 ) & ( NC >= 0 ) & ( NC <= 1.3 ) & ( OC >= 0 ) & ( OC <= 1.2 ) & ( PC >= 0 ) & ( PC <= 0.3 ) & ( SC >= 0 ) & ( SC <= 0.8 );
                 if( GoldenRule3 == false ) {
                     return false;
@@ -1351,40 +1964,40 @@ namespace CIA {
             //Golden rule 4 "Heteroatom counts"
             if( GoldenRuleFilters [ 4 ] == true ) {
                 //manuscript has "<" instead of "<=" for ***Min calculation
-                bool checkNOPSMin = ( Formula [ ( int ) EElemNumber.O ] > 1 ) & ( Formula [ ( int ) EElemNumber.N ] > 1 ) & ( Formula [ ( int ) EElemNumber.S ] > 1 ) & ( Formula [ ( int ) EElemNumber.P ] > 1 );
-                bool checkNOPSMax = ( Formula [ ( int ) EElemNumber.O ] < 20 ) & ( Formula [ ( int ) EElemNumber.N ] < 10 ) & ( Formula [ ( int ) EElemNumber.S ] < 3 ) & ( Formula [ ( int ) EElemNumber.P ] < 4 );
+                bool checkNOPSMin = ( Formula [ ( int ) EElemIndex.O ] > 1 ) & ( Formula [ ( int ) EElemIndex.N ] > 1 ) & ( Formula [ ( int ) EElemIndex.S ] > 1 ) & ( Formula [ ( int ) EElemIndex.P ] > 1 );
+                bool checkNOPSMax = ( Formula [ ( int ) EElemIndex.O ] < 20 ) & ( Formula [ ( int ) EElemIndex.N ] < 10 ) & ( Formula [ ( int ) EElemIndex.S ] < 3 ) & ( Formula [ ( int ) EElemIndex.P ] < 4 );
                 if( checkNOPSMin == true && checkNOPSMax == false ) {
                     return false;
                 }
 
                 //bool checkNOPMin = ( Formula [ ( int ) EElemNumber.O ] > 3 ) & ( Formula [ ( int ) EElemNumber.N ] > 3 ) & ( Formula [ ( int ) EElemNumber.S ] == 0 ) & ( Formula [ ( int ) EElemNumber.P ] >= 3 );
                 //manuscript doesn't use "S == 0"
-                bool checkNOPMin = ( Formula [ ( int ) EElemNumber.O ] > 3 ) & ( Formula [ ( int ) EElemNumber.N ] > 3 ) & ( Formula [ ( int ) EElemNumber.P ] > 3 );
-                bool checkNOPMax = ( Formula [ ( int ) EElemNumber.O ] < 22 ) & ( Formula [ ( int ) EElemNumber.N ] < 11 ) & ( Formula [ ( int ) EElemNumber.P ] < 6 );
+                bool checkNOPMin = ( Formula [ ( int ) EElemIndex.O ] > 3 ) & ( Formula [ ( int ) EElemIndex.N ] > 3 ) & ( Formula [ ( int ) EElemIndex.P ] > 3 );
+                bool checkNOPMax = ( Formula [ ( int ) EElemIndex.O ] < 22 ) & ( Formula [ ( int ) EElemIndex.N ] < 11 ) & ( Formula [ ( int ) EElemIndex.P ] < 6 );
                 if( checkNOPMin == true && checkNOPMax == false ) {
                     return false;
                 }
 
                 //bool checkOPSMin = ( Formula [ ( int ) EElemNumber.O ] >= 1 ) & ( Formula [ ( int ) EElemNumber.N ] == 0 ) & ( Formula [ ( int ) EElemNumber.S ] >= 1 ) & ( Formula [ ( int ) EElemNumber.P ] >= 1 );
                 //manuscript doesn't use "N == 0"
-                bool checkOPSMin = ( Formula [ ( int ) EElemNumber.O ] > 1 ) & ( Formula [ ( int ) EElemNumber.S ] > 1 ) & ( Formula [ ( int ) EElemNumber.P ] > 1 );
-                bool checkOPSMax = ( Formula [ ( int ) EElemNumber.O ] < 14 ) & ( Formula [ ( int ) EElemNumber.S ] < 3 ) & ( Formula [ ( int ) EElemNumber.P ] < 3 );
+                bool checkOPSMin = ( Formula [ ( int ) EElemIndex.O ] > 1 ) & ( Formula [ ( int ) EElemIndex.S ] > 1 ) & ( Formula [ ( int ) EElemIndex.P ] > 1 );
+                bool checkOPSMax = ( Formula [ ( int ) EElemIndex.O ] < 14 ) & ( Formula [ ( int ) EElemIndex.S ] < 3 ) & ( Formula [ ( int ) EElemIndex.P ] < 3 );
                 if( checkOPSMin == true && checkOPSMax == false ) {
                     return false;
                 }
 
                 //bool checkNPSMin = ( Formula [ ( int ) EElemNumber.O ] == 0 ) & ( Formula [ ( int ) EElemNumber.N ] >= 1 ) & ( Formula [ ( int ) EElemNumber.S ] >= 1 ) & ( Formula [ ( int ) EElemNumber.P ] >= 1 );
                 //manuscript doesn't use "O == 0"
-                bool checkNPSMin = ( Formula [ ( int ) EElemNumber.N ] > 1 ) & ( Formula [ ( int ) EElemNumber.S ] > 1 ) & ( Formula [ ( int ) EElemNumber.P ] > 1 );
-                bool checkNPSMax = ( Formula [ ( int ) EElemNumber.N ] < 4 ) & ( Formula [ ( int ) EElemNumber.S ] < 3 ) & ( Formula [ ( int ) EElemNumber.P ] < 3 );
+                bool checkNPSMin = ( Formula [ ( int ) EElemIndex.N ] > 1 ) & ( Formula [ ( int ) EElemIndex.S ] > 1 ) & ( Formula [ ( int ) EElemIndex.P ] > 1 );
+                bool checkNPSMax = ( Formula [ ( int ) EElemIndex.N ] < 4 ) & ( Formula [ ( int ) EElemIndex.S ] < 3 ) & ( Formula [ ( int ) EElemIndex.P ] < 3 );
                 if( checkNPSMin == true && checkNPSMax == false ) {
                     return false;
                 }
 
                 //bool checkNOSMin = ( Formula [ ( int ) EElemNumber.O ] >= 6 ) & ( Formula [ ( int ) EElemNumber.N ] >= 6 ) & ( Formula [ ( int ) EElemNumber.S ] >= 6 ) & ( Formula [ ( int ) EElemNumber.P ] == 0 );
                 //manuscript doesn't use "P == 0"
-                bool checkNOSMin = ( Formula [ ( int ) EElemNumber.O ] > 6 ) & ( Formula [ ( int ) EElemNumber.N ] > 6 ) & ( Formula [ ( int ) EElemNumber.S ] > 6 );
-                bool checkNOSMax = ( Formula [ ( int ) EElemNumber.O ] < 14 ) & ( Formula [ ( int ) EElemNumber.N ] < 19 ) & ( Formula [ ( int ) EElemNumber.S ] < 8 );
+                bool checkNOSMin = ( Formula [ ( int ) EElemIndex.O ] > 6 ) & ( Formula [ ( int ) EElemIndex.N ] > 6 ) & ( Formula [ ( int ) EElemIndex.S ] > 6 );
+                bool checkNOSMax = ( Formula [ ( int ) EElemIndex.O ] < 14 ) & ( Formula [ ( int ) EElemIndex.N ] < 19 ) & ( Formula [ ( int ) EElemIndex.S ] < 8 );
                 if( checkNOSMin == true && checkNOSMax == false ) {
                     return false;
                 }
@@ -1401,27 +2014,27 @@ namespace CIA {
             //Golden rule 6 "Integer DBE"
             if( GoldenRuleFilters [ 5 ] == true ) {
                 //int DBECount = ( Formula [ ( int ) EElemNumber.C ] * 2 + Formula [ ( int ) EElemNumber.N ] + Formula [ ( int ) EElemNumber.P ] - Formula [ ( int ) EElemNumber.H ] + 2 ) % 2;
-                int DBEResudence = ( Formula [ ( int ) EElemNumber.N ] + Formula [ ( int ) EElemNumber.P ] - Formula [ ( int ) EElemNumber.H ] ) % 2;
+                int DBEResudence = ( Formula [ ( int ) EElemIndex.N ] + Formula [ ( int ) EElemIndex.P ] - Formula [ ( int ) EElemIndex.H ] ) % 2;
                 if( DBEResudence != 0 ) { return false; }
             }
 
             //Special filter
             if( oESpecialFilter != ESpecialFilters.None ) {
                 DataTableSpecialFilter.Rows [ 0 ] [ "Mass" ] = Mass;
-                for( int Element = 0; Element < Elements; Element++ ) {
-                    DataTableSpecialFilter.Rows [ 0 ] [ Enum.GetName( typeof( EElemNumber ), Element ) ] = Formula [ Element ];
+                for( int Element = 0; Element < ElementCount; Element++ ) {
+                    DataTableSpecialFilter.Rows [ 0 ] [ Enum.GetName( typeof( EElemIndex ), Element ) ] = Formula [ Element ];
                 }
                 if( ( bool ) DataTableSpecialFilter.Rows [ 0 ] [ "SpecialFilter" ] == false) {
                     return false;
                 }
             }
             //User-defined filters
-            if( UserDefinedFilter != null ) {
-                UserDefinedFilter.Rows [ 0 ] [ "Mass" ] = Mass;
-                for( int Element = 0; Element < Elements; Element++ ) {
-                    UserDefinedFilter.Rows [ 0 ] [ Enum.GetName( typeof( EElemNumber ), Element ) ] = Formula [ Element ];
+            if( UserDefinedFilterTable != null ) {
+                UserDefinedFilterTable.Rows [ 0 ] [ "Mass" ] = Mass;
+                for( int Element = 0; Element < ElementCount; Element++ ) {
+                    UserDefinedFilterTable.Rows [ 0 ] [ Enum.GetName( typeof( EElemIndex ), Element ) ] = Formula [ Element ];
                 }
-                if( ( bool ) UserDefinedFilter.Rows [ 0 ] [ "UserDefinedFilter" ] == false ) {
+                if( ( bool ) UserDefinedFilterTable.Rows [ 0 ] [ "UserDefinedFilter" ] == false ) {
                     return false;
                 }
             }
@@ -1429,19 +2042,19 @@ namespace CIA {
         } 
         void ProcessC13( double [] NeutralMasses, short [][] Formulas, double [] PPMErrors) {
             if( UseC13 == false ) { return; }
-            double CDiff = C13 - C;
+            double CDiff = CElements.C13 - CElements.C;
             for( int Peak = 0; Peak < NeutralMasses.Length - 1; Peak++ ) {
                 short [] PeakFormula = Formulas [ Peak ];
                 if( IsFormula( PeakFormula ) == false ) {
                     continue;
                 }
-                if( ( PeakFormula [ ( int ) EElemNumber.C13 ] > 0) || (PeakFormula [ ( int ) EElemNumber.C] <= 0) ) {
+                if( ( PeakFormula [ ( int ) EElemIndex.C13 ] > 0) || (PeakFormula [ ( int ) EElemIndex.C] <= 0) ) {
                     continue;
                 }
                 double PeakMass = NeutralMasses [ Peak ];
                 double C13PeakMass = PeakMass + CDiff;
-                double MinPeakMass = C13PeakMass - PpmToError( C13PeakMass, C13Tolerance );
-                double MaxPeakMass = C13PeakMass + PpmToError( C13PeakMass, C13Tolerance );
+                double MinPeakMass = C13PeakMass - CPpmError.PpmToError( C13PeakMass, C13Tolerance );
+                double MaxPeakMass = C13PeakMass + CPpmError.PpmToError( C13PeakMass, C13Tolerance );
                 for( int C13Peak = Peak + 1; C13Peak < NeutralMasses.Length; C13Peak++ ) {
                     if( NeutralMasses [ C13Peak] < MinPeakMass ) {
                         continue;
@@ -1451,13 +2064,13 @@ namespace CIA {
                     }
                     if( IsFormula( Formulas [ C13Peak ] ) == false ) {
                         Formulas [ C13Peak ] = ( short [] ) PeakFormula.Clone();
-                        Formulas [ C13Peak ] [ ( int ) EElemNumber.C13 ] = ( short ) ( Formulas [ C13Peak ] [ ( int ) EElemNumber.C13 ] + 1 );
-                        Formulas [ C13Peak ] [ ( int ) EElemNumber.C ] = ( short ) ( Formulas [ C13Peak ] [ ( int ) EElemNumber.C ] - 1 );
+                        Formulas [ C13Peak ] [ ( int ) EElemIndex.C13 ] = ( short ) ( Formulas [ C13Peak ] [ ( int ) EElemIndex.C13 ] + 1 );
+                        Formulas [ C13Peak ] [ ( int ) EElemIndex.C ] = ( short ) ( Formulas [ C13Peak ] [ ( int ) EElemIndex.C ] - 1 );
                         PPMErrors [ C13Peak ] = NeutralMasses [ C13Peak ] - FormulaToNeutralMass( Formulas [ C13Peak ] );
                     } else {
                         short [] Formula = ( short [] ) PeakFormula.Clone();
-                        Formula [ ( int ) EElemNumber.C13 ] = ( short ) ( Formula [ ( int ) EElemNumber.C13 ] + 1 );
-                        Formula [ ( int ) EElemNumber.C ] = ( short ) ( Formula [ ( int ) EElemNumber.C ] - 1 );
+                        Formula [ ( int ) EElemIndex.C13 ] = ( short ) ( Formula [ ( int ) EElemIndex.C13 ] + 1 );
+                        Formula [ ( int ) EElemIndex.C ] = ( short ) ( Formula [ ( int ) EElemIndex.C ] - 1 );
                         double PPMError = NeutralMasses [ C13Peak ] - FormulaToNeutralMass( Formula );
                         if( Math.Abs( PPMError ) < Math.Abs( PPMErrors [ C13Peak ] ) ) {
                             Formulas [ C13Peak ] = Formula;
@@ -1469,8 +2082,8 @@ namespace CIA {
         }
         int FindC13ParentPeak( short [] [] Formulas, int C13Peak ) {
             short [] ParentFormula = ( short [] ) Formulas [ C13Peak ].Clone();
-            ParentFormula [ ( int ) EElemNumber.C13 ] = ( short ) ( ParentFormula [ ( int ) EElemNumber.C13 ] - 1 );
-            ParentFormula [ ( int ) EElemNumber.C ] = ( short ) ( ParentFormula [ ( int ) EElemNumber.C ] + 1 );
+            ParentFormula [ ( int ) EElemIndex.C13 ] = ( short ) ( ParentFormula [ ( int ) EElemIndex.C13 ] - 1 );
+            ParentFormula [ ( int ) EElemIndex.C ] = ( short ) ( ParentFormula [ ( int ) EElemIndex.C ] + 1 );
             for( int ParentPeak = C13Peak - 1; ParentPeak >= 0; ParentPeak-- ) {
                 if( AreFormulasEqual( Formulas [ C13Peak ], ParentFormula ) == true ) {
                     return ParentPeak;
@@ -1482,13 +2095,13 @@ namespace CIA {
         //DB
         //*******************************************************************
         List<string> DBFilenames = new List<string>();
-        double [] DBMasses = null;
+        public double [] DBMasses = null;
         public double GetDBMass( int Index ) { return DBMasses [ Index ]; }
-        short [] [] DBFormulas = null;
+        public short [] [] DBFormulas = null;
         public short [] GetDBFormula( int Index ) { return DBFormulas [ Index ]; }
         public string GetDBFormulaName( int Index ) { return FormulaToName( DBFormulas [ Index ] ); }
         public string [] GetDBFilenames() { return DBFilenames.ToArray(); }
-        static int DBBytesPerRecord = sizeof( double ) + Elements * sizeof( short );
+        static int DBBytesPerRecord = sizeof( double ) + ElementCount * sizeof( short );
         static int DBRecordPerBlock = 1000;
         int DBBlockBytes = DBRecordPerBlock * DBBytesPerRecord;
         [StructLayout( LayoutKind.Explicit )]
@@ -1545,8 +2158,8 @@ namespace CIA {
             return ( short ) ( ( Bytes [ StartIndex + 1 ] << 8 ) + Bytes [ StartIndex ] );
         }
         short [] FormulaCovertFromBinary( byte [] TempBytes, int ArrayPointer ) {
-            short [] Formula = new short [ Elements ];
-            for( int Element = 0; Element < Elements; Element++ ) {
+            short [] Formula = new short [ ElementCount ];
+            for( int Element = 0; Element < ElementCount; Element++ ) {
                 Formula[ Element ] = BytesToShort( TempBytes, ArrayPointer );
                 ArrayPointer = ArrayPointer + sizeof( short );
             }
@@ -1567,7 +2180,7 @@ namespace CIA {
         public double GetDBMaxError() { return DBMaxError; }
         public bool GetDBLimitIndexes( double Mass, out int LowerIndex, out int UpperIndex ) {
             //double FormulaError = Mass * FormulaErrorPPM / PPM;
-            double LowerMZ = Mass - PpmToError( Mass, FormulaPPMTolerance );
+            double LowerMZ = Mass - CPpmError.PpmToError( Mass, FormulaPPMTolerance );
             LowerIndex = Array.BinarySearch( DBMasses, LowerMZ );
             UpperIndex = -1;//can't return without assigment
             if( LowerIndex < 0 ) {
@@ -1578,7 +2191,7 @@ namespace CIA {
             if( LowerIndex >= DBMasses.Length ) {
                 return false;
             }
-            double UpperMZ = Mass + PpmToError( Mass, FormulaPPMTolerance );
+            double UpperMZ = Mass + CPpmError.PpmToError( Mass, FormulaPPMTolerance );
             UpperIndex = Array.BinarySearch( DBMasses, UpperMZ );
             if( UpperIndex < 0 ) {
                 UpperIndex = ~UpperIndex;
@@ -1646,7 +2259,7 @@ namespace CIA {
             for( int Record = 0; Record < MaxRecords - 1; Record++ ) {
                 double Mass = Masses [ Record ];
                 if( Mass < 0 ) { continue; }
-                double MassPlusPpmError = Mass + PpmToError( Mass, FormulaPPMTolerance );
+                double MassPlusPpmError = Mass + CPpmError.PpmToError( Mass, FormulaPPMTolerance );
                 for( int TempRecord = Record + 1; TempRecord < MaxRecords; TempRecord++ ) {
                     if( Masses [ TempRecord ] < 0 ) {
                         continue;
@@ -1735,8 +2348,8 @@ namespace CIA {
                         ListFormulas.Add( NameToFormula( Words [ 1 ] ) );
                     } else if( Words.Length == 10 ) {
                         ListMasses.Add( double.Parse( Words [ 1 ] ) );
-                        short [] Formula = new short [ Elements ];
-                        for( int Element = 0; Element < Elements; Element++ ) {
+                        short [] Formula = new short [ ElementCount ];
+                        for( int Element = 0; Element < ElementCount; Element++ ) {
                             Formula [ Element ] = Int16.Parse( Words [ Element + 2 ] );
                         }
                         ListFormulas.Add( Formula );
@@ -1767,8 +2380,8 @@ namespace CIA {
                     }
                     if( Columns == 10 ) {
                         ListMasses.Add( ( double ) ( ( Array ) RangeArray ).GetValue( FormulaIndex + 1, 2 ) );
-                        short [] Formula = new short [ Elements ];
-                        for( int Element = 0; Element < Elements; Element++ ) {
+                        short [] Formula = new short [ ElementCount ];
+                        for( int Element = 0; Element < ElementCount; Element++ ) {
                             Formula [ Element ] = ( short ) ( ( Array ) RangeArray ).GetValue( FormulaIndex + 1, Element + 2 );
                         }
                         ListFormulas.Add( Formula );
@@ -1824,7 +2437,7 @@ namespace CIA {
             BinaryWriter oBinaryWriter = new BinaryWriter( File.Open( DBBinaryFilename, FileMode.Create ) );
             for( int Record = 0; Record < Masses.Length; Record++ ) {
                 oBinaryWriter.Write( Masses[ Record] );
-                for( int Element = 0; Element < Elements; Element++ ) {
+                for( int Element = 0; Element < ElementCount; Element++ ) {
                     oBinaryWriter.Write( Formulas[ Record][ Element]);
                 }
             }
@@ -1861,7 +2474,7 @@ namespace CIA {
             BinaryWriter oBinaryWriter = new BinaryWriter( File.Open( DBBinaryFilename, FileMode.Create ) );
             for( int Record = 0; Record < Masses.Length; Record++ ) {
                 oBinaryWriter.Write( Masses [ Record ] );
-                for( int Element = 0; Element < Elements; Element++ ) {
+                for( int Element = 0; Element < ElementCount; Element++ ) {
                     oBinaryWriter.Write( Formulas [ Record ] [ Element ] );
                 }
             }
@@ -1878,9 +2491,9 @@ namespace CIA {
             for( int Formula = 0; Formula < Formulas; Formula++ ) {
                 double Mass = oBinaryReader.ReadDouble();
                 string Line = ( Formula + 1 ).ToString() + ',' + Mass.ToString();
-                for( int Element = 0; Element < Elements; Element++ ) {
-                    short ElementCount = ( short ) oBinaryReader.ReadInt16();
-                    Line = Line + ',' + ElementCount.ToString();
+                for( int Element = 0; Element < ElementCount; Element++ ) {
+                    short gg = ( short ) oBinaryReader.ReadInt16();
+                    Line = Line + ',' + gg.ToString();
                 }
                 if( DBMassRangePerCsvFile == true ){
                     int NewRangeIndex = Convert.ToInt32( Math.Floor( Mass / DBMassRange) * DBMassRange );
@@ -1911,8 +2524,8 @@ namespace CIA {
                 }
 
                 string HeaderLine = "Mass" + OutputFileDelimiter + "Abundance";
-                for( int Element = 0; Element < Elements; Element++ ) {
-                    HeaderLine = HeaderLine + OutputFileDelimiter + Enum.GetName( typeof( EElemNumber ), Element );
+                for( int Element = 0; Element < ElementCount; Element++ ) {
+                    HeaderLine = HeaderLine + OutputFileDelimiter + Enum.GetName( typeof( EElemIndex ), Element );
                 }
                 HeaderLine = HeaderLine + OutputFileDelimiter + "Error_ppm"/* + OutputFileDelimiter + "Candidates";
                 HeaderLine = HeaderLine + OutputFileDelimiter + "CalMass" + OutputFileDelimiter + "AlignMasses"*/ + OutputFileDelimiter + "NeutralMass";
@@ -1930,11 +2543,11 @@ namespace CIA {
                 for( int Peak = 0; Peak < Masses.Length; Peak++ ) {
                     string LineStart = Masses [ Peak ].ToString() + OutputFileDelimiter + Abundances [ Peak ].ToString();
                     double NeutralMass = Ipa.GetNeutralMass( Masses [ Peak ] );
-                    double Error = PpmToError( NeutralMass, GetFormulaPPMTolerance() );
+                    double Error = CPpmError.PpmToError( NeutralMass, GetFormulaPPMTolerance() );
                     int LowerIndex, UpperIndex;
                     if( GetDBLimitIndexes( NeutralMass, out LowerIndex, out UpperIndex ) == false ) {
                         string Line = LineStart;
-                        for( int Element = 0; Element < Elements; Element++ ) {
+                        for( int Element = 0; Element < ElementCount; Element++ ) {
                             Line = Line + OutputFileDelimiter + "0";
                         }
                         Line = Line + OutputFileDelimiter + "0";
@@ -1949,7 +2562,7 @@ namespace CIA {
                         for( int Index = LowerIndex; Index <= UpperIndex; Index++ ) {
                             string Line = LineStart;
                             short [] Formula = DBFormulas [ Index ];
-                            for( int Element = 0; Element < Elements; Element++ ) {
+                            for( int Element = 0; Element < ElementCount; Element++ ) {
                                 Line = Line + OutputFileDelimiter + Formula [ Element ].ToString();
                             }
                             Line = Line + OutputFileDelimiter + ( NeutralMass - FormulaToNeutralMass( Formula ) ).ToString();

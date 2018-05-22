@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using NationalInstruments.Analysis;
 using NationalInstruments.Analysis.Monitoring;
 
-using FileReader;
+using Support;
 
 namespace TestSpectrumNoiseLevel {
     public partial class TestSpectrumNoiseLevelForm : Form {
@@ -45,7 +45,7 @@ namespace TestSpectrumNoiseLevel {
             double [] SNs;
             double [] Resolutions;
             double [] RelAbundances;
-            FileReader.FileReader.ReadFile( Filenames [ 0 ], out MZs, out Abundances, out SNs, out Resolutions, out RelAbundances );
+            Support.CFileReader.ReadFile( Filenames [ 0 ], out MZs, out Abundances, out SNs, out Resolutions, out RelAbundances );
             RawSignal.LineStyle = NationalInstruments.UI.LineStyle.Solid;
             RawSignal.PointStyle = NationalInstruments.UI.PointStyle.None;
             RawSignal.PlotXY( MZs, Abundances );
@@ -121,7 +121,7 @@ namespace TestSpectrumNoiseLevel {
             double [] SNs;
             double [] Resolutions;
             double [] RelAbundances;
-            FileReader.FileReader.ReadFile( Filenames [ 0 ], out OurMZs, out OurAbundances, out SNs, out Resolutions, out RelAbundances );
+            Support.CFileReader.ReadFile( Filenames [ 0 ], out OurMZs, out OurAbundances, out SNs, out Resolutions, out RelAbundances );
         }
 
         private void textBoxDropBrukerPeakData_DragEnter( object sender, DragEventArgs e ) {
@@ -136,7 +136,7 @@ namespace TestSpectrumNoiseLevel {
             double [] SNs;
             double [] Resolutions;
             double [] RelAbundances;
-            FileReader.FileReader.ReadFile( Filenames [ 0 ], out BrukerMZs, out BrukerAbundances, out SNs, out Resolutions, out RelAbundances );
+            Support.CFileReader.ReadFile( Filenames [ 0 ], out BrukerMZs, out BrukerAbundances, out SNs, out Resolutions, out RelAbundances );
         }
 
         class MZData {

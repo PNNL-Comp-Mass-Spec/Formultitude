@@ -71,7 +71,7 @@
             this.checkBoxIpaMatchedPeakReport = new System.Windows.Forms.CheckBox();
             this.label54 = new System.Windows.Forms.Label();
             this.label55 = new System.Windows.Forms.Label();
-            this.cmdIpaMergeWithCIA = new System.Windows.Forms.Button();
+            this.buttonIpaMergeWithCIA = new System.Windows.Forms.Button();
             this.label56 = new System.Windows.Forms.Label();
             this.label57 = new System.Windows.Forms.Label();
             this.textBoxIpaDropDBFile = new System.Windows.Forms.TextBox();
@@ -128,9 +128,10 @@
             this.label16 = new System.Windows.Forms.Label();
             this.numericUpDownDBMassRange = new System.Windows.Forms.NumericUpDown();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.buttonFilterCheckDB = new System.Windows.Forms.Button();
             this.textBoxFilterResult = new System.Windows.Forms.TextBox();
             this.label46 = new System.Windows.Forms.Label();
-            this.buttonFilterCheck = new System.Windows.Forms.Button();
+            this.buttonFilterCheckFormula = new System.Windows.Forms.Button();
             this.textBoxFilter = new System.Windows.Forms.TextBox();
             this.label45 = new System.Windows.Forms.Label();
             this.textBoxNeutralMass = new System.Windows.Forms.TextBox();
@@ -151,6 +152,46 @@
             this.label19 = new System.Windows.Forms.Label();
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.richTextBoxAbout = new System.Windows.Forms.RichTextBox();
+            this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.textBoxChainUniqueCalMaxChainsPeakMass = new System.Windows.Forms.TextBox();
+            this.textBoxChainRawCalMaxChainsPeakMass = new System.Windows.Forms.TextBox();
+            this.textBoxChainRawNoncalMaxChainsPeakMass = new System.Windows.Forms.TextBox();
+            this.textBoxChainUniqueNoncalMaxChainsPeakMass = new System.Windows.Forms.TextBox();
+            this.textBoxChainRawCalMaxChainsPeakIndex = new System.Windows.Forms.TextBox();
+            this.textBoxChainUniqueCalMaxChainsPeakIndex = new System.Windows.Forms.TextBox();
+            this.label65 = new System.Windows.Forms.Label();
+            this.label66 = new System.Windows.Forms.Label();
+            this.label67 = new System.Windows.Forms.Label();
+            this.label68 = new System.Windows.Forms.Label();
+            this.textBoxChainRawNoncalMaxChainsPeakIndex = new System.Windows.Forms.TextBox();
+            this.textBoxChainUniqueNoncalMaxChainsPeakIndex = new System.Windows.Forms.TextBox();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.label61 = new System.Windows.Forms.Label();
+            this.textBoxChainUniqueResult = new System.Windows.Forms.TextBox();
+            this.textBoxChainRawResult = new System.Windows.Forms.TextBox();
+            this.textBoxChainUniqueCal = new System.Windows.Forms.TextBox();
+            this.textBoxChainRawCal = new System.Windows.Forms.TextBox();
+            this.textBoxChainUniqueNoncal = new System.Windows.Forms.TextBox();
+            this.label60 = new System.Windows.Forms.Label();
+            this.label59 = new System.Windows.Forms.Label();
+            this.label58 = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.textBoxChainRawNoncal = new System.Windows.Forms.TextBox();
+            this.checkBoxChainCalOutput = new System.Windows.Forms.CheckBox();
+            this.checkBoxChainNoncalOutput = new System.Windows.Forms.CheckBox();
+            this.checkBoxChainChainsPerPeakOutput = new System.Windows.Forms.CheckBox();
+            this.checkBoxChainChainOutput = new System.Windows.Forms.CheckBox();
+            this.checkBoxChainRawChainOutput = new System.Windows.Forms.CheckBox();
+            this.checkBoxChainUniqueChainOutput = new System.Windows.Forms.CheckBox();
+            this.textBoxChainCalGain = new System.Windows.Forms.TextBox();
+            this.label62 = new System.Windows.Forms.Label();
+            this.textBoxChainDropSpectraFile = new System.Windows.Forms.TextBox();
+            this.numericUpDownChainPpmError = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
+            this.numericUpDownChainMinPeaks = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
             this.buttonLoadCiaParameters = new System.Windows.Forms.Button();
             this.buttonLoadParameters = new System.Windows.Forms.Button();
             this.buttonSaveParameters = new System.Windows.Forms.Button();
@@ -214,6 +255,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHAtoms)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCAtoms)).BeginInit();
             this.tabPage7.SuspendLayout();
+            this.tabPage8.SuspendLayout();
+            this.groupBox6.SuspendLayout();
+            this.groupBox11.SuspendLayout();
+            this.groupBox10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownChainPpmError)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownChainMinPeaks)).BeginInit();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCalRelFactor)).BeginInit();
             this.groupBox8.SuspendLayout();
@@ -412,6 +459,7 @@
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage7);
+            this.tabControl1.Controls.Add(this.tabPage8);
             this.tabControl1.Location = new System.Drawing.Point(31, 192);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -591,7 +639,7 @@
             this.tabPage6.Controls.Add(this.checkBoxIpaMatchedPeakReport);
             this.tabPage6.Controls.Add(this.label54);
             this.tabPage6.Controls.Add(this.label55);
-            this.tabPage6.Controls.Add(this.cmdIpaMergeWithCIA);
+            this.tabPage6.Controls.Add(this.buttonIpaMergeWithCIA);
             this.tabPage6.Controls.Add(this.label56);
             this.tabPage6.Controls.Add(this.label57);
             this.tabPage6.Controls.Add(this.textBoxIpaDropDBFile);
@@ -764,14 +812,14 @@
             this.label55.TabIndex = 53;
             this.label55.Text = "Min p/a to report";
             // 
-            // cmdIpaMergeWithCIA
+            // buttonIpaMergeWithCIA
             // 
-            this.cmdIpaMergeWithCIA.Location = new System.Drawing.Point(286, 389);
-            this.cmdIpaMergeWithCIA.Name = "cmdIpaMergeWithCIA";
-            this.cmdIpaMergeWithCIA.Size = new System.Drawing.Size(99, 30);
-            this.cmdIpaMergeWithCIA.TabIndex = 52;
-            this.cmdIpaMergeWithCIA.Text = "merge with CIA";
-            this.cmdIpaMergeWithCIA.UseVisualStyleBackColor = true;
+            this.buttonIpaMergeWithCIA.Location = new System.Drawing.Point(286, 389);
+            this.buttonIpaMergeWithCIA.Name = "buttonIpaMergeWithCIA";
+            this.buttonIpaMergeWithCIA.Size = new System.Drawing.Size(99, 30);
+            this.buttonIpaMergeWithCIA.TabIndex = 52;
+            this.buttonIpaMergeWithCIA.Text = "merge with CIA";
+            this.buttonIpaMergeWithCIA.UseVisualStyleBackColor = true;
             // 
             // label56
             // 
@@ -1391,9 +1439,10 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.buttonFilterCheckDB);
             this.tabPage5.Controls.Add(this.textBoxFilterResult);
             this.tabPage5.Controls.Add(this.label46);
-            this.tabPage5.Controls.Add(this.buttonFilterCheck);
+            this.tabPage5.Controls.Add(this.buttonFilterCheckFormula);
             this.tabPage5.Controls.Add(this.textBoxFilter);
             this.tabPage5.Controls.Add(this.label45);
             this.tabPage5.Controls.Add(this.textBoxNeutralMass);
@@ -1420,48 +1469,58 @@
             this.tabPage5.Text = "CIA filter inspector";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
+            // buttonFilterCheckDB
+            // 
+            this.buttonFilterCheckDB.Location = new System.Drawing.Point(120, 308);
+            this.buttonFilterCheckDB.Name = "buttonFilterCheckDB";
+            this.buttonFilterCheckDB.Size = new System.Drawing.Size(384, 59);
+            this.buttonFilterCheckDB.TabIndex = 21;
+            this.buttonFilterCheckDB.Text = "Check DB\r\n(DBFilteredCompositions.csv file in Application folder)\r\n\r\n";
+            this.buttonFilterCheckDB.UseVisualStyleBackColor = true;
+            this.buttonFilterCheckDB.Click += new System.EventHandler(this.buttonFilterCheckDB_Click);
+            // 
             // textBoxFilterResult
             // 
-            this.textBoxFilterResult.Location = new System.Drawing.Point(148, 388);
+            this.textBoxFilterResult.Location = new System.Drawing.Point(104, 225);
             this.textBoxFilterResult.Multiline = true;
             this.textBoxFilterResult.Name = "textBoxFilterResult";
             this.textBoxFilterResult.ReadOnly = true;
             this.textBoxFilterResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxFilterResult.Size = new System.Drawing.Size(401, 33);
+            this.textBoxFilterResult.Size = new System.Drawing.Size(462, 33);
             this.textBoxFilterResult.TabIndex = 20;
             // 
             // label46
             // 
             this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(65, 391);
+            this.label46.Location = new System.Drawing.Point(36, 228);
             this.label46.Name = "label46";
             this.label46.Size = new System.Drawing.Size(37, 13);
             this.label46.TabIndex = 19;
             this.label46.Text = "Result";
             // 
-            // buttonFilterCheck
+            // buttonFilterCheckFormula
             // 
-            this.buttonFilterCheck.Location = new System.Drawing.Point(332, 122);
-            this.buttonFilterCheck.Name = "buttonFilterCheck";
-            this.buttonFilterCheck.Size = new System.Drawing.Size(191, 51);
-            this.buttonFilterCheck.TabIndex = 18;
-            this.buttonFilterCheck.Text = "Check";
-            this.buttonFilterCheck.UseVisualStyleBackColor = true;
-            this.buttonFilterCheck.Click += new System.EventHandler(this.buttonFilterCheck_Click);
+            this.buttonFilterCheckFormula.Location = new System.Drawing.Point(471, 112);
+            this.buttonFilterCheckFormula.Name = "buttonFilterCheckFormula";
+            this.buttonFilterCheckFormula.Size = new System.Drawing.Size(95, 94);
+            this.buttonFilterCheckFormula.TabIndex = 18;
+            this.buttonFilterCheckFormula.Text = "Check formula";
+            this.buttonFilterCheckFormula.UseVisualStyleBackColor = true;
+            this.buttonFilterCheckFormula.Click += new System.EventHandler(this.buttonFilterCheckFormula_Click);
             // 
             // textBoxFilter
             // 
-            this.textBoxFilter.Location = new System.Drawing.Point(148, 263);
+            this.textBoxFilter.Location = new System.Drawing.Point(103, 28);
             this.textBoxFilter.Multiline = true;
             this.textBoxFilter.Name = "textBoxFilter";
             this.textBoxFilter.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxFilter.Size = new System.Drawing.Size(401, 119);
+            this.textBoxFilter.Size = new System.Drawing.Size(457, 43);
             this.textBoxFilter.TabIndex = 17;
             // 
             // label45
             // 
             this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(65, 322);
+            this.label45.Location = new System.Drawing.Point(36, 41);
             this.label45.Name = "label45";
             this.label45.Size = new System.Drawing.Size(29, 13);
             this.label45.TabIndex = 16;
@@ -1469,7 +1528,7 @@
             // 
             // textBoxNeutralMass
             // 
-            this.textBoxNeutralMass.Location = new System.Drawing.Point(148, 232);
+            this.textBoxNeutralMass.Location = new System.Drawing.Point(337, 190);
             this.textBoxNeutralMass.Name = "textBoxNeutralMass";
             this.textBoxNeutralMass.ReadOnly = true;
             this.textBoxNeutralMass.Size = new System.Drawing.Size(124, 20);
@@ -1478,7 +1537,7 @@
             // label44
             // 
             this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(65, 235);
+            this.label44.Location = new System.Drawing.Point(254, 193);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(68, 13);
             this.label44.TabIndex = 14;
@@ -1486,7 +1545,7 @@
             // 
             // numericUpDownNaAtoms
             // 
-            this.numericUpDownNaAtoms.Location = new System.Drawing.Point(148, 205);
+            this.numericUpDownNaAtoms.Location = new System.Drawing.Point(337, 163);
             this.numericUpDownNaAtoms.Name = "numericUpDownNaAtoms";
             this.numericUpDownNaAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownNaAtoms.TabIndex = 13;
@@ -1494,7 +1553,7 @@
             // label43
             // 
             this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(65, 207);
+            this.label43.Location = new System.Drawing.Point(254, 165);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(52, 13);
             this.label43.TabIndex = 12;
@@ -1502,7 +1561,7 @@
             // 
             // numericUpDownPAtoms
             // 
-            this.numericUpDownPAtoms.Location = new System.Drawing.Point(148, 179);
+            this.numericUpDownPAtoms.Location = new System.Drawing.Point(337, 137);
             this.numericUpDownPAtoms.Name = "numericUpDownPAtoms";
             this.numericUpDownPAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownPAtoms.TabIndex = 11;
@@ -1510,7 +1569,7 @@
             // label42
             // 
             this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(65, 181);
+            this.label42.Location = new System.Drawing.Point(254, 139);
             this.label42.Name = "label42";
             this.label42.Size = new System.Drawing.Size(45, 13);
             this.label42.TabIndex = 10;
@@ -1518,7 +1577,7 @@
             // 
             // numericUpDownSAtoms
             // 
-            this.numericUpDownSAtoms.Location = new System.Drawing.Point(148, 153);
+            this.numericUpDownSAtoms.Location = new System.Drawing.Point(337, 111);
             this.numericUpDownSAtoms.Name = "numericUpDownSAtoms";
             this.numericUpDownSAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownSAtoms.TabIndex = 9;
@@ -1526,7 +1585,7 @@
             // label41
             // 
             this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(65, 155);
+            this.label41.Location = new System.Drawing.Point(254, 113);
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(45, 13);
             this.label41.TabIndex = 8;
@@ -1534,7 +1593,7 @@
             // 
             // numericUpDownNAtoms
             // 
-            this.numericUpDownNAtoms.Location = new System.Drawing.Point(148, 127);
+            this.numericUpDownNAtoms.Location = new System.Drawing.Point(103, 189);
             this.numericUpDownNAtoms.Name = "numericUpDownNAtoms";
             this.numericUpDownNAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownNAtoms.TabIndex = 7;
@@ -1542,7 +1601,7 @@
             // label40
             // 
             this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(65, 129);
+            this.label40.Location = new System.Drawing.Point(35, 191);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(46, 13);
             this.label40.TabIndex = 6;
@@ -1550,7 +1609,7 @@
             // 
             // numericUpDownOAtoms
             // 
-            this.numericUpDownOAtoms.Location = new System.Drawing.Point(148, 101);
+            this.numericUpDownOAtoms.Location = new System.Drawing.Point(103, 163);
             this.numericUpDownOAtoms.Name = "numericUpDownOAtoms";
             this.numericUpDownOAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownOAtoms.TabIndex = 5;
@@ -1558,7 +1617,7 @@
             // label39
             // 
             this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(65, 103);
+            this.label39.Location = new System.Drawing.Point(35, 165);
             this.label39.Name = "label39";
             this.label39.Size = new System.Drawing.Size(46, 13);
             this.label39.TabIndex = 4;
@@ -1566,7 +1625,7 @@
             // 
             // numericUpDownHAtoms
             // 
-            this.numericUpDownHAtoms.Location = new System.Drawing.Point(148, 75);
+            this.numericUpDownHAtoms.Location = new System.Drawing.Point(103, 137);
             this.numericUpDownHAtoms.Name = "numericUpDownHAtoms";
             this.numericUpDownHAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownHAtoms.TabIndex = 3;
@@ -1574,7 +1633,7 @@
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(65, 77);
+            this.label27.Location = new System.Drawing.Point(35, 139);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(46, 13);
             this.label27.TabIndex = 2;
@@ -1582,7 +1641,7 @@
             // 
             // numericUpDownCAtoms
             // 
-            this.numericUpDownCAtoms.Location = new System.Drawing.Point(148, 49);
+            this.numericUpDownCAtoms.Location = new System.Drawing.Point(103, 111);
             this.numericUpDownCAtoms.Name = "numericUpDownCAtoms";
             this.numericUpDownCAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownCAtoms.TabIndex = 1;
@@ -1590,7 +1649,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(65, 51);
+            this.label19.Location = new System.Drawing.Point(35, 113);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(45, 13);
             this.label19.TabIndex = 0;
@@ -1614,6 +1673,422 @@
             this.richTextBoxAbout.Size = new System.Drawing.Size(560, 406);
             this.richTextBoxAbout.TabIndex = 2;
             this.richTextBoxAbout.Text = "";
+            // 
+            // tabPage8
+            // 
+            this.tabPage8.Controls.Add(this.groupBox6);
+            this.tabPage8.Location = new System.Drawing.Point(4, 22);
+            this.tabPage8.Name = "tabPage8";
+            this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage8.Size = new System.Drawing.Size(607, 450);
+            this.tabPage8.TabIndex = 7;
+            this.tabPage8.Text = "Chain";
+            this.tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.groupBox11);
+            this.groupBox6.Controls.Add(this.groupBox10);
+            this.groupBox6.Controls.Add(this.checkBoxChainCalOutput);
+            this.groupBox6.Controls.Add(this.checkBoxChainNoncalOutput);
+            this.groupBox6.Controls.Add(this.checkBoxChainChainsPerPeakOutput);
+            this.groupBox6.Controls.Add(this.checkBoxChainChainOutput);
+            this.groupBox6.Controls.Add(this.checkBoxChainRawChainOutput);
+            this.groupBox6.Controls.Add(this.checkBoxChainUniqueChainOutput);
+            this.groupBox6.Controls.Add(this.textBoxChainCalGain);
+            this.groupBox6.Controls.Add(this.label62);
+            this.groupBox6.Controls.Add(this.textBoxChainDropSpectraFile);
+            this.groupBox6.Controls.Add(this.numericUpDownChainPpmError);
+            this.groupBox6.Controls.Add(this.label9);
+            this.groupBox6.Controls.Add(this.numericUpDownChainMinPeaks);
+            this.groupBox6.Controls.Add(this.label8);
+            this.groupBox6.Location = new System.Drawing.Point(48, 27);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(538, 366);
+            this.groupBox6.TabIndex = 0;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "vs Calibration";
+            // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.textBoxChainUniqueCalMaxChainsPeakMass);
+            this.groupBox11.Controls.Add(this.textBoxChainRawCalMaxChainsPeakMass);
+            this.groupBox11.Controls.Add(this.textBoxChainRawNoncalMaxChainsPeakMass);
+            this.groupBox11.Controls.Add(this.textBoxChainUniqueNoncalMaxChainsPeakMass);
+            this.groupBox11.Controls.Add(this.textBoxChainRawCalMaxChainsPeakIndex);
+            this.groupBox11.Controls.Add(this.textBoxChainUniqueCalMaxChainsPeakIndex);
+            this.groupBox11.Controls.Add(this.label65);
+            this.groupBox11.Controls.Add(this.label66);
+            this.groupBox11.Controls.Add(this.label67);
+            this.groupBox11.Controls.Add(this.label68);
+            this.groupBox11.Controls.Add(this.textBoxChainRawNoncalMaxChainsPeakIndex);
+            this.groupBox11.Controls.Add(this.textBoxChainUniqueNoncalMaxChainsPeakIndex);
+            this.groupBox11.Location = new System.Drawing.Point(12, 200);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(349, 93);
+            this.groupBox11.TabIndex = 83;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "Max chains peak index / mass";
+            // 
+            // textBoxChainUniqueCalMaxChainsPeakMass
+            // 
+            this.textBoxChainUniqueCalMaxChainsPeakMass.Location = new System.Drawing.Point(276, 49);
+            this.textBoxChainUniqueCalMaxChainsPeakMass.Name = "textBoxChainUniqueCalMaxChainsPeakMass";
+            this.textBoxChainUniqueCalMaxChainsPeakMass.ReadOnly = true;
+            this.textBoxChainUniqueCalMaxChainsPeakMass.Size = new System.Drawing.Size(58, 20);
+            this.textBoxChainUniqueCalMaxChainsPeakMass.TabIndex = 82;
+            // 
+            // textBoxChainRawCalMaxChainsPeakMass
+            // 
+            this.textBoxChainRawCalMaxChainsPeakMass.Location = new System.Drawing.Point(276, 26);
+            this.textBoxChainRawCalMaxChainsPeakMass.Name = "textBoxChainRawCalMaxChainsPeakMass";
+            this.textBoxChainRawCalMaxChainsPeakMass.ReadOnly = true;
+            this.textBoxChainRawCalMaxChainsPeakMass.Size = new System.Drawing.Size(58, 20);
+            this.textBoxChainRawCalMaxChainsPeakMass.TabIndex = 81;
+            // 
+            // textBoxChainRawNoncalMaxChainsPeakMass
+            // 
+            this.textBoxChainRawNoncalMaxChainsPeakMass.Location = new System.Drawing.Point(145, 30);
+            this.textBoxChainRawNoncalMaxChainsPeakMass.Name = "textBoxChainRawNoncalMaxChainsPeakMass";
+            this.textBoxChainRawNoncalMaxChainsPeakMass.ReadOnly = true;
+            this.textBoxChainRawNoncalMaxChainsPeakMass.Size = new System.Drawing.Size(58, 20);
+            this.textBoxChainRawNoncalMaxChainsPeakMass.TabIndex = 79;
+            // 
+            // textBoxChainUniqueNoncalMaxChainsPeakMass
+            // 
+            this.textBoxChainUniqueNoncalMaxChainsPeakMass.Location = new System.Drawing.Point(145, 52);
+            this.textBoxChainUniqueNoncalMaxChainsPeakMass.Name = "textBoxChainUniqueNoncalMaxChainsPeakMass";
+            this.textBoxChainUniqueNoncalMaxChainsPeakMass.ReadOnly = true;
+            this.textBoxChainUniqueNoncalMaxChainsPeakMass.Size = new System.Drawing.Size(58, 20);
+            this.textBoxChainUniqueNoncalMaxChainsPeakMass.TabIndex = 80;
+            // 
+            // textBoxChainRawCalMaxChainsPeakIndex
+            // 
+            this.textBoxChainRawCalMaxChainsPeakIndex.Location = new System.Drawing.Point(212, 30);
+            this.textBoxChainRawCalMaxChainsPeakIndex.Name = "textBoxChainRawCalMaxChainsPeakIndex";
+            this.textBoxChainRawCalMaxChainsPeakIndex.ReadOnly = true;
+            this.textBoxChainRawCalMaxChainsPeakIndex.Size = new System.Drawing.Size(58, 20);
+            this.textBoxChainRawCalMaxChainsPeakIndex.TabIndex = 77;
+            // 
+            // textBoxChainUniqueCalMaxChainsPeakIndex
+            // 
+            this.textBoxChainUniqueCalMaxChainsPeakIndex.Location = new System.Drawing.Point(212, 52);
+            this.textBoxChainUniqueCalMaxChainsPeakIndex.Name = "textBoxChainUniqueCalMaxChainsPeakIndex";
+            this.textBoxChainUniqueCalMaxChainsPeakIndex.ReadOnly = true;
+            this.textBoxChainUniqueCalMaxChainsPeakIndex.Size = new System.Drawing.Size(58, 20);
+            this.textBoxChainUniqueCalMaxChainsPeakIndex.TabIndex = 78;
+            // 
+            // label65
+            // 
+            this.label65.AutoSize = true;
+            this.label65.Location = new System.Drawing.Point(223, 14);
+            this.label65.Name = "label65";
+            this.label65.Size = new System.Drawing.Size(22, 13);
+            this.label65.TabIndex = 65;
+            this.label65.Text = "Cal";
+            // 
+            // label66
+            // 
+            this.label66.AutoSize = true;
+            this.label66.Location = new System.Drawing.Point(84, 14);
+            this.label66.Name = "label66";
+            this.label66.Size = new System.Drawing.Size(44, 13);
+            this.label66.TabIndex = 64;
+            this.label66.Text = "Non-cal";
+            // 
+            // label67
+            // 
+            this.label67.AutoSize = true;
+            this.label67.Location = new System.Drawing.Point(20, 57);
+            this.label67.Name = "label67";
+            this.label67.Size = new System.Drawing.Size(41, 13);
+            this.label67.TabIndex = 63;
+            this.label67.Text = "Unique";
+            // 
+            // label68
+            // 
+            this.label68.AutoSize = true;
+            this.label68.Location = new System.Drawing.Point(20, 33);
+            this.label68.Name = "label68";
+            this.label68.Size = new System.Drawing.Size(29, 13);
+            this.label68.TabIndex = 62;
+            this.label68.Text = "Raw";
+            // 
+            // textBoxChainRawNoncalMaxChainsPeakIndex
+            // 
+            this.textBoxChainRawNoncalMaxChainsPeakIndex.Location = new System.Drawing.Point(79, 30);
+            this.textBoxChainRawNoncalMaxChainsPeakIndex.Name = "textBoxChainRawNoncalMaxChainsPeakIndex";
+            this.textBoxChainRawNoncalMaxChainsPeakIndex.ReadOnly = true;
+            this.textBoxChainRawNoncalMaxChainsPeakIndex.Size = new System.Drawing.Size(58, 20);
+            this.textBoxChainRawNoncalMaxChainsPeakIndex.TabIndex = 72;
+            // 
+            // textBoxChainUniqueNoncalMaxChainsPeakIndex
+            // 
+            this.textBoxChainUniqueNoncalMaxChainsPeakIndex.Location = new System.Drawing.Point(79, 52);
+            this.textBoxChainUniqueNoncalMaxChainsPeakIndex.Name = "textBoxChainUniqueNoncalMaxChainsPeakIndex";
+            this.textBoxChainUniqueNoncalMaxChainsPeakIndex.ReadOnly = true;
+            this.textBoxChainUniqueNoncalMaxChainsPeakIndex.Size = new System.Drawing.Size(58, 20);
+            this.textBoxChainUniqueNoncalMaxChainsPeakIndex.TabIndex = 76;
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.Controls.Add(this.label61);
+            this.groupBox10.Controls.Add(this.textBoxChainUniqueResult);
+            this.groupBox10.Controls.Add(this.textBoxChainRawResult);
+            this.groupBox10.Controls.Add(this.textBoxChainUniqueCal);
+            this.groupBox10.Controls.Add(this.textBoxChainRawCal);
+            this.groupBox10.Controls.Add(this.textBoxChainUniqueNoncal);
+            this.groupBox10.Controls.Add(this.label60);
+            this.groupBox10.Controls.Add(this.label59);
+            this.groupBox10.Controls.Add(this.label58);
+            this.groupBox10.Controls.Add(this.label28);
+            this.groupBox10.Controls.Add(this.textBoxChainRawNoncal);
+            this.groupBox10.Location = new System.Drawing.Point(11, 111);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(351, 76);
+            this.groupBox10.TabIndex = 82;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Chains";
+            // 
+            // label61
+            // 
+            this.label61.AutoSize = true;
+            this.label61.Location = new System.Drawing.Point(264, 9);
+            this.label61.Name = "label61";
+            this.label61.Size = new System.Drawing.Size(37, 13);
+            this.label61.TabIndex = 67;
+            this.label61.Text = "Result";
+            // 
+            // textBoxChainUniqueResult
+            // 
+            this.textBoxChainUniqueResult.Location = new System.Drawing.Point(246, 49);
+            this.textBoxChainUniqueResult.Name = "textBoxChainUniqueResult";
+            this.textBoxChainUniqueResult.ReadOnly = true;
+            this.textBoxChainUniqueResult.Size = new System.Drawing.Size(81, 20);
+            this.textBoxChainUniqueResult.TabIndex = 66;
+            // 
+            // textBoxChainRawResult
+            // 
+            this.textBoxChainRawResult.Location = new System.Drawing.Point(245, 26);
+            this.textBoxChainRawResult.Name = "textBoxChainRawResult";
+            this.textBoxChainRawResult.ReadOnly = true;
+            this.textBoxChainRawResult.Size = new System.Drawing.Size(82, 20);
+            this.textBoxChainRawResult.TabIndex = 65;
+            // 
+            // textBoxChainUniqueCal
+            // 
+            this.textBoxChainUniqueCal.Location = new System.Drawing.Point(160, 49);
+            this.textBoxChainUniqueCal.Name = "textBoxChainUniqueCal";
+            this.textBoxChainUniqueCal.ReadOnly = true;
+            this.textBoxChainUniqueCal.Size = new System.Drawing.Size(82, 20);
+            this.textBoxChainUniqueCal.TabIndex = 64;
+            // 
+            // textBoxChainRawCal
+            // 
+            this.textBoxChainRawCal.Location = new System.Drawing.Point(160, 25);
+            this.textBoxChainRawCal.Name = "textBoxChainRawCal";
+            this.textBoxChainRawCal.ReadOnly = true;
+            this.textBoxChainRawCal.Size = new System.Drawing.Size(82, 20);
+            this.textBoxChainRawCal.TabIndex = 63;
+            // 
+            // textBoxChainUniqueNoncal
+            // 
+            this.textBoxChainUniqueNoncal.Location = new System.Drawing.Point(72, 49);
+            this.textBoxChainUniqueNoncal.Name = "textBoxChainUniqueNoncal";
+            this.textBoxChainUniqueNoncal.ReadOnly = true;
+            this.textBoxChainUniqueNoncal.Size = new System.Drawing.Size(82, 20);
+            this.textBoxChainUniqueNoncal.TabIndex = 62;
+            // 
+            // label60
+            // 
+            this.label60.AutoSize = true;
+            this.label60.Location = new System.Drawing.Point(167, 9);
+            this.label60.Name = "label60";
+            this.label60.Size = new System.Drawing.Size(22, 13);
+            this.label60.TabIndex = 61;
+            this.label60.Text = "Cal";
+            // 
+            // label59
+            // 
+            this.label59.AutoSize = true;
+            this.label59.Location = new System.Drawing.Point(83, 9);
+            this.label59.Name = "label59";
+            this.label59.Size = new System.Drawing.Size(44, 13);
+            this.label59.TabIndex = 60;
+            this.label59.Text = "Non-cal";
+            // 
+            // label58
+            // 
+            this.label58.AutoSize = true;
+            this.label58.Location = new System.Drawing.Point(19, 52);
+            this.label58.Name = "label58";
+            this.label58.Size = new System.Drawing.Size(41, 13);
+            this.label58.TabIndex = 59;
+            this.label58.Text = "Unique";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(19, 28);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(29, 13);
+            this.label28.TabIndex = 58;
+            this.label28.Text = "Raw";
+            // 
+            // textBoxChainRawNoncal
+            // 
+            this.textBoxChainRawNoncal.Location = new System.Drawing.Point(72, 25);
+            this.textBoxChainRawNoncal.Name = "textBoxChainRawNoncal";
+            this.textBoxChainRawNoncal.ReadOnly = true;
+            this.textBoxChainRawNoncal.Size = new System.Drawing.Size(82, 20);
+            this.textBoxChainRawNoncal.TabIndex = 57;
+            // 
+            // checkBoxChainCalOutput
+            // 
+            this.checkBoxChainCalOutput.AutoSize = true;
+            this.checkBoxChainCalOutput.Location = new System.Drawing.Point(319, 318);
+            this.checkBoxChainCalOutput.Name = "checkBoxChainCalOutput";
+            this.checkBoxChainCalOutput.Size = new System.Drawing.Size(74, 17);
+            this.checkBoxChainCalOutput.TabIndex = 81;
+            this.checkBoxChainCalOutput.Text = "Cal output";
+            this.checkBoxChainCalOutput.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxChainNoncalOutput
+            // 
+            this.checkBoxChainNoncalOutput.AutoSize = true;
+            this.checkBoxChainNoncalOutput.Location = new System.Drawing.Point(321, 299);
+            this.checkBoxChainNoncalOutput.Name = "checkBoxChainNoncalOutput";
+            this.checkBoxChainNoncalOutput.Size = new System.Drawing.Size(96, 17);
+            this.checkBoxChainNoncalOutput.TabIndex = 80;
+            this.checkBoxChainNoncalOutput.Text = "Non-cal output";
+            this.checkBoxChainNoncalOutput.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxChainChainsPerPeakOutput
+            // 
+            this.checkBoxChainChainsPerPeakOutput.AutoSize = true;
+            this.checkBoxChainChainsPerPeakOutput.Location = new System.Drawing.Point(13, 299);
+            this.checkBoxChainChainsPerPeakOutput.Name = "checkBoxChainChainsPerPeakOutput";
+            this.checkBoxChainChainsPerPeakOutput.Size = new System.Drawing.Size(136, 17);
+            this.checkBoxChainChainsPerPeakOutput.TabIndex = 79;
+            this.checkBoxChainChainsPerPeakOutput.Text = "Chains per peak output";
+            this.checkBoxChainChainsPerPeakOutput.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxChainChainOutput
+            // 
+            this.checkBoxChainChainOutput.AutoSize = true;
+            this.checkBoxChainChainOutput.Location = new System.Drawing.Point(13, 318);
+            this.checkBoxChainChainOutput.Name = "checkBoxChainChainOutput";
+            this.checkBoxChainChainOutput.Size = new System.Drawing.Size(91, 17);
+            this.checkBoxChainChainOutput.TabIndex = 78;
+            this.checkBoxChainChainOutput.Text = "Chains output";
+            this.checkBoxChainChainOutput.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxChainRawChainOutput
+            // 
+            this.checkBoxChainRawChainOutput.AutoSize = true;
+            this.checkBoxChainRawChainOutput.Location = new System.Drawing.Point(172, 299);
+            this.checkBoxChainRawChainOutput.Name = "checkBoxChainRawChainOutput";
+            this.checkBoxChainRawChainOutput.Size = new System.Drawing.Size(110, 17);
+            this.checkBoxChainRawChainOutput.TabIndex = 71;
+            this.checkBoxChainRawChainOutput.Text = "Raw chain output";
+            this.checkBoxChainRawChainOutput.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxChainUniqueChainOutput
+            // 
+            this.checkBoxChainUniqueChainOutput.AutoSize = true;
+            this.checkBoxChainUniqueChainOutput.Location = new System.Drawing.Point(172, 318);
+            this.checkBoxChainUniqueChainOutput.Name = "checkBoxChainUniqueChainOutput";
+            this.checkBoxChainUniqueChainOutput.Size = new System.Drawing.Size(122, 17);
+            this.checkBoxChainUniqueChainOutput.TabIndex = 70;
+            this.checkBoxChainUniqueChainOutput.Text = "Unique chain output";
+            this.checkBoxChainUniqueChainOutput.UseVisualStyleBackColor = true;
+            // 
+            // textBoxChainCalGain
+            // 
+            this.textBoxChainCalGain.Location = new System.Drawing.Point(95, 27);
+            this.textBoxChainCalGain.Name = "textBoxChainCalGain";
+            this.textBoxChainCalGain.ReadOnly = true;
+            this.textBoxChainCalGain.Size = new System.Drawing.Size(82, 20);
+            this.textBoxChainCalGain.TabIndex = 69;
+            // 
+            // label62
+            // 
+            this.label62.AutoSize = true;
+            this.label62.Location = new System.Drawing.Point(9, 31);
+            this.label62.Name = "label62";
+            this.label62.Size = new System.Drawing.Size(79, 13);
+            this.label62.TabIndex = 68;
+            this.label62.Text = "Calibration gain";
+            // 
+            // textBoxChainDropSpectraFile
+            // 
+            this.textBoxChainDropSpectraFile.AllowDrop = true;
+            this.textBoxChainDropSpectraFile.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.textBoxChainDropSpectraFile.Enabled = false;
+            this.textBoxChainDropSpectraFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxChainDropSpectraFile.Location = new System.Drawing.Point(184, 54);
+            this.textBoxChainDropSpectraFile.Multiline = true;
+            this.textBoxChainDropSpectraFile.Name = "textBoxChainDropSpectraFile";
+            this.textBoxChainDropSpectraFile.ReadOnly = true;
+            this.textBoxChainDropSpectraFile.Size = new System.Drawing.Size(98, 41);
+            this.textBoxChainDropSpectraFile.TabIndex = 1;
+            this.textBoxChainDropSpectraFile.Text = "Drop Spectra Files ";
+            this.textBoxChainDropSpectraFile.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBoxChainDropSpectraFile.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxDropSpectraFile_DragDrop);
+            this.textBoxChainDropSpectraFile.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxDropSpectraFile_DragEnter);
+            // 
+            // numericUpDownChainPpmError
+            // 
+            this.numericUpDownChainPpmError.DecimalPlaces = 3;
+            this.numericUpDownChainPpmError.Increment = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericUpDownChainPpmError.Location = new System.Drawing.Point(109, 77);
+            this.numericUpDownChainPpmError.Name = "numericUpDownChainPpmError";
+            this.numericUpDownChainPpmError.Size = new System.Drawing.Size(68, 20);
+            this.numericUpDownChainPpmError.TabIndex = 19;
+            this.numericUpDownChainPpmError.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            65536});
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(37, 79);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(55, 13);
+            this.label9.TabIndex = 18;
+            this.label9.Text = "Error, ppm";
+            // 
+            // numericUpDownChainMinPeaks
+            // 
+            this.numericUpDownChainMinPeaks.Location = new System.Drawing.Point(109, 53);
+            this.numericUpDownChainMinPeaks.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numericUpDownChainMinPeaks.Name = "numericUpDownChainMinPeaks";
+            this.numericUpDownChainMinPeaks.Size = new System.Drawing.Size(68, 20);
+            this.numericUpDownChainMinPeaks.TabIndex = 9;
+            this.numericUpDownChainMinPeaks.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(9, 57);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(96, 13);
+            this.label8.TabIndex = 8;
+            this.label8.Text = "Min peaks in chain";
             // 
             // buttonLoadCiaParameters
             // 
@@ -2021,6 +2496,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHAtoms)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCAtoms)).EndInit();
             this.tabPage7.ResumeLayout(false);
+            this.tabPage8.ResumeLayout(false);
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
+            this.groupBox11.ResumeLayout(false);
+            this.groupBox11.PerformLayout();
+            this.groupBox10.ResumeLayout(false);
+            this.groupBox10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownChainPpmError)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownChainMinPeaks)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCalRelFactor)).EndInit();
@@ -2151,7 +2635,7 @@
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox textBoxFilterResult;
         private System.Windows.Forms.Label label46;
-        private System.Windows.Forms.Button buttonFilterCheck;
+        private System.Windows.Forms.Button buttonFilterCheckFormula;
         private System.Windows.Forms.TextBox textBoxFilter;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.TextBox textBoxNeutralMass;
@@ -2173,7 +2657,7 @@
         public System.Windows.Forms.CheckBox checkBoxIpaMatchedPeakReport;
         public System.Windows.Forms.Label label54;
         public System.Windows.Forms.Label label55;
-        public System.Windows.Forms.Button cmdIpaMergeWithCIA;
+        public System.Windows.Forms.Button buttonIpaMergeWithCIA;
         public System.Windows.Forms.Label label56;
         public System.Windows.Forms.Label label57;
         public System.Windows.Forms.TextBox textBoxIpaDropDBFile;
@@ -2194,6 +2678,47 @@
         private System.Windows.Forms.Button buttonSwitchToAdvanced;
         private System.Windows.Forms.CheckBox checkBoxCIAUseDefault;
         private System.Windows.Forms.RichTextBox richTextBoxAbout;
+        private System.Windows.Forms.TabPage tabPage8;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.NumericUpDown numericUpDownChainMinPeaks;
+        private System.Windows.Forms.Label label8;
+        protected internal System.Windows.Forms.NumericUpDown numericUpDownChainPpmError;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox textBoxChainCalGain;
+        private System.Windows.Forms.Label label62;
+        private System.Windows.Forms.TextBox textBoxChainDropSpectraFile;
+        private System.Windows.Forms.Label label61;
+        private System.Windows.Forms.TextBox textBoxChainUniqueResult;
+        private System.Windows.Forms.TextBox textBoxChainRawResult;
+        private System.Windows.Forms.TextBox textBoxChainUniqueCal;
+        private System.Windows.Forms.TextBox textBoxChainRawCal;
+        private System.Windows.Forms.TextBox textBoxChainUniqueNoncal;
+        private System.Windows.Forms.Label label60;
+        private System.Windows.Forms.Label label59;
+        private System.Windows.Forms.Label label58;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.TextBox textBoxChainRawNoncal;
+        private System.Windows.Forms.CheckBox checkBoxChainRawChainOutput;
+        private System.Windows.Forms.CheckBox checkBoxChainUniqueChainOutput;
+        private System.Windows.Forms.CheckBox checkBoxChainChainsPerPeakOutput;
+        private System.Windows.Forms.CheckBox checkBoxChainChainOutput;
+        private System.Windows.Forms.TextBox textBoxChainUniqueNoncalMaxChainsPeakIndex;
+        private System.Windows.Forms.TextBox textBoxChainRawNoncalMaxChainsPeakIndex;
+        private System.Windows.Forms.CheckBox checkBoxChainCalOutput;
+        private System.Windows.Forms.CheckBox checkBoxChainNoncalOutput;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.TextBox textBoxChainUniqueCalMaxChainsPeakMass;
+        private System.Windows.Forms.TextBox textBoxChainRawCalMaxChainsPeakMass;
+        private System.Windows.Forms.TextBox textBoxChainRawNoncalMaxChainsPeakMass;
+        private System.Windows.Forms.TextBox textBoxChainUniqueNoncalMaxChainsPeakMass;
+        private System.Windows.Forms.TextBox textBoxChainRawCalMaxChainsPeakIndex;
+        private System.Windows.Forms.TextBox textBoxChainUniqueCalMaxChainsPeakIndex;
+        private System.Windows.Forms.Label label65;
+        private System.Windows.Forms.Label label66;
+        private System.Windows.Forms.Label label67;
+        private System.Windows.Forms.Label label68;
+        private System.Windows.Forms.GroupBox groupBox10;
+        private System.Windows.Forms.Button buttonFilterCheckDB;
     }
 }
 

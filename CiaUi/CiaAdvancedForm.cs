@@ -12,7 +12,7 @@ using System.Xml;
 using System.Threading;
 using System.Globalization;
 
-using FileReader;
+using Support;
 using TestFSDBSearch;
 using CIA;
 
@@ -36,12 +36,14 @@ namespace CiaUi {
             comboBoxRelationshipErrorType.DataSource = Enum.GetNames( typeof( CCia.RelationshipErrorType ) );
 
             //Formula assignment     
-            short [] [] DftRelationFormulas = oCCia.GetRelationFormulaBuildingBlocks();
-            for( int Relation = 0; Relation < DftRelationFormulas.Length; Relation++ ) {
+            for ( int Relation = 0; Relation < CCia.RelationBuildingBlockFormulas.Length; Relation++ ) {
                 bool bb = false;
                 if( Relation == 0 || Relation == 2 || Relation == 6 ) { bb = true; }
-                checkedListBoxRelations.Items.Add( oCCia.FormulaToName( DftRelationFormulas [ Relation ] ), bb );
+                checkedListBoxRelations.Items.Add( oCCia.FormulaToName( CCia.RelationBuildingBlockFormulas [ Relation ] ), bb );
             }
+            checkBoxCIAAdvAddChains.Checked = oCCia.GetGenerateChainReport();
+            numericUpDownCIAAdvMinPeaksPerChain.Value  = oCCia.GetMinPeaksPerChain();
+
             //Golden rules
             GoldenRuleFilterUsage = new System.Windows.Forms.CheckBox [ oCCia.GetGoldenRuleFilterUsage().Length ];
             System.Windows.Forms.GroupBox groupBoxGoldenRuleFilters = ( System.Windows.Forms.GroupBox ) this.Controls.Find( "groupBoxGoldenRuleFilters", true ) [ 0 ];
@@ -61,7 +63,6 @@ namespace CiaUi {
 
             //Reports
             checkBoxIndividualFileReport.Checked = oCCia.GetGenerateIndividualFileReports();
-            checkBoxChainReport.Checked = oCCia.GetGenerateChainReport();
 
             //Out file formats
             comboBoxOutputFileDelimiter.DataSource = Enum.GetNames( typeof( CCia.EDelimiters ) );
@@ -148,7 +149,7 @@ namespace CiaUi {
                 double [] [] CalMasses = new double [ FileCount ] [];
                 for( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
                     //read files
-                    FileReader.FileReader.ReadFile( Filenames [ FileIndex ], out Masses [ FileIndex ], out Abundances [ FileIndex ], out SNs [ FileIndex ], out Resolutions [ FileIndex ], out RelAbundances [ FileIndex ] );
+                    Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses [ FileIndex ], out Abundances [ FileIndex ], out SNs [ FileIndex ], out Resolutions [ FileIndex ], out RelAbundances [ FileIndex ] );
                     double MaxAbundance = Abundances [ FileIndex ] [ 0 ];
                     foreach( double Abundabce in Abundances [ FileIndex ] ) { if( MaxAbundance < Abundabce ) { MaxAbundance = Abundabce; } }
                     MaxAbundances [ FileIndex ] = MaxAbundance;
@@ -172,14 +173,16 @@ namespace CiaUi {
                 //Alignment
                 oCCia.SetAlignment( checkBoxAlignment.Checked );
                 oCCia.SetAlignmentPpmTolerance( ( double ) numericUpDownAlignmentTolerance.Value );
+                oCCia.SetAddChains( checkBoxCIAAdvAddChains.Checked );
+                oCCia.SetMinPeaksPerChain( ( int ) numericUpDownCIAAdvMinPeaksPerChain.Value );
 
                 //Formula assignment
                 oCCia.SetMassLimit( ( double ) numericUpDownDBMassLimit.Value );
                 //not use oCCia.SetUseCIAFormulaScore( checkBoxUseCIAFormulaScore.Checked );
                 oCCia.SetFormulaScore( ( CCia.EFormulaScore ) Array.IndexOf( oCCia.GetFormulaScoreNames(), comboBoxFormulaScore.Text ) );
-                oCCia.SetUseKendrick( checkBoxCIAUseKendrick.Checked );
-                oCCia.SetUseC13( checkBoxCIAUseC13.Checked );
-                oCCia.SetC13Tolerance( ( double ) numericUpDownCIAC13Tolerance.Value );
+                oCCia.SetUseKendrick( checkBoxCIAAdvUseKendrick.Checked );
+                oCCia.SetUseC13( checkBoxCIAAdvUseC13.Checked );
+                oCCia.SetC13Tolerance( ( double ) numericUpDownCIAAdvC13Tolerance.Value );
 
                 //Filters
                 oCCia.SetUseFormulaFilter( checkBoxUseFormulaFilters.Checked );
@@ -196,17 +199,21 @@ namespace CiaUi {
                 oCCia.SetMaxRelationGaps( ( int ) numericUpDownMaxRelationshipGaps.Value );
                 oCCia.SetRelationshipErrorType( ( CCia.RelationshipErrorType ) Enum.Parse( typeof( CCia.RelationshipErrorType ), comboBoxRelationshipErrorType.Text ) );
                 oCCia.SetRelationErrorAMU( ( double ) numericUpDownRelationErrorValue.Value );
-                oCCia.SetUseBackward( checkBoxCIABackward.Checked );
+                oCCia.SetUseBackward( checkBoxCIAAdvBackward.Checked );
 
-                short [] [] ActiveRelationBlocks = new short [ checkedListBoxRelations.CheckedItems.Count ] [];
-                for( int ActiveFormula = 0; ActiveFormula < checkedListBoxRelations.CheckedItems.Count; ActiveFormula++ ) {
-                    ActiveRelationBlocks [ ActiveFormula ] = oCCia.NameToFormula( checkedListBoxRelations.CheckedItems [ ActiveFormula ].ToString() );
+                //short [] [] ActiveRelationBlocks = new short [ checkedListBoxRelations.CheckedItems.Count ] [];
+                //for( int ActiveFormula = 0; ActiveFormula < checkedListBoxRelations.CheckedItems.Count; ActiveFormula++ ) {
+                //    ActiveRelationBlocks [ ActiveFormula ] = oCCia.NameToFormula( checkedListBoxRelations.CheckedItems [ ActiveFormula ].ToString() );
+                //}
+                //oCCia.SetRelationFormulaBuildingBlocks( ActiveRelationBlocks );
+                bool [] ActiveRelationBlocks = new bool [ CCia.RelationBuildingBlockFormulas.Length ];
+                for ( int ActiveFormula = 0; ActiveFormula < ActiveRelationBlocks.Length; ActiveFormula++ ) {
+                    ActiveRelationBlocks [ ActiveFormula ] = checkedListBoxRelations.GetItemChecked( ActiveFormula );
                 }
-                oCCia.SetRelationFormulaBuildingBlocks( ActiveRelationBlocks );
+                oCCia.SetActiveRelationFormulaBuildingBlocks( ActiveRelationBlocks );
 
                 //Reports
-                oCCia.SetGenerateIndividualFileReports( checkBoxIndividualFileReport.Checked );
-                oCCia.SetGenerateChainReport( checkBoxChainReport.Checked );
+                oCCia.SetGenerateIndividualFileReports( checkBoxIndividualFileReport.Checked );                             
 
                 //File formats
                 oCCia.SetOutputFileDelimiterType( ( CCia.EDelimiters ) Enum.Parse( typeof( CCia.EDelimiters ), comboBoxOutputFileDelimiter.Text ) );
@@ -290,34 +297,31 @@ namespace CiaUi {
                 textBoxDropSpectraFiles.Enabled = false;
             }
         }
-
         private void checkBoxCIAUseC13_CheckedChanged( object sender, EventArgs e ) {
-            numericUpDownCIAC13Tolerance.Enabled = checkBoxCIAUseC13.Checked;
+            numericUpDownCIAAdvC13Tolerance.Enabled = checkBoxCIAAdvUseC13.Checked;
         }
-
         private void checkBoxAlignment_CheckedChanged_1( object sender, EventArgs e ) {
             numericUpDownAlignmentTolerance.Enabled = checkBoxAlignment.Checked;
         }
-
         private void checkBoxUseRelation_CheckedChanged( object sender, EventArgs e ) {
             numericUpDownMaxRelationshipGaps.Enabled = checkBoxUseRelation.Checked;
             comboBoxRelationshipErrorType.Enabled = checkBoxUseRelation.Checked;
             numericUpDownRelationErrorValue.Enabled = checkBoxUseRelation.Checked;
             checkedListBoxRelations.Enabled = checkBoxUseRelation.Checked;
-            checkBoxCIABackward.Enabled = checkBoxUseRelation.Checked;
+            checkBoxCIAAdvBackward.Enabled = checkBoxUseRelation.Checked;
         }
-
         private void buttonSetAdvancedDefault_Click( object sender, EventArgs e ) {
-            checkBoxCIABackward.Checked = true;
-            checkBoxCIAUseKendrick.Checked = true;
-            checkBoxCIAUseC13.Checked = true;
-            numericUpDownCIAC13Tolerance.Value = numericUpDownFormulaTolerance.Value;
+            checkBoxCIAAdvBackward.Checked = true;
+            checkBoxCIAAdvUseKendrick.Checked = true;
+            checkBoxCIAAdvUseC13.Checked = true;
+            numericUpDownCIAAdvC13Tolerance.Value = numericUpDownFormulaTolerance.Value;
             if( checkBoxAlignment.Checked == true ) {
                 oCCia.SetGenerateIndividualFileReports( false );
             } else {
                 oCCia.SetGenerateIndividualFileReports( true );
             }
-            oCCia.SetGenerateChainReport( false );
+            oCCia.SetAddChains( false );
+            oCCia.SetMinPeaksPerChain( 5);
             oCCia.SetOutputFileDelimiterType( CCia.EDelimiters.Comma );
             oCCia.SetErrorType( CCia.EErrorType.Signed );
         }

@@ -17,24 +17,21 @@ using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using Microsoft.Office.Interop.Excel;
 using System.Xml;
+using Support;
 
 namespace FindChains {
     public partial class FindChainsForm : Form {
-        public char [] WordSeparators = new char [] { '\t', ',', ' ' };
         public FindChainsForm() {
             InitializeComponent();
             numericUpDownFrequencyError.Enabled = checkBoxFrequency.Checked;
+            oCChainBlocks = new CChainBlocks();
         }
-        private void FindChainsForm_DragEnter( object sender, DragEventArgs e ) {
-            if( e.Data.GetDataPresent( DataFormats.FileDrop ) == true ) {
-                e.Effect = DragDropEffects.Copy;
-            }
-        }
+        CChainBlocks oCChainBlocks;
 
         //PeakIndex
         double [] Masses;
         double [] Abundances;
-        double [] SNs;
+        double [] S2Ns;
         double [] Resolutions;
         double [] RelAbundances;
 
@@ -61,308 +58,366 @@ namespace FindChains {
             TempChain.Insert( 0, BinRightPeaks [ BinIndex ] [ PairIndex ] );
             return TempChain;
         }
-        const double PPM = 1e6;//parts per million
-        public double PpmToError( double Mass, double ErrorPPM ) { return Mass * ErrorPPM / PPM; }
-        public double SignedMassErrorPPM( double ReferenceMass, double Mass ) { return ( Mass - ReferenceMass ) / ReferenceMass * PPM; }
-        public double AbsMassErrorPPM( double ReferenceMass, double Mass ) { return Math.Abs( ( Mass - ReferenceMass ) / ReferenceMass * PPM ); }
-        public double LeftPpmMass( double Mass, double PpmError ) { return Mass / ( 1 + PpmError / PPM ); }
-        public double RightPpmMass( double Mass, double PpmError ) { return Mass * ( 1 + PpmError / PPM ); }
-
         private void checkBoxFrequency_CheckedChanged( object sender, EventArgs e ) {
             numericUpDownFrequencyError.Enabled = checkBoxFrequency.Checked;
         }
-        private void FindChainsForm_DragDrop( object sender, DragEventArgs e ) {
+        class PeakMzError {
+            public int PeakIndex;
+            public double Mz;
+            public double NewMz;
+            public double PpmError;
+            public int Chain;
+        }
+
+        private void textBoxChainBlockMasses_DragEnter( object sender, DragEventArgs e ) {
+            if ( e.Data.GetDataPresent( DataFormats.FileDrop ) == true ) {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+        private void textBoxChainBlockMasses_DragDrop( object sender, DragEventArgs e ) {
+            string Filename = ( ( string [] ) e.Data.GetData( DataFormats.FileDrop ))[ 0];
+            oCChainBlocks.ReadFile( Filename );
+        }
+
+        private void textBoxSpectraFile_DragEnter( object sender, DragEventArgs e ) {
+            if ( e.Data.GetDataPresent( DataFormats.FileDrop ) == true ) {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+        private void textBoxSpectraFile_DragDrop( object sender, DragEventArgs e ) {
             string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
-            //read from files
+            
             for( int FileIndex = 0; FileIndex < Filenames.Length; FileIndex++ ) {
                 string FileExtension = Path.GetExtension( Filenames [ FileIndex ] );
-                if( FileExtension == ".csv" || FileExtension == ".txt" ) {
-                    string [] Lines = File.ReadAllLines( Filenames [ FileIndex ] );
-                    int PeakCount = Lines.Length - 1;
-                    Masses = new double [ PeakCount ];
-                    Abundances = new double [ PeakCount ];
-                    SNs = new double [ PeakCount ];
-                    Resolutions = new double [ PeakCount ];
-                    RelAbundances = new double [ PeakCount ];
-                    for( int Line = 1; Line < Lines.Length; Line++ ) {
-                        string [] LineParts = Lines [ Line ].Split( WordSeparators, StringSplitOptions.RemoveEmptyEntries );
-                        int Peak = Line - 1;
-                        Masses [ Peak ] = Double.Parse( LineParts [ 0 ] );
-                        Abundances [ Peak ] = Double.Parse( LineParts [ 1 ] );
-                        if( LineParts.Length == 5 ) {
-                            SNs [ Peak ] = Double.Parse( LineParts [ 2 ] );
-                            Resolutions [ Peak ] = Double.Parse( LineParts [ 3 ] );
-                            RelAbundances [ Peak ] = Double.Parse( LineParts [ 4 ] );
-                        }
-                    }
-                } else if( FileExtension == ".xlsx" || FileExtension == ".xls" ) {
-                    Microsoft.Office.Interop.Excel.Application MyApp = new Microsoft.Office.Interop.Excel.Application();
-                    MyApp.Visible = false;
-                    Microsoft.Office.Interop.Excel.Workbook MyBook = MyApp.Workbooks.Open( Filenames [ FileIndex ] );
-                    Microsoft.Office.Interop.Excel.Worksheet MySheet = MyBook.Sheets [ 1 ];
-                    Microsoft.Office.Interop.Excel.Range MyRange = MySheet.UsedRange;
-                    object RangeArray = MyRange.Value;
-                    int PeakCount = MyRange.Rows.Count - 1;
-                    Masses = new double [ PeakCount ];
-                    Abundances = new double [ PeakCount ];
-                    SNs = new double [ PeakCount ];
-                    Resolutions = new double [ PeakCount ];
-                    RelAbundances = new double [ PeakCount ];
-                    for( int Peak = 0; Peak < PeakCount; Peak++ ) {
-                        int Row = Peak + 2;
-                        Masses [ Peak ] = ( double ) ( ( Array ) RangeArray ).GetValue( Row, 1 );
-                        Abundances [ Peak ] = ( double ) ( ( Array ) RangeArray ).GetValue( Row, 2 );
-                        SNs [ Peak ] = ( double ) ( ( Array ) RangeArray ).GetValue( Row, 3 );
-                        Resolutions [ Peak ] = ( double ) ( ( Array ) RangeArray ).GetValue( Row, 4 );
-                        RelAbundances [ Peak ] = ( double ) ( ( Array ) RangeArray ).GetValue( Row, 5 );
-                    }
-                    CleanComObject( MyRange );
-                    MyRange = null;
-                    CleanComObject( MySheet );
-                    MySheet = null;
-                    MyBook.Close( null, null, null );
-                    CleanComObject( MyBook );
-                    MyBook = null;
-                    MyApp.Quit();
-                    CleanComObject( MyApp );
-                    MyApp = null;
-                    GC.Collect();
-                } else if( FileExtension == ".xml" ) {
-                    XmlDocument XmlDoc = new XmlDocument();
-                    XmlDoc.Load( Filenames [ FileIndex ] );
-                    //check Bruker instrument
-                    XmlNodeList Nodes = XmlDoc.GetElementsByTagName( "fileinfo" );
-                    if( Nodes.Count != 1 ) { continue; }
-                    if( Nodes [ 0 ].Attributes [ "appname" ].Value != "Bruker Compass DataAnalysis" ) { continue; }
-                    //read peaks
-                    XmlNodeList MsPeakNodes = XmlDoc.GetElementsByTagName( "ms_peaks" );
-                    if( MsPeakNodes.Count != 1 ) { continue; }
-                    XmlNode MsPeakNode = MsPeakNodes [ 0 ];
-                    int PeakCount = MsPeakNode.ChildNodes.Count;
-                    Masses = new double [ PeakCount ];
-                    Abundances = new double [ PeakCount ];
-                    SNs = new double [ PeakCount ];
-                    Resolutions = new double [ PeakCount ];
-                    RelAbundances = new double [ PeakCount ];
-                    double MaxAbundance = 0;
-                    for( int Peak = 0; Peak < PeakCount; Peak++ ) {
-                        //<pk res="930674.5" algo="FTMS" fwhm="0.000218" a="102.53" sn="7.15" i="646225.1" mz="203.034719"/>
-                        XmlAttributeCollection Attributes = MsPeakNode.ChildNodes [ Peak ].Attributes;
-                        Masses [ Peak ] = Double.Parse( Attributes [ "mz" ].Value );
-                        Abundances [ Peak ] = Double.Parse( Attributes [ "i" ].Value );
-                        if( MaxAbundance < Abundances [ Peak ] ) { MaxAbundance = Abundances [ Peak ]; }
-                        SNs [ Peak ] = Double.Parse( Attributes [ "sn" ].Value );
-                        Resolutions [ Peak ] = Double.Parse( Attributes [ "res" ].Value );
-                    }
-                    for( int Peak = 0; Peak < PeakCount; Peak++ ) {
-                        RelAbundances [ Peak ] = Abundances [ Peak ] / MaxAbundance;
-                    }
-                    XmlDoc = null;
-                } else {
-                    //???unsupported format
-                    continue;
+                //read from files        
+
+                Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses, out Abundances, out S2Ns, out Resolutions, out RelAbundances );
+                Support.InputData RawData = new Support.InputData();
+                Support.CFileReader.ReadFile( Filenames [ FileIndex ], out RawData );
+
+                //cut data
+                int SettingCount = 0;
+                if ( checkBoxS2N.Checked == true ) { SettingCount++;}
+                if( checkBoxUseRelAbundance.Checked == true){ SettingCount ++;}
+                Support.CFileReader.CutSettings [] CurSettings = new Support.CFileReader.CutSettings [ SettingCount ];
+                int SettingIndex = 0;
+                if ( checkBoxS2N.Checked == true ) {
+                    CurSettings [ SettingIndex ] = new CFileReader.CutSettings();
+                    CurSettings [ SettingIndex ].CutType = Support.CFileReader.ECutType.S2N;
+                    CurSettings [ SettingIndex ].Min = ( double ) numericUpDownS2N.Value;
+                    CurSettings [ SettingIndex ].Max = -1;
+                    SettingIndex++;
                 }
-
+                if ( checkBoxUseRelAbundance.Checked == true ) {
+                    CurSettings [ SettingIndex ] = new CFileReader.CutSettings();
+                    CurSettings [ SettingIndex ].CutType = Support.CFileReader.ECutType.RelAbundance;
+                    CurSettings [ SettingIndex ].Min = ( double ) numericUpDownMinRelAbundance.Value;
+                    CurSettings [ SettingIndex ].Max = -1;
+                }
+                
                 string Filename = Path.GetDirectoryName( Filenames [ FileIndex ] ) + "\\" + Path.GetFileNameWithoutExtension( Filenames [ FileIndex ] );
-                if( checkBoxPPMProcess.Checked == true ) {
-                    List<double> LChainDistances = new List<double>( Masses.Length * ( Masses.Length - 1 ) );
-                    List<List<int>> LChains = new List<List<int>>( Masses.Length * ( Masses.Length - 1 ) );
-
+                if ( checkBoxPPMProcess.Checked == true ) {
                     double MaxChainStartMass = ( double ) numericUpDownMaxPeakToStartChain.Value;
                     int MinPeaksInChain = ( int ) numericUpDownMinPeaksInChain.Value;
-                    double PpmError = ( double ) numericUpDownPpmError.Value;
+                    double PeakPpmError = ( double ) numericUpDownPpmError.Value;
 
-                    for( int PeakIndex = 0; PeakIndex < Masses.Length - 1; PeakIndex++ ) {
-                        if( Masses [ PeakIndex ] > MaxChainStartMass ) { break; }
-                        double MaxDistance = ( Masses [ Masses.Length - 1 ] - Masses [ PeakIndex ] ) / ( MinPeaksInChain - 1 );
-                        double MaxMass = Masses [ PeakIndex ] + MaxDistance + PpmToError( Masses [ PeakIndex ], PpmError );
+                    Support.InputData Data;
+                    Support.CFileReader.CutData( RawData, out Data, CurSettings );
+                    oCChainBlocks.FindChains( RawData, MinPeaksInChain, PeakPpmError, 3 * PeakPpmError, MaxChainStartMass, 0, RawData.Masses [ RawData.Masses.Length - 1 ], checkBoxUseKnownChainBlocks.Checked );
+                    //CFindChains.ChainsToFile( RawData, Filename + "RawChains.csv" );
 
-                        for( int NextPeakIndex = PeakIndex + 1; NextPeakIndex < Masses.Length; NextPeakIndex++ ) {
-                            if( Masses [ NextPeakIndex ] > MaxMass ) { break; }
-                            List<int> Chain = new List<int>();
-                            Chain.Add( PeakIndex );
-                            Chain.Add( NextPeakIndex );
-                            double Distance = Masses [ NextPeakIndex ] - Masses [ PeakIndex ];
-                            double ChainLastPeakMass = Masses [ NextPeakIndex ];
-                            for( ; ; ) {
-                                double NextMass = ChainLastPeakMass + Distance;
-                                double LeftMass = LeftPpmMass( NextMass, PpmError );
-                                int Index = Array.BinarySearch( Masses, LeftMass );
-                                //int Index = Array.BinarySearch( Masses, PeakIndex, Masses.Length - PeakIndex - 1, LeftMass );
-                                if( Index < 0 ) { Index = ~Index; }
-                                if( Index >= Masses.Length ) { break; }
-                                double RightMass = RightPpmMass( NextMass, PpmError );
-                                if( Masses [ Index ] <= RightMass ) {
-                                    Chain.Add( Index );
-                                    ChainLastPeakMass = Masses [ Index ];
-                                } else {
+                    oCChainBlocks.CreateUniqueChains( RawData, PeakPpmError );
+                    oCChainBlocks.ChainsToFile( RawData, Filename + "UniqueChains.csv" );
+
+                    //find clusters based on chains
+                    bool [] IsInChainCluster = new bool [ RawData.Chains.Length ];
+                    List<List<int>> ChainClusters = new List<List<int>>();
+
+                    for ( int LeftChainIndex = 0; LeftChainIndex < RawData.Chains.Length; LeftChainIndex++ ) {
+                        if ( IsInChainCluster [ LeftChainIndex ] == true ) { continue; }
+                        List<int> ChainCluster = new List<int>();
+                        ChainCluster.Add( LeftChainIndex );
+                        IsInChainCluster [ LeftChainIndex ] = true;
+
+                        Dictionary<int, int> ClusterPeaksD = new Dictionary<int, int>();
+                        foreach ( int PeakIndex in RawData.Chains [ LeftChainIndex ].PeakIndexes ) {
+                            ClusterPeaksD.Add( PeakIndex, PeakIndex );
+                        }
+                        bool New = false;
+                        for ( int RightChainIndex = LeftChainIndex + 1; RightChainIndex < RawData.Chains.Length; RightChainIndex++ ) {
+                            if ( IsInChainCluster [ RightChainIndex ] == true ) { continue; }
+                            foreach ( int ComparingIndex in RawData.Chains [ RightChainIndex ].PeakIndexes ) {
+                                if ( ClusterPeaksD.Contains( new KeyValuePair<int, int>( ComparingIndex, ComparingIndex ) ) == true ) {
+                                    ChainCluster.Add( RightChainIndex );
+                                    IsInChainCluster [ RightChainIndex ] = true;
+                                    foreach ( int PeakIndex in RawData.Chains [ RightChainIndex ].PeakIndexes ) {
+                                        KeyValuePair<int, int> qq = new KeyValuePair<int, int>( PeakIndex, PeakIndex );
+                                        if ( ClusterPeaksD.Contains( qq ) == false ) {
+                                            ClusterPeaksD.Add( PeakIndex, PeakIndex );
+                                        }
+                                    }
+                                    New = true;
                                     break;
                                 }
                             }
-                            if( Chain.Count >= MinPeaksInChain ) {
-                                LChainDistances.Add( Distance );
-                                int ChainIndex = LChainDistances.Count - 1;
-                                LChains.Add( Chain );
-                            }
-                        }
-                    }
-
-                    double [] ChainDistances = LChainDistances.ToArray();
-                    List<int> [] Chains = LChains.ToArray();
-                    Array.Sort( ChainDistances, Chains );
-
-                    StreamWriter oStreamWriterChains = new StreamWriter( Filename + "PpmChains.csv" );
-                    oStreamWriterChains.WriteLine( "Distance,Count,Mass" );
-                    for( int LineIndex = 0; LineIndex < ChainDistances.Length; LineIndex++ ) {
-                        string Line = ChainDistances [ LineIndex ].ToString() + "," + Chains [ LineIndex ].Count;
-                        foreach( int PeakIndex in Chains [ LineIndex ] ) {
-                            Line = Line + "," + Masses [ PeakIndex ];
-                        }
-                        oStreamWriterChains.WriteLine( Line );
-                    }
-                    oStreamWriterChains.Close();
-
-                    //remove secondary chains
-                    bool [] DublicatedChains = new bool [ Chains.Length ];
-                    for( int ChainIndex = 0; ChainIndex < Chains.Length - 1; ChainIndex++ ) {
-                        if( DublicatedChains [ ChainIndex ] == true ) { continue; }
-                        double Distance = ChainDistances [ ChainIndex ];
-                        List<int> Chain = Chains [ ChainIndex ];
-                        for( int DistanceGap = 1; ; DistanceGap++ ) {
-                            //check chain availibity on min peaks in chain
-                            double MinPeaksMaxMass = Masses [ Chain [ 0 ] ] + Distance * DistanceGap * ( MinPeaksInChain - 1 );
-                            if( Masses [ Masses.Length - 1 ] < LeftPpmMass( MinPeaksMaxMass, 2 * PpmError ) ) {
-                                break;
-                            }
-                            //find distance error max based on mass of last peak in chain
-                            double MaxMassInChain = ( Masses [ Chain [ 0 ] ] + Masses [ Chain [ Chain.Count - 1 ] ] - Masses [ Chain [ 0 ] ] ) * DistanceGap;
-                            double MaxError = PpmToError( MaxMassInChain, 2 * PpmError );
-                            double LeftDistance = Distance * DistanceGap - MaxError;
-                            //calculate min distance
-                            int LeftDistanceIndex = Array.BinarySearch( ChainDistances, LeftDistance );
-                            //int LeftDistanceIndex = Array.BinarySearch( ChainDistances, ChainIndex + 1, Chains.Length - ChainIndex - 1, LeftDistance );
-                            if( LeftDistanceIndex < 0 ) { LeftDistanceIndex = ~LeftDistanceIndex; }
-                            if( LeftDistanceIndex <= ChainIndex ) { LeftDistanceIndex = ChainIndex + 1; }//in case DistanceGap == 1
-                            if( LeftDistanceIndex >= ChainDistances.Length ) { break; }
-                            //search
-                            double RightDistance = Distance * DistanceGap + MaxError;
-                            for( int CompareChainIndex = LeftDistanceIndex; CompareChainIndex < ChainDistances.Length; CompareChainIndex++ ) {
-                                if( ChainDistances [ CompareChainIndex ] > RightDistance ) { break; }
-                                if( DublicatedChains [ CompareChainIndex ] == true ) { continue; }
-                                List<int> CompareChain = Chains [ CompareChainIndex ];
-
-                                //compare chains
-                                for( int Index = 0; Index < Chain.Count; Index++ ) {
-                                    int PeakIndex = Chain [ Index ];
-                                    int CompareIndex = Array.BinarySearch( CompareChain.ToArray(), PeakIndex );
-                                    if( CompareIndex >= 0 ) {
-                                        int NextIndex = Index + DistanceGap;
-                                        int NextCompareIndex = CompareIndex + 1;
-                                        if( ( ( NextIndex < Chain.Count ) && ( NextCompareIndex < CompareChain.Count ) ) == false ) {
-                                            break;
-                                        }
-                                        bool TheSameChains = ( Chain [ NextIndex ] == CompareChain [ NextCompareIndex ] );
-                                        if( TheSameChains == false ) {
-                                            //second try
-                                            NextIndex = Index + DistanceGap * 2;
-                                            NextCompareIndex = CompareIndex + 2;
-                                            if( ( ( NextIndex < Chain.Count ) && ( NextCompareIndex < CompareChain.Count ) ) == false ) {
-                                                break;
-                                            }
-                                            TheSameChains = ( Chain [ NextIndex ] == CompareChain [ NextCompareIndex ] );
-                                        }
-                                        if( TheSameChains == false ) { break; }
-                                        //mark secondary chain
-                                        if( DistanceGap > 1 ) {
-                                            DublicatedChains [ CompareChainIndex ] = true;
-                                            //include peaks?
-                                        } else {
-                                            if( Chain.Count >= CompareChain.Count ) {
-                                                DublicatedChains [ CompareChainIndex ] = true;
-                                            } else {
-                                                DublicatedChains [ ChainIndex ] = true;
-                                            }
-                                        }
-                                        break;
-                                    }
+                            if ( New == true ) {
+                                if ( RightChainIndex == RawData.Chains.Length - 1 ) {
+                                    RightChainIndex = LeftChainIndex + 1;
+                                    New = false;
                                 }
                             }
                         }
+                        ChainClusters.Add( ChainCluster );
                     }
-                    //remove secondary chains
-                    LChains.Clear();
-                    LChainDistances.Clear();
-                    for( int ChainIndex = 0; ChainIndex < Chains.Length; ChainIndex++ ) {
-                        if( DublicatedChains [ ChainIndex ] == false ) {
-                            LChains.Add( Chains [ ChainIndex ] );
-                            LChainDistances.Add( ChainDistances [ ChainIndex ] );
-                        }
-                    }
-                    //save result
-                    if( checkBoxFileFormatPeakIndex.Checked == true ) {
-                        StreamWriter oStreamWriterPrimaryChains = new StreamWriter( Filename + "PrimaryChainsIndex.csv" );
-                        oStreamWriterPrimaryChains.WriteLine( "Distance,Count,Index" );
-                        for( int LineIndex = 0; LineIndex < LChainDistances.Count; LineIndex++ ) {
-                            string Line = LChainDistances [ LineIndex ].ToString() + "," + LChains [ LineIndex ].Count;
-                            foreach( int PeakIndex in LChains [ LineIndex ] ) {
-                                Line = Line + "," + PeakIndex;
+                    {
+                        StreamWriter oStreamWriterClusters = new StreamWriter( Filename + "Clusters.csv" );
+                        string HeadLine = "Chain,Mass,PeakIndexes";
+                        oStreamWriterClusters.WriteLine( HeadLine );
+
+                        for ( int ClusterIndex = 0; ClusterIndex < ChainClusters.Count; ClusterIndex++ ) {
+                            oStreamWriterClusters.WriteLine( "Cluster " + ( ClusterIndex + 1 ).ToString() );
+                            for ( int ChainIndex = 0; ChainIndex < ChainClusters [ ClusterIndex ].Count; ChainIndex++ ) {
+                                int ChainNumber = ChainClusters [ ClusterIndex ] [ ChainIndex ];
+                                string Line = ChainNumber.ToString() + ',' + RawData.Chains [ ChainNumber ].BlockMass.ToString( "F6" );
+                                foreach ( int PeakIndex in RawData.Chains [ ChainNumber ].PeakIndexes ) {
+                                    Line = Line + ',' + PeakIndex;
+                                }
+                                oStreamWriterClusters.WriteLine( Line );
                             }
-                            oStreamWriterPrimaryChains.WriteLine( Line );
                         }
-                        oStreamWriterPrimaryChains.Close();
+                        oStreamWriterClusters.Close();
                     }
-                    if( checkBoxFileFormatPeakMass.Checked == true ) {
-                        StreamWriter oStreamWriterPrimaryChains = new StreamWriter( Filename + "PrimaryChainsMass.csv" );
-                        oStreamWriterPrimaryChains.WriteLine( "Distance,Count,Mass" );
-                        for( int LineIndex = 0; LineIndex < LChainDistances.Count; LineIndex++ ) {
-                            string Line = LChainDistances [ LineIndex ].ToString() + "," + LChains [ LineIndex ].Count;
-                            foreach( int PeakIndex in LChains [ LineIndex ] ) {
-                                Line = Line + "," + Masses [ PeakIndex ];
+
+                    //find the biggest cluster (very simple)
+                    int [] ClusterIndexes = new int [ ChainClusters.Count ];
+                    int [] ClusterCounts = new int [ ChainClusters.Count ];
+                    for ( int Index = 0; Index < ClusterCounts.Length; Index++ ) {
+                        ClusterIndexes [ Index ] = Index;
+                        ClusterCounts [ Index ] = ChainClusters [ Index ].Count;
+                    }
+                    Array.Sort( ClusterCounts, ClusterIndexes );
+                    List<int> BiggestChainCluster = ChainClusters [ ClusterIndexes [ ClusterIndexes.Length - 1 ] ];
+
+                    //error
+                    int ClusterPeaks = 0;
+                    int MinClsuterChainIndex = -1;
+                    for ( int ClusterChainIndex = 0; ClusterChainIndex < BiggestChainCluster.Count; ClusterChainIndex++ ) {
+                        int ChainIndex = BiggestChainCluster [ ClusterChainIndex ];
+                        ClusterPeaks = ClusterPeaks + RawData.Chains [ ChainIndex ].PeakIndexes.Length;
+                        if ( MinClsuterChainIndex == -1 ) {
+                            MinClsuterChainIndex = ClusterChainIndex;
+                        } else if ( RawData.Chains [ BiggestChainCluster [ MinClsuterChainIndex ] ].PeakIndexes [ 0 ] > RawData.Chains [ BiggestChainCluster [ ClusterChainIndex ] ].PeakIndexes [ 0 ] ) {
+                            MinClsuterChainIndex = ClusterChainIndex;
+                        }
+                    }
+                    int SwapClusterIndex = BiggestChainCluster [ 0 ];
+                    BiggestChainCluster [ 0 ] = BiggestChainCluster [ MinClsuterChainIndex ];
+                    BiggestChainCluster [ MinClsuterChainIndex ] = SwapClusterIndex;
+
+                    bool [] ClusterChains = new bool [ BiggestChainCluster.Count];
+                    int [] ClusterPeakIndexes = new int [ ClusterPeaks ];
+                    for( int ii = 0; ii < ClusterPeaks; ii++){
+                        ClusterPeakIndexes[ ii] = -1;
+                    }
+                    PeakMzError [] PeakMzErrorArray = new PeakMzError[ ClusterPeaks];
+                    int StartPeakMzErrorArrayIndex = 0;
+                    int EndPeakMzErrorArrayIndex = 0;
+                    int NewEndPeakMzErrorArrayIndex = 0;
+                    do {
+                        if ( EndPeakMzErrorArrayIndex == 0 ) {
+                            //add Chain 0
+                            int [] PeakIndexes = RawData.Chains [ BiggestChainCluster [ 0 ] ].PeakIndexes;
+                            double FirstPeakMz = RawData.Masses [ PeakIndexes [ 0 ] ];
+                            for ( int PeakIndex = 0; PeakIndex < PeakIndexes.Length; PeakIndex++ ) {
+                                PeakMzError NewPeakMzError = new PeakMzError();
+                                NewPeakMzError.PeakIndex = PeakIndexes [ PeakIndex ];
+                                NewPeakMzError.Mz = RawData.Masses [ NewPeakMzError.PeakIndex ];
+                                NewPeakMzError.NewMz = FirstPeakMz + PeakIndex *  RawData.Chains [ BiggestChainCluster [ 0 ] ].IdealBlockMass;
+                                NewPeakMzError.Chain = BiggestChainCluster [ 0 ];
+                                NewPeakMzError.PpmError = CPpmError.ErrorToPpm( NewPeakMzError.Mz, NewPeakMzError.NewMz - NewPeakMzError.Mz );
+                                PeakMzErrorArray [ EndPeakMzErrorArrayIndex ] = NewPeakMzError;
+                                EndPeakMzErrorArrayIndex++;
                             }
-                            oStreamWriterPrimaryChains.WriteLine( Line );
+                            NewEndPeakMzErrorArrayIndex = EndPeakMzErrorArrayIndex;
+                        } else {
+                            StartPeakMzErrorArrayIndex = EndPeakMzErrorArrayIndex;
+                            EndPeakMzErrorArrayIndex = NewEndPeakMzErrorArrayIndex;
                         }
-                        oStreamWriterPrimaryChains.Close();
+                        for ( int CurIndex = StartPeakMzErrorArrayIndex; CurIndex < EndPeakMzErrorArrayIndex; CurIndex++ ) {
+                            for ( int ClusterChainIndex = 1; ClusterChainIndex < BiggestChainCluster.Count; ClusterChainIndex++ ) {
+                                if ( ClusterChains [ ClusterChainIndex ] == true ) { continue; }
+                                int SearchPeakIndex = Array.BinarySearch( RawData.Chains [ BiggestChainCluster [ ClusterChainIndex ] ].PeakIndexes, PeakMzErrorArray [ CurIndex ].PeakIndex );
+                                if ( SearchPeakIndex < 0 ) { continue; }
+                                int [] PeakIndexes = RawData.Chains [ BiggestChainCluster [ ClusterChainIndex ] ].PeakIndexes;
+                                double FirstPeakMz = PeakMzErrorArray [ CurIndex ].NewMz - SearchPeakIndex * RawData.Chains [ BiggestChainCluster [ ClusterChainIndex ] ].IdealBlockMass;
+                                for ( int PeakIndex = 0; PeakIndex < PeakIndexes.Length; PeakIndex++ ) {
+                                    PeakMzError NewPeakMzError = new PeakMzError();
+                                    NewPeakMzError.PeakIndex = PeakIndexes [ PeakIndex ];
+                                    NewPeakMzError.Mz = RawData.Masses [ NewPeakMzError.PeakIndex ];
+                                    NewPeakMzError.NewMz = FirstPeakMz + PeakIndex *  RawData.Chains [ BiggestChainCluster [ ClusterChainIndex ] ].IdealBlockMass;
+                                    NewPeakMzError.Chain = BiggestChainCluster [ ClusterChainIndex];
+                                    NewPeakMzError.PpmError = CPpmError.ErrorToPpm( NewPeakMzError.Mz, NewPeakMzError.NewMz - NewPeakMzError.Mz );
+                                    PeakMzErrorArray [ NewEndPeakMzErrorArrayIndex ] = NewPeakMzError;
+                                    NewEndPeakMzErrorArrayIndex++;
+                                }
+                                ClusterChains [ ClusterChainIndex ] = true;
+                            }
+                        }
+                    } while ( NewEndPeakMzErrorArrayIndex > EndPeakMzErrorArrayIndex );
+                    {
+                        StreamWriter oStreamWriterErrors = new StreamWriter( Filename + "Errors.csv" );
+                        string HeadLine = "PeakIndex,Mass,Abundance,NewMass,Chain,ChainBlockMass,PpmError";
+                        oStreamWriterErrors.WriteLine( HeadLine );
+                        for ( int PeakIndex = 0; PeakIndex < PeakMzErrorArray.Length; PeakIndex++ ) {
+                            PeakMzError CurPeakMzError = PeakMzErrorArray [ PeakIndex ];
+                            oStreamWriterErrors.WriteLine( CurPeakMzError.PeakIndex.ToString() + "," + CurPeakMzError.Mz.ToString( "F6" ) + "," + RawData.Abundances[CurPeakMzError.PeakIndex]
+                                    + "," + CurPeakMzError.NewMz.ToString( "F6" ) + "," + CurPeakMzError.Chain + 
+                                    "," + RawData.Chains[CurPeakMzError.Chain].IdealBlockMass.ToString( "F6") + "," + CurPeakMzError.PpmError.ToString( "F6" ) );
+                        }
+                        oStreamWriterErrors.Close();
                     }
+
+                    //                    bool [] DublicatedChains = new bool [ Chains.Length ];
+                    //                    for( int ChainIndex = 0; ChainIndex < Chains.Length - 1; ChainIndex++ ) {
+                    //                        if( DublicatedChains [ ChainIndex ] == true ) { continue; }
+                    //                        double Distance = ChainDistances [ ChainIndex ];
+                    //                        List<int> Chain = Chains [ ChainIndex ];
+                    //                        for( int DistanceGap = 1; ; DistanceGap++ ) {
+                    //                            //check chain availibity on min peaks in chain
+                    //                            double MinPeaksMaxMass = Masses [ Chain [ 0 ] ] + Distance * DistanceGap * ( MinPeaksInChain - 1 );
+                    //                            if( Masses [ Masses.Length - 1 ] < LeftPpmMass( MinPeaksMaxMass, 2 * PpmError ) ) {
+                    //                                break;
+                    //                            }
+                    //                            //find distance error max based on mass of last peak in chain
+                    //                            double MaxMassInChain = ( Masses [ Chain [ 0 ] ] + Masses [ Chain [ Chain.Count - 1 ] ] - Masses [ Chain [ 0 ] ] ) * DistanceGap;
+                    //                            double MaxError = PpmToError( MaxMassInChain, 2 * PpmError );
+                    //                            double LeftDistance = Distance * DistanceGap - MaxError;
+                    //                            //calculate min distance
+                    //                            int LeftDistanceIndex = Array.BinarySearch( ChainDistances, LeftDistance );
+                    //                            //int LeftDistanceIndex = Array.BinarySearch( ChainDistances, ChainIndex + 1, Chains.Length - ChainIndex - 1, LeftDistance );
+                    //                            if( LeftDistanceIndex < 0 ) { LeftDistanceIndex = ~LeftDistanceIndex; }
+                    //                            if( LeftDistanceIndex <= ChainIndex ) { LeftDistanceIndex = ChainIndex + 1; }//in case DistanceGap == 1
+                    //                            if( LeftDistanceIndex >= ChainDistances.Length ) { break; }
+                    //                            //search
+                    //                            double RightDistance = Distance * DistanceGap + MaxError;
+                    //                            for( int CompareChainIndex = LeftDistanceIndex; CompareChainIndex < ChainDistances.Length; CompareChainIndex++ ) {
+                    //                                if( ChainDistances [ CompareChainIndex ] > RightDistance ) { break; }
+                    //                                if( DublicatedChains [ CompareChainIndex ] == true ) { continue; }
+                    //                                List<int> CompareChain = Chains [ CompareChainIndex ];
+                    //
+                    //                                //compare chains
+                    //                                for( int Index = 0; Index < Chain.Count; Index++ ) {
+                    //                                    int PeakIndex = Chain [ Index ];
+                    //                                    int CompareIndex = Array.BinarySearch( CompareChain.ToArray(), PeakIndex );
+                    //                                    if( CompareIndex >= 0 ) {
+                    //                                        int NextIndex = Index + DistanceGap;
+                    //                                        int NextCompareIndex = CompareIndex + 1;
+                    //                                        if( ( ( NextIndex < Chain.Count ) && ( NextCompareIndex < CompareChain.Count ) ) == false ) {
+                    //                                           break;
+                    //                                        }
+                    //                                        bool TheSameChains = ( Chain [ NextIndex ] == CompareChain [ NextCompareIndex ] );
+                    //                                        if( TheSameChains == false ) {
+                    //                                            //second try
+                    //                                            NextIndex = Index + DistanceGap * 2;
+                    //                                            NextCompareIndex = CompareIndex + 2;
+                    //                                            if( ( ( NextIndex < Chain.Count ) && ( NextCompareIndex < CompareChain.Count ) ) == false ) {
+                    //                                                break;
+                    //                                            }
+                    //                                            TheSameChains = ( Chain [ NextIndex ] == CompareChain [ NextCompareIndex ] );
+                    //                                        }
+                    //                                        if( TheSameChains == false ) { break; }
+                    //                                        //mark secondary chain
+                    //                                        if( DistanceGap > 1 ) {
+                    //                                            DublicatedChains [ CompareChainIndex ] = true;
+                    //                                            //include peaks?
+                    //                                        } else {
+                    //                                            if( Chain.Count >= CompareChain.Count ) {
+                    //                                                DublicatedChains [ CompareChainIndex ] = true;
+                    //                                            } else {
+                    //                                                DublicatedChains [ ChainIndex ] = true;
+                    //                                           }
+                    //                                        }
+                    //                                        break;
+                    //                                    }
+                    //                                }
+                    //                            }
+                    //                        }
+                    //                    }
+                    //remove n*derived chains
+                    //                    LChains.Clear();
+                    //                    LChainDistances.Clear();
+                    //                    for( int ChainIndex = 0; ChainIndex < Chains.Length; ChainIndex++ ) {
+                    //                        if( DublicatedChains [ ChainIndex ] == false ) {
+                    //                            LChains.Add( Chains [ ChainIndex ] );
+                    //                            LChainDistances.Add( ChainDistances [ ChainIndex ] );
+                    //                        }
+                    //                    }
+                    //                    //save result
+                    //                    if( checkBoxFileFormatPeakIndex.Checked == true ) {
+                    //                        StreamWriter oStreamWriterPrimaryChains = new StreamWriter( Filename + "PrimaryChainsIndex.csv" );
+                    //                        oStreamWriterPrimaryChains.WriteLine( "Distance,Count,Index" );
+                    //                        for( int LineIndex = 0; LineIndex < LChainDistances.Count; LineIndex++ ) {
+                    //                            string Line = LChainDistances [ LineIndex ].ToString() + "," + LChains [ LineIndex ].Count;
+                    //                            foreach( int PeakIndex in LChains [ LineIndex ] ) {
+                    //                                Line = Line + "," + PeakIndex;
+                    //                            }
+                    //                            oStreamWriterPrimaryChains.WriteLine( Line );
+                    //                        }
+                    //                        oStreamWriterPrimaryChains.Close();
+                    //                    }
+                    //                    if( checkBoxFileFormatPeakMass.Checked == true ) {
+                    //                        StreamWriter oStreamWriterPrimaryChains = new StreamWriter( Filename + "PrimaryChainsMass.csv" );
+                    //                        oStreamWriterPrimaryChains.WriteLine( "Distance,Count,Mass" );
+                    //                        for( int LineIndex = 0; LineIndex < LChainDistances.Count; LineIndex++ ) {
+                    //                            string Line = LChainDistances [ LineIndex ].ToString() + "," + LChains [ LineIndex ].Count;
+                    //                            foreach( int PeakIndex in LChains [ LineIndex ] ) {
+                    //                                Line = Line + "," + Masses [ PeakIndex ];
+                    //                            }
+                    //                            oStreamWriterPrimaryChains.WriteLine( Line );
+                    //                        }
+                    //                        oStreamWriterPrimaryChains.Close();
+                    //                    }
                     //Combine distances                
-                    if( checkBoxFrequency.Checked == true){
-                        List <int> LDistancePeaks = new List<int> ( LChains.Count);
-                        for( int ChainIndex = 0; ChainIndex < LChains.Count; ChainIndex++ ) {
-                            LDistancePeaks.Add( LChains [ ChainIndex ].Count);
-                        }
-                        int TotalChains = LChains.Count;
-                        double DistanceError = ( double ) numericUpDownFrequencyError.Value;
-                        for( int ChainIndex = 1; ChainIndex < TotalChains - 2; ) {
-                            double PreviousDistance = LChainDistances [ ChainIndex - 1 ];
-                            double Distance = LChainDistances [ ChainIndex ];
-                            double LeftError = Distance - PreviousDistance;
-                            if( LeftError > DistanceError ) { ChainIndex++; }
-                            double NextDistance = LChainDistances [ ChainIndex + 1 ];
-                            double RightError = NextDistance - Distance;
-                            if( LeftError <= RightError ) {
-                                //combine PreviousChain and Chain
-                                LDistancePeaks [ ChainIndex - 1 ] = LDistancePeaks [ ChainIndex - 1 ] + LDistancePeaks [ ChainIndex ];
-                                LChainDistances [ ChainIndex - 1 ] = PreviousDistance + ( Distance - PreviousDistance ) * LDistancePeaks [ ChainIndex ] / LDistancePeaks [ ChainIndex - 1 ];
-                                LDistancePeaks.RemoveAt( ChainIndex );
-                                LChainDistances.RemoveAt( ChainIndex );
-                                TotalChains--;
-                            } else {//LeftError > RightError
-                                //combine Chain and NextChain
-                                LDistancePeaks [ ChainIndex ] = LDistancePeaks [ ChainIndex ] + LDistancePeaks [ ChainIndex + 1 ];
-                                LChainDistances [ ChainIndex ] = Distance + ( NextDistance - Distance ) * LDistancePeaks [ ChainIndex + 1 ] / LDistancePeaks [ ChainIndex ];
-                                LDistancePeaks.RemoveAt( ChainIndex + 1 );
-                                LChainDistances.RemoveAt( ChainIndex + 1 );
-                                TotalChains--;
-                            }
-                        }
-                        StreamWriter oStreamWriterPrimaryChains = new StreamWriter( Filename + "AlignedDistances.csv" );
-                        oStreamWriterPrimaryChains.WriteLine( "Distance,Peaks" );
-                        for( int LineIndex = 0; LineIndex < LDistancePeaks.Count; LineIndex++ ) {
-                            string Line = LChainDistances [ LineIndex ].ToString() + "," + LDistancePeaks [ LineIndex ];
-                            oStreamWriterPrimaryChains.WriteLine( Line );
-                        }
-                        oStreamWriterPrimaryChains.Close();
-                    }                    
+                    //                    if( checkBoxFrequency.Checked == true){
+                    //                        List <int> LDistancePeaks = new List<int> ( LChains.Count);
+                    //                        for( int ChainIndex = 0; ChainIndex < LChains.Count; ChainIndex++ ) {
+                    //                            LDistancePeaks.Add( LChains [ ChainIndex ].Count);
+                    //                        }
+                    //                        int TotalChains = LChains.Count;
+                    //                        double DistanceError = ( double ) numericUpDownFrequencyError.Value;
+                    //                        for( int ChainIndex = 1; ChainIndex < TotalChains - 2; ) {
+                    //                            double PreviousDistance = LChainDistances [ ChainIndex - 1 ];
+                    //                            double Distance = LChainDistances [ ChainIndex ];
+                    //                            double LeftError = Distance - PreviousDistance;
+                    //                            if( LeftError > DistanceError ) { ChainIndex++; }
+                    //                            double NextDistance = LChainDistances [ ChainIndex + 1 ];
+                    //                            double RightError = NextDistance - Distance;
+                    //                            if( LeftError <= RightError ) {
+                    //                                //combine PreviousChain and Chain
+                    //                                LDistancePeaks [ ChainIndex - 1 ] = LDistancePeaks [ ChainIndex - 1 ] + LDistancePeaks [ ChainIndex ];
+                    //                                LChainDistances [ ChainIndex - 1 ] = PreviousDistance + ( Distance - PreviousDistance ) * LDistancePeaks [ ChainIndex ] / LDistancePeaks [ ChainIndex - 1 ];
+                    //                                LDistancePeaks.RemoveAt( ChainIndex );
+                    //                                LChainDistances.RemoveAt( ChainIndex );
+                    //                                TotalChains--;
+                    //                            } else {//LeftError > RightError
+                    //                                //combine Chain and NextChain
+                    //                                LDistancePeaks [ ChainIndex ] = LDistancePeaks [ ChainIndex ] + LDistancePeaks [ ChainIndex + 1 ];
+                    //                                LChainDistances [ ChainIndex ] = Distance + ( NextDistance - Distance ) * LDistancePeaks [ ChainIndex + 1 ] / LDistancePeaks [ ChainIndex ];
+                    //                                LDistancePeaks.RemoveAt( ChainIndex + 1 );
+                    //                                LChainDistances.RemoveAt( ChainIndex + 1 );
+                    //                                TotalChains--;
+                    //                            }
+                    //                        }
+                    //                        StreamWriter oStreamWriterPrimaryChains = new StreamWriter( Filename + "AlignedDistances.csv" );
+                    //                        oStreamWriterPrimaryChains.WriteLine( "Distance,Peaks" );
+                    //                        for( int LineIndex = 0; LineIndex < LDistancePeaks.Count; LineIndex++ ) {
+                    //                            string Line = LChainDistances [ LineIndex ].ToString() + "," + LDistancePeaks [ LineIndex ];
+                    //                            oStreamWriterPrimaryChains.WriteLine( Line );
+                    //                        }
+                    //                        oStreamWriterPrimaryChains.Close();
+                    //                    }
                 }
+                
                 if( checkBoxAmuProcess.Checked == true ) {
                     CalculatePpmError( Masses );
                     double Error = ( double ) numericUpDownAbsError.Value;
@@ -530,6 +585,7 @@ namespace FindChains {
                 }
             }
         }
+                      
         public double CalculatePpmError( double [] Masses ) {
             int MassesCount = Masses.Length;
             double RangeMin = 0;
@@ -657,7 +713,7 @@ namespace FindChains {
                     double RightMass = Masses [ BinRightPeaks [ BinIndex ] [ PairIndex ] ];
                     double LeftMass= Masses [ BinLeftPeaks [ BinIndex ] [ PairIndex ] ];
                     double CurDistance = RightMass - LeftMass;
-                    double LinkError = AbsMassErrorPPM( BestDistance, CurDistance );
+                    double LinkError = CPpmError.AbsMassErrorPPM( BestDistance, CurDistance );
                     LinkErrors.Add( LinkError );
                 }
             }
@@ -678,22 +734,5 @@ namespace FindChains {
             return MeanError;
         }
 
-        public void CleanComObject( object o ) {
-            try {
-                while( System.Runtime.InteropServices.Marshal.ReleaseComObject( o ) > 0 )
-                    ;
-            } catch { } finally {
-                o = null;
-            }
-        }
-    }
-    class DistanceSupport {
-        public int PeakIndex;
-        public int NextPeakIndex;
-        public List<int> ChaninIndexes = new List<int>();
-        public DistanceSupport( int PeakIndex, int NextPeakIndex ) {
-            this.PeakIndex = PeakIndex;
-            this.NextPeakIndex = NextPeakIndex;
-        }
     }
 }

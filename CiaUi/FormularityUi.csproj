@@ -126,9 +126,13 @@
       <Project>{1A6F50EE-62C2-4C53-B311-7F5AE6908687}</Project>
       <Name>Formularity</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FileReader\FileReader.csproj">
-      <Project>{B53ECC28-7E9B-4B9A-82B0-786F246C5C0F}</Project>
-      <Name>FileReader</Name>
+    <ProjectReference Include="..\FindChains\FindChains.csproj">
+      <Project>{A74338A1-C5B9-48F1-A425-9D65466AD723}</Project>
+      <Name>FindChains</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Support\Support.csproj">
+      <Project>{6F4AC729-CF97-45C4-A8F7-42599DFB734F}</Project>
+      <Name>Support</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
