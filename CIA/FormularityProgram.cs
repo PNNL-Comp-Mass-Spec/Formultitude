@@ -2227,6 +2227,11 @@ namespace CIA {
             }
             GC.Collect();
 
+            if (NewDBFilenames.Length == 1)
+                Console.WriteLine("Reading database {0}", NewDBFilenames[0]);
+            else
+                Console.WriteLine("Reading {0} databases", NewDBFilenames.Length);
+
             int [] DBRecords = new int [ NewDBFilenames.Length ];
             int MaxRecords = 0;
             for( int DBFilename = 0; DBFilename < NewDBFilenames.Length; DBFilename++ ) {
@@ -2258,8 +2263,11 @@ namespace CIA {
             DBMassError( DBMasses, DBFormulas, ref DBMinError, ref DBMaxError );
             DBFilenames.AddRange( NewDBFilenames );
         }
-        void DBSortAndClean( ref double [] Masses, ref short [][] Formulas){
+        void DBSortAndClean( ref double [] Masses, ref short [][] Formulas)
+        {
+            Console.WriteLine("Sorting {0:N0} DB entries", Masses.Length);
             Array.Sort( Masses, Formulas );
+            Console.WriteLine("Condensing formulas whose mass values are within {0:N1} ppm", FormulaPPMTolerance);
             int RemovedFormulas = 0;
             int MaxRecords = Masses.Length;
             for( int Record = 0; Record < MaxRecords - 1; Record++ ) {
