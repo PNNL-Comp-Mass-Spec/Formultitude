@@ -35,7 +35,7 @@ namespace CiaUi {
             comboBoxFormulaScore.DataSource = oCCia.GetFormulaScoreNames();
             comboBoxRelationshipErrorType.DataSource = Enum.GetNames( typeof( CCia.RelationshipErrorType ) );
 
-            //Formula assignment     
+            //Formula assignment
             for ( int Relation = 0; Relation < CCia.RelationBuildingBlockFormulas.Length; Relation++ ) {
                 bool bb = false;
                 if( Relation == 0 || Relation == 2 || Relation == 6 ) { bb = true; }
@@ -133,7 +133,7 @@ namespace CiaUi {
                 double [] [] SNs = new double [ FileCount ] [];
                 double [] [] Resolutions = new double [ FileCount ] [];
                 double [] [] RelAbundances = new double [ FileCount ] [];
-                //Read files & Calibration 
+                //Read files & Calibration
                 oCCia.Ipa.Adduct = textBoxAdduct.Text;
                 oCCia.Ipa.Ionization = ( TestFSDBSearch.TotalSupport.IonizationMethod ) Enum.Parse( typeof( TestFSDBSearch.TotalSupport.IonizationMethod ), comboBoxIonization.Text );
                 oCCia.Ipa.CS = ( int ) Math.Abs( numericUpDownCharge.Value );
@@ -213,7 +213,7 @@ namespace CiaUi {
                 oCCia.SetActiveRelationFormulaBuildingBlocks( ActiveRelationBlocks );
 
                 //Reports
-                oCCia.SetGenerateIndividualFileReports( checkBoxIndividualFileReport.Checked );                             
+                oCCia.SetGenerateIndividualFileReports( checkBoxIndividualFileReport.Checked );
 
                 //File formats
                 oCCia.SetOutputFileDelimiterType( ( CCia.EDelimiters ) Enum.Parse( typeof( CCia.EDelimiters ), comboBoxOutputFileDelimiter.Text ) );
@@ -221,7 +221,7 @@ namespace CiaUi {
 
                 //oCCia.SetLogReportStatus( checkBoxLogReport.Checked );
 
-                //Process                    
+                //Process
                 oCCia.Process( Filenames, Masses, Abundances, SNs, Resolutions, RelAbundances, CalMasses, oStreamLogWriter );
 
                 //change textbox

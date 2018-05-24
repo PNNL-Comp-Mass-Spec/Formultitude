@@ -7,8 +7,8 @@ using System.IO;
 
 namespace Support {
     public class CChainBlocks {
-        string [] ElementNames = new string [] { 
-                "H", "C", "N", "O", "Na", 
+        string [] ElementNames = new string [] {
+                "H", "C", "N", "O", "Na",
                 "P", "S", "Cl", "K", "Br",
                 "I"
         };
@@ -17,20 +17,20 @@ namespace Support {
                 30.97376151, 31.97207069, 34.96885271, 38.9637069, 78.9183376,
                 126.904473
         };
-        
-        public string [] KnownChainBlockNames = new string [] { 
-                "H2", 
-                "C", 
-                "CH2", 
+
+        public string [] KnownChainBlockNames = new string [] {
+                "H2",
+                "C",
+                "CH2",
                 "O"
         };
-        public double [] KnownChainBlockMasses = new double [] { 
-                CElements.H *2, 
-                CElements.C, 
-                CElements.C + 2 * CElements.H, 
-                CElements.O, 
+        public double [] KnownChainBlockMasses = new double [] {
+                CElements.H *2,
+                CElements.C,
+                CElements.C + 2 * CElements.H,
+                CElements.O,
         };
-        
+
         public CChainBlocks() {
             Array.Sort( ElementNames, ElementMasses );
             //double dd = CalculateFormulaMass( "N1H_3O" );
@@ -46,7 +46,7 @@ namespace Support {
             List<double> FormulaMassList = new List<double>( Lines.Length);
             foreach ( string Line in Lines ) {
                 string Formula = Line.Split( WordSeparators )[0];
-                try{                   
+                try{
                     FormulaMassList.Add( CalculateFormulaMass( Formula) );
                     FormulaNameList.Add( Formula );
                 }catch{}
@@ -60,10 +60,10 @@ namespace Support {
             string [] Lines = new string [ KnownChainBlockMasses.Length ];
             for ( int Index = 0; Index < KnownChainBlockMasses.Length; Index++ ) {
                 Lines [ Index ] = KnownChainBlockNames [ Index ] + "," + KnownChainBlockMasses [ Index ].ToString( "F6" );
-            }                                       
+            }
             int FileExtentionLength = Path.GetExtension( Filename).Length;
             Filename = Filename.Substring( 0, Filename.Length - FileExtentionLength ) + "Real.csv";
-            //File.WriteAllLines( Filename, Lines );               
+            //File.WriteAllLines( Filename, Lines );
         }
         double CalculateFormulaMass( string Formula ) {
             //formula example N1H_3O
@@ -82,7 +82,7 @@ namespace Support {
                 }else{
                     ElementName = Formula [ SymbolIndex ].ToString();
                     if ( char.IsUpper( Formula [ SymbolIndex + 1 ] ) == true ) {
-                        //next element                        
+                        //next element
                         //NegPos = 1;
                         //Atoms = 1;
                     } else {
@@ -92,7 +92,7 @@ namespace Support {
                             SymbolIndex = SymbolIndex + 1;
                         }
                         if ( SymbolIndex + 1 >= Formula.Length ) {
-                            //last symbol                            
+                            //last symbol
                             //NegPos = 1;
                             //Atoms = 1;
                         } else {

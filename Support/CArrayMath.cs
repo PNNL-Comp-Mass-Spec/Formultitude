@@ -29,5 +29,5 @@ namespace Support {
             }
             return Math.Pow( Sum / ( Data.Length - 1 ), 0.5 );
         }
-    }       
+    }
 }

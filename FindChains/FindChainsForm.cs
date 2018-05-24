@@ -86,10 +86,10 @@ namespace FindChains {
         }
         private void textBoxSpectraFile_DragDrop( object sender, DragEventArgs e ) {
             string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
-            
+
             for( int FileIndex = 0; FileIndex < Filenames.Length; FileIndex++ ) {
                 string FileExtension = Path.GetExtension( Filenames [ FileIndex ] );
-                //read from files        
+                //read from files
 
                 Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses, out Abundances, out S2Ns, out Resolutions, out RelAbundances );
                 Support.InputData RawData = new Support.InputData();
@@ -114,7 +114,7 @@ namespace FindChains {
                     CurSettings [ SettingIndex ].Min = ( double ) numericUpDownMinRelAbundance.Value;
                     CurSettings [ SettingIndex ].Max = -1;
                 }
-                
+
                 string Filename = Path.GetDirectoryName( Filenames [ FileIndex ] ) + "\\" + Path.GetFileNameWithoutExtension( Filenames [ FileIndex ] );
                 if ( checkBoxPPMProcess.Checked == true ) {
                     double MaxChainStartMass = ( double ) numericUpDownMaxPeakToStartChain.Value;
@@ -271,7 +271,7 @@ namespace FindChains {
                         for ( int PeakIndex = 0; PeakIndex < PeakMzErrorArray.Length; PeakIndex++ ) {
                             PeakMzError CurPeakMzError = PeakMzErrorArray [ PeakIndex ];
                             oStreamWriterErrors.WriteLine( CurPeakMzError.PeakIndex.ToString() + "," + CurPeakMzError.Mz.ToString( "F6" ) + "," + RawData.Abundances[CurPeakMzError.PeakIndex]
-                                    + "," + CurPeakMzError.NewMz.ToString( "F6" ) + "," + CurPeakMzError.Chain + 
+                                    + "," + CurPeakMzError.NewMz.ToString( "F6" ) + "," + CurPeakMzError.Chain +
                                     "," + RawData.Chains[CurPeakMzError.Chain].IdealBlockMass.ToString( "F6") + "," + CurPeakMzError.PpmError.ToString( "F6" ) );
                         }
                         oStreamWriterErrors.Close();
@@ -377,7 +377,7 @@ namespace FindChains {
                     //                        }
                     //                        oStreamWriterPrimaryChains.Close();
                     //                    }
-                    //Combine distances                
+                    //Combine distances
                     //                    if( checkBoxFrequency.Checked == true){
                     //                        List <int> LDistancePeaks = new List<int> ( LChains.Count);
                     //                        for( int ChainIndex = 0; ChainIndex < LChains.Count; ChainIndex++ ) {
@@ -417,7 +417,7 @@ namespace FindChains {
                     //                        oStreamWriterPrimaryChains.Close();
                     //                    }
                 }
-                
+
                 if( checkBoxAmuProcess.Checked == true ) {
                     CalculatePpmError( Masses );
                     double Error = ( double ) numericUpDownAbsError.Value;
@@ -427,7 +427,7 @@ namespace FindChains {
                     int BinsPerErrorRange = ( int ) numericUpDownBinsPerErrorRange.Value;
                     int MinPeaksInChain = ( int ) numericUpDownMinPeaksInChain.Value;
 
-                    //create Bin distances ( = left and right peaks)           
+                    //create Bin distances ( = left and right peaks)
                     double BinSize = Error / BinsPerErrorRange;
                     int BinCount = ( int ) Math.Ceiling( ( RangeMax - RangeMin ) / BinSize );
                     BinLeftPeaks = new List<int> [ BinCount ];
@@ -518,8 +518,8 @@ namespace FindChains {
                     for( int BinIndex = 0; BinIndex < BinCount; BinIndex++ ) {
                         //double BinDistance = RangeMin + BinIndex * BinSize;
                         for( int PairIndex = 0; PairIndex < BinLeftPeaks [ BinIndex ].Count; PairIndex++ ) {
-                            if( BinLeftLinks [ BinIndex ] [ PairIndex ].Count != 0 ) { continue; }//chain starts when left peak doesn't have link    
-                            if( BinRightLinks [ BinIndex ] [ PairIndex ].Count == 0 ) { continue; }//chain doesn't start when right peak doesn't have link   
+                            if( BinLeftLinks [ BinIndex ] [ PairIndex ].Count != 0 ) { continue; }//chain starts when left peak doesn't have link
+                            if( BinRightLinks [ BinIndex ] [ PairIndex ].Count == 0 ) { continue; }//chain doesn't start when right peak doesn't have link
                             for( int LinkIndex = 0; LinkIndex < BinRightLinks [ BinIndex ] [ PairIndex ].Count; LinkIndex++ ) {
                                 if( LinkIndex > 0 ) { break; }//??? take only first
                                 PeakLink temp = BinRightLinks [ BinIndex ] [ PairIndex ] [ LinkIndex ];
@@ -585,7 +585,7 @@ namespace FindChains {
                 }
             }
         }
-                      
+
         public double CalculatePpmError( double [] Masses ) {
             int MassesCount = Masses.Length;
             double RangeMin = 0;
@@ -670,7 +670,7 @@ namespace FindChains {
             //Save BinLinks to file
             string FilenameBinLinks =  "c:\\temp\\BinLinks.csv";
             StreamWriter oStreamWriterBinLinks = new StreamWriter( FilenameBinLinks );
-            oStreamWriterBinLinks.WriteLine( "Block size,Counts" );                        
+            oStreamWriterBinLinks.WriteLine( "Block size,Counts" );
             for( int BinIndex = 0; BinIndex < BinCount; BinIndex++ ) {
                 oStreamWriterBinLinks.WriteLine( ( RangeMin + BinSize * BinIndex + BinSize / 2 ).ToString() + "," +   BinLeftLinks [ BinIndex ].Length  );
             }
@@ -683,7 +683,7 @@ namespace FindChains {
                 if( MaxBinCount < BinLeftPeaks [ BinIndex ].Count ) {
                     MaxBinCount = BinLeftPeaks [ BinIndex ].Count;
                     MaxBinIndex1 = BinIndex;
-                }  
+                }
             }
             //find wigth on 10% MaxBinCount
             int Level10MaxBinCount = MaxBinCount / 10;
