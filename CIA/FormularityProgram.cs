@@ -2287,12 +2287,14 @@ namespace CIA {
                     if( Masses [ TempRecord ] > MassPlusPpmError ) {
                         break;
                     }
-                    if( AreFormulasEqual( Formulas [ Record ], Formulas [ TempRecord ] ) == true ) {
-                        Masses [ TempRecord ] = -1;
+                        Masses[TempRecord] = -1;
                         RemovedFormulas = RemovedFormulas + 1;
                     }
                 }
             }
+            if (RemovedFormulas == 0)
+                return;
+
             int RealRecords = MaxRecords - RemovedFormulas;
             double [] TempDBMasses = new double [ RealRecords ];
             short [][] TempDBFormulas = new short [ RealRecords ] [];
