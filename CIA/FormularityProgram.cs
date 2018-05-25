@@ -124,6 +124,7 @@ namespace CIA {
                 double [] [] CalMasses = new double [ FileCount ] [];
                 for ( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
                     //read files
+                    Console.WriteLine("Opening " + Filenames[FileIndex]);
                     Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses [ FileIndex ], out Abundances [ FileIndex ], out SNs [ FileIndex ], out Resolutions [ FileIndex ], out RelAbundances [ FileIndex ] );
                     MaxAbundances [ FileIndex ] = Support.CArrayMath.Max( Abundances [ FileIndex ] );
                     //Calibration
@@ -781,10 +782,12 @@ namespace CIA {
 
                 //Alignment + Formula finding
                 if( Alignment == true ) {
+                    Console.WriteLine("Aligning");
                     AlignmentByPeak();
                     for( int PeakIndex = 0; PeakIndex < oAlignData.AlignMasses.Length; PeakIndex++ ) {
                         oAlignData.NeutralMasses [ PeakIndex ] = Ipa.GetNeutralMass( oAlignData.AlignMasses [ PeakIndex ] );
                     }
+                    Console.WriteLine("Formula Finding");
                     FindFormulas( oAlignData.NeutralMasses, oAlignData.Formulas, oAlignData.PPMErrors, oAlignData.Candidates, FormulaPPMTolerance, RelationErrorAMU, MassLimit );
                     ProcessC13( oAlignData.NeutralMasses, oAlignData.Formulas, oAlignData.PPMErrors );
                 } else {
@@ -794,6 +797,7 @@ namespace CIA {
                             oData.NeutralMasses [ FileIndex ] [ PeakIndex ] = Ipa.GetNeutralMass( oData.AlignMasses [ FileIndex ] [ PeakIndex ] );
                             oData.Formulas [ FileIndex ] [ PeakIndex ] = ( short [] ) NullFormula.Clone();
                         }
+                        Console.WriteLine("Formula Finding");
                         FindFormulas( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ], oData.Candidates [ FileIndex ], FormulaPPMTolerance, RelationErrorAMU, MassLimit );
                         ProcessC13( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ] );
                     }
@@ -931,12 +935,14 @@ namespace CIA {
                             }
                         }
                     }
-                    StreamWriter oStreamWriter;
+                    string OutputFilePath;
                     if( oEOutputFileDelimiter == EDelimiters.Comma ) {
-                        oStreamWriter = new StreamWriter( Path.GetDirectoryName( Filenames [ 0 ] ) + "\\Report.csv" );
+                        OutputFilePath = Path.Combine(Path.GetDirectoryName(Filenames[0]), "Report.csv");
                     } else {
-                        oStreamWriter = new StreamWriter( Path.GetDirectoryName( Filenames [ 0 ] ) + "\\Report.txt" );
+                        OutputFilePath = Path.Combine(Path.GetDirectoryName(Filenames[0]), "Report.txt");
                     }
+                    Console.WriteLine("Writing results to " + OutputFilePath);
+                    StreamWriter oStreamWriter = new StreamWriter(OutputFilePath);
                     string HeaderLine = "Mass";
                     foreach( string Element in Enum.GetNames( typeof( CCia.EElemIndex ) ) ) {
                         HeaderLine = HeaderLine + OutputFileDelimiter + Element;
@@ -2267,7 +2273,7 @@ namespace CIA {
         {
             Console.WriteLine("Sorting {0:N0} DB entries", Masses.Length);
             Array.Sort( Masses, Formulas );
-            Console.WriteLine("Condensing formulas whose mass values are within {0:N1} ppm", FormulaPPMTolerance);
+            Console.WriteLine("Looking for identical formulas");
             int RemovedFormulas = 0;
             int MaxRecords = Masses.Length;
             for( int Record = 0; Record < MaxRecords - 1; Record++ ) {
