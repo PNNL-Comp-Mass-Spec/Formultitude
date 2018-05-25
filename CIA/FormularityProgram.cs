@@ -110,7 +110,7 @@ namespace CIA {
 
                 string [] Filenames = DatasetsList.ToArray();
                 //log file
-                string LogFileTimestamp = DateTime.Now.ToString().Replace("/", "").Replace(":", "").Replace(" ", "");
+                string LogFileTimestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string LogFilePath = Path.Combine(Path.GetDirectoryName( Filenames [ 0 ] ), "Report" + LogFileTimestamp + ".log");
                 StreamWriter oStreamLogWriter = new StreamWriter(LogFilePath);
 
