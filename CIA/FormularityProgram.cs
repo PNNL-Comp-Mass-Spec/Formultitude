@@ -2280,6 +2280,7 @@ namespace CIA {
             int RemovedFormulas = 0;
             int MaxRecords = Masses.Length;
             int ComparedFormulas = 0;
+            DateTime LastProgress = DateTime.UtcNow;
             for( int Record = 0; Record < MaxRecords - 1; Record++ ) {
                 double Mass = Masses [ Record ];
                 if( Mass < 0 ) { continue; }
@@ -2300,11 +2301,17 @@ namespace CIA {
                 if (Record % 10000 != 0 || DateTime.UtcNow.Subtract(LastProgress).TotalSeconds < 2) {
                     continue;
                 }
+                double PercentComplete = Record / (double)MaxRecords * 100;
+                Console.WriteLine("  {0:F0}% complete", PercentComplete);
+                LastProgress = DateTime.UtcNow;
             }
             Console.WriteLine("Compared {0:N0} formulas while looking for duplicates", ComparedFormulas);
             if (RemovedFormulas == 0) {
+                Console.WriteLine("No duplicate formulas were found");
+                DuplicatesFound = false;
                 return;
             }
+            DuplicatesFound = true;
             int RealRecords = MaxRecords - RemovedFormulas;
             double [] TempDBMasses = new double [ RealRecords ];
             short [][] TempDBFormulas = new short [ RealRecords ] [];
