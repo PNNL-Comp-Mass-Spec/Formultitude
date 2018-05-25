@@ -1,0 +1,1 @@
+..\CIA\bin\x64\Debug\CIA.exe cia TestData\data_4_formularity.txt TestData\param_4_formularity.xml C:\DBs\WHOI_CIA_DB_2016_11_21.bin
