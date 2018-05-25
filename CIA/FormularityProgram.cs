@@ -2276,16 +2276,14 @@ namespace CIA {
         {
             Console.WriteLine("Sorting {0:N0} DB entries", Masses.Length);
             Array.Sort( Masses, Formulas );
-            Console.WriteLine("Looking for identical formulas");
+            Console.WriteLine("Looking for duplicate formulas");
             int RemovedFormulas = 0;
             int MaxRecords = Masses.Length;
             int ComparedFormulas = 0;
-            int Record = 0;
-            while( Record < MaxRecords - 1 ) {
+            for( int Record = 0; Record < MaxRecords - 1; Record++ ) {
                 double Mass = Masses [ Record ];
                 if( Mass < 0 ) { continue; }
                 double MassPlusPpmError = Mass + CPpmError.PpmToError( Mass, FormulaPPMTolerance );
-                var MaxTempRecord = 0;
                 for( int TempRecord = Record + 1; TempRecord < MaxRecords; TempRecord++ ) {
                     if( Masses [ TempRecord ] < 0 ) {
                         continue;
@@ -2294,27 +2292,27 @@ namespace CIA {
                         break;
                     }
                     ComparedFormulas++;
-                    MaxTempRecord = TempRecord;
-                    if (AreFormulasEqual(Formulas[Record], Formulas[TempRecord]) == true)
-                    {
+                    if (AreFormulasEqual(Formulas[Record], Formulas[TempRecord]) == true) {
                         Masses[TempRecord] = -1;
                         RemovedFormulas = RemovedFormulas + 1;
                     }
                 }
-                Record = Math.Max(Record + 1, MaxTempRecord);
+                if (Record % 10000 != 0 || DateTime.UtcNow.Subtract(LastProgress).TotalSeconds < 2) {
+                    continue;
+                }
             }
-            Console.WriteLine("Compared {0:N0} formulas", ComparedFormulas);
-            if (RemovedFormulas == 0)
+            Console.WriteLine("Compared {0:N0} formulas while looking for duplicates", ComparedFormulas);
+            if (RemovedFormulas == 0) {
                 return;
-
+            }
             int RealRecords = MaxRecords - RemovedFormulas;
             double [] TempDBMasses = new double [ RealRecords ];
             short [][] TempDBFormulas = new short [ RealRecords ] [];
             int RealRecord = 0;
-            for( int i = 0; i < MaxRecords; i++ ) {
+            for( int Record = 0; Record < MaxRecords; Record++ ) {
                 if( Masses [ Record ] > 0 ) {
-                    TempDBMasses [ RealRecord ] = Masses [ i ];
-                    TempDBFormulas [ RealRecord ] = Formulas [ i ];
+                    TempDBMasses [ RealRecord ] = Masses [ Record ];
+                    TempDBFormulas [ RealRecord ] = Formulas [ Record ];
                     RealRecord = RealRecord + 1;
                 }
             }
