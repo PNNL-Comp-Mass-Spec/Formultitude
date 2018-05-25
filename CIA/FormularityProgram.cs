@@ -110,9 +110,9 @@ namespace CIA {
 
                 string [] Filenames = DatasetsList.ToArray();
                 //log file
-                string LogFileName = DateTime.Now.ToString();
-                LogFileName = Path.GetDirectoryName( Filenames [ 0 ] ) + "\\" + "Report" + LogFileName.Replace( "/", "" ).Replace( ":", "" ).Replace( " ", "" ) + ".log";
-                StreamWriter oStreamLogWriter = new StreamWriter( LogFileName );
+                string LogFileTimestamp = DateTime.Now.ToString().Replace("/", "").Replace(":", "").Replace(" ", "");
+                string LogFilePath = Path.Combine(Path.GetDirectoryName( Filenames [ 0 ] ), "Report" + LogFileTimestamp + ".log");
+                StreamWriter oStreamLogWriter = new StreamWriter(LogFilePath);
 
                 int FileCount = Filenames.Length;
                 double [] [] Masses = new double [ FileCount ] [];
@@ -167,6 +167,9 @@ namespace CIA {
                 }
                 oStreamLogWriter.Flush();
                 oStreamLogWriter.Close();
+                var LogFileInfo = new FileInfo(LogFilePath);
+                if (LogFileInfo.Length == 0)
+                    LogFileInfo.Delete();
                 System.Console.WriteLine( "Finished." );
                 return 0;
             } catch ( Exception ex ) {
