@@ -2250,6 +2250,7 @@ namespace CIA {
             DBMasses = new double [ MaxRecords ];
             DBFormulas = new short [ MaxRecords ] [];
             int NextRecord = 0;
+            bool CheckForDuplicates = true;
             byte [] TempBytes = new byte [ DBBlockBytes ];
             for( int DBFilename = 0; DBFilename < NewDBFilenames.Length; DBFilename++ ) {
                 BinaryReader oBinaryReader = new BinaryReader( File.Open( NewDBFilenames [ DBFilename ], FileMode.Open ) );
@@ -2265,17 +2266,65 @@ namespace CIA {
                     }
                 }
                 oBinaryReader.Close();
+
+                if (NewDBFilenames.Length == 1)
+                {
+                    // Look for a file named DBFileName_VerifiedNoDuplicates.txt
+                    // in the same directory as the database file
+                    // If it exists, change CheckForDuplicates to false
+                    var verificationFilePath = GetNoDupsVerificationFilePath(NewDBFilenames[0]);
+                    if (!string.IsNullOrWhiteSpace(verificationFilePath))
+                    {
+                        var duplicateCheckFile = new FileInfo(verificationFilePath);
+                        if (duplicateCheckFile.Exists)
+                        {
+                            CheckForDuplicates = false;
+                        }
+                    }
+                }
             }
             TempBytes = null;
 
-            DBSortAndClean( ref DBMasses, ref DBFormulas);
+            DBSortAndClean( ref DBMasses, ref DBFormulas, CheckForDuplicates, out bool DuplicatesFound);
+            if (NewDBFilenames.Length == 1 && CheckForDuplicates && !DuplicatesFound)
+            {
+                var verificationFilePath = GetNoDupsVerificationFilePath(NewDBFilenames[0]);
+                if (!string.IsNullOrWhiteSpace(verificationFilePath))
+                {
+                    try
+                    {
+                        using (var writer = new StreamWriter(new FileStream(verificationFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite)))
+                        {
+                            var statusMsg = string.Format("Verified no duplicate formulas in {0} on {1:yyyy-MM-dd hh:mm:ss tt}",
+                                                          Path.GetFileName(NewDBFilenames[0]), DateTime.Now);
+                            writer.WriteLine(statusMsg);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error, unable to create file {0}: {1}", verificationFilePath, ex.Message);
+                    }
+                }
+            }
             DBMassError( DBMasses, DBFormulas, ref DBMinError, ref DBMaxError );
             DBFilenames.AddRange( NewDBFilenames );
         }
-        void DBSortAndClean( ref double [] Masses, ref short [][] Formulas)
+        private string GetNoDupsVerificationFilePath(string dbFilePath)
+        {
+            const string NO_DUPLICATIONS_EXTENSION = "_VerifiedNoDuplicates.txt";
+
+            var noDupsVerificationFilePath = Path.ChangeExtension(dbFilePath, null) + NO_DUPLICATIONS_EXTENSION;
+            return noDupsVerificationFilePath;
+        }
+        void DBSortAndClean( ref double [] Masses, ref short [][] Formulas, bool CheckForDuplicates, out bool DuplicatesFound)
         {
             Console.WriteLine("Sorting {0:N0} DB entries", Masses.Length);
             Array.Sort( Masses, Formulas );
+            if (!CheckForDuplicates) {
+                Console.WriteLine("Skipping check for duplicate formulas; database was previously validated");
+                DuplicatesFound = false;
+                return;
+            }
             Console.WriteLine("Looking for duplicate formulas");
             int RemovedFormulas = 0;
             int MaxRecords = Masses.Length;
@@ -2464,7 +2513,7 @@ namespace CIA {
                 }
             }
             if( DBSort == true ) {
-                DBSortAndClean( ref Masses, ref Formulas);
+                DBSortAndClean( ref Masses, ref Formulas, true, out _);
             }
             double MinError = 0;
             double MaxError = 0;
@@ -2500,7 +2549,7 @@ namespace CIA {
                 }
             }
             if( DBSort == true ) {
-                DBSortAndClean( ref Masses, ref Formulas);
+                DBSortAndClean( ref Masses, ref Formulas, true, out _);
             }
             double MinError = 0;
             double MaxError = 0;
