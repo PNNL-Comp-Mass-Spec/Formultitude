@@ -2276,10 +2276,13 @@ namespace CIA {
             Console.WriteLine("Looking for identical formulas");
             int RemovedFormulas = 0;
             int MaxRecords = Masses.Length;
-            for( int Record = 0; Record < MaxRecords - 1; Record++ ) {
+            int ComparedFormulas = 0;
+            int Record = 0;
+            while( Record < MaxRecords - 1 ) {
                 double Mass = Masses [ Record ];
                 if( Mass < 0 ) { continue; }
                 double MassPlusPpmError = Mass + CPpmError.PpmToError( Mass, FormulaPPMTolerance );
+                var MaxTempRecord = 0;
                 for( int TempRecord = Record + 1; TempRecord < MaxRecords; TempRecord++ ) {
                     if( Masses [ TempRecord ] < 0 ) {
                         continue;
@@ -2287,11 +2290,17 @@ namespace CIA {
                     if( Masses [ TempRecord ] > MassPlusPpmError ) {
                         break;
                     }
+                    ComparedFormulas++;
+                    MaxTempRecord = TempRecord;
+                    if (AreFormulasEqual(Formulas[Record], Formulas[TempRecord]) == true)
+                    {
                         Masses[TempRecord] = -1;
                         RemovedFormulas = RemovedFormulas + 1;
                     }
                 }
+                Record = Math.Max(Record + 1, MaxTempRecord);
             }
+            Console.WriteLine("Compared {0:N0} formulas", ComparedFormulas);
             if (RemovedFormulas == 0)
                 return;
 
@@ -2299,10 +2308,10 @@ namespace CIA {
             double [] TempDBMasses = new double [ RealRecords ];
             short [][] TempDBFormulas = new short [ RealRecords ] [];
             int RealRecord = 0;
-            for( int Record = 0; Record < MaxRecords; Record++ ) {
+            for( int i = 0; i < MaxRecords; i++ ) {
                 if( Masses [ Record ] > 0 ) {
-                    TempDBMasses [ RealRecord ] = Masses [ Record ];
-                    TempDBFormulas [ RealRecord ] = Formulas [ Record ];
+                    TempDBMasses [ RealRecord ] = Masses [ i ];
+                    TempDBFormulas [ RealRecord ] = Formulas [ i ];
                     RealRecord = RealRecord + 1;
                 }
             }
