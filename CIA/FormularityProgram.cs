@@ -61,12 +61,18 @@ namespace CIA {
                         throw new Exception( "File in argument 2 must be xml, csv or txt type file" );
 
                     }
-                } else {
-                    DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.csv" ) );
-                    DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.txt" ) );
-                    DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.xml" ) );
+                } else
+                {
+                    var SourceDirectory = new DirectoryInfo(args[1]);
+                    foreach (var sourceFile in SourceDirectory.GetFiles("*.csv"))
+                    {
+                        if (!string.Equals(sourceFile.Name, "Report.csv", StringComparison.OrdinalIgnoreCase))
+                            DatasetsList.Add(sourceFile.FullName);
+                    }
+                    DatasetsList.AddRange(from item in SourceDirectory.GetFiles( "*.txt" ) select item.FullName );
+                    DatasetsList.AddRange(from item in SourceDirectory.GetFiles( "*.xml" ) select item.FullName);
                     if ( DatasetsList.Count == 0 ) {
-                        throw new Exception( "Folder in argument 2 doesn't have xml, csv or txt file extension" );
+                        throw new Exception( "Folder in argument 2 doesn't have xml, csv or txt files" );
                     }
                 }
 
@@ -75,6 +81,15 @@ namespace CIA {
                     throw new Exception( "Argument 3 XML parameter file " + args [ 2 ] + " does not exist" );
                 } else if ( Path.GetExtension( args [ 2 ] ) != ".xml" ) {
                     throw new Exception( "Argument 3 XML parameter file " + args [ 2 ] + " doesn't have XML file extension" );
+                }
+
+                if (FileOrDirectory && DatasetsList.Count > 1)
+                {
+                    // Make sure the parameter file is not in DatasetsList
+                    var paramFileInfo = new FileInfo(args[2]);
+                    if (DatasetsList.Contains(paramFileInfo.FullName)) {
+                        DatasetsList.Remove(paramFileInfo.FullName);
+                    }
                 }
 
                 //args[ 3] - bin db file
