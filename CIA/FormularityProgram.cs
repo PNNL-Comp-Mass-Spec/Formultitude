@@ -43,23 +43,58 @@ namespace CIA {
                     throw new Exception( "Argument 1 [" + args[0] + " is not CIA ot IPA." );
                 }
 
-                //args[1] - data
-                bool FileOrDirectory = false;
+                //args[1] - data file path (spectrum file path)
+                bool FileOrDirectory;       // False if args[1] is a file (or filename with a wildcard); true if args[1] is a directory
+                bool wildcardFileSpec;
                 try {
-                    FileOrDirectory = ( File.GetAttributes( args [ 1 ] ) & FileAttributes.Directory ) == FileAttributes.Directory;
-                    //File.GetAttributes() also check File.Exists();
+                    if (args[1].Contains("*") || args[1].Contains("?")) {
+                        // Assume it points to a set of files in the given directory
+                        FileOrDirectory = false;
+                        wildcardFileSpec = true;
+                    }
+                    else {
+                        FileOrDirectory = (File.GetAttributes(args[1]) & FileAttributes.Directory) == FileAttributes.Directory;
+                        wildcardFileSpec = false;
+                        //File.GetAttributes() also check File.Exists();
+                    }
                 } catch ( Exception ex ) {
                     throw new Exception( "Argument 2 exception: " + ex.Message );
                 }
                 List<string> DatasetsList = new List<string>();
                 if ( FileOrDirectory == false ) {
-                    if ( ( Path.GetExtension( args [ 1 ] ) == ".csv" )
-                        || ( Path.GetExtension( args [ 1 ] ) == ".txt" )
-                        || ( Path.GetExtension( args [ 1 ] ) == ".xml" ) ) {
-                        DatasetsList.Add( args [ 1 ] );
-                    } else {
-                        throw new Exception( "File in argument 2 must be xml, csv or txt type file" );
+                    if (wildcardFileSpec)
+                    {
+                        try
+                        {
+                            var placeholderFile = new FileInfo(args[1].Replace("*", "_").Replace("?", "_"));
+                            if (placeholderFile.Directory == null)
+                                throw new Exception("Unable to determine the parent directory of " + args[1]);
 
+                            string wildcardMatchSpec;
+                            var lastSlash = args[1].LastIndexOf('\\');
+
+                            if (lastSlash >=0) {
+                                wildcardMatchSpec = args[1].Substring(lastSlash + 1);
+                            } else {
+                                wildcardMatchSpec = args[1];
+                            }
+                            foreach (var dataFile in placeholderFile.Directory.GetFiles(wildcardMatchSpec)) {
+                                DatasetsList.Add(dataFile.FullName);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("Argument 2 exception: " + ex.Message);
+                        }
+                    } else {
+                        if ((Path.GetExtension(args[1]) == ".csv")
+                            || (Path.GetExtension(args[1]) == ".txt")
+                            || (Path.GetExtension(args[1]) == ".xml"))
+                        {
+                            DatasetsList.Add(args[1]);
+                        } else {
+                            throw new Exception("File in argument 2 must be xml, csv or txt type file");
+                        }
                     }
                 } else
                 {
@@ -92,14 +127,14 @@ namespace CIA {
                     }
                 }
 
-                //args[ 3] - bin db file
+                //args[3] - bin db file
                 if ( File.Exists( args [ 3 ] ) == false ) {
                     throw new Exception( "Argument 4 BIN db file " + args [ 3 ] + " does not exist" );
                 } else if ( Path.GetExtension( args [ 3 ] ) != ".bin" ) {
                     throw new Exception( "Argument 4 BIN db file " + args [ 3 ] + " doesn't have BIN file extension" );
                 }
 
-                //args[ 4] - ref calibration file
+                //args[4] - ref calibration file (optional)
                 if ( args.Length == 5 ) {
                     if ( File.Exists( args [ 4 ] ) == false ) {
                         throw new Exception( "Argument 5 REF calibration file " + args [ 4 ] + " does not exist" );
