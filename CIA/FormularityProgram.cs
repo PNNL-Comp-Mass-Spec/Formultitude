@@ -72,14 +72,14 @@ namespace CIA {
 
                 //args[2] - xml parameter file
                 if ( File.Exists( args [ 2 ] ) == false ) {
-                    throw new Exception( "Argument 3 XML parameter file " + args [ 2 ] + " is not exist" );
+                    throw new Exception( "Argument 3 XML parameter file " + args [ 2 ] + " does not exist" );
                 } else if ( Path.GetExtension( args [ 2 ] ) != ".xml" ) {
                     throw new Exception( "Argument 3 XML parameter file " + args [ 2 ] + " doesn't have XML file extension" );
                 }
 
                 //args[ 3] - bin db file
                 if ( File.Exists( args [ 3 ] ) == false ) {
-                    throw new Exception( "Argument 4 BIN db file " + args [ 3 ] + " is not exist" );
+                    throw new Exception( "Argument 4 BIN db file " + args [ 3 ] + " does not exist" );
                 } else if ( Path.GetExtension( args [ 3 ] ) != ".bin" ) {
                     throw new Exception( "Argument 4 BIN db file " + args [ 3 ] + " doesn't have BIN file extension" );
                 }
@@ -87,7 +87,7 @@ namespace CIA {
                 //args[ 4] - ref calibration file
                 if ( args.Length == 5 ) {
                     if ( File.Exists( args [ 4 ] ) == false ) {
-                        throw new Exception( "Argument 5 REF calibration file " + args [ 4 ] + " is not exist" );
+                        throw new Exception( "Argument 5 REF calibration file " + args [ 4 ] + " does not exist" );
                     } else if ( Path.GetExtension( args [ 4 ] ) != ".ref" ) {
                         throw new Exception( "Argument 5 REF calibration file  " + args [ 4 ] + " doesn't have ref file extension" );
                     }
@@ -2409,7 +2409,7 @@ namespace CIA {
             //2. column 1 = mass as double; column 2 = formula like C1H1O8P1 or CH1O8P
             //also checks last empty line
             //read file of text and csv files
-            if( File.Exists( Filename ) == false ) { throw new Exception( "File is not exist. " + Filename ); }
+            if( File.Exists( Filename ) == false ) { throw new Exception( "File does not exist. " + Filename ); }
             if( new FileInfo( Filename ).Length == 0 ) { throw new Exception( "File is empty. " + Filename ); }
 
             string FileExtension = Path.GetExtension( Filename );
