@@ -22,6 +22,7 @@ using Support;
 namespace CIA {
     class FormularityProgram {
         static int Main( string [] args ) {
+            bool processingStarted = false;
             try {
                 System.Console.WriteLine( "Started." );
                 if ( ( args.Length == 1 ) && ( ( args [ 0 ] == "\\h" ) || ( args [ 0 ] == "/h" ) || ( args [ 0 ] == "-h" ) ) ) {
@@ -144,6 +145,7 @@ namespace CIA {
                 }
 
                 System.Console.WriteLine( "Checked arguments." );
+                processingStarted = true;
                 CCia oCCia = new CCia();
                 oCCia.LoadParameters( args [ 2 ] );
                 System.Console.WriteLine( "Loaded parameters." );
@@ -223,8 +225,9 @@ namespace CIA {
                 System.Console.WriteLine( "Finished." );
                 return 0;
             } catch ( Exception ex ) {
-                System.Console.WriteLine( "Error: " + ex.Message );
-                PrintHelp();
+                ReportError(ex, false);
+                if (!processingStarted)
+                    PrintHelp();
                 return -1;
             }
         }
@@ -237,6 +240,17 @@ namespace CIA {
             System.Console.WriteLine( "   arg3 is xml parameter file" );
             System.Console.WriteLine( "   arg4 is bin db file" );
             System.Console.WriteLine( "   arg5 (optional) is ref calibration file" );
+        }
+        public static void ReportError(Exception ex, bool throwException = true) {
+            ReportError(ex.Message);
+            if (throwException)
+                throw ex;
+        }
+        public static void ReportError(string errorMessage) {
+            if (errorMessage.StartsWith("Error:"))
+                Console.WriteLine(errorMessage);
+            else
+                Console.WriteLine("Error: " + errorMessage);
         }
     }
     class Data {
@@ -277,10 +291,10 @@ namespace CIA {
         short [] NullFormula = new short[ ElementCount];
         public double FormulaToNeutralMass( short [] Formula ) {
             if( Formula == null ) {
-                throw new Exception( "Formula array is null" );
+                FormularityProgram.ReportError(new Exception( "Formula array is null" ));
             }
             if( Formula.Length != ElementCount ) {
-                throw new Exception( "Formula array length (" + Formula.Length + ") must be " + ElementCount );
+                FormularityProgram.ReportError(new Exception( "Formula array length (" + Formula.Length + ") must be " + ElementCount ));
             }
             double NeutralMass = 0;
             for( int Element = 0; Element < ElementCount; Element++ ) {
@@ -317,7 +331,7 @@ namespace CIA {
                 //Element
                 string ElementName = string.Empty;
                 if( Char.IsLetter( FormulaName [ CurrentSymbol ] ) == false ) {
-                    throw new Exception( "Formula name (" + FormulaName + "is wrong" );
+                    FormularityProgram.ReportError(new Exception( "Formula name (" + FormulaName + "is wrong" ));
                 }
                 if( ( FormulaName.Length > CurrentSymbol + 1) && (Char.IsLetter( FormulaName [ CurrentSymbol + 1 ] ) == true ) ) {
                     //Maybe Element name consists of 2 letters
@@ -776,7 +790,10 @@ namespace CIA {
                 case EDelimiters.Comma: return ",";
                 case EDelimiters.Tab: return "\t";
                 case EDelimiters.Space: return " ";
-                default: throw new Exception( "Delimeter error. [" + oo.ToString() + "]");
+                default:
+                    var ex = new Exception( "Delimeter error. [" + oo + "]" );
+                    FormularityProgram.ReportError(ex, false);
+                    throw ex;
             }
         }
         public static EDelimiters OutputFileDelimiterToEnum( string oo ) {
@@ -790,7 +807,10 @@ namespace CIA {
                 case " ":
                 case "space":
                     return EDelimiters.Space;
-                default: throw new Exception( "Delimeter error. [" + oo + "]");
+                default:
+                    var ex = new Exception( "Delimeter error. [" + oo + "]" );
+                    FormularityProgram.ReportError(ex, false);
+                    throw ex;
             }
         }
         string OutputFileDelimiter = ",";
@@ -1545,7 +1565,9 @@ namespace CIA {
                     }
                     break;
                 default:
-                    throw new Exception( "Wrong SortType : " + FormulaScore.ToString() );
+                    var ex = new Exception( "Wrong SortType : " + FormulaScore.ToString() );
+                    FormularityProgram.ReportError(ex, false);
+                    throw ex;
             }
             return false;
         }
@@ -2352,7 +2374,7 @@ namespace CIA {
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Error, unable to create file {0}: {1}", verificationFilePath, ex.Message);
+                        FormularityProgram.ReportError(string.Format("Unable to create file {0}: {1}", verificationFilePath, ex.Message));
                     }
                 }
             }
@@ -2459,8 +2481,12 @@ namespace CIA {
             //2. column 1 = mass as double; column 2 = formula like C1H1O8P1 or CH1O8P
             //also checks last empty line
             //read file of text and csv files
-            if( File.Exists( Filename ) == false ) { throw new Exception( "File does not exist. " + Filename ); }
-            if( new FileInfo( Filename ).Length == 0 ) { throw new Exception( "File is empty. " + Filename ); }
+            if( File.Exists( Filename ) == false ) {
+                FormularityProgram.ReportError( "File does not exist. " + Filename );
+            }
+            if( new FileInfo( Filename ).Length == 0 ) {
+                FormularityProgram.ReportError( "File is empty. " + Filename );
+            }
 
             string FileExtension = Path.GetExtension( Filename );
             List<double> ListMasses = new List<double>();
@@ -2492,7 +2518,7 @@ namespace CIA {
                         }
                         ListFormulas.Add( Formula );
                     } else {
-                        throw new Exception( "File format is wrong. " + Filename );
+                        FormularityProgram.ReportError( "File format is wrong. " + Filename );
                     }
                 }
                 oStreamReader.Close();
@@ -2545,10 +2571,10 @@ namespace CIA {
                 MyApp = null;
                 GC.Collect();
                 if( ExceptionMesssage.Length > 0 ) {
-                    throw new Exception( ExceptionMesssage );
+                    FormularityProgram.ReportError( ExceptionMesssage );
                 }
             } else {
-                throw new Exception( "File type is not supported. " + Filename );
+                FormularityProgram.ReportError( "File type is not supported. " + Filename );
             }
             Masses = ListMasses.ToArray();
             Formulas = ListFormulas.ToArray();
