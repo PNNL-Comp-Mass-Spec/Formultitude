@@ -11,7 +11,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Data;
 using System.Runtime.InteropServices;
+
+#if NoExcel
+#else
 using Microsoft.Office.Interop.Excel;
+#endif
+
 using System.Xml;
 using System.Globalization;
 
@@ -2523,6 +2528,9 @@ namespace CIA {
                 }
                 oStreamReader.Close();
             } else if( FileExtension == ".xlsx" || FileExtension == ".xls" ) {
+#if NoExcel
+                FormularityProgram.ReportError("This version of Formularity was compiled without Excel support; cannot open " + Filename);
+#else
                 Microsoft.Office.Interop.Excel.Application MyApp = new Microsoft.Office.Interop.Excel.Application();
                 MyApp.Visible = false;
                 Microsoft.Office.Interop.Excel.Workbook MyBook = MyApp.Workbooks.Open( Filename );
@@ -2573,6 +2581,7 @@ namespace CIA {
                 if( ExceptionMesssage.Length > 0 ) {
                     FormularityProgram.ReportError( ExceptionMesssage );
                 }
+#endif
             } else {
                 FormularityProgram.ReportError( "File type is not supported. " + Filename );
             }

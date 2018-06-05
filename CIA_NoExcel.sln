@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2018
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Formularity_NoExcel", "CIA\Formularity_NoExcel.csproj", "{633A29D3-6A02-4AE3-A3A4-9E48319FC8E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindChains_NoExcel", "FindChains\FindChains_NoExcel.csproj", "{14DEFD99-D67A-4660-A41F-B6D926D325C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Support_NoExcel", "Support\Support_NoExcel.csproj", "{E9C7F67B-40F2-411D-9673-AECA77AB6E62}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{633A29D3-6A02-4AE3-A3A4-9E48319FC8E9}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{633A29D3-6A02-4AE3-A3A4-9E48319FC8E9}.Debug|Any CPU.Build.0 = Debug|x64
+		{633A29D3-6A02-4AE3-A3A4-9E48319FC8E9}.Release|Any CPU.ActiveCfg = Release|x64
+		{14DEFD99-D67A-4660-A41F-B6D926D325C6}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{14DEFD99-D67A-4660-A41F-B6D926D325C6}.Debug|Any CPU.Build.0 = Debug|x64
+		{14DEFD99-D67A-4660-A41F-B6D926D325C6}.Release|Any CPU.ActiveCfg = Release|x86
+		{E9C7F67B-40F2-411D-9673-AECA77AB6E62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9C7F67B-40F2-411D-9673-AECA77AB6E62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9C7F67B-40F2-411D-9673-AECA77AB6E62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9C7F67B-40F2-411D-9673-AECA77AB6E62}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2EDD0674-BC42-41EA-83C2-A768C121DA7C}
+	EndGlobalSection
+EndGlobal

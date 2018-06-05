@@ -4,7 +4,12 @@ using System.Linq;
 using System.Text;
 
 using System.IO;
+
+#if NoExcel
+#else
 using Microsoft.Office.Interop.Excel;
+#endif
+
 using System.Xml;
 
 namespace Support {
@@ -39,6 +44,10 @@ namespace Support {
                 string FileExtension = Path.GetExtension( Filename );
                 double MaxAbundance = 0;
                 if( FileExtension == ".xlsx" || FileExtension == ".xls" ) {
+#if NoExcel
+                    throw new Exception( "This version of CFileReader was compiled without Excel support; cannot open: " + Filename );
+#else
+
                     Microsoft.Office.Interop.Excel.Application ExcelApp = null;
                     Microsoft.Office.Interop.Excel.Workbook ExcelBook = null;
                     Microsoft.Office.Interop.Excel.Worksheet ExcelSheet = null;
@@ -78,6 +87,7 @@ namespace Support {
                     if( ExceptionMessage.Length != 0 ) {
                         throw new Exception( ExceptionMessage );
                     }
+#endif
                 } else if( FileExtension == ".xml" ) {
                     XmlDocument XmlDoc = new XmlDocument();
                     XmlDoc.Load( Filename );

@@ -15,7 +15,12 @@ using System.Collections.Concurrent;
 //using System.Threading.Tasks;
 //using System.Data;
 using System.Runtime.InteropServices;
+
+#if NoExcel
+#else
 using Microsoft.Office.Interop.Excel;
+#endif
+
 using System.Xml;
 using Support;
 
