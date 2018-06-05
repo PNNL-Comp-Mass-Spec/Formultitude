@@ -92,6 +92,11 @@ namespace CIA {
                         {
                             throw new Exception("Argument 2 exception: " + ex.Message);
                         }
+
+                        if (DatasetsList.Count == 0)
+                        {
+                            throw new Exception("No files found matching \n" + args[1] + "\n");
+                        }
                     } else {
                         if ((Path.GetExtension(args[1]) == ".csv")
                             || (Path.GetExtension(args[1]) == ".txt")
