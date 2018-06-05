@@ -188,6 +188,11 @@ namespace CIA {
                     //read files
                     Console.WriteLine("Opening " + Filenames[FileIndex]);
                     Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses [ FileIndex ], out Abundances [ FileIndex ], out SNs [ FileIndex ], out Resolutions [ FileIndex ], out RelAbundances [ FileIndex ] );
+                    if (Abundances[FileIndex].Length == 0)
+                    {
+                        Console.WriteLine("Warning: no data points found in " + Path.GetFileName(Filenames[FileIndex]));
+                        continue;
+                    }
                     MaxAbundances [ FileIndex ] = Support.CArrayMath.Max( Abundances [ FileIndex ] );
                     //Calibration
                     if ( oCCia.oTotalCalibration.ttl_cal_regression == TotalCalibration.ttlRegressionType.none ) {
@@ -869,6 +874,11 @@ namespace CIA {
                     AlignmentByPeak();
                     for( int PeakIndex = 0; PeakIndex < oAlignData.AlignMasses.Length; PeakIndex++ ) {
                         oAlignData.NeutralMasses [ PeakIndex ] = Ipa.GetNeutralMass( oAlignData.AlignMasses [ PeakIndex ] );
+                    }
+                    if (oAlignData.NeutralMasses.Length == 0)
+                    {
+                        FormularityProgram.ReportError("Nothing to align; aborting");
+                        return;
                     }
                     Console.WriteLine("Formula Finding");
                     FindFormulas( oAlignData.NeutralMasses, oAlignData.Formulas, oAlignData.PPMErrors, oAlignData.Candidates, FormulaPPMTolerance, RelationErrorAMU, MassLimit );

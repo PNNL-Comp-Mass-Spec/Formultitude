@@ -115,6 +115,10 @@ namespace Support {
                         Resolutions [ Peak ] = Double.Parse( Attributes [ "res" ].Value );
                     }
                     XmlDoc = null;
+                    if (PeakCount == 0)
+                    {
+                        MaxAbundance = 1;
+                    }
                 } else { //if( FileExtension == ".csv" || FileExtension == ".txt" ) { and unsupported
                     string [] Lines = File.ReadAllLines( Filename );
                     int PeakCount = Lines.Length - 1;
