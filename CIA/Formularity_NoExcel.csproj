@@ -51,7 +51,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TestFSDBSearch">
+    <Reference Include="TestFSDBSearch, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\TestFSDBSearch.exe</HintPath>
     </Reference>
   </ItemGroup>
