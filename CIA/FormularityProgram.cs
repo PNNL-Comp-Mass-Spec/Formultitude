@@ -175,6 +175,7 @@ namespace CIA {
                 string LogFileTimestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string LogFilePath = Path.Combine(Path.GetDirectoryName( Filenames [ 0 ] ), "Report" + LogFileTimestamp + ".log");
                 StreamWriter oStreamLogWriter = new StreamWriter(LogFilePath);
+                oStreamLogWriter.AutoFlush = true;
 
                 int FileCount = Filenames.Length;
                 double [] [] Masses = new double [ FileCount ] [];
@@ -462,7 +463,7 @@ namespace CIA {
         }
         void AlignmentByPeak() {
             //Group near peaks as one peak.
-            //Peak from the same file can't be gropped
+            //Peak from the same file can't be grouped
             //New mass calculation is linear (doesn't use peak Abundance)
             int [] IndexesTemplate = new int [ oData.FileCount + 1 ];//extra last row for weight counting
             int TotalPeakCount = 0;
