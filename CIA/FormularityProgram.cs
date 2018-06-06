@@ -204,10 +204,11 @@ namespace CIA {
                         oCCia.oTotalCalibration.cal_log.Clear();
                         double MaxAbundance = Support.CArrayMath.Max( Abundances [ FileIndex ] );
                         CalMasses [ FileIndex ] = oCCia.oTotalCalibration.ttl_LQ_InternalCalibration( ref Masses [ FileIndex ], ref Abundances [ FileIndex ], ref SNs [ FileIndex ], MaxAbundances [ FileIndex ] );
-                        oStreamLogWriter.WriteLine();
-                        oStreamLogWriter.WriteLine( "Calibration of " + Path.GetFileName( Filenames [ FileIndex ] ) );
-                        oStreamLogWriter.WriteLine();
-                        oStreamLogWriter.Write( oCCia.oTotalCalibration.cal_log );
+                        AppendToLog(oStreamLogWriter, "");
+                        AppendToLog(oStreamLogWriter, "Calibration of " + Path.GetFileName( Filenames [ FileIndex ] ) );
+                        AppendToLog(oStreamLogWriter, "");
+                        AppendToLog(oStreamLogWriter, oCCia.oTotalCalibration.cal_log.ToString());
+
                     }
                 }
                 if ( CiaOrIpa == false ) {
@@ -229,7 +230,7 @@ namespace CIA {
                     for ( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
                         oCCia.Ipa.IPDB_log.Clear();
                         oCCia.Ipa.ttlSearch( ref CalMasses [ FileIndex ], ref Abundances [ FileIndex ], ref SNs [ FileIndex ], ref MaxAbundances [ FileIndex ], Filenames [ FileIndex ] );
-                        oStreamLogWriter.Write( oCCia.Ipa.IPDB_log );
+                        AppendToLog(oStreamLogWriter, oCCia.Ipa.IPDB_log.ToString() );
                     }
                 }
                 oStreamLogWriter.Flush();
@@ -246,6 +247,21 @@ namespace CIA {
                 return -1;
             }
         }
+
+        public static void AppendToLog(StreamWriter logWriter, string message)
+        {
+            if (message.EndsWith("\n"))
+            {
+                Console.Write(message);
+                logWriter.Write(message);
+            }
+            else
+            {
+                Console.WriteLine(message);
+                logWriter.WriteLine(message);
+            }
+        }
+
         static void PrintHelp() {
             System.Console.WriteLine( "Help:" );
             System.Console.WriteLine( "Command line: cia.exe arg1 arg2 arg3 arg4 arg5" );
@@ -1140,8 +1156,9 @@ namespace CIA {
                 }
             } catch( Exception ex ) {
                 if( oStreamLogWriter != null ) {
-                    oStreamLogWriter.WriteLine( "Exception: " );
-                    oStreamLogWriter.Write( ex.Message );
+                    FormularityProgram.AppendToLog(oStreamLogWriter, "Exception: " + ex.Message);
+                } else {
+                    FormularityProgram.ReportError("Exception processing: " + ex.Message);
                 }
             }
         }
