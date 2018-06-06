@@ -195,11 +195,10 @@ namespace CIA {
                     }
                     MaxAbundances [ FileIndex ] = Support.CArrayMath.Max( Abundances [ FileIndex ] );
                     //Calibration
-                    if ( oCCia.oTotalCalibration.ttl_cal_regression == TotalCalibration.ttlRegressionType.none ) {
-                        CalMasses [ FileIndex ] = new double [ Masses [ FileIndex ].Length ];
-                        for ( int PeakIndex = 0; PeakIndex < CalMasses.Length; PeakIndex++ ) {
-                            CalMasses [ PeakIndex ] = Masses [ PeakIndex ];
-                        }
+                    if ( oCCia.oTotalCalibration.ttl_cal_regression == TotalCalibration.ttlRegressionType.none )
+                    {
+                        // Populate the calibrated mass array with the original masses
+                        CalMasses[FileIndex] = CopyArray(Masses[FileIndex]);
                     } else {
                         oCCia.oTotalCalibration.cal_log.Clear();
                         double MaxAbundance = Support.CArrayMath.Max( Abundances [ FileIndex ] );
@@ -209,8 +208,15 @@ namespace CIA {
                         AppendToLog(oStreamLogWriter, "");
                         AppendToLog(oStreamLogWriter, oCCia.oTotalCalibration.cal_log.ToString());
 
+                        if (CalMasses[FileIndex] == null) {
+                            AppendToLog(oStreamLogWriter, "Calibration failed; using uncalibrated masses");
+                            AppendToLog(oStreamLogWriter, "");
+                            // Populate the calibrated mass array with the original masses
+                            CalMasses[FileIndex] = CopyArray(Masses[FileIndex]);
+                        }
                     }
                 }
+
                 if ( CiaOrIpa == false ) {
                     oCCia.Process( Filenames, Masses, Abundances, SNs, Resolutions, RelAbundances, CalMasses, oStreamLogWriter );
                 } else {
@@ -236,8 +242,9 @@ namespace CIA {
                 oStreamLogWriter.Flush();
                 oStreamLogWriter.Close();
                 var LogFileInfo = new FileInfo(LogFilePath);
-                if (LogFileInfo.Length == 0)
+                if (LogFileInfo.Length == 0) {
                     LogFileInfo.Delete();
+                }
                 System.Console.WriteLine( "Finished." );
                 return 0;
             } catch ( Exception ex ) {
@@ -260,6 +267,16 @@ namespace CIA {
                 Console.WriteLine(message);
                 logWriter.WriteLine(message);
             }
+        }
+
+        private static double[] CopyArray(IList<double> sourceData)
+        {
+            var copiedData = new double[sourceData.Count];
+            for (var i = 0; i < sourceData.Count; i++)
+            {
+                copiedData[i] = sourceData[i];
+            }
+            return copiedData;
         }
 
         static void PrintHelp() {
@@ -460,7 +477,9 @@ namespace CIA {
             for( int FileIndex = 0; FileIndex < oData.FileCount; FileIndex++ ) {
                 int FilePeakCount = oData.Masses [ FileIndex ].Length;
                 double [] AlignMasses = oData.CalMasses[ FileIndex ];
-                for( int Peak = 0; Peak < FilePeakCount; Peak++ ) {
+                if (AlignMasses == null)
+                    throw new Exception(string.Format("oData.CalMasses is null for FileIndex {0}", FileIndex));
+                for ( int Peak = 0; Peak < FilePeakCount; Peak++ ) {
                     TotalMasses [ FilePeakShift + Peak ] = AlignMasses[ Peak ];
                     TotalIndexes [ FilePeakShift + Peak ] = ( int [] ) IndexesTemplate.Clone();
                     TotalIndexes [ FilePeakShift + Peak ] [ FileIndex ] = Peak;
