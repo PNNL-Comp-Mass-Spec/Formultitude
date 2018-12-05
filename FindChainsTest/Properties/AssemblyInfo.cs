@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "Formularity" )]
+[assembly: AssemblyTitle( "FindChainsTest" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "PNNL" )]
-[assembly: AssemblyProduct( "Formularity" )]
-[assembly: AssemblyCopyright( "Copyright © PNNL 2018" )]
+[assembly: AssemblyCompany( "" )]
+[assembly: AssemblyProduct( "FindChainsTest" )]
+[assembly: AssemblyCopyright( "Copyright ©  2018" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible( false )]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "0d59ebb8-6f1b-49f4-be35-4d4aad654cd5" )]
+[assembly: Guid( "4fd5390e-a3d1-4214-b14e-28b9d1431fb6" )]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion( "1.0.*" )]
+[assembly: AssemblyVersion( "1.0.0.0" )]
 [assembly: AssemblyFileVersion( "1.0.0.0" )]
