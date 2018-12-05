@@ -11,12 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Data;
 using System.Runtime.InteropServices;
-
-#if NoExcel
-#else
-using Microsoft.Office.Interop.Excel;
-#endif
-
+//using Microsoft.Office.Interop.Excel;
 using System.Xml;
 using System.Globalization;
 
@@ -27,96 +22,88 @@ using Support;
 namespace CIA {
     class FormularityProgram {
         static int Main( string [] args ) {
-            bool processingStarted = false;
             try {
                 System.Console.WriteLine( "Started." );
+                CCia oCCia = new CCia();
                 if ( ( args.Length == 1 ) && ( ( args [ 0 ] == "\\h" ) || ( args [ 0 ] == "/h" ) || ( args [ 0 ] == "-h" ) ) ) {
                     throw new Exception( "Incorrect Help argument." );
                 }
-                if ( args.Length != 4 ) {
-                    if ( args.Length != 5 ) {
-                        throw new Exception ("Application uses 4 or 5 arguments." );
-                    }
+                if ( ( args.Length < 3 ) || ( args.Length > 5 ) ) {
+                    throw new Exception( "Application uses 3, 4 or 5 arguments." );
                 }
 
                 //args[0] - CIA or IPA method
                 bool CiaOrIpa = false;
                 if ( args [ 0 ].ToLower() == "cia") {
-                    CiaOrIpa = false;
+                    oCCia.SetProcessType( CCia.ProcessType.Cia );
+                    //CiaOrIpa = false;
                 } else if ( args [ 0 ].ToLower() == "ipa" ) {
-                    CiaOrIpa = true;
+                    oCCia.SetProcessType( CCia.ProcessType.Ipa );
+                    //CiaOrIpa = true;
                 } else {
                     throw new Exception( "Argument 1 [" + args[0] + " is not CIA ot IPA." );
                 }
 
                 //args[1] - data file path (spectrum file path)
-                bool FileOrDirectory;       // False if args[1] is a file (or filename with a wildcard); true if args[1] is a directory
+                bool FileOrDirectory = false;// False if args[1] is a file (or filename with a wildcard); true if args[1] is a directory
                 bool wildcardFileSpec;
                 try {
-                    if (args[1].Contains("*") || args[1].Contains("?")) {
+                    if ( args [ 1 ].Contains( "*" ) || args [ 1 ].Contains( "?" ) ) {
                         // Assume it points to a set of files in the given directory
                         FileOrDirectory = false;
                         wildcardFileSpec = true;
-                    }
-                    else {
-                        FileOrDirectory = (File.GetAttributes(args[1]) & FileAttributes.Directory) == FileAttributes.Directory;
+                    } else {
+                        FileOrDirectory = ( File.GetAttributes( args [ 1 ] ) & FileAttributes.Directory ) == FileAttributes.Directory;
                         wildcardFileSpec = false;
                         //File.GetAttributes() also check File.Exists();
                     }
+                    //File.GetAttributes() also check File.Exists();
                 } catch ( Exception ex ) {
                     throw new Exception( "Argument 2 exception: " + ex.Message );
-                }
+                }               
                 List<string> DatasetsList = new List<string>();
                 if ( FileOrDirectory == false ) {
-                    if (wildcardFileSpec)
-                    {
-                        try
-                        {
-                            var placeholderFile = new FileInfo(args[1].Replace("*", "_").Replace("?", "_"));
-                            if (placeholderFile.Directory == null)
-                                throw new Exception("Unable to determine the parent directory of " + args[1]);
-
+                    //if ( ( Path.GetExtension( args [ 1 ] ) == ".csv" )
+                    //|| ( Path.GetExtension( args [ 1 ] ) == ".txt" )
+                    //|| ( Path.GetExtension( args [ 1 ] ) == ".xml" ) ) {
+                    //DatasetsList.Add( args [ 1 ] );
+                    //} else {
+                    // throw new Exception( "File in argument 2 must be xml, csv or txt type file" );
+                    if ( wildcardFileSpec ) {
+                        try {
+                            var placeholderFile = new FileInfo( args [ 1 ].Replace( "*", "_" ).Replace( "?", "_" ) );
+                            if ( placeholderFile.Directory == null ) {
+                                throw new Exception( "Unable to determine the parent directory of " + args [ 1 ] );
+                            }
                             string wildcardMatchSpec;
-                            var lastSlash = args[1].LastIndexOf('\\');
-
-                            if (lastSlash >=0) {
-                                wildcardMatchSpec = args[1].Substring(lastSlash + 1);
+                            var lastSlash = args [ 1 ].LastIndexOf( '\\' );
+                            if ( lastSlash >=0 ) {
+                                wildcardMatchSpec = args [ 1 ].Substring( lastSlash + 1 );
                             } else {
-                                wildcardMatchSpec = args[1];
+                                wildcardMatchSpec = args [ 1 ];
                             }
-                            foreach (var dataFile in placeholderFile.Directory.GetFiles(wildcardMatchSpec)) {
-                                DatasetsList.Add(dataFile.FullName);
+                            foreach ( var dataFile in placeholderFile.Directory.GetFiles( wildcardMatchSpec ) ) {
+                                DatasetsList.Add( dataFile.FullName );
                             }
+                        } catch ( Exception ex ) {
+                            throw new Exception( "Argument 2 exception: " + ex.Message );
                         }
-                        catch (Exception ex)
-                        {
-                            throw new Exception("Argument 2 exception: " + ex.Message);
-                        }
-
-                        if (DatasetsList.Count == 0)
-                        {
-                            throw new Exception("No files found matching \n" + args[1] + "\n");
+                        if ( DatasetsList.Count == 0 ) {
+                            throw new Exception( "No files found matching \n" + args [ 1 ] + "\n" );
                         }
                     } else {
-                        if ((Path.GetExtension(args[1]) == ".csv")
-                            || (Path.GetExtension(args[1]) == ".txt")
-                            || (Path.GetExtension(args[1]) == ".xml"))
-                        {
-                            DatasetsList.Add(args[1]);
+                        if ( ( Path.GetExtension( args [ 1 ] ) == ".csv" )
+                            || ( Path.GetExtension( args [ 1 ] ) == ".txt" )
+                            || ( Path.GetExtension( args [ 1 ] ) == ".xml" ) ) {
+                            DatasetsList.Add( args [ 1 ] );
                         } else {
-                            throw new Exception("File in argument 2 must be xml, csv or txt type file");
+                            throw new Exception( "File in argument 2 must be xml, csv or txt type file" );
                         }
                     }
-                } else
-                {
-                    var SourceDirectory = new DirectoryInfo(args[1]);
-                    foreach (var sourceFile in SourceDirectory.GetFiles("*.csv"))
-                    {
-                        if (!string.Equals(sourceFile.Name, "Report.csv", StringComparison.OrdinalIgnoreCase))
-                            DatasetsList.Add(sourceFile.FullName);
-                    }
-                    DatasetsList.AddRange(from item in SourceDirectory.GetFiles( "*.txt" ) select item.FullName );
-                    DatasetsList.AddRange(from item in SourceDirectory.GetFiles( "*.xml" ) select item.FullName);
+                } else {
+                    DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.csv" ) );
+                    DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.txt" ) );
+                    DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.xml" ) );
                     if ( DatasetsList.Count == 0 ) {
                         throw new Exception( "Folder in argument 2 doesn't have xml, csv or txt files" );
                     }
@@ -126,160 +113,84 @@ namespace CIA {
                 if ( File.Exists( args [ 2 ] ) == false ) {
                     throw new Exception( "Argument 3 XML parameter file " + args [ 2 ] + " does not exist" );
                 } else if ( Path.GetExtension( args [ 2 ] ) != ".xml" ) {
-                    throw new Exception( "Argument 3 XML parameter file " + args [ 2 ] + " doesn't have XML file extension" );
+                    throw new Exception( "Argument 3 XML parameter file " + args [ 2 ] + " doesn't have XML files" );
                 }
-
-                if (FileOrDirectory && DatasetsList.Count > 1)
-                {
-                    // Make sure the parameter file is not in DatasetsList
-                    var paramFileInfo = new FileInfo(args[2]);
-                    if (DatasetsList.Contains(paramFileInfo.FullName)) {
-                        DatasetsList.Remove(paramFileInfo.FullName);
-                    }
-                }
-
-                //args[3] - bin db file
-                if ( File.Exists( args [ 3 ] ) == false ) {
-                    throw new Exception( "Argument 4 BIN db file " + args [ 3 ] + " does not exist" );
-                } else if ( Path.GetExtension( args [ 3 ] ) != ".bin" ) {
-                    throw new Exception( "Argument 4 BIN db file " + args [ 3 ] + " doesn't have BIN file extension" );
-                }
-
-                //args[4] - ref calibration file (optional)
-                if ( args.Length == 5 ) {
-                    if ( File.Exists( args [ 4 ] ) == false ) {
-                        throw new Exception( "Argument 5 REF calibration file " + args [ 4 ] + " does not exist" );
-                    } else if ( Path.GetExtension( args [ 4 ] ) != ".ref" ) {
-                        throw new Exception( "Argument 5 REF calibration file  " + args [ 4 ] + " doesn't have ref file extension" );
-                    }
-                }
-
-                System.Console.WriteLine( "Checked arguments." );
-                processingStarted = true;
-                CCia oCCia = new CCia();
                 oCCia.LoadParameters( args [ 2 ] );
                 System.Console.WriteLine( "Loaded parameters." );
                 if ( CiaOrIpa == false ) {
-                    oCCia.LoadDBs( new string [] { args [ 3 ] } );
-                } else {
-                    oCCia.Ipa.LoadTabulatedDB( args [ 3 ] );
-                }
-                System.Console.WriteLine( "Loaded DB." );
-                if ( oCCia.oTotalCalibration.ttl_cal_regression != TotalCalibration.ttlRegressionType.none ) {
-                    oCCia.oTotalCalibration.Load( args [ 4 ] );
-                    System.Console.WriteLine( "Loaded calibration." );
-                }
-
-                string [] Filenames = DatasetsList.ToArray();
-                //log file
-                string LogFileTimestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                string LogFilePath = Path.Combine(Path.GetDirectoryName( Filenames [ 0 ] ), "Report" + LogFileTimestamp + ".log");
-                StreamWriter oStreamLogWriter = new StreamWriter(LogFilePath);
-                oStreamLogWriter.AutoFlush = true;
-
-                int FileCount = Filenames.Length;
-                double [] [] Masses = new double [ FileCount ] [];
-                double [] [] Abundances = new double [ FileCount ] [];
-                double [] [] SNs = new double [ FileCount ] [];
-                double [] [] Resolutions = new double [ FileCount ] [];
-                double [] [] RelAbundances = new double [ FileCount ] [];
-                double [] MaxAbundances = new double [ FileCount ];
-                double [] [] CalMasses = new double [ FileCount ] [];
-                for ( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
-                    //read files
-                    Console.WriteLine("Opening " + Filenames[FileIndex]);
-                    Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses [ FileIndex ], out Abundances [ FileIndex ], out SNs [ FileIndex ], out Resolutions [ FileIndex ], out RelAbundances [ FileIndex ] );
-                    if (Abundances[FileIndex].Length == 0)
-                    {
-                        Console.WriteLine("Warning: no data points found in " + Path.GetFileName(Filenames[FileIndex]));
-                        continue;
-                    }
-                    MaxAbundances [ FileIndex ] = Support.CArrayMath.Max( Abundances [ FileIndex ] );
-                    //Calibration
-                    if ( oCCia.oTotalCalibration.ttl_cal_regression == TotalCalibration.ttlRegressionType.none )
-                    {
-                        // Populate the calibrated mass array with the original masses
-                        CalMasses[FileIndex] = CopyArray(Masses[FileIndex]);
-                    } else {
-                        oCCia.oTotalCalibration.cal_log.Clear();
-                        double MaxAbundance = Support.CArrayMath.Max( Abundances [ FileIndex ] );
-                        CalMasses [ FileIndex ] = oCCia.oTotalCalibration.ttl_LQ_InternalCalibration( ref Masses [ FileIndex ], ref Abundances [ FileIndex ], ref SNs [ FileIndex ], MaxAbundances [ FileIndex ] );
-                        AppendToLog(oStreamLogWriter, "");
-                        AppendToLog(oStreamLogWriter, "Calibration of " + Path.GetFileName( Filenames [ FileIndex ] ) );
-                        AppendToLog(oStreamLogWriter, "");
-                        AppendToLog(oStreamLogWriter, oCCia.oTotalCalibration.cal_log.ToString());
-
-                        if (CalMasses[FileIndex] == null) {
-                            AppendToLog(oStreamLogWriter, "Calibration failed; using uncalibrated masses");
-                            AppendToLog(oStreamLogWriter, "");
-                            // Populate the calibrated mass array with the original masses
-                            CalMasses[FileIndex] = CopyArray(Masses[FileIndex]);
+                    if ( oCCia.GetAlignment() == true ) {
+                        if ( oCCia.GetRelationErrorType() == CCia.RelationErrorType.DynamicPPM ){
+                            throw new Exception( "in parameter fie: multiple file aligment can't be used dynamic ppm relationship error." );
+                        }else if( oCCia.GetStaticDynamicPpmError() == true ){
+                            throw new Exception( "in parameter file: multiple file aligment can't be used dynamic ppm formula tolerance." );
                         }
                     }
                 }
-
-                if ( CiaOrIpa == false ) {
-                    oCCia.Process( Filenames, Masses, Abundances, SNs, Resolutions, RelAbundances, CalMasses, oStreamLogWriter );
-                } else {
-                    bool b = oCCia.Ipa.SetCalculation();
-
-                    //oCCia.Ipa.m_ppm_tol = ( double ) numericUpDownIpaMassTolerance.Value;
-                    //oCCia.Ipa.m_min_major_sn = ( double ) numericUpDownIpaMajorPeaksMinSN.Value;
-                    //oCCia.Ipa.m_min_minor_sn = ( double ) numericUpDownIpaMinorPeaksMinSN.Value;
-
-                    //oCCia.Ipa.m_min_major_pa_mm_abs_2_report = ( double ) numericUpDownIpaMinMajorPeaksToAbsToReport.Value;
-                    //oCCia.Ipa.m_matched_peaks_report = checkBoxIpaMatchedPeakReport.Checked;
-
-                    //oCCia.Ipa.m_min_p_to_score = ( double ) numericUpDownIpaMinPeakProbabilityToScore.Value;
-
-                   // oCCia.Ipa.m_IPDB_ec_filter = textBoxIpaFilter.Text;
-
-                    for ( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
-                        oCCia.Ipa.IPDB_log.Clear();
-                        oCCia.Ipa.ttlSearch( ref CalMasses [ FileIndex ], ref Abundances [ FileIndex ], ref SNs [ FileIndex ], ref MaxAbundances [ FileIndex ], Filenames [ FileIndex ] );
-                        AppendToLog(oStreamLogWriter, oCCia.Ipa.IPDB_log.ToString() );
+                if ( FileOrDirectory && DatasetsList.Count > 1 ) {
+                    // Make sure the parameter file is not in DatasetsList
+                    var paramFileInfo = new FileInfo( args [ 2 ] );
+                    if ( DatasetsList.Contains( paramFileInfo.FullName ) ) {
+                        DatasetsList.Remove( paramFileInfo.FullName );
                     }
                 }
-                oStreamLogWriter.Flush();
-                oStreamLogWriter.Close();
-                var LogFileInfo = new FileInfo(LogFilePath);
-                if (LogFileInfo.Length == 0) {
-                    LogFileInfo.Delete();
+
+                //optional args[ 3] - db file (optional if it is in Parameter file)
+                if( args.Length > 3){
+                    if ( CiaOrIpa == false ) {
+                        if(  File.Exists( args [ 3 ] ) == false ) {
+                            throw new Exception( "CIA DB file (argument 4: " + args [ 3 ] + ") does not exist" );
+                        }
+                        oCCia.LoadCiaDB( args [ 3 ] );
+                    } else {
+                        if(  File.Exists( args [ 3 ] ) == false ) {
+                            throw new Exception( "IPA DB file (Argument 4: " + args [ 3 ] + ") does not exist" );
+                        }
+                        oCCia.Ipa.LoadTabulatedDB( args [ 3 ] );
+                    }
+                }else{
+                    if ( CiaOrIpa == false ) {
+                        if(  File.Exists( oCCia.GetCiaDBFilename() ) == false ) {
+                            throw new Exception( "CIA DB file (parameter file: " + oCCia.GetCiaDBFilename() + ") does not exist" );
+                        }
+                        oCCia.LoadCiaDB( oCCia.GetCiaDBFilename() );
+                    }else{
+                        if(  File.Exists( oCCia.GetIpaDBFilename()) == false ) {
+                            throw new Exception( "IPA DB file (parameter file: " + args [ 3 ] + ") does not exist" );
+                        }
+                        oCCia.Ipa.LoadTabulatedDB( oCCia.GetIpaDBFilename() );
+                    }
                 }
-                System.Console.WriteLine( "Finished." );
+                System.Console.WriteLine( "Loaded DB." );
+
+                //args[ 4] - ref calibration file (optional)
+                if ( oCCia.oTotalCalibration.ttl_cal_regression != TotalCalibration.ttlRegressionType.none ) {
+                    if ( args.Length == 5 ) {
+                        if ( File.Exists( args [ 4 ] ) == false ) {
+                            throw new Exception( "REF calibration file (argument 5: " + args [ 4 ] + ") does not exist" );
+                        }
+                        oCCia.SetRefPeakFilename( args [ 4 ] );
+                        //oCCia.oTotalCalibration.Load( args [ 4 ] );
+                        System.Console.WriteLine( "Loaded calibration." );
+                    }else{
+                        if(  File.Exists( oCCia.GetRefPeakFilename()) == false ) {
+                            throw new Exception( "Argument 5 REF calibration file (parameter file: " + oCCia.GetRefPeakFilename() + ") does not exist" );
+                        }
+                        //oCCia.oTotalCalibration.Load( oCCia.GetRefPeakFilename() );
+                    }
+                }else{
+                    System.Console.WriteLine( "Calibration is not required." );
+                }
+
+                string [] Filenames = DatasetsList.ToArray();
+                oCCia.Process( Filenames );
                 return 0;
             } catch ( Exception ex ) {
-                ReportError(ex, false);
-                if (!processingStarted)
-                    PrintHelp();
+                //System.Console.WriteLine( "Error: " + ex.Message );
+                ReportError( ex, false );
+                PrintHelp();
                 return -1;
             }
         }
-
-        public static void AppendToLog(StreamWriter logWriter, string message)
-        {
-            if (message.EndsWith("\n"))
-            {
-                Console.Write(message);
-                logWriter.Write(message);
-            }
-            else
-            {
-                Console.WriteLine(message);
-                logWriter.WriteLine(message);
-            }
-        }
-
-        private static double[] CopyArray(IList<double> sourceData)
-        {
-            var copiedData = new double[sourceData.Count];
-            for (var i = 0; i < sourceData.Count; i++)
-            {
-                copiedData[i] = sourceData[i];
-            }
-            return copiedData;
-        }
-
         static void PrintHelp() {
             System.Console.WriteLine( "Help:" );
             System.Console.WriteLine( "Command line: cia.exe arg1 arg2 arg3 arg4 arg5" );
@@ -287,19 +198,28 @@ namespace CIA {
             System.Console.WriteLine( "   arg1 is CAI or IPA" );
             System.Console.WriteLine( "   arg2 is dataset or folder with dataset(s)" );
             System.Console.WriteLine( "   arg3 is xml parameter file" );
-            System.Console.WriteLine( "   arg4 is bin db file" );
-            System.Console.WriteLine( "   arg5 (optional) is ref calibration file" );
+            System.Console.WriteLine( "   arg4 (optional) is bin db file; can be added through parameter file" );
+            System.Console.WriteLine( "   arg5 (optional) is ref calibration file; can be not used or added through parameter file" );
         }
-        public static void ReportError(Exception ex, bool throwException = true) {
-            ReportError(ex.Message);
-            if (throwException)
+        public static void ReportError( Exception ex, bool throwException = true ) {
+            ReportError( ex.Message );
+            if ( throwException )
                 throw ex;
         }
-        public static void ReportError(string errorMessage) {
-            if (errorMessage.StartsWith("Error:"))
-                Console.WriteLine(errorMessage);
+        public static void ReportError( string errorMessage ) {
+            if ( errorMessage.StartsWith( "Error:" ) )
+                Console.WriteLine( errorMessage );
             else
-                Console.WriteLine("Error: " + errorMessage);
+                Console.WriteLine( "Error: " + errorMessage );
+        }
+        public static void AppendToLog( StreamWriter logWriter, string message ) {
+            if ( message.EndsWith( "\n" ) ) {
+                Console.WriteLine( message );
+                logWriter.WriteLine( message );
+            } else {
+                Console.Write( message );
+                logWriter.Write( message );
+            }
         }
     }
     class Data {
@@ -329,7 +249,7 @@ namespace CIA {
         public double [] PPMErrors;
         public short [] Candidates;
     }
-    public class CCia{
+    public class CCia{        
         //Elements
         public const int ElementCount = 8;
         public enum EElemIndex { C = 0, H, O, N, C13, S, P, Na};
@@ -340,10 +260,10 @@ namespace CIA {
         short [] NullFormula = new short[ ElementCount];
         public double FormulaToNeutralMass( short [] Formula ) {
             if( Formula == null ) {
-                FormularityProgram.ReportError(new Exception( "Formula array is null" ));
+                throw new Exception( "Formula array is null" );
             }
             if( Formula.Length != ElementCount ) {
-                FormularityProgram.ReportError(new Exception( "Formula array length (" + Formula.Length + ") must be " + ElementCount ));
+                throw new Exception( "Formula array length (" + Formula.Length + ") must be " + ElementCount );
             }
             double NeutralMass = 0;
             for( int Element = 0; Element < ElementCount; Element++ ) {
@@ -372,7 +292,7 @@ namespace CIA {
             }
             return FormulaName;
         }
-        public short [] NameToFormula( string FormulaName) {
+        public short [] NameToFormula( string FormulaName) {                   
             short [] Formula = (short []) NullFormula.Clone();
             if( FormulaName.Length == 0){ return Formula;}
 
@@ -380,7 +300,7 @@ namespace CIA {
                 //Element
                 string ElementName = string.Empty;
                 if( Char.IsLetter( FormulaName [ CurrentSymbol ] ) == false ) {
-                    FormularityProgram.ReportError(new Exception( "Formula name (" + FormulaName + "is wrong" ));
+                    throw new Exception( "Formula name (" + FormulaName + "is wrong" );
                 }
                 if( ( FormulaName.Length > CurrentSymbol + 1) && (Char.IsLetter( FormulaName [ CurrentSymbol + 1 ] ) == true ) ) {
                     //Maybe Element name consists of 2 letters
@@ -430,26 +350,19 @@ namespace CIA {
         //Input files
         //***********
         //string [] Filenames;
-
+        //******************************************************************************************
+        //Pre-alignment
+        //******************************************************************************************    
+        public bool PreAlignment = true;
+        public bool GetPreAlignment() { return PreAlignment; }
+        public void SetPreAlignment( bool PreAlignment ) { this.PreAlignment = PreAlignment; }
         //******************************************************************************************
         //Calibration
         //******************************************************************************************
         public TestFSDBSearch.TotalCalibration oTotalCalibration = new TotalCalibration();
-        /*
-        void Calibrate() {
-            for( int FileIndex = 0; FileIndex < oData.FileCount; FileIndex++ ) {
-                double [] Abundances = oData.Abundances[ FileIndex];
-                double MaxAbundance = Abundances[ 0];
-                foreach( double Abundabce in Abundances){ if( MaxAbundance < Abundabce){  MaxAbundance = Abundabce;}}
-                oTotalCalibration.cal_log.Clear();
-                oData.CalMasses [ FileIndex ] = oTotalCalibration.ttl_LQ_InternalCalibration( ref oData.Masses [ FileIndex ], ref Abundances, ref oData.SNs [ FileIndex ], MaxAbundance );
-                oStreamLogWriter.WriteLine();
-                oStreamLogWriter.WriteLine( "Calibration of " + Path.GetFileName( Filenames [ FileIndex]) );
-                oStreamLogWriter.WriteLine();
-                oStreamLogWriter.Write( oTotalCalibration.cal_log );
-            }
-        }
-        */
+        public string RefPeakFilename = "";
+        public string GetRefPeakFilename() { return RefPeakFilename; }
+        public void SetRefPeakFilename( string RefPeakFilename){ this.RefPeakFilename = RefPeakFilename; }
         //******************************************************************************************
         //Alignment
         //******************************************************************************************
@@ -478,9 +391,10 @@ namespace CIA {
             for( int FileIndex = 0; FileIndex < oData.FileCount; FileIndex++ ) {
                 int FilePeakCount = oData.Masses [ FileIndex ].Length;
                 double [] AlignMasses = oData.CalMasses[ FileIndex ];
-                if (AlignMasses == null)
-                    throw new Exception(string.Format("oData.CalMasses is null for FileIndex {0}", FileIndex));
-                for ( int Peak = 0; Peak < FilePeakCount; Peak++ ) {
+                if ( AlignMasses == null ) {
+                    throw new Exception( string.Format( "oData.CalMasses is null for FileIndex {0}", FileIndex ) );
+                }
+                for( int Peak = 0; Peak < FilePeakCount; Peak++ ) {
                     TotalMasses [ FilePeakShift + Peak ] = AlignMasses[ Peak ];
                     TotalIndexes [ FilePeakShift + Peak ] = ( int [] ) IndexesTemplate.Clone();
                     TotalIndexes [ FilePeakShift + Peak ] [ FileIndex ] = Peak;
@@ -633,7 +547,7 @@ namespace CIA {
                     Candidates = Candidates + oData.Candidates[ Index][ oAlignData.Indexes [ PeakIndex][ Index] ];
                 }
                 oAlignData.PPMErrors [ PeakIndex] = Error / ValueableFiles;
-                oAlignData.Candidates [ PeakIndex] = (short) Math.Round( (double) Candidates / ValueableFiles);
+                oAlignData.Candidates [ PeakIndex] = (short) Math.Round( (double) Candidates / ValueableFiles); 
                 PeakIndex ++;
             }
         }
@@ -642,9 +556,30 @@ namespace CIA {
         //Formula finding
         //******************************************************************************************
         //Formula error
+        bool StaticDynamicPpmError = false;
+        public bool GetStaticDynamicPpmError() { return StaticDynamicPpmError; }
+        public void SetStaticDynamicPpmError( bool StaticDynamicPpmError ) { this.StaticDynamicPpmError = StaticDynamicPpmError; }        
         double FormulaPPMTolerance = 1;//default
         public double GetFormulaPPMTolerance() { return FormulaPPMTolerance; }
         public void SetFormulaPPMTolerance( double PPMTolerance ) { FormulaPPMTolerance = PPMTolerance;}
+        double StdDevErrorGain = 1;
+        public double GetStdDevErrorGain(){ return StdDevErrorGain;}
+        public void SetStdDevErrorGain( double StdDevErrorGain ) {
+            this.StdDevErrorGain = StdDevErrorGain;
+        }
+        public double GetRealFormulaPpmError( double PeakMass){
+            if ( StaticDynamicPpmError == true ) {
+                return StdDevErrorGain * InputData.GetErrorStdDev( PeakMass );
+            } else {
+                return GetFormulaPPMTolerance();
+            }
+        }
+        public Support.InputData InputData;
+        public void SetInputData( Support.InputData InputData ) { this.InputData = InputData; }
+        CChainBlocks oCChainBlocks;
+        public void SetChainBlocks( CChainBlocks oCChainBlocks ) { this.oCChainBlocks = oCChainBlocks; }
+        double [] BlockMasses;
+        public void SetBlockMasses( double [] BlockMasses ) { this.BlockMasses = BlockMasses; }
 
         //Relations
         bool UseRelation = true;//default
@@ -653,10 +588,10 @@ namespace CIA {
         int MaxRelationGaps = 5;//default
         public int GetMaxRelationGaps() { return MaxRelationGaps; }
         public void SetMaxRelationGaps( int MaxRelationGaps ) { this.MaxRelationGaps = MaxRelationGaps; }
-        public enum RelationshipErrorType { AMU, PPM, GapPPM };
-        RelationshipErrorType oRelationshipErrorType = RelationshipErrorType.AMU;
-        public RelationshipErrorType GetRelationshipErrorType() { return oRelationshipErrorType; }
-        public void SetRelationshipErrorType( RelationshipErrorType oRelationshipErrorType ) { this.oRelationshipErrorType = oRelationshipErrorType; }
+        public enum RelationErrorType { AMU, PPM, GapPPM, DynamicPPM };
+        RelationErrorType oRelationErrorType = RelationErrorType.AMU;
+        public RelationErrorType GetRelationErrorType() { return oRelationErrorType; }
+        public void SetRelationErrorType( RelationErrorType oRelationErrorType ) { this.oRelationErrorType = oRelationErrorType; }
         double RelationErrorAMU = 0.00002;//default
         public double GetRelationErrorAMU() { return RelationErrorAMU; }
         public void SetRelationErrorAMU( double ErrorAMU ) { RelationErrorAMU = ErrorAMU; }
@@ -664,7 +599,7 @@ namespace CIA {
         public bool GetUseBackward() { return UseBackward; }
         public void SetUseBackward( bool UseBackward ) { this.UseBackward = UseBackward; }
 
-        public static short [] [] RelationBuildingBlockFormulas = {
+        public static short [] [] RelationBuildingBlockFormulas = { 
                 new short [] { 1, 2, 0, 0, 0, 0, 0, 0 },//CH2
                 new short [] { 1, 4, -1, 0, 0, 0, 0, 0},//CH4O- or CH4O-1
                 new short [] { 0, 2, 0, 0, 0, 0, 0, 0 },//H2
@@ -672,17 +607,18 @@ namespace CIA {
                 new short [] { 1, 0, 2, 0, 0, 0, 0, 0 },//CO2
                 new short [] { 2, 2, 1, 0, 0, 0, 0, 0 },//C2H2O
                 new short [] { 0, 0, 1, 0, 0, 0, 0, 0 },//O
-                new short [] { 1, 1, 0, 0, 0, 0, 0, 0 },//CH
+                //new short [] { 1, 1, 0, 0, 0, 0, 0, 0 },//CH
                 new short [] { 0, 1, 0, 1, 0, 0, 0, 0 },//HN
-                new short [] { 0, 0, 3, 0, 0, 0, 1, 0 }//O3P
+                //new short [] { 0, 0, 3, 0, 0, 0, 1, 0 }//O3P
+                new short [] { 1, 2, 1, 0, 0, 0, 0, 0 }//CH2O
         };
-        bool [] ActiveRelationBuildingBlocks = new bool [] { true, false, true, false, false, false, true, false, false, false};//, [ RelationBuildingBlockFormulas.Length ];
+        bool [] ActiveRelationBuildingBlocks = new bool [] { true, false, true, false, false, false, true, false, false};
         public bool [] GetActiveRelationFormulaBuildingBlocks() { return ActiveRelationBuildingBlocks; }
         public void SetActiveRelationFormulaBuildingBlocks( bool [] ActiveBlocks ) {
             ListActiveRelationFormulaBuildingBlocks = new List<short []>();
             List<double> ActiveRelationFormulaBuildingBlockMassesList = new List<double>();
             //ActiveRelationFormulaBuildingBlockMasses = new double [ ListActiveRelationFormulaBuildingBlocks.Count ];
-            for ( int ActiveBlock = 0; ActiveBlock < ActiveBlocks.Length; ActiveBlock++ ) {
+            for ( int ActiveBlock = 0; ActiveBlock < ActiveBlocks.Length; ActiveBlock++ ) {                
                 if ( ActiveBlocks [ ActiveBlock ] == false ) { continue; }
                 double Mass = 0;
                 for ( int Element = 0; Element < ElementCount; Element++ ) {
@@ -704,7 +640,7 @@ namespace CIA {
             for( int Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++ ) {
                 ActiveRelationFormulaBuildingBlockMasses [ Relation ] = 0;
                 for( int Element = 0; Element < ElementCount; Element++ ) {
-                    ActiveRelationFormulaBuildingBlockMasses [ Relation ] = ActiveRelationFormulaBuildingBlockMasses [ Relation ] +
+                    ActiveRelationFormulaBuildingBlockMasses [ Relation ] = ActiveRelationFormulaBuildingBlockMasses [ Relation ] + 
                             ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] * ElementMasses [ Element ];
                 }
             }
@@ -723,12 +659,45 @@ namespace CIA {
         string [] FormulaScoreNames = new string []{
                 "min(S+P) & The lowest error",
                 "The lowest error",
-                "min(N+S+P) & The lowest error"};
+                "min(N+S+P) & The lowest error",
+                "min(O+N+S+P) & The lowest error",
+                "UserDefined"
+        };
         public string [] GetFormulaScoreNames() { return FormulaScoreNames; }
-        public enum EFormulaScore { lowestSP = 0, lowestError = 1, HAcap = 2};
-        public EFormulaScore FormulaScore = EFormulaScore.HAcap;//default
+        public enum EFormulaScore { MinSPAndError = 0, lowestError = 1, MinNSPAndError = 2, MinONSPAndError = 3, UserDefined = 4};
+        public EFormulaScore FormulaScore = EFormulaScore.MinNSPAndError;//default
         public EFormulaScore GetFormulaScore() { return FormulaScore; }
         public void SetFormulaScore( EFormulaScore FormulaScore ) { this.FormulaScore = FormulaScore; }
+
+        //User-defined score
+        System.Data.DataTable UserDefinedScoreTable;
+        string UserDefinedScore = "";
+        public string GetUserDefinedScore() { return UserDefinedScore; }
+        string PrefixFirst = "First";
+        string PrefixSecond = "Second";
+        public void SetUserDefinedScore( string UserDefinedScore) {
+            if ( UserDefinedScore.Length == 0 ) {
+                UserDefinedScoreTable = null;
+                return;
+            }
+            UserDefinedScoreTable = new System.Data.DataTable();
+            //PrefixFirst            
+            UserDefinedScoreTable.Columns.Add( PrefixFirst + "Mass", typeof( double ) );
+            UserDefinedScoreTable.Columns.Add( PrefixFirst + "Error", typeof( double ) );
+            foreach ( string Name in Enum.GetNames( typeof( EElemIndex ) ) ) {
+                UserDefinedScoreTable.Columns.Add( PrefixFirst + Name, typeof( short ) );
+            }
+            //PrefixSecond
+            UserDefinedScoreTable.Columns.Add( PrefixSecond + "Mass", typeof( double ) );
+            UserDefinedScoreTable.Columns.Add( PrefixSecond + "Error", typeof( double ) );
+            foreach ( string Name in Enum.GetNames( typeof( EElemIndex ) ) ) {
+                UserDefinedScoreTable.Columns.Add( PrefixSecond + Name, typeof( short ) );
+            }
+
+            UserDefinedScoreTable.Columns.Add( "UserDefinedScore", typeof( bool ), UserDefinedScore);
+            UserDefinedScoreTable.Rows.Add( UserDefinedScoreTable.NewRow() );
+            this.UserDefinedScore = UserDefinedScore;
+        }
 
         //Kendrick
         bool UseKendrick = true;
@@ -740,11 +709,17 @@ namespace CIA {
         public bool GetUseC13() { return UseC13; }
         public void SetUseC13( bool UseC13 ) { this.UseC13 = UseC13; }
         double C13Tolerance = 0;
-        public double GetC13Tolerance() { return C13Tolerance; }
+        public double GetC13Tolerance( ) { return C13Tolerance; }
         public void SetC13Tolerance( double C13Tolerance ) { this.C13Tolerance = C13Tolerance; }
+        public double GetRealC13Tolerance( double PeakMass ) {
+            if ( StaticDynamicPpmError == true ) {
+                return StdDevErrorGain * InputData.GetErrorStdDev( PeakMass );
+            }
+            return C13Tolerance;
+        }
 
         //Golden rule filters
-        public string [] GoldenRuleFilterNames = new string []{
+        public string [] GoldenRuleFilterNames = new string []{ 
                 "Elemental counts",
                 "Valence rules",
                 "Elemental ratios",
@@ -783,11 +758,11 @@ namespace CIA {
             if( oESpecialFilter != ESpecialFilters.None ) {
                 DataTableSpecialFilter.Columns.Add( "SpecialFilter", typeof( bool ), SpecialFilterRules [ ( int ) oESpecialFilter ] );
             }
-            DataTableSpecialFilter.Rows.Add( DataTableSpecialFilter.NewRow() );
+            DataTableSpecialFilter.Rows.Add( DataTableSpecialFilter.NewRow() );           
         }
         //User-defined filters
-        string UserDefinedFilter = "";
         System.Data.DataTable UserDefinedFilterTable;
+        string UserDefinedFilter = "";
         public string GetUserDefinedFilter(){ return UserDefinedFilter;}
         public void SetUserDefinedFilter( string UserDefinedFilter ) {
             if( UserDefinedFilter.Length == 0 ) {
@@ -815,9 +790,9 @@ namespace CIA {
         public void SetErrorType( EErrorType oEErrorType ) { this.oEErrorType = oEErrorType; }
 
         //Reports
-        bool GenerateIndividualFileReports = false;
-        public bool GetGenerateIndividualFileReports(){ return GenerateIndividualFileReports;}
-        public void SetGenerateIndividualFileReports( bool GenerateIndividualFileReports ) { this.GenerateIndividualFileReports = GenerateIndividualFileReports; }
+        bool GenerateReports = false;
+        public bool GetGenerateReports() { return GenerateReports; }
+        public void SetGenerateReports( bool GenerateReports ) { this.GenerateReports = GenerateReports; }
 
         int MinPeaksPerChain = 5;
         public int GetMinPeaksPerChain() { return MinPeaksPerChain; }
@@ -828,57 +803,203 @@ namespace CIA {
         //public void SetLogReportStatus( bool LogReportStatus ) { this.LogReportStatus = LogReportStatus; }
         //public StreamWriter oStreamLogWriter;
 
+        /*
         bool AddChain = false;
         public bool GetGenerateChainReport() { return AddChain; }
         public void SetAddChains( bool AddChain ) { this.AddChain = AddChain; }
         public bool GetAddChains(){ return AddChain;}
+        */
 
         //Output file delimiter
-        public enum EDelimiters { Comma, Tab, Space};
-        EDelimiters oEOutputFileDelimiter = EDelimiters.Comma;
+        string OutputFileDelimiter = ",";
+        /*public enum EDelimiters { Comma, Tab, Space};
+        EDelimiters oEOutputFileDelimiter = EDelimiters.Comma;        
         public static string OutputFileDelimiterToString( EDelimiters oo){
             switch ( oo ) {
                 case EDelimiters.Comma: return ",";
                 case EDelimiters.Tab: return "\t";
                 case EDelimiters.Space: return " ";
-                default:
-                    var ex = new Exception( "Delimeter error. [" + oo + "]" );
-                    FormularityProgram.ReportError(ex, false);
-                    throw ex;
+                default: throw new Exception( "Delimeter error. [" + oo.ToString() + "]");
             }
         }
         public static EDelimiters OutputFileDelimiterToEnum( string oo ) {
-            switch ( oo.ToLower() ) {
-                case ",":
-                case "comma":
-                    return EDelimiters.Comma;
-                case "\t":
-                case "tab":
-                    return EDelimiters.Tab;
-                case " ":
-                case "space":
-                    return EDelimiters.Space;
-                default:
-                    var ex = new Exception( "Delimeter error. [" + oo + "]" );
-                    FormularityProgram.ReportError(ex, false);
-                    throw ex;
+            switch ( oo ) {
+                case ",": return EDelimiters.Comma;
+                case "\t": return EDelimiters.Tab;
+                case " ": return EDelimiters.Space;
+                default: throw new Exception( "Delimeter error. [" + oo + "]");
             }
         }
-        string OutputFileDelimiter = ",";
         public EDelimiters GetOutputFileDelimiterType() { return oEOutputFileDelimiter; }
         public string GetOutputFileDelimiter() { return OutputFileDelimiter; }
         public void SetOutputFileDelimiterType( EDelimiters Delimiter ) {
             this.oEOutputFileDelimiter = Delimiter;
             OutputFileDelimiter = OutputFileDelimiterToString( Delimiter );
         }
-
-        Data oData = new Data();
+        */
+        Data oData = new Data();//log file
         public AlignData oAlignData = new AlignData();
         public TotalIPDBSearch Ipa;
         public CCia() {
             Ipa = new TotalIPDBSearch();
             foreach( short Element in NullFormula ) { NullFormula [ Element ] = 0; }
-            //SetRelationFormulaBuildingBlocks( RelationBuildingBlockFormulas );
+            //SetRelationFormulaBuildingBlocks( RelationBuildingBlockFormulas );           
+        }
+        public enum ProcessType { Cia, Ipa, CiaIpa };
+        ProcessType oProcessType = ProcessType.Cia;
+        public ProcessType GetProcessType() { return oProcessType; }
+        public void SetProcessType( ProcessType oProcessType ) { this.oProcessType = oProcessType; }
+        string OutputSubfolder = "";
+        public void Process( string [] Filenames) {
+            //create subfolder
+            string SubfolderName = DateTime.Now.ToString( "yyyyMMdd_HHmmss" );
+            OutputSubfolder = Path.Combine( Path.GetDirectoryName( Filenames [ 0 ] ), SubfolderName );
+            Directory.CreateDirectory( OutputSubfolder );
+
+            string LogFilename = Path.Combine( OutputSubfolder, "log.csv" );
+            StreamWriter oStreamLogWriter = new StreamWriter( LogFilename );
+            oStreamLogWriter.AutoFlush = true;
+
+            int FileCount = Filenames.Length;
+            double [] [] Masses = new double [ FileCount ] [];
+            double [] [] Abundances = new double [ FileCount ] [];
+            double [] [] SNs = new double [ FileCount ] [];
+            double [] [] Resolutions = new double [ FileCount ] [];
+            double [] [] RelAbundances = new double [ FileCount ] [];
+            InputData = new InputData();
+            Support.CChainBlocks ChainBlocks = new CChainBlocks();
+            string [] StandardBlockNames = new string [] { "H2", "C", "CH2", "O" };
+            double [] StandardBlockMasses = new double [] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
+
+            double [] MaxAbundances = new double [ FileCount ];
+            double [] [] CalMasses = new double [ FileCount ] [];
+
+            if ( oTotalCalibration.ttl_cal_regression != TotalCalibration.ttlRegressionType.none ) {
+                oTotalCalibration.Load( RefPeakFilename );
+            }
+            if ( GenerateReports == true ) {
+                string IsotopeFilename = "Isotope.inf";
+                CIsotope.ConvertIsotopeFileIntoIsotopeDistanceFile( IsotopeFilename );
+                ChainBlocks.KnownMassBlocksFromFile( "dmTransformations_MalakReal.csv" );
+            }
+            for ( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
+                //read files
+                Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses [ FileIndex ], out Abundances [ FileIndex ], out SNs [ FileIndex ], out Resolutions [ FileIndex ], out RelAbundances [ FileIndex ] );
+                if ( Masses [ FileIndex ].Length == 0 ) {
+                    Console.WriteLine( "Warning: no data points found in " + Path.GetFileName( Filenames [ FileIndex ] ) );
+                    continue;
+                }
+                MaxAbundances [ FileIndex ] = Support.CArrayMath.Max( Abundances [ FileIndex ] );
+                //oStreamLogWriter.WriteLine( "\r\n\t\t\t\t\tDataset " + Path.GetFileName( Filenames [ FileIndex ] ) );
+                FormularityProgram.AppendToLog( oStreamLogWriter, "\n" );
+                FormularityProgram.AppendToLog( oStreamLogWriter, "Dataset: " + Path.GetFileName( Filenames [ FileIndex ] ) + "\n" );
+                //Pre-Aligment
+                //oStreamLogWriter.Write( "Pre-alignment:" );
+                FormularityProgram.AppendToLog( oStreamLogWriter, "Pre-alignment:\n" );
+                if ( ( PreAlignment == true ) 
+                        || ( StaticDynamicPpmError == true ) 
+                        || ( oRelationErrorType == RelationErrorType.DynamicPPM) ) {
+                    //spectra alignment                            
+                    InputData.Masses = Masses [ FileIndex ];
+                    InputData.Abundances = Abundances [ FileIndex ];
+                    InputData.Init();
+
+                    double StartPpmError = 5;
+                    InputData.MaxPpmErrorGain = 1;
+                    int MinPeaksPerChain = 5;
+
+                    if ( GenerateReports == true ) {
+                        //double [] StandardBlockMasses = new double [] { 2* CElements.H, CElements.C, 2* CElements.H + CElements.C, CElements.O };
+                        ChainBlocks.CalculateErrorDistribution( InputData, StartPpmError, StandardBlockMasses );
+                        InputData.MaxPpmErrorGain = 3;
+
+                        Support.CChainBlocks.PairDistance [] DistancePeaks = ChainBlocks.GetPairChainIsotopeStatistics( InputData );
+                        File.WriteAllText( Path.Combine( OutputSubfolder, Path.GetFileNameWithoutExtension( Filenames [ FileIndex ]) + "ChainIsotopes.csv"), ChainBlocks.PairChainIsotopeStatisticsToString( DistancePeaks) );
+                    }
+
+                    ChainBlocks.CalculateErrorDistribution( InputData, StartPpmError, StandardBlockMasses );
+                    ChainBlocks.FindChains1( InputData, MinPeaksPerChain, InputData.Masses.Last() + 1, StandardBlockMasses );
+                    ChainBlocks.FindClusters( InputData );
+                    ChainBlocks.AssignIdealMassesTheBiggestCluster( InputData );
+
+                    //oStreamLogWriter.Write( "\r\nStart ppm error: " + ( FormulaPPMTolerance * 5 ).ToString( "F8" ) );
+                    FormularityProgram.AppendToLog( oStreamLogWriter, "Start ppm error: " + ( FormulaPPMTolerance * 5 ).ToString( "F8" ) + "\n");
+                    string TempText = string.Empty;
+                    foreach ( string BlockName in StandardBlockNames ) {
+                        TempText = TempText + BlockName + ",";
+                    }
+                    //oStreamLogWriter.Write( "\r\nError StdDev distribution along mass:\r\n" );
+                    FormularityProgram.AppendToLog( oStreamLogWriter, "Error StdDev distribution along mass:\n" );
+                    //oStreamLogWriter.Write( InputData.ErrorDistributionToString() );
+                    FormularityProgram.AppendToLog( oStreamLogWriter, InputData.ErrorDistributionToString() );
+                    if ( GenerateReports == true ) {
+                        File.WriteAllText( Path.Combine( OutputSubfolder, Path.GetFileNameWithoutExtension( Filenames [ FileIndex ]) + "ErrorDistribution.csv"), InputData.ErrorDistributionToString( true ) );
+                        File.WriteAllText( Path.Combine( OutputSubfolder, Path.GetFileNameWithoutExtension( Filenames [ FileIndex ]) + "Chains.csv"), InputData.ChainsToString( true ) );
+                        File.WriteAllText( Path.Combine( OutputSubfolder, Path.GetFileNameWithoutExtension( Filenames [ FileIndex ]) + "Clusters.csv"), InputData.ClustersToString( true ) );
+                        File.WriteAllText( Path.Combine( OutputSubfolder, Path.GetFileNameWithoutExtension( Filenames [ FileIndex ]) + "IdealMassesAfterCluster0.csv"), InputData.IdealMassesToString() );
+                    }
+                    ChainBlocks.AssignIdealMassesToRestPeaks( InputData );
+                    if ( GenerateReports == true ) {
+                        File.WriteAllText( Path.Combine( OutputSubfolder, Path.GetFileNameWithoutExtension( Filenames [ FileIndex ]) + "IdealMasses.csv"), InputData.IdealMassesToString() );
+                    }
+                    Masses [ FileIndex ] = InputData.IdealMasses;
+                } else {
+                    //oStreamLogWriter.Write( "no" );
+                    FormularityProgram.AppendToLog( oStreamLogWriter, "no\n" );
+                }
+                //Calibration
+                //oStreamLogWriter.Write( "\r\n\r\nCalibration:" );
+                FormularityProgram.AppendToLog( oStreamLogWriter, "\nCalibration: " );
+                if ( oTotalCalibration.ttl_cal_regression == TotalCalibration.ttlRegressionType.none ) {
+                    //oStreamLogWriter.Write( "no" );
+                    FormularityProgram.AppendToLog( oStreamLogWriter, "no\n" );
+                    CalMasses [ FileIndex ] = new double [ Masses [ FileIndex ].Length ];
+                    //for ( int PeakIndex = 0; PeakIndex < CalMasses.Length; PeakIndex++ ) {
+                    //    CalMasses [ PeakIndex ] = Masses [ PeakIndex ];
+                    //}
+                    Array.Copy( Masses [ FileIndex ], CalMasses [ FileIndex ], Masses [ FileIndex ].Length );
+                } else {
+                    oTotalCalibration.cal_log.Clear();
+                    double MaxAbundance = Support.CArrayMath.Max( Abundances [ FileIndex ] );
+                    CalMasses [ FileIndex ] = oTotalCalibration.ttl_LQ_InternalCalibration( ref Masses [ FileIndex ], ref Abundances [ FileIndex ], ref SNs [ FileIndex ], MaxAbundances [ FileIndex ] );
+                    //oStreamLogWriter.Write( oTotalCalibration.cal_log );
+                    FormularityProgram.AppendToLog( oStreamLogWriter, oTotalCalibration.cal_log + "\n");
+                    if ( CalMasses [ FileIndex ] == null ) {
+                        FormularityProgram.AppendToLog( oStreamLogWriter, "Calibration failed; using uncalibrated masses" );
+                        FormularityProgram.AppendToLog( oStreamLogWriter, "" );
+                        // Populate the calibrated mass array with the original masses
+                        Array.Copy( Masses [ FileIndex ], CalMasses [ FileIndex ], Masses [ FileIndex ].Length );
+                    }
+                }
+            }
+            if( ( oProcessType == ProcessType.Cia) || ( oProcessType == ProcessType.CiaIpa) ){
+                Process( Filenames, Masses, Abundances, SNs, Resolutions, RelAbundances, CalMasses, oStreamLogWriter );
+            }
+            if ( ( oProcessType == ProcessType.Ipa ) || ( oProcessType == ProcessType.CiaIpa ) ) {
+                for ( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
+                    Ipa.IPDB_log.Clear();
+                    Ipa.ttlSearch( ref CalMasses [ FileIndex ], ref Abundances [ FileIndex ], ref SNs [ FileIndex ], ref MaxAbundances [ FileIndex ], Filenames [ FileIndex ] );
+                    //oStreamLogWriter.Write( Ipa.IPDB_log );
+                    FormularityProgram.AppendToLog( oStreamLogWriter, Ipa.IPDB_log + "\n");
+                }
+            }
+
+            //oStreamLogWriter.WriteLine( "Processed files:" );
+            FormularityProgram.AppendToLog( oStreamLogWriter, "Processed files:\n" );
+            foreach ( string Filename in Filenames ) {
+                //oStreamLogWriter.WriteLine( Path.GetFileName( Filename ) );
+                FormularityProgram.AppendToLog( oStreamLogWriter, Path.GetFileName( Filename ) + "\n");
+            }
+            //oStreamLogWriter.WriteLine( "Parameters:" );
+            FormularityProgram.AppendToLog( oStreamLogWriter, "Parameters:\n" );
+            //oStreamLogWriter.Write( GetSaveParameterText() );
+            FormularityProgram.AppendToLog( oStreamLogWriter, GetSaveParameterText() + "\n");
+            oStreamLogWriter.Flush();
+            oStreamLogWriter.Close();
+            var LogFileInfo = new FileInfo( LogFilename );
+            if ( LogFileInfo.Length == 0 ) {
+                LogFileInfo.Delete();
+            }
         }
         public void Process( string [] Filenames, double [] [] Masses, double [] [] Abundances, double [] [] SNs, double [] [] Resolutions, double [] [] RelAbundances, double [] [] CalMasses, StreamWriter oStreamLogWriter ) {
             try {
@@ -906,18 +1027,12 @@ namespace CIA {
 
                 //Alignment + Formula finding
                 if( Alignment == true ) {
-                    Console.WriteLine("Aligning");
                     AlignmentByPeak();
                     for( int PeakIndex = 0; PeakIndex < oAlignData.AlignMasses.Length; PeakIndex++ ) {
                         oAlignData.NeutralMasses [ PeakIndex ] = Ipa.GetNeutralMass( oAlignData.AlignMasses [ PeakIndex ] );
                     }
-                    if (oAlignData.NeutralMasses.Length == 0)
-                    {
-                        FormularityProgram.ReportError("Nothing to align; aborting");
-                        return;
-                    }
-                    Console.WriteLine("Formula Finding");
-                    FindFormulas( oAlignData.NeutralMasses, oAlignData.Formulas, oAlignData.PPMErrors, oAlignData.Candidates, FormulaPPMTolerance, RelationErrorAMU, MassLimit );
+                    //FindFormulas( oAlignData.NeutralMasses, oAlignData.Formulas, oAlignData.PPMErrors, oAlignData.Candidates, FormulaPPMTolerance, RelationErrorAMU, MassLimit );
+                    FindFormulas( oAlignData.NeutralMasses, oAlignData.Formulas, oAlignData.PPMErrors, oAlignData.Candidates, RelationErrorAMU, MassLimit );
                     ProcessC13( oAlignData.NeutralMasses, oAlignData.Formulas, oAlignData.PPMErrors );
                 } else {
                     for( int FileIndex = 0; FileIndex < oData.FileCount; FileIndex++ ) {
@@ -925,14 +1040,14 @@ namespace CIA {
                             oData.AlignMasses [ FileIndex ] [ PeakIndex ] = oData.CalMasses [ FileIndex ] [ PeakIndex ];
                             oData.NeutralMasses [ FileIndex ] [ PeakIndex ] = Ipa.GetNeutralMass( oData.AlignMasses [ FileIndex ] [ PeakIndex ] );
                             oData.Formulas [ FileIndex ] [ PeakIndex ] = ( short [] ) NullFormula.Clone();
-                        }
-                        Console.WriteLine("Formula Finding");
-                        FindFormulas( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ], oData.Candidates [ FileIndex ], FormulaPPMTolerance, RelationErrorAMU, MassLimit );
+                        } 
+                        //FindFormulas( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ], oData.Candidates [ FileIndex ], FormulaPPMTolerance, RelationErrorAMU, MassLimit );
+                        FindFormulas( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ], oData.Candidates [ FileIndex ], RelationErrorAMU, MassLimit );
                         ProcessC13( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ] );
                     }
                 }
 
-                //Save
+                //Report
                 //preparation
                 if( Alignment == true ) {
                     //preparation: peak alignment into file
@@ -949,16 +1064,16 @@ namespace CIA {
                     }
                 }
 
-                //IndividualFileReports
-                if( GenerateIndividualFileReports == true ) {
+                if ( ( Alignment == false) || ( GenerateReports == true )) {
                     for( int FileIndex = 0; FileIndex < Filenames.Length; FileIndex++ ) {
-                        StreamWriter oStreamWriter;
-                        int FileExtentionLength = Path.GetExtension( Filenames [ FileIndex ] ).Length;
-                        if( oEOutputFileDelimiter == EDelimiters.Comma ) {
-                            oStreamWriter = new StreamWriter( Filenames [ FileIndex ].Substring( 0, Filenames [ FileIndex ].Length - FileExtentionLength ) + "CShOut.csv" );
-                        } else {
-                            oStreamWriter = new StreamWriter( Filenames [ FileIndex ].Substring( 0, Filenames [ FileIndex ].Length - FileExtentionLength ) + "CShOut.txt" );
-                        }
+                        //StreamWriter oStreamWriter;
+                        //int FileExtentionLength = Path.GetExtension( Filenames [ FileIndex ] ).Length;
+                        //if( oEOutputFileDelimiter == EDelimiters.Comma ) {
+                        //    oStreamWriter = new StreamWriter( Filenames [ FileIndex ].Substring( 0, Filenames [ FileIndex ].Length - FileExtentionLength ) + "CShOut.csv" );
+                        //} else {
+                        //    oStreamWriter = new StreamWriter( Filenames [ FileIndex ].Substring( 0, Filenames [ FileIndex ].Length - FileExtentionLength ) + "CShOut.txt" );
+                        //}
+                        StreamWriter oStreamWriter = new StreamWriter( Path.Combine( OutputSubfolder, Path.GetFileNameWithoutExtension( Filenames [ FileIndex ]) + "Result.csv" ) );
                         double [] Masses1 = oData.Masses [ FileIndex ];
                         double [] Abundances1 = oData.Abundances [ FileIndex ];
                         double [] SNs1 = oData.SNs [ FileIndex ];
@@ -972,36 +1087,39 @@ namespace CIA {
                         double [] PPMErrors = oData.PPMErrors [ FileIndex ];
                         short [] Candidates = oData.Candidates [ FileIndex ];
 
-                        string HeaderLine = "Mass" + OutputFileDelimiter + "Abundance";
+                        string HeaderLine = "Mass";
                         for( int Element = 0; Element < ElementCount; Element++ ) {
                             HeaderLine = HeaderLine + OutputFileDelimiter + Enum.GetName( typeof( EElemIndex ), Element );
                         }
-                        HeaderLine = HeaderLine + OutputFileDelimiter + "Error_ppm" + OutputFileDelimiter + "Candidates";
-                        HeaderLine = HeaderLine + OutputFileDelimiter + "CalMass" + OutputFileDelimiter + "AlignMasses" + OutputFileDelimiter + "NeutralMass";
+                        HeaderLine = HeaderLine + OutputFileDelimiter + "El_comp" + OutputFileDelimiter + "Class";
+                        HeaderLine = HeaderLine + OutputFileDelimiter + "NeutralMass" + OutputFileDelimiter + "Error_ppm" + OutputFileDelimiter + "Candidates";
+                        HeaderLine = HeaderLine + OutputFileDelimiter + "CalMass" + OutputFileDelimiter + "AlignMasses" + OutputFileDelimiter + "Abundance";
                         if( SNs1 [ 0 ] > 0 ) {
                             HeaderLine = HeaderLine + OutputFileDelimiter + "sn" + OutputFileDelimiter + "resolution" + OutputFileDelimiter + "rel_abu" + OutputFileDelimiter + "peak_index";
                         }
                         oStreamWriter.WriteLine( HeaderLine );
 
                         for( int Peak = 0; Peak < Masses1.Length; Peak++ ) {
-                            string Line = Masses1 [ Peak ].ToString();
-                            Line = Line + OutputFileDelimiter + Abundances1 [ Peak ].ToString();
+                            string Line = Masses1 [ Peak ].ToString();                            
                             for( int Element = 0; Element < ElementCount; Element++ ) {
                                 Line = Line + OutputFileDelimiter + Formulas [ Peak ] [ Element ].ToString();
                             }
+                            Line = Line + OutputFileDelimiter +  GetFormulaElementComposition( Formulas [ Peak ] );
+                            Line = Line + OutputFileDelimiter + GetFormulaClass( Formulas [ Peak ] );
+                            Line = Line + OutputFileDelimiter + NeutralMasses [ Peak ].ToString();
                             if( oEErrorType == EErrorType.CIA ) {
                                 Line = Line + OutputFileDelimiter + PPMErrors [ Peak ].ToString();
                             } else if( oEErrorType == EErrorType.Signed ) {
                                 if( IsFormula( Formulas [ Peak ] ) == false ) {
                                     Line = Line + OutputFileDelimiter + "0";
                                 } else {
-                                    Line = Line + OutputFileDelimiter + CPpmError.SignedMassErrorPPM( NeutralMasses [ Peak ], FormulaToNeutralMass( Formulas [ Peak ] ) ).ToString();
+                                    Line = Line + OutputFileDelimiter + CPpmError.SignedPpmPPM( NeutralMasses [ Peak ], FormulaToNeutralMass( Formulas [ Peak ] ) ).ToString();
                                 }
                             }
                             Line = Line + OutputFileDelimiter + Candidates [ Peak ].ToString();
                             Line = Line + OutputFileDelimiter + CalMasses1 [ Peak ].ToString();
-                            Line = Line + OutputFileDelimiter + AlignMasses [ Peak ].ToString();
-                            Line = Line + OutputFileDelimiter + NeutralMasses [ Peak ].ToString();
+                            Line = Line + OutputFileDelimiter + AlignMasses [ Peak ].ToString();                            
+                            Line = Line + OutputFileDelimiter + Abundances1 [ Peak ].ToString();
                             if( SNs1 [ 0 ] > 0 ) {
                                 Line = Line + OutputFileDelimiter + SNs1 [ Peak ].ToString();
                                 Line = Line + OutputFileDelimiter + Resolutions1 [ Peak ].ToString();
@@ -1015,63 +1133,13 @@ namespace CIA {
                 }
                 //AlignmentReport
                 if( Alignment == true ) {
-                    //Chain report
-                    int [] [] PeaksChainIndexes = null;
-                    if ( AddChain == true ) {
-                        //Nikola 8/15/2017
-                        List<int> PowerfulPeakIndexes = new List<int>();
-                        int [] [] FilePeakIndexes = oAlignData.Indexes;
-
-                        for ( int PeakIndex = 0; PeakIndex< FilePeakIndexes.Length; PeakIndex++ ) {
-                            int [] FileIndexes = FilePeakIndexes [ PeakIndex ];
-                            int PowerfulPeakCount = 0;
-                            foreach ( int bb in FileIndexes ) {
-                                if ( bb >= 0 ) { PowerfulPeakCount++; }
-                            }
-                            if ( ( PowerfulPeakCount * 2.0 > FileIndexes.Length ) || ( FileIndexes.Length == 1)) {
-                                PowerfulPeakIndexes.Add( PeakIndex );
-                            }
-                        }
-                        double [] PowerfulPeakMasses = new double [ PowerfulPeakIndexes.Count ];
-                        for ( int PeakIndex = 0; PeakIndex < PowerfulPeakMasses.Length; PeakIndex++ ) {
-                            PowerfulPeakMasses [ PeakIndex ] = oAlignData.NeutralMasses [ PowerfulPeakIndexes [ PeakIndex ] ];
-                        }
-                        Support.InputData Data = new Support.InputData();
-                        Data.Masses = PowerfulPeakMasses;
-                        double PpmError = GetFormulaPPMTolerance();
-                        double MaxMass = PowerfulPeakMasses [ PowerfulPeakMasses.Length - 1 ];
-
-                        PeaksChainIndexes = new int [ oAlignData.AlignMasses.Length ] [];
-                        int [] tt = new int [ ActiveRelationFormulaBuildingBlockMasses.Length];
-                        for ( int BlockIndex = 0; BlockIndex < tt.Length; BlockIndex++ ) {
-                            tt [ BlockIndex ] = -1;
-                        }
-                        for ( int PeakIndex = 0; PeakIndex < PeaksChainIndexes.Length; PeakIndex++ ) {
-                            PeaksChainIndexes [ PeakIndex ] = (int []) tt.Clone();
-                        }
-
-                        CChainBlocks oCChainBlocks = new CChainBlocks();
-                        for ( int ActiveBlock = 0; ActiveBlock < ActiveRelationFormulaBuildingBlockMasses.Length; ActiveBlock++ ) {
-                            double MinChainMass = Support.CPpmError.LeftPpmMass( ActiveRelationFormulaBuildingBlockMasses [ ActiveBlock ], PpmError );
-                            double MaxChainMass = Support.CPpmError.RightPpmMass( ActiveRelationFormulaBuildingBlockMasses [ ActiveBlock ], PpmError );
-                            oCChainBlocks.FindChains( Data, 5, PpmError, PpmError, MaxMass, MinChainMass, MaxChainMass, false );
-                            oCChainBlocks.CreateUniqueChains( Data, PpmError );
-                            Chain [] Chains = Data.Chains;
-                            for ( int ChainIndex = 0; ChainIndex < Chains.Length; ChainIndex++ ) {
-                                foreach ( int PeakIndex in Chains [ ChainIndex ].PeakIndexes ) {
-                                    PeaksChainIndexes [ PeakIndex ] [ ActiveBlock ] = ChainIndex;
-                                }
-                            }
-                        }
-                    }
-                    string OutputFilePath;
-                    if( oEOutputFileDelimiter == EDelimiters.Comma ) {
-                        OutputFilePath = Path.Combine(Path.GetDirectoryName(Filenames[0]), "Report.csv");
-                    } else {
-                        OutputFilePath = Path.Combine(Path.GetDirectoryName(Filenames[0]), "Report.txt");
-                    }
-                    Console.WriteLine("Writing results to " + OutputFilePath);
-                    StreamWriter oStreamWriter = new StreamWriter(OutputFilePath);
+                    //StreamWriter oStreamWriter;
+                    //if( oEOutputFileDelimiter == EDelimiters.Comma ) {
+                    //    oStreamWriter = new StreamWriter( Path.GetDirectoryName( Filenames [ 0 ] ) + "\\Report.csv" );
+                    //} else {
+                    //    oStreamWriter = new StreamWriter( Path.GetDirectoryName( Filenames [ 0 ] ) + "\\Report.txt" );
+                    //}
+                    StreamWriter oStreamWriter = new StreamWriter( Path.Combine( OutputSubfolder, "Out.csv" ) );
                     string HeaderLine = "Mass";
                     foreach( string Element in Enum.GetNames( typeof( CCia.EElemIndex ) ) ) {
                         HeaderLine = HeaderLine + OutputFileDelimiter + Element;
@@ -1081,11 +1149,6 @@ namespace CIA {
                     foreach( string File in Filenames ) {
                         HeaderLine = HeaderLine + OutputFileDelimiter + Path.GetFileNameWithoutExtension( File );
                     }
-                    if ( AddChain == true ) {
-                        for ( int ActiveBlock = 0; ActiveBlock < ActiveRelationFormulaBuildingBlockMasses.Length; ActiveBlock++ ) {
-                            HeaderLine = HeaderLine + OutputFileDelimiter + ActiveRelationFormulaBuildingBlockMasses [ ActiveBlock ].ToString( "F6" );
-                        }
-                    }
                     oStreamWriter.WriteLine( HeaderLine );
 
                     for( int Peak = 0; Peak < oAlignData.NeutralMasses.Length; Peak++ ) {
@@ -1094,23 +1157,8 @@ namespace CIA {
                         for( int Element = 0; Element < ElementCount; Element++ ) {
                             Line = Line + OutputFileDelimiter + Formula [ Element ].ToString();
                         }
-                        Line = Line + OutputFileDelimiter;
-                        if( Formula [ ( int ) EElemIndex.C ] > 0 ) {
-                            foreach( EElemIndex Element in Enum.GetValues( typeof( EElemIndex ) ) ) {
-                                if( Element == EElemIndex.C ) {
-                                    if( Formula [ ( int ) EElemIndex.C ] + Formula [ ( int ) EElemIndex.C13 ] > 0 ) {
-                                        Line = Line + EElemIndex.C.ToString();
-                                    }
-                                } else if( Element == EElemIndex.C13 ) {
-                                    continue;
-                                } else {
-                                    if( Formula [ ( int ) Element ] > 0 ) {
-                                        Line = Line + Element.ToString();
-                                    }
-                                }
-                            }
-                        }
-
+                        Line = Line + OutputFileDelimiter +  GetFormulaElementComposition( Formula );
+                        /*
                         //class	        O:C(low)	O:C(high)	H:C(low)	H:C(high)
                         //lipid 	    >=0	        <0.3	    >=1.5	    <2.5
                         //unsatHC	    >=0	        <0.125	    >=0.8	    <1.5
@@ -1146,6 +1194,8 @@ namespace CIA {
                                 Line = Line + OutputFileDelimiter + "Other";
                             }
                         }
+                        */
+                        Line = Line + OutputFileDelimiter + GetFormulaClass( Formula );
                         Line = Line + OutputFileDelimiter + oAlignData.NeutralMasses [ Peak ].ToString();
                         if( oEErrorType == EErrorType.CIA ) {
                             Line = Line + OutputFileDelimiter + oAlignData.PPMErrors [ Peak ].ToString();
@@ -1153,7 +1203,7 @@ namespace CIA {
                             if( IsFormula( Formula ) == false ) {
                                 Line = Line + OutputFileDelimiter + "0";
                             } else {
-                                Line = Line + OutputFileDelimiter + CPpmError.SignedMassErrorPPM( oAlignData.NeutralMasses [ Peak ], FormulaToNeutralMass( Formula ) ).ToString();
+                                Line = Line + OutputFileDelimiter + CPpmError.SignedPpmPPM( oAlignData.NeutralMasses [ Peak ], FormulaToNeutralMass( Formula ) ).ToString();
                             }
                         }
                         Line = Line + OutputFileDelimiter + oAlignData.Candidates [ Peak ].ToString();
@@ -1164,22 +1214,75 @@ namespace CIA {
                             } else {
                                 Line = Line + OutputFileDelimiter + oData.Abundances [ FileIndex ] [ Indexes [ FileIndex ] ];
                             }
-                        }
-                        if ( AddChain == true ) {
-                            for ( int ActiveBlock = 0; ActiveBlock < ActiveRelationFormulaBuildingBlockMasses.Length; ActiveBlock++ ) {
-                                Line = Line + OutputFileDelimiter + PeaksChainIndexes[Peak] [ ActiveBlock ];
-                            }
-                        }
+                        } 
                         oStreamWriter.WriteLine( Line );
                     }
                     oStreamWriter.Close();
                 }
             } catch( Exception ex ) {
-                if( oStreamLogWriter != null ) {
-                    FormularityProgram.AppendToLog(oStreamLogWriter, "Exception: " + ex.Message);
+                if ( oStreamLogWriter != null ) {
+                    //oStreamLogWriter.WriteLine( "Exception: " );
+                    //oStreamLogWriter.Write( ex.Message );
+                    FormularityProgram.AppendToLog( oStreamLogWriter, "Exception: " + ex.Message );
                 } else {
-                    FormularityProgram.ReportError("Exception processing: " + ex.Message);
+                    FormularityProgram.ReportError( "Exception processing: " + ex.Message );
                 }
+            }
+        }
+        string GetFormulaElementComposition( short [] Formula ) {
+            string Answer = string.Empty;
+            if ( Formula [ ( int ) EElemIndex.C ] > 0 ) {
+                foreach ( EElemIndex Element in Enum.GetValues( typeof( EElemIndex ) ) ) {
+                    if ( Element == EElemIndex.C ) {
+                        if ( Formula [ ( int ) EElemIndex.C ] + Formula [ ( int ) EElemIndex.C13 ] > 0 ) {
+                            Answer = Answer + EElemIndex.C.ToString();
+                        }
+                    } else if ( Element == EElemIndex.C13 ) {
+                        continue;
+                    } else {
+                        if ( Formula [ ( int ) Element ] > 0 ) {
+                            Answer = Answer + Element.ToString();
+                        }
+                    }
+                }
+            }
+            return Answer;
+        }
+        string GetFormulaClass( short [] Formula ) {
+            //class	        O:C(low)	O:C(high)	H:C(low)	H:C(high)
+            //lipid 	    >=0	        <0.3	    >=1.5	    <2.5
+            //unsatHC	    >=0	        <0.125	    >=0.8	    <1.5
+            //condHC	    >=0	        <0.95	    >=0.2	    <0.8
+            //protein	    >=0.3	    <0.55	    >=1.5	    <2.3
+            //aminosugar	>=0.55   	<0.7	    >=1.5	    <2.2
+            //carb	        >=0.7	    <1.05	    >=1.5	    <2.2
+            //lignin	    >=0.125    	<0.65	    >=0.8	    <1.5
+            //tannin	    >=0.65	    <1.1	    >=0.8	    <1.5
+
+            double TotalC = Formula [ ( int ) EElemIndex.C ] + Formula [ ( int ) EElemIndex.C13 ];//must be double!
+            if ( TotalC == 0 ) {
+                return "None";
+            }
+            double HToC = Formula [ ( int ) EElemIndex.H ] / TotalC;
+            double OToC = Formula [ ( int ) EElemIndex.O ] / TotalC;
+            if ( ( ( OToC >= 0 ) && ( OToC < 0.3 ) && ( HToC >= 1.5 ) && ( HToC < 2.5 ) ) == true ) {//Lipid
+                return "Lipid";
+            } else if ( ( ( OToC >= 0 ) && ( OToC < 0.125 ) && ( HToC >= 0.8 ) && ( HToC < 1.5 ) ) == true ) {//UnsatHC
+                return "UnsatHC";
+            } else if ( ( ( OToC >= 0 ) && ( OToC < 0.95 ) && ( HToC >= 0.2 ) && ( HToC < 0.8 ) ) == true ) {//CondHC
+                return "ConHC";
+            } else if ( ( ( OToC >= 0.3 ) && ( OToC < 0.55 ) && ( HToC >= 1.5 ) && ( HToC < 2.3 ) ) == true ) {//Protein
+                return "Protein";
+            } else if ( ( ( OToC >= 0.55 ) && ( OToC < 0.7 ) && ( HToC >= 1.5 ) && ( HToC < 2.2 ) ) == true ) {//AminoSugar
+                return "AminoSugar";
+            } else if ( ( ( OToC >= 0.7 ) && ( OToC < 1.05 ) && ( HToC >= 1.5 ) && ( HToC < 2.2 ) ) == true ) {//Carb
+                return "Carb";
+            } else if ( ( ( OToC >= 0.125 ) && ( OToC < 0.65 ) && ( HToC >= 0.8 ) && ( HToC < 1.5 ) ) == true ) {//Lignin
+                return "Lignin";
+            } else if ( ( ( OToC >= 0.65 ) && ( OToC < 1.1 ) && ( HToC >= 0.8 ) && ( HToC < 1.5 ) ) == true ) {//Tannin
+                return "Tannin";
+            } else {
+                return "Other";
             }
         }
         public void CleanComObject( object o ) {
@@ -1189,11 +1292,11 @@ namespace CIA {
             } catch { } finally {
                 o = null;
             }
-        }
+        }        
         class CGrpdiffK {
             public bool IsEmpty;
             public List<int> [] Indexes;
-        };
+        }; 
         bool CheckPeakMassByEvenOdd( double [] Masses) {
             int Even = 0;
             int Odd = 0;
@@ -1204,40 +1307,41 @@ namespace CIA {
                     Odd = Odd + 1;
                 }
             }
-            if( Odd > Even ) {
-                return false;
-            } else {
+            if( Odd > Even ) { 
+                return false; 
+            } else { 
                 return true;
             }
         }
-        void FindFormulas( double [] NeutralMasses, short [][] Formulas, double [] PPMErrors, short [] Candidates, double FormulaErrorPPM, double RelationErrorAMU, double MassLimit ) {
+        //void FindFormulas( double [] NeutralMasses, short [][] Formulas, double [] PPMErrors, short [] Candidates, double FormulaErrorPPM, double RelationErrorAMU, double MassLimit ) {
+        void FindFormulas( double [] NeutralMasses, short [][] Formulas, double [] PPMErrors, short [] Candidates, double RelationErrorAMU, double MassLimit ) {
             //DIFFERENCE FROM NON-MODIFIED VERSION IS WHICH FUNCTIONAL GROUPS ARE PROPAGATED (SEE relations) AND DECISION TREE WHEN MULTIPLE FORMULAS ARE
             //FOUND; IDEA IS THAT MODIFIED VERSION SHOULD BE USED WHEN EXPERIMENTING REDUCING THE RISK OF CHANGING ORIGINAL FUNCTION OR CONFUSION WHICH VERSION IS USED
             //AFTER AUTOMATION THIS DILEMA SHOULD BE RESOLVED ON A PARAMETER FILE LEVEL(N.T.)
 
             //input the following variables:
-            //    peak_mass - list of masses
+            //    peak_mass - list of masses 
             //    peak_int - intensity of each peak (can currently be set to zeros)
-            //    FORMULA_ERROR is the error for the elemental formula determination by the function, chemform, in ppm;
+            //    FORMULA_ERROR is the error for the elemental formula determination by the function, chemform, in ppm; 
             //    RELATION_ERROR is the window allowed % for identification of a relationship between two peaks, in ppm.
             //    MASS_LIMIT is the maximum mass for the brute force calculation
             //    fullCompoundList - the database of possible compounds calculated by K Longnecker (LongneckerKujawinski_fullCompoundList.mat)
             //    sortType can be one of the following choices:
-            //        1) 'lowestSP' select the formula with the lowest # of S and P
+            //        1) 'lowestSP' select the formula with the lowest # of S and P 
             //        2) 'HAcap' sorts based on the lowest number of S,P,N, and then only formulas with P <= 1 or S <= 3 are considered valid
             //        3) 'lowestError' to sort on the formula which has the lowest error from the measured mass
             //    This iteration % of the program uses only chemical relationships that are common to refractory DOM such as humic acids. It does not include many biologically-relevant (i.e., metabolic) reactions.
 
-            //output is
+            //output is 
             //    formula : the elemental formulas for the peak list [C H O N C13 S P Na Error].
             //    elementOrder : a reminder of the order of elements by column
 
-            //Original version of this algorithm published as: Kujawinski and Behn. 2006. Automated analysis of electrospray ionization Fourier-transform ion cyclotron resonance mass spectra
-            //of natural organic matter. Analytical Chemistry 78:4363-4373.
+            //Original version of this algorithm published as: Kujawinski and Behn. 2006. Automated analysis of electrospray ionization Fourier-transform ion cyclotron resonance mass spectra 
+            //of natural organic matter. Analytical Chemistry 78:4363-4373. 
             //Largest change has been to use a database to find the formulas rather than recalculating all of the possible formulas each time.
             //Elizabeth Kujawinski Behn, May 2005
-
-            //Last updated:
+         
+            //Last updated: 
             //November 6, 2005 updated version received by K Longnecker from LK 8/8/08 KL changing relations to structures 9/12/08
             //KL added 9/12/08: put in a check to make sure that the format of the data are as needed for this function. peak_int and peak_mass both need to be multiple rows and one column
 
@@ -1245,17 +1349,17 @@ namespace CIA {
             //    can have different formulas with the same number of non-oxygen heteroatoms
             //KL 1/6/09 - convert the results of getMATfile to double precision to get the right answer in the mass calculations! and added a line to Check7GR to
             //    require all elements to be positive (bc can't have negative number of elements in a compound, so why allow it)
-            //KL 1/17/09 findformula_uselist_KL7_SPsort - Still finding too much S and P  at the expense of N, try sorting to bias against S and P, but not N this involves changes both
+            //KL 1/17/09 findformula_uselist_KL7_SPsort - Still finding too much S and P  at the expense of N, try sorting to bias against S and P, but not N this involves changes both 
             //    in the useMATfile function embedded and in the loops for building at the higher masses
             //KL 1/20/09 - had a requirement that to keep a new peak, has to be within half of the given formula_error if there already is an old formula IF the
             //    formula is a comparison bw an existing formula found through the relations and a new formula found with the database (previously brute force)
-            //KL 4/15/09 - IF there is more than one formula, cap the number of S and P, and then select based on lowest number of N, S, and P (sortType = 'HA_cap')
+            //KL 4/15/09 - IF there is more than one formula, cap the number of S and P, and then select based on lowest number of N, S, and P (sortType = 'HA_cap') 
             //    (will also test an overall cap on the number of S and P). Also, get rid of the relation which switches H for Na (will deal with that later)
             //KL 4/30/09 - cleaning up, and changing the names of the sortTypes KL 5/1/09 - only change is to correct the neutral mass check bc sent out the wrong version yesterday
             //KL 5/11/09 - changing the neutral mass check yet again
             //KL 9/23/09 - change useMATfile to send out startform as double precision
-            //KL 9/1/2011 - correcting problem found by Dan Baluha (Univ. of Maryland) where in one of the calculations, the error calculation was multiplied by 1e-6, rather than 1e6,
-            //    therefore the error calculations were off by 1e-12.
+            //KL 9/1/2011 - correcting problem found by Dan Baluha (Univ. of Maryland) where in one of the calculations, the error calculation was multiplied by 1e-6, rather than 1e6, 
+            //    therefore the error calculations were off by 1e-12.          
             //??? log
             CheckPeakMassByEvenOdd( NeutralMasses );
             //Create relations
@@ -1274,25 +1378,36 @@ namespace CIA {
                     double NeutralMassToMax = MaxMass - NeutralMass;
                     CurrentGrpdiffK.Indexes = new List<int> [ ListActiveRelationFormulaBuildingBlocks.Count ];
                     for( int Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++ ) {
-                        //KL note: look for differences, and keep those less than the defined relation_error
+                        //KL note: look for differences, and keep those less than the defined relation_error                 
                         List<int> CurIndexes = new List<int>();
                         int NeutralMassToMinGrp = ( int ) Math.Ceiling( NeutralMassToMin / ActiveRelationFormulaBuildingBlockMasses [ Relation ] );
                         int NeutralMassToMaxGrp = ( int ) Math.Floor( NeutralMassToMax / ActiveRelationFormulaBuildingBlockMasses [ Relation ] );
                         for( int CurrentGrp = NeutralMassToMinGrp; CurrentGrp <= NeutralMassToMaxGrp; CurrentGrp++ ) {
                             double GrpMinNeutralMass;
                             double GrpMaxNeutralMass;
-                            if( oRelationshipErrorType == RelationshipErrorType.AMU ) {
-                                GrpMinNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp - RelationErrorAMU);
-                                GrpMaxNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp + RelationErrorAMU);
-                            } else if( oRelationshipErrorType == RelationshipErrorType.GapPPM ) {
-                                double GapPPMError = CPpmError.PpmToError( ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp, RelationErrorAMU );
-                                GrpMinNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp - GapPPMError);
-                                GrpMaxNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp + GapPPMError);
-                            } else {
-                                double GapNeutralMass =  NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp;
-                                double PPMError = CPpmError.PpmToError( GapNeutralMass, RelationErrorAMU );
-                                GrpMinNeutralMass = GapNeutralMass - PPMError;
-                                GrpMaxNeutralMass = GapNeutralMass + PPMError;
+                            switch( oRelationErrorType){
+                                case RelationErrorType.AMU:
+                                    GrpMinNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp - RelationErrorAMU);
+                                    GrpMaxNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp + RelationErrorAMU);                              
+                                    break;
+                                case RelationErrorType.GapPPM:
+                                    double GapPPMError = CPpmError.PpmToError( ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp, RelationErrorAMU );                                
+                                    GrpMinNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp - GapPPMError);
+                                    GrpMaxNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp + GapPPMError);
+                                    break;
+                                case RelationErrorType.DynamicPPM:
+                                    double GapNeutralMass =  NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp;
+                                    double PPMError = StdDevErrorGain * InputData.GetErrorStdDev( GapNeutralMass ); 
+                                    GrpMinNeutralMass = GapNeutralMass - PPMError;
+                                    GrpMaxNeutralMass = GapNeutralMass + PPMError;
+                                    break;
+                                case RelationErrorType.PPM:
+                                default:
+                                    GapNeutralMass =  NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp;
+                                    PPMError = CPpmError.PpmToError( GapNeutralMass, RelationErrorAMU ); 
+                                    GrpMinNeutralMass = GapNeutralMass - PPMError;
+                                    GrpMaxNeutralMass = GapNeutralMass + PPMError;
+                                    break;
                             }
                             int GrpPeak = Array.BinarySearch( NeutralMasses, GrpMinNeutralMass );
                             if( GrpPeak < 0 ) { GrpPeak = ~GrpPeak; }
@@ -1323,7 +1438,7 @@ namespace CIA {
                     double DBFormulaMass = 0;
                     double DBFormulaMassError = 0;
                     DBFormulaMass = FormulaToNeutralMass( DBFormula );
-                    DBFormulaMassError = CPpmError.AbsMassErrorPPM( DBFormulaMass, NeutralMasses [ Peak ] );
+                    DBFormulaMassError = CPpmError.AbsPpmError( DBFormulaMass, NeutralMasses [ Peak ] );
                     if( GrpdiffK [ Peak ].IsEmpty == true ) {
                         //StartFormula = PickDBFormula( NeutralMasses [ Peak ], out Candidates[ Peak ]);
                         //if( IsFormula( DBFormula ) == true ) {
@@ -1345,13 +1460,13 @@ namespace CIA {
                             //first get the brute force formula from the table
                             //short [] tempform = PickDBFormula( NeutralMasses [ Peak ], out Candidates [ Peak ] );
                             //double tempmass = FormulaToNeutralMass( tempform );
-                            //double tempmass = FormulaToNeutralMass( DBFormula );
+                            //double tempmass = FormulaToNeutralMass( DBFormula );                            
                             //double errornew = AbsMassErrorPPM( tempmass, NeutralMasses [ Peak ]);
-                            //bool check = CheckFormulaByFilters( Formulas [ Peak ], NeutralMasses [ Peak ]);//this seems redundant...but leave in
-                            //attempt to address incorrect propagation without eliminating NH propagation
+                            //bool check = CheckFormulaByFilters( Formulas [ Peak ], NeutralMasses [ Peak ]);//this seems redundant...but leave in      
+                            //attempt to address incorrect propagation without eliminating NH propagation            
                             //Nikola Tolic(1/17/14)
                             //improvement on sub-ppm level is not that easy to evaluate; keep brute force formula if heteroatom evaluation makes it better choice
-                            //if we have resolved peaks this is where decision by "fine isotopic structure" could come handy
+                            //if we have resolved peaks this is where decision by "fine isotopic structure" could come handy     
                             //This was original LK decision tree with comments; then decide whether to keep the brute force formula or the formula which is already present (from the relations)
                             //if( check == false ) {
                             //    Formulas [ Peak ] = ( short [] ) DBFormula/*tempform*/.Clone();
@@ -1360,8 +1475,9 @@ namespace CIA {
                             if( UseCIAFormulaScore == true ) {
                                 //if( tempform [ ( int ) EElemNumber.S ] + tempform [ ( int ) EElemNumber.P ] < Formulas [ Peak ] [ ( int ) EElemNumber.S ] + Formulas [ Peak ] [ ( int ) EElemNumber.P ]
                                 if( DBFormula [ ( int ) EElemIndex.S ] + DBFormula [ ( int ) EElemIndex.P ] < Formulas [ Peak ] [ ( int ) EElemIndex.S ] + Formulas [ Peak ] [ ( int ) EElemIndex.P ]
-                                        && Math.Abs( DBFormulaMassError/*errornew*/ ) < FormulaErrorPPM / 2 ) {
-                                    //KL adding this last line 1/20/09 - only keep brute force if it 'really' improves the formula (much smaller error)
+                                        //&& Math.Abs( DBFormulaMassError/*errornew*/ ) < FormulaErrorPPM / 2 ) {
+                                        && Math.Abs( DBFormulaMassError/*errornew*/ ) < GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) {                                    
+                                    //KL adding this last line 1/20/09 - only keep brute force if it 'really' improves the formula (much smaller error)                                                                         
                                     Formulas [ Peak ] = ( short [] ) DBFormula/*tempform*/.Clone();
                                     PPMErrors [ Peak ] = DBFormulaMassError/*errornew*/;
                                 }
@@ -1387,14 +1503,15 @@ namespace CIA {
                                             newform [ Element ] = ( short ) ( DBFormula [ Element ] + numGps * ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] );
                                         }
                                         double newmass = FormulaToNeutralMass( newform );
-                                        double errornew = CPpmError.AbsMassErrorPPM( newmass, NeutralMasses [ relpk ] );
+                                        double errornew = CPpmError.AbsPpmError( newmass, NeutralMasses [ relpk ] );
                                         bool checknew = CheckFormulaByFilters( newform, NeutralMasses [ relpk ] );
                                         bool checkold = CheckFormulaByFilters( Formulas [ relpk ], NeutralMasses [ relpk ] );
                                         if( checknew == true ) {
                                             if( checkold == true ){
                                                 if( UseCIAFormulaScore == true ) {
                                                     if( ( newform [ ( int ) EElemIndex.S ] + newform [ ( int ) EElemIndex.P ] < Formulas [ relpk ] [ ( int ) EElemIndex.S ] + Formulas [ relpk ] [ ( int ) EElemIndex.P ] )
-                                                            && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) {
+                                                            //&& ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) {
+                                                            && ( Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) ) {
                                                         Formulas [ relpk ] = ( short [] ) newform.Clone();
                                                         PPMErrors [ relpk ] = errornew;
                                                     }
@@ -1404,7 +1521,8 @@ namespace CIA {
                                                         PPMErrors [ relpk ] = errornew;
                                                     }
                                                 }
-                                            } else if( checkold == false && Math.Abs( errornew ) <= FormulaErrorPPM ) {
+                                            //} else if( checkold == false && Math.Abs( errornew ) <= FormulaErrorPPM ) {
+                                            } else if ( checkold == false && Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) {
                                                 Formulas [ relpk ] = ( short [] ) newform.Clone();
                                                 PPMErrors [ relpk ] = errornew;
                                             }
@@ -1419,21 +1537,22 @@ namespace CIA {
                     if( GrpdiffK [ Peak ].IsEmpty == false) {
                         if( IsFormula( Formulas[ Peak ] ) == true ) {//if the formula is already known
                             short [] startform = ( short [] ) ( Formulas [ Peak ].Clone() );
-                            //KL change to only do this for the places where Grpdiff is not empty
+                            //KL change to only do this for the places where Grpdiff is not empty                                 
                             for( int Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++ ) {
                                 foreach( int relpk in GrpdiffK [ Peak ].Indexes [ Relation ] ) {
                                     //relpk > Peak???
                                     bool checkold = CheckFormulaByFilters( Formulas [ relpk ], NeutralMasses [ relpk ]);//???
                                     short [] newform = ( short [] ) startform.Clone();
-                                    int RelationshipGaps = ( int ) Math.Round( ( NeutralMasses [ relpk ] - NeutralMasses [ Peak ]) / ActiveRelationFormulaBuildingBlockMasses [ Relation ] );
-                                    if( Math.Abs( RelationshipGaps ) > MaxRelationGaps ) { continue; }
+                                    int RelationGaps = ( int ) Math.Round( ( NeutralMasses [ relpk ] - NeutralMasses [ Peak ]) / ActiveRelationFormulaBuildingBlockMasses [ Relation ] );
+                                    if( Math.Abs( RelationGaps ) > MaxRelationGaps ) { continue; }
                                     for( int Element = 0; Element < ElementCount; Element++ ) {
-                                        newform [ Element ] = ( short ) ( newform [ Element ] + RelationshipGaps * ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] );
+                                        newform [ Element ] = ( short ) ( newform [ Element ] + RelationGaps * ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] );
                                     }
                                     bool checknew = CheckFormulaByFilters( newform, NeutralMasses [ relpk ]);
                                     double newmass = FormulaToNeutralMass( newform );
-                                    double errornew = CPpmError.AbsMassErrorPPM( newmass, NeutralMasses [ relpk ] );
-                                    if( ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) {
+                                    double errornew = CPpmError.AbsPpmError( newmass, NeutralMasses [ relpk ] );
+                                    //if( ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) {
+                                    if ( ( checknew == true ) && ( Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) ) {                                        
                                         if( checkold == true ) {
                                             if( UseCIAFormulaScore == true) {
                                                 if( newform [ ( int ) EElemIndex.S ] + newform [ ( int ) EElemIndex.P ] < Formulas [ relpk ] [ ( int ) EElemIndex.S ] + Formulas [ relpk ] [ ( int ) EElemIndex.P ] ) {
@@ -1453,8 +1572,8 @@ namespace CIA {
                                     }
                                 }
                             }
-                        } else {//formula is not known - check for formulas in lower masses
-                            //KL change to only do this for the places where Grpdiff is not empty
+                        } else {//formula is not known - check for formulas in lower masses                            
+                            //KL change to only do this for the places where Grpdiff is not empty       
                             if( UseRelation == true ) {
                                 for( int Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++ ) {
                                     foreach( int low_m in GrpdiffK [ Peak ].Indexes [ Relation ] ) {
@@ -1462,19 +1581,20 @@ namespace CIA {
                                             //int low_m = GrpdiffK [ Peak ].Indexs [Relation][ t ];
                                             if( IsFormula( Formulas [ low_m ] ) == true ) {
                                                 short [] startform = ( short [] ) Formulas [ low_m ].Clone();
-                                                int RelationshipGaps = ( int ) Math.Round( Math.Abs( NeutralMasses [ low_m ] - NeutralMasses [ Peak ] ) / ActiveRelationFormulaBuildingBlockMasses [ Relation ] );
-                                                if( Math.Abs( RelationshipGaps ) > MaxRelationGaps ) { continue; }
+                                                int RelationGaps = ( int ) Math.Round( Math.Abs( NeutralMasses [ low_m ] - NeutralMasses [ Peak ] ) / ActiveRelationFormulaBuildingBlockMasses [ Relation ] );
+                                                if( Math.Abs( RelationGaps ) > MaxRelationGaps ) { continue; }
                                                 short [] newform = ( short [] ) startform.Clone();
                                                 for( int Element = 0; Element < ElementCount; Element++ ) {
-                                                    newform [ Element ] = ( short ) ( newform [ Element ] + RelationshipGaps * ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] );
+                                                    newform [ Element ] = ( short ) ( newform [ Element ] + RelationGaps * ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] );
                                                 }
                                                 bool checknew = CheckFormulaByFilters( newform, NeutralMasses [ Peak ] );
                                                 if( checknew == false ) { continue; }
                                                 double newmass = FormulaToNeutralMass( newform );
-                                                double errornew = CPpmError.AbsMassErrorPPM( newmass, NeutralMasses [ Peak ] );
+                                                double errornew = CPpmError.AbsPpmError( newmass, NeutralMasses [ Peak ] );
                                                 //if( Math.Abs( numGps ) <= MaxNumGps && checknew == true && errornew <= FormulaError ) {
                                                 bool bIsFormula = IsFormula( Formulas [ Peak ] );
-                                                if( ( ( bIsFormula == false ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) || ( ( bIsFormula == true ) && ( errornew < PPMErrors [ Peak ] ) ) ) {
+                                                //if( ( ( bIsFormula == false ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) || ( ( bIsFormula == true ) && ( errornew < PPMErrors [ Peak ] ) ) ) {
+                                                if ( ( ( bIsFormula == false ) && ( Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) ) || ( ( bIsFormula == true ) && ( errornew < PPMErrors [ Peak ] ) ) ) {                                                   
                                                     Formulas [ Peak ] = ( short [] ) newform.Clone();
                                                     PPMErrors [ Peak ] = errornew;
                                                 }
@@ -1517,15 +1637,16 @@ namespace CIA {
                             continue;
                         }
                         //int numCH2 = ( int ) Math.Floor( ( AKendrick_matrix [ relpk ].peak_mass - AKendrick_matrix [ FirstRelpk ].peak_mass ) / 14 );
-                        int numCH2 = ( int ) Math.Floor( ( NeutralMasses [ relpk ] - NeutralMasses[ FirstRelpk ]) / 14 );
+                        int numCH2 = ( int ) Math.Floor( ( NeutralMasses [ relpk ] - NeutralMasses[ FirstRelpk ]) / 14 );                        
                         short [] newform = ( short [] ) startform.Clone();
                         //KL change this to be more general
                         newform [ ( int ) EElemIndex.C ] = ( short ) ( newform [ ( int ) EElemIndex.C ] + 1 * numCH2 );
                         newform [ ( int ) EElemIndex.H ] = ( short ) ( newform [ ( int ) EElemIndex.H ] + 2 * numCH2 );
                         bool checknew = CheckFormulaByFilters( newform, NeutralMasses [ relpk ] );
                         bool checkold = CheckFormulaByFilters( Formulas [ relpk ], NeutralMasses [ relpk ] );
-                        double errornew = CPpmError.AbsMassErrorPPM( FormulaToNeutralMass( newform ), NeutralMasses [ relpk ] );
-                        if( ( checkold == true ) && ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM / 2 ) ){
+                        double errornew = CPpmError.AbsPpmError( FormulaToNeutralMass( newform ), NeutralMasses [ relpk ] );
+                        //if( ( checkold == true ) && ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM / 2 ) ){
+                        if( ( checkold == true ) && ( checknew == true ) && ( Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) ){
                             if( UseCIAFormulaScore == true ) {
                                 if( ( newform [ ( int ) EElemIndex.S ] + newform [ ( int ) EElemIndex.P ] ) < ( Formulas [ relpk ] [ ( int ) EElemIndex.S ] + Formulas [ relpk ] [ ( int ) EElemIndex.P ] ) ) {
                                     Formulas [ relpk ] = ( short [] ) newform.Clone();
@@ -1537,7 +1658,8 @@ namespace CIA {
                                     PPMErrors [ relpk ] = errornew;
                                 }
                             }
-                        } else if( ( checkold == false ) && ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM / 2 ) ) {
+                        //} else if( ( checkold == false ) && ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM / 2 ) ) {
+                        } else if ( ( checkold == false ) && ( checknew == true ) && ( Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) / 2 ) ) {                            
                             Formulas [ relpk ] = ( short [] ) newform.Clone();
                             PPMErrors [ relpk ] = errornew;
                         }
@@ -1551,7 +1673,7 @@ namespace CIA {
             short [] BestFormula = ( short[]) NullFormula.Clone();
             //using the master list of compounds - can keep them in the array and then use arrayfun to search through the different cells in sData
             //KL 12/15/08
-            //1/2/09 - can have the case where multiple compounds have the same number of non-oxygen heteroatoms, so that isn't always the best way to sort.
+            //1/2/09 - can have the case where multiple compounds have the same number of non-oxygen heteroatoms, so that isn't always the best way to sort. 
             //If that happens, from the options with the lowest number of non-oxygen heteroatoms, chose the one with the lowest error
             //KL 1/6/09 - convert elemformula to double to get the precision I need
 
@@ -1569,7 +1691,7 @@ namespace CIA {
                 //}
                 double DBMass = DBMasses [ DBIndex ];
                 short [] DBFormula = DBFormulas [ DBIndex ];
-                double ErrorPPMToDBMass = Math.Abs( CPpmError.AbsMassErrorPPM( DBMass, peak_mass ) );
+                double ErrorPPMToDBMass = Math.Abs( CPpmError.AbsPpmError( DBMass, peak_mass ) );
                 bool Change = false;
                 if( IsFormula( BestFormula) == false ) {
                     Change = true;
@@ -1583,214 +1705,431 @@ namespace CIA {
                     BestFormula = ( short [] ) DBFormula.Clone();
                     BestErrorPPM = ErrorPPMToDBMass;
                 }
-            }
+            }        
             return BestFormula;
         }
         private bool IsNewFormulaScoreBetter( short [] Formula, double FormulaError, short [] NewFormula, double NewFormulaError ) {
-            switch( FormulaScore ) {
-                case EFormulaScore.lowestSP:
+            switch ( FormulaScore ) {
+                case EFormulaScore.MinSPAndError:
                     //select the first elemental formula on the list (lowest # of non oxygen heteroatoms
-                    //1/20/09: change to test if only sort based on S and P
+                    //1/20/09: change to test if only sort based on S and P 
                     //KL 1/2/09 addition - if multiple with the same, low, # of non-oxygen heteroatoms, sort based on the lowest error AND
                     //lowest number of non-oyxgen heteroatoms (S and P only here).
-                    int SPlusP = Formula [ ( int ) EElemIndex.S ] + Formula [ ( int ) EElemIndex.P ];
-                    int NewSPlusP = NewFormula [ ( int ) EElemIndex.S ] + NewFormula [ ( int ) EElemIndex.P ];
-                    if( NewSPlusP < SPlusP) { return true;}
-                    break;
-                case EFormulaScore.lowestError:
-                    //sort based on the lowest error - for comparison
-                    if( NewFormulaError < FormulaError ) { return true;}
-                    break;
-                case EFormulaScore.HAcap:
-                    //public enum EElemNumber { C = 0, H, O, N, C13, S, P, Na};
-                    //added 4/15/09 by KL cap the number of S and P atoms, after selecting based on the lowest number of N, S, and P
-                    //4/15/09 by KL cap the number of S and P atoms, after selecting based on the lowest number of N, S, and P added 2/24/14 by NT; for masses under 350 limit number of N to 3 calculate the # of non-oxygen heteroatoms
-                    int NonOxyHeteroAtoms = Formula [ ( int ) EElemIndex.N ] + Formula [ ( int ) EElemIndex.S ] + Formula [ ( int ) EElemIndex.P ];
-                    int NewNonOxyHeteroAtoms = NewFormula [ ( int ) EElemIndex.N ] + NewFormula [ ( int ) EElemIndex.S ] + NewFormula [ ( int ) EElemIndex.P ];
-                    if( NewNonOxyHeteroAtoms < NonOxyHeteroAtoms ) {
-                        //only consider the formulas with the low # non-oxy HA
-                        return true;
-                    } else if( NonOxyHeteroAtoms == NewNonOxyHeteroAtoms ) {
+                    int SPSum = Formula [ ( int ) EElemIndex.S ] + Formula [ ( int ) EElemIndex.P ];
+                    int NewSPSum = NewFormula [ ( int ) EElemIndex.S ] + NewFormula [ ( int ) EElemIndex.P ];
+                    if ( NewSPSum < SPSum ) { return true; } 
+                    else if ( NewSPSum == SPSum ) {
                         //then only consider formulas with P <= 1 or S <= 3
                         bool Sle3AndPle1 = ( Formula [ ( int ) EElemIndex.S ] <= 3 ) & ( Formula [ ( int ) EElemIndex.P ] <= 1 );
                         bool NewSle3AndPle1 = ( NewFormula [ ( int ) EElemIndex.S ] <= 3 ) & ( NewFormula [ ( int ) EElemIndex.P ] <= 1 );
-                        if( ( Sle3AndPle1 == false ) && ( NewSle3AndPle1 == true ) ) {
+                        if ( ( Sle3AndPle1 == false ) && ( NewSle3AndPle1 == true ) ) {
                             return true;
-                        } else if( ( Sle3AndPle1 == NewSle3AndPle1 ) && ( FormulaError > NewFormulaError ) ) {
+                        } else if ( ( Sle3AndPle1 == NewSle3AndPle1 ) && ( FormulaError > NewFormulaError ) ) {
                             return true;
                         }
                     }
                     break;
+                case EFormulaScore.lowestError:
+                    //sort based on the lowest error - for comparison
+                    if ( NewFormulaError < FormulaError ) { return true; }
+                    break;
+                case EFormulaScore.MinNSPAndError:
+                    //public enum EElemNumber { C = 0, H, O, N, C13, S, P, Na};
+                    //added 4/15/09 by KL cap the number of S and P atoms, after selecting based on the lowest number of N, S, and P
+                    //4/15/09 by KL cap the number of S and P atoms, after selecting based on the lowest number of N, S, and P added 2/24/14 by NT; for masses under 350 limit number of N to 3 calculate the # of non-oxygen heteroatoms
+                    int NSPSum = Formula [ ( int ) EElemIndex.N ] + Formula [ ( int ) EElemIndex.S ] + Formula [ ( int ) EElemIndex.P ];
+                    int NewNSPSum = NewFormula [ ( int ) EElemIndex.N ] + NewFormula [ ( int ) EElemIndex.S ] + NewFormula [ ( int ) EElemIndex.P ];
+                    if ( NewNSPSum < NSPSum ) {
+                        //only consider the formulas with the low # non-oxy HA
+                        return true;
+                    } else if ( NSPSum == NewNSPSum ) {
+                        //then only consider formulas with P <= 1 or S <= 3
+                        bool Sle3AndPle1 = ( Formula [ ( int ) EElemIndex.S ] <= 3 ) & ( Formula [ ( int ) EElemIndex.P ] <= 1 );
+                        bool NewSle3AndPle1 = ( NewFormula [ ( int ) EElemIndex.S ] <= 3 ) & ( NewFormula [ ( int ) EElemIndex.P ] <= 1 );
+                        if ( ( Sle3AndPle1 == false ) && ( NewSle3AndPle1 == true ) ) {
+                            return true;
+                        } else if ( ( Sle3AndPle1 == NewSle3AndPle1 ) && ( FormulaError > NewFormulaError ) ) {
+                            return true;
+                        }
+                    }
+                    break;
+                case EFormulaScore.MinONSPAndError:
+                    int ONSPSum =  Formula [ ( int ) EElemIndex.O ]  + Formula [ ( int ) EElemIndex.N ] + Formula [ ( int ) EElemIndex.S ] + Formula [ ( int ) EElemIndex.P ];
+                    int NewONSPSum =  NewFormula [ ( int ) EElemIndex.O ] + NewFormula [ ( int ) EElemIndex.N ] + NewFormula [ ( int ) EElemIndex.S ] + NewFormula [ ( int ) EElemIndex.P ];
+                    if ( NewONSPSum < ONSPSum ) {
+                        //only consider the formulas with the low # non-oxy HA
+                        return true;
+                    } else if ( ONSPSum == NewONSPSum ) {
+                        //then only consider formulas with P <= 1 or S <= 3
+                        bool Sle3AndPle1 = ( Formula [ ( int ) EElemIndex.S ] <= 3 ) & ( Formula [ ( int ) EElemIndex.P ] <= 1 );
+                        bool NewSle3AndPle1 = ( NewFormula [ ( int ) EElemIndex.S ] <= 3 ) & ( NewFormula [ ( int ) EElemIndex.P ] <= 1 );
+                        if ( ( Sle3AndPle1 == false ) && ( NewSle3AndPle1 == true ) ) {
+                            return true;
+                        } else if ( ( Sle3AndPle1 == NewSle3AndPle1 ) && ( FormulaError > NewFormulaError ) ) {
+                            return true;
+                        }
+                    }
+                    break;
+                case EFormulaScore.UserDefined:
+                    if ( UserDefinedScoreTable != null ) {
+                        //PrefixFirst
+                        UserDefinedScoreTable.Rows [ 0 ] [ PrefixFirst + "Mass" ] =  FormulaToNeutralMass( Formula);
+                        UserDefinedScoreTable.Rows [ 0 ] [ PrefixFirst + "Error" ] =  FormulaError;
+                        for ( int Element = 0; Element < ElementCount; Element++ ) {
+                            UserDefinedScoreTable.Rows [ 0 ] [ PrefixFirst + Enum.GetName( typeof( EElemIndex ), Element ) ] = Formula [ Element ];
+                        }
+                        //PrefixSecond
+                        UserDefinedScoreTable.Rows [ 0 ] [ PrefixSecond + "Mass" ] = FormulaToNeutralMass( NewFormula) ;
+                        UserDefinedScoreTable.Rows [ 0 ] [ PrefixSecond + "Error" ] =  NewFormulaError;
+                        for ( int Element = 0; Element < ElementCount; Element++ ) {
+                            UserDefinedScoreTable.Rows [ 0 ] [ PrefixSecond + Enum.GetName( typeof( EElemIndex ), Element ) ] = NewFormula [ Element ];
+                        }
+                        if ( ( bool ) UserDefinedScoreTable.Rows [ 0 ] [ "UserDefinedScore" ] == false ) {
+                            return false;
+                        }
+                    }
+                    break;
                 default:
-                    var ex = new Exception( "Wrong SortType : " + FormulaScore.ToString() );
-                    FormularityProgram.ReportError(ex, false);
-                    throw ex;
+                    throw new Exception( "Wrong SortType : " + FormulaScore.ToString() );
             }
             return false;
         }
-        public void SaveParameters( string Filename ) {
-            XmlWriter xmlWriter = XmlWriter.Create( Filename );
-
-            xmlWriter.WriteStartDocument();
-            xmlWriter.WriteStartElement( "DefaultParameters" );
-            xmlWriter.WriteStartElement( "InputFilesTab" );
-            xmlWriter.WriteStartElement( "Adduct" );
-            xmlWriter.WriteString( Ipa.Adduct );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "Ionization" );
-            xmlWriter.WriteString( Ipa.Ionization.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "Charge" );
-            xmlWriter.WriteString( Ipa.CS.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "Calibration" );
-            xmlWriter.WriteStartElement( "Regression" );
-            xmlWriter.WriteString( oTotalCalibration.ttl_cal_regression.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "RelFactor" );
-            xmlWriter.WriteString( oTotalCalibration.ttl_cal_rf.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "StartTolerance" );
-            xmlWriter.WriteString( oTotalCalibration.ttl_cal_start_ppm.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "EndTolerance" );
-            xmlWriter.WriteString( oTotalCalibration.ttl_cal_target_ppm.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "PeakFilters" );
-            xmlWriter.WriteStartElement( "MinSToN" );
-            xmlWriter.WriteString( oTotalCalibration.ttl_cal_min_sn.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "MinRelAbun" );
-            xmlWriter.WriteString( oTotalCalibration.ttl_cal_min_abu_pct.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "MaxRelAbun" );
-            xmlWriter.WriteString( oTotalCalibration.ttl_cal_max_abu_pct.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteEndElement();
-
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteEndElement();//InputFilesTab
-            xmlWriter.WriteStartElement( "CiaTab" );
-            xmlWriter.WriteStartElement( "UseAlignment" );
-            xmlWriter.WriteString( GetAlignment().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "AlignmentTolerance" );
-            xmlWriter.WriteString( GetAlignmentPpmTolerance().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "FormulaTolerance" );
-            xmlWriter.WriteString( GetFormulaPPMTolerance().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "DBMassLimit" );
-            xmlWriter.WriteString( GetMassLimit().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "AddChains" );
-            xmlWriter.WriteString( GetAddChains().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "MinPeaksPerChain" );
-            xmlWriter.WriteString( GetMinPeaksPerChain().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "FormulaScore" );
-            xmlWriter.WriteString( GetFormulaScore().ToString() );
-            xmlWriter.WriteEndElement();
-            //xmlWriter.WriteStartElement( "UseCiaFormulaScore" );
-            //xmlWriter.WriteString( checkBoxUseCIAFormulaScore.Checked.ToString() );
+        public string GetSaveParameterText( string Filename = ""){
+            //StringBuilder XmlString = new StringBuilder();
+            //XmlWriterSettings Settings = new XmlWriterSettings( );
+            //Settings.Encoding = Encoding.UTF8;
+            //XmlWriter xmlWriter = XmlWriter.Create( XmlString, Settings );
+            //XmlWriter xmlWriter = XmlWriter.Create( XmlString);
+            //xmlWriter.WriteStartDocument();            
+            XmlDocument XmlDoc = new XmlDocument();
+            //xmlWriter.WriteStartElement( "DefaultParameters" );
+            XmlNode RootNode = XmlDoc.CreateElement( "DefaultParameters" );
+            XmlNode FirstLayerNode;
+            XmlNode SecondLayerNode;
+            XmlNode ThirdLayerNode;
+            XmlNode FourthLayerNode;
+            XmlDoc.AppendChild( RootNode );
+            //xmlWriter.WriteStartElement( "InputFilesTab" );
+            FirstLayerNode = XmlDoc.CreateElement( "InputFilesTab" );
+            //xmlWriter.WriteStartElement( "Adduct" );
+            //xmlWriter.WriteString( Ipa.Adduct );
             //xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "UseKendrick" );
-            xmlWriter.WriteString( GetUseKendrick().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "UseC13" );
-            xmlWriter.WriteString( GetUseC13().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "C13Tolerance" );
-            xmlWriter.WriteString( GetC13Tolerance().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "UseFormulaFilters" );
-            xmlWriter.WriteString( GetUseFormulaFilter().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "ElementalCounts" );
-            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 0 ].ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "ValenceRules" );
-            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 1 ].ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "ElementalRatios" );
-            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 2 ].ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "HeteroatomCounts" );
-            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 3 ].ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "PositiveAtoms" );
-            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 4 ].ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "IntegerDBE" );
-            xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 5 ].ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "SpecialFilter" );
-            xmlWriter.WriteString( GetSpecialFilter().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "UserDefinedFilter" );
-            xmlWriter.WriteString( GetUserDefinedFilter() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "UseRelationship" );
-            xmlWriter.WriteString( GetUseRelation().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "MaxRelationshipGaps" );
-            xmlWriter.WriteString( GetMaxRelationGaps().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "UseBackward" );
-            xmlWriter.WriteString( GetUseBackward().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "RelationError" );
-            xmlWriter.WriteString( GetRelationErrorAMU().ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "FormulaBuildingBlocks" );
+            SecondLayerNode = XmlDoc.CreateElement( "Adduct" );
+            SecondLayerNode.InnerText = Ipa.Adduct;
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "Ionization" );
+            //xmlWriter.WriteString( Ipa.Ionization.ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "Ionization" );
+            SecondLayerNode.InnerText = Ipa.Ionization.ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "Charge" );
+            //xmlWriter.WriteString( Ipa.CS.ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "Charge" );
+            SecondLayerNode.InnerText =  Ipa.CS.ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "UsePreAlignment" );
+            //xmlWriter.WriteString( GetPreAlignment().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "UsePreAlignment" );
+            SecondLayerNode.InnerText =  GetPreAlignment().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "Calibration" );
+            SecondLayerNode = XmlDoc.CreateElement( "Calibration" );
+            //xmlWriter.WriteStartElement( "RefPeakFileName" );
+            //xmlWriter.WriteString( RefPeakFileName.Replace( " ", "\u0020") );
+            //xmlWriter.WriteEndElement();
+            ThirdLayerNode = XmlDoc.CreateElement( "RefPeakFileName" );
+            ThirdLayerNode.InnerText =  RefPeakFilename.Replace( " ", "\u0020" );
+            SecondLayerNode.AppendChild( ThirdLayerNode );
+            //xmlWriter.WriteStartElement( "Regression" );
+            //xmlWriter.WriteString( oTotalCalibration.ttl_cal_regression.ToString() );
+            //xmlWriter.WriteEndElement();
+            ThirdLayerNode = XmlDoc.CreateElement( "Regression" );
+            ThirdLayerNode.InnerText =  oTotalCalibration.ttl_cal_regression.ToString();
+            SecondLayerNode.AppendChild( ThirdLayerNode );
+            //xmlWriter.WriteStartElement( "RelFactor" );
+            //xmlWriter.WriteString( oTotalCalibration.ttl_cal_rf.ToString() );
+            //xmlWriter.WriteEndElement();
+            ThirdLayerNode = XmlDoc.CreateElement( "RelFactor" );
+            ThirdLayerNode.InnerText =  oTotalCalibration.ttl_cal_rf.ToString();
+            SecondLayerNode.AppendChild( ThirdLayerNode );
+            //xmlWriter.WriteStartElement( "StartTolerance" );
+            //xmlWriter.WriteString( oTotalCalibration.ttl_cal_start_ppm.ToString() );
+            //xmlWriter.WriteEndElement();
+            ThirdLayerNode = XmlDoc.CreateElement( "StartTolerance" );
+            ThirdLayerNode.InnerText =  oTotalCalibration.ttl_cal_start_ppm.ToString();
+            SecondLayerNode.AppendChild( ThirdLayerNode );
+            //xmlWriter.WriteStartElement( "EndTolerance" );
+            //xmlWriter.WriteString( oTotalCalibration.ttl_cal_target_ppm.ToString() );
+            //xmlWriter.WriteEndElement();
+            ThirdLayerNode = XmlDoc.CreateElement( "EndTolerance" );
+            ThirdLayerNode.InnerText =  oTotalCalibration.ttl_cal_target_ppm.ToString();
+            SecondLayerNode.AppendChild( ThirdLayerNode );
+            //xmlWriter.WriteStartElement( "PeakFilters" );
+            ThirdLayerNode = XmlDoc.CreateElement( "PeakFilters" );
+            //xmlWriter.WriteStartElement( "MinSToN" );
+            //xmlWriter.WriteString( oTotalCalibration.ttl_cal_min_sn.ToString() );
+            //xmlWriter.WriteEndElement();
+            FourthLayerNode = XmlDoc.CreateElement( "MinSToN" );
+            FourthLayerNode.InnerText =  oTotalCalibration.ttl_cal_min_sn.ToString();
+            ThirdLayerNode.AppendChild( FourthLayerNode );
+            //xmlWriter.WriteStartElement( "MinRelAbun" );
+            //xmlWriter.WriteString( oTotalCalibration.ttl_cal_min_abu_pct.ToString() );
+            //xmlWriter.WriteEndElement();
+            FourthLayerNode = XmlDoc.CreateElement( "MinRelAbun" );
+            FourthLayerNode.InnerText =  oTotalCalibration.ttl_cal_min_abu_pct.ToString();
+            ThirdLayerNode.AppendChild( FourthLayerNode );
+            //xmlWriter.WriteStartElement( "MaxRelAbun" );
+            //xmlWriter.WriteString( oTotalCalibration.ttl_cal_max_abu_pct.ToString() );
+            //xmlWriter.WriteEndElement();
+            FourthLayerNode = XmlDoc.CreateElement( "MaxRelAbun" );
+            FourthLayerNode.InnerText =  oTotalCalibration.ttl_cal_max_abu_pct.ToString();
+            ThirdLayerNode.AppendChild( FourthLayerNode );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode.AppendChild( ThirdLayerNode );
+            //xmlWriter.WriteEndElement();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteEndElement();//InputFilesTab
+            RootNode.AppendChild( FirstLayerNode );
+
+            //xmlWriter.WriteStartElement( "CiaTab" );
+            FirstLayerNode = XmlDoc.CreateElement( "CiaTab" );
+            //xmlWriter.WriteStartElement( "UseAlignment" );
+            //xmlWriter.WriteString( GetAlignment().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "UseAlignment" );
+            SecondLayerNode.InnerText =  GetAlignment().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "AlignmentTolerance" );
+            //xmlWriter.WriteString( GetAlignmentPpmTolerance().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "AlignmentTolerance" );
+            SecondLayerNode.InnerText =  GetAlignmentPpmTolerance().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "CiaDBFilename" );
+            //xmlWriter.WriteString( GetCiaDBFilename() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "CiaDBFilename" );
+            SecondLayerNode.InnerText =  GetCiaDBFilename().Replace( " ", "\u0020" );
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            SecondLayerNode = XmlDoc.CreateElement( "StaticPpmDynamicStdDevError" );
+            SecondLayerNode.InnerText =  GetStaticDynamicPpmError().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            SecondLayerNode = XmlDoc.CreateElement( "StdDevErrorGain" );
+            SecondLayerNode.InnerText =  GetStdDevErrorGain().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "FormulaTolerance" );
+            //xmlWriter.WriteString( GetFormulaPPMTolerance().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "FormulaTolerance" );
+            SecondLayerNode.InnerText =  GetFormulaPPMTolerance().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "DBMassLimit" );
+            //xmlWriter.WriteString( GetMassLimit().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "DBMassLimit" );
+            SecondLayerNode.InnerText =  GetMassLimit().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "FormulaScore" );
+            //xmlWriter.WriteString( GetFormulaScore().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "FormulaScore" );
+            SecondLayerNode.InnerText =  GetFormulaScore().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "UseKendrick" );
+            //xmlWriter.WriteString( GetUseKendrick().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "UseKendrick" );
+            SecondLayerNode.InnerText =  GetUseKendrick().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "UseC13" );
+            //xmlWriter.WriteString( GetUseC13().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "UseC13" );
+            SecondLayerNode.InnerText =  GetUseC13().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "C13Tolerance" );
+            //xmlWriter.WriteString( GetC13Tolerance().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "C13Tolerance" );
+            SecondLayerNode.InnerText =  GetC13Tolerance().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "UseFormulaFilters" );
+            //xmlWriter.WriteString( GetUseFormulaFilter().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "UseFormulaFilters" );
+            SecondLayerNode.InnerText =  GetUseFormulaFilter().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "ElementalCounts" );
+            //xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 0 ].ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "ElementalCounts" );
+            SecondLayerNode.InnerText =  GetGoldenRuleFilterUsage() [ 0 ].ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "ValenceRules" );
+            //xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 1 ].ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "ValenceRules" );
+            SecondLayerNode.InnerText =  GetGoldenRuleFilterUsage() [ 1 ].ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "ElementalRatios" );
+            //xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 2 ].ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "ElementalRatios" );
+            SecondLayerNode.InnerText =  GetGoldenRuleFilterUsage() [ 2 ].ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "HeteroatomCounts" );
+            //xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 3 ].ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "HeteroatomCounts" );
+            SecondLayerNode.InnerText =  GetGoldenRuleFilterUsage() [ 3 ].ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "PositiveAtoms" );
+            //xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 4 ].ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "PositiveAtoms" );
+            SecondLayerNode.InnerText =  GetGoldenRuleFilterUsage() [ 4 ].ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "IntegerDBE" );
+            //xmlWriter.WriteString( GetGoldenRuleFilterUsage() [ 5 ].ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "IntegerDBE" );
+            SecondLayerNode.InnerText =  GetGoldenRuleFilterUsage() [ 5 ].ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "SpecialFilter" );
+            //xmlWriter.WriteString( GetSpecialFilter().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "SpecialFilter" );
+            SecondLayerNode.InnerText =  GetSpecialFilter().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "UserDefinedFilter" );
+            //xmlWriter.WriteString( GetUserDefinedFilter() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "UserDefinedFilter" );
+            SecondLayerNode.InnerText =  GetUserDefinedFilter().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "UseRelation" );
+            //xmlWriter.WriteString( GetUseRelation().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "UseRelation" );
+            SecondLayerNode.InnerText =  GetUseRelation().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "MaxRelationGaps" );
+            //xmlWriter.WriteString( GetMaxRelationGaps().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "MaxRelationGaps" );
+            SecondLayerNode.InnerText =  GetMaxRelationGaps().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "UseBackward" );
+            //xmlWriter.WriteString( GetUseBackward().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "UseBackward" );
+            SecondLayerNode.InnerText =  GetUseBackward().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            SecondLayerNode = XmlDoc.CreateElement( "RelationErrorType" );
+            SecondLayerNode.InnerText =  GetRelationErrorType().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "RelationError" );
+            //xmlWriter.WriteString( GetRelationErrorAMU().ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "RelationError" );
+            SecondLayerNode.InnerText =  GetRelationErrorAMU().ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "FormulaBuildingBlocks" );
+            SecondLayerNode = XmlDoc.CreateElement( "FormulaBuildingBlocks" );
             for ( int BlockIndex = 0; BlockIndex < RelationBuildingBlockFormulas.Length; BlockIndex++ ) {
-                xmlWriter.WriteStartElement( FormulaToName( RelationBuildingBlockFormulas [ BlockIndex ] ) );
-                xmlWriter.WriteString( ActiveRelationBuildingBlocks [ BlockIndex ].ToString() );
-                xmlWriter.WriteEndElement();
+                //xmlWriter.WriteStartElement( FormulaToName( RelationBuildingBlockFormulas [ BlockIndex ] ) );
+                //xmlWriter.WriteString( ActiveRelationBuildingBlocks [ BlockIndex ].ToString() );
+                //xmlWriter.WriteEndElement();
+                ThirdLayerNode = XmlDoc.CreateElement( FormulaToName( RelationBuildingBlockFormulas [ BlockIndex ] ) );
+                ThirdLayerNode.InnerText =  ActiveRelationBuildingBlocks [ BlockIndex ].ToString();
+                SecondLayerNode.AppendChild( ThirdLayerNode );
             }
-            xmlWriter.WriteEndElement();
-
-            xmlWriter.WriteStartElement( "Output" );
-            xmlWriter.WriteStartElement( "IndividualFileReports" );
-            xmlWriter.WriteString( GetGenerateIndividualFileReports().ToString() );
-            xmlWriter.WriteEndElement();
-            //xmlWriter.WriteStartElement( "LogReports" );
-            //xmlWriter.WriteString( oCiaAdvancedForm.checkBoxLogReport.Checked.ToString() );
             //xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "Delimiters" );
-            xmlWriter.WriteString( OutputFileDelimiter );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "Error" );
-            xmlWriter.WriteString( oEErrorType.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteEndElement();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+
+            //xmlWriter.WriteStartElement( "Output" );
+            SecondLayerNode = XmlDoc.CreateElement( "Output" );
+            //xmlWriter.WriteStartElement( "IndividualFileReports" );
+            //xmlWriter.WriteString( GetGenerateIndividualFileReports().ToString() );
+            //xmlWriter.WriteEndElement();
+            ThirdLayerNode = XmlDoc.CreateElement( "GenerateReports" );
+            ThirdLayerNode.InnerText =  GetGenerateReports().ToString();
+            SecondLayerNode.AppendChild( ThirdLayerNode );
+            //xmlWriter.WriteStartElement( "Delimiters" );
+            //xmlWriter.WriteString( OutputFileDelimiter );
+            //xmlWriter.WriteEndElement();
+            //ThirdLayerNode = XmlDoc.CreateElement( "Delimiters" );
+            //ThirdLayerNode.InnerText =  OutputFileDelimiter;
+            //SecondLayerNode.AppendChild( ThirdLayerNode );
+            //xmlWriter.WriteStartElement( "Error" );
+            //xmlWriter.WriteString( oEErrorType.ToString() );
+            //xmlWriter.WriteEndElement();
+            ThirdLayerNode = XmlDoc.CreateElement( "Error" );
+            ThirdLayerNode.InnerText =  oEErrorType.ToString();
+            SecondLayerNode.AppendChild( ThirdLayerNode );
+            //xmlWriter.WriteEndElement();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteEndElement();
+            RootNode.AppendChild( FirstLayerNode );
             //end CiaTab
-            xmlWriter.WriteStartElement( "IpaTab" );
-            xmlWriter.WriteStartElement( "MassTol" );
-            xmlWriter.WriteString( Ipa.m_ppm_tol.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "MajorPeaksMinSToN" );
-            xmlWriter.WriteString( Ipa.m_min_major_sn.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "MinorPeaksMinSToN" );
-            xmlWriter.WriteString( Ipa.m_min_minor_sn.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "MatchedPeakReport" );
-            xmlWriter.WriteString( Ipa.m_matched_peaks_report.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "MinPeakProbabilityToScore" );
-            xmlWriter.WriteString( Ipa.m_min_p_to_score.ToString() );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement( "DbFilter" );
-            xmlWriter.WriteString( Ipa.m_IPDB_ec_filter );
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteEndElement();//IpaTab
-            xmlWriter.WriteEndDocument();
-            xmlWriter.Close();
+            //xmlWriter.WriteStartElement( "IpaTab" );
+            FirstLayerNode = XmlDoc.CreateElement( "IpaTab" );
+            //xmlWriter.WriteStartElement( "IpaDBFilename" );
+            //xmlWriter.WriteString( IpaDBFilename);
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "IpaDBFilename" );
+            SecondLayerNode.InnerText =  IpaDBFilename.Replace( " ", "\u0020" );
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "MassTol" );
+            //xmlWriter.WriteString( Ipa.m_ppm_tol.ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "MassTol" );
+            SecondLayerNode.InnerText =  Ipa.m_ppm_tol.ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "MajorPeaksMinSToN" );
+            //xmlWriter.WriteString( Ipa.m_min_major_sn.ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "MajorPeaksMinSToN" );
+            SecondLayerNode.InnerText =  Ipa.m_min_major_sn.ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "MinorPeaksMinSToN" );
+            //xmlWriter.WriteString( Ipa.m_min_minor_sn.ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "MinorPeaksMinSToN" );
+            SecondLayerNode.InnerText =  Ipa.m_min_minor_sn.ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "MatchedPeakReport" );
+            //xmlWriter.WriteString( Ipa.m_matched_peaks_report.ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "MatchedPeakReport" );
+            SecondLayerNode.InnerText =  Ipa.m_matched_peaks_report.ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "MinPeakProbabilityToScore" );
+            //xmlWriter.WriteString( Ipa.m_min_p_to_score.ToString() );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "MinPeakProbabilityToScore" );
+            SecondLayerNode.InnerText =  Ipa.m_min_p_to_score.ToString();
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteStartElement( "DbFilter" );
+            //xmlWriter.WriteString( Ipa.m_IPDB_ec_filter );
+            //xmlWriter.WriteEndElement();
+            SecondLayerNode = XmlDoc.CreateElement( "DbFilter" );
+            SecondLayerNode.InnerText =  Ipa.m_IPDB_ec_filter;
+            FirstLayerNode.AppendChild( SecondLayerNode );
+            //xmlWriter.WriteEndElement();//IpaTab
+            RootNode.AppendChild( FirstLayerNode );
+            //xmlWriter.WriteEndDocument();
+            //xmlWriter.Flush();
+            //xmlWriter.Close();
+            if( Filename.Length > 0){
+                XmlDoc.Save( Filename );
+            }
+            return XmlDoc.InnerXml;
         }
-        public void LoadParameters( string Filename ) {
+        public void LoadParameters( string Filename ) {            
             XmlDocument XmlDoc = new XmlDocument();
             XmlDoc.Load( Filename );
             XmlNode XmlDocRoot = XmlDoc.DocumentElement;
@@ -1805,6 +2144,14 @@ namespace CIA {
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Charge" );
             if ( XmlNode != null ) {
                 Ipa.CS = int.Parse( XmlNode.InnerText );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/UsePreAlignment" );
+            if ( XmlNode != null ) {
+                SetPreAlignment( bool.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Calibration/RefPeakFileName" );
+            if ( XmlNode != null ) {
+                RefPeakFilename = XmlNode.InnerText.Replace( "\u0020", " ");
             }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/InputFilesTab/Calibration/Regression" );
             if ( XmlNode != null ) {
@@ -1843,26 +2190,37 @@ namespace CIA {
             if ( XmlNode != null ) {
                 SetAlignmentPpmTolerance( double.Parse( XmlNode.InnerText ) );
             }
-            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/AddChains" );
+            //XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/AddChains" );
+            //if ( XmlNode != null ) {
+            //    SetAddChains( bool.Parse( XmlNode.InnerText ) );
+            //}
+            //XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/MinPeaksPerChain" );
+            //if ( XmlNode != null ) {
+            //    SetMinPeaksPerChain( int.Parse( XmlNode.InnerText ) );
+            //}
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/CiaDBFilename" );
             if ( XmlNode != null ) {
-                SetAddChains( bool.Parse( XmlNode.InnerText ) );
+                SetCiaDBFilename( XmlNode.InnerText.Replace( "\u0020", " " ) );
             }
-            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/MinPeaksPerChain" );
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/StaticPpmDynamicStdDevError" );
             if ( XmlNode != null ) {
-                SetMinPeaksPerChain( int.Parse( XmlNode.InnerText ) );
+                SetStaticDynamicPpmError( bool.Parse( XmlNode.InnerText ) );
+            }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/StdDevErrorGain" );
+            if ( XmlNode != null ) {
+                SetStdDevErrorGain( double.Parse( XmlNode.InnerText ) );
             }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaTolerance" );
             if ( XmlNode != null ) {
                 SetFormulaPPMTolerance( double.Parse( XmlNode.InnerText ) );
             }
-            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/DbMassLimit" );
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/DBMassLimit" );
             if ( XmlNode != null ) {
                 SetMassLimit( double.Parse( XmlNode.InnerText ) );
             }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaScore" );
             if ( XmlNode != null ) {
                 SetFormulaScore( ( CCia.EFormulaScore ) Enum.Parse( typeof( CCia.EFormulaScore ), XmlNode.InnerText ) );
-                //SetFormulaScore( ttt );
             }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UseKendrick" );
             if ( XmlNode != null ) {
@@ -1915,22 +2273,25 @@ namespace CIA {
             if ( XmlNode != null ) {
                 SetUserDefinedFilter( XmlNode.InnerText );
             }
-            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UseRelationship" );
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UseRelation" );
             if ( XmlNode != null ) {
                 SetUseRelation( bool.Parse( XmlNode.InnerText ) );
             }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UseBackward" );
             if ( XmlNode != null ) {
                 SetUseBackward( bool.Parse( XmlNode.InnerText ) );
-            }
-            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/MaxRelationshipGaps" );
+            } 
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/MaxRelationGaps" );
             if ( XmlNode != null ) {
                 SetMaxRelationGaps( int.Parse( XmlNode.InnerText ) );
             }
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/RelationErrorType" );
+            if ( XmlNode != null ) {
+                SetRelationErrorType( ( CCia.RelationErrorType ) Enum.Parse( typeof( CCia.RelationErrorType ), XmlNode.InnerText) );
+            }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/RelationError" );
             if ( XmlNode != null ) {
-                SetRelationErrorAMU( double.Parse( XmlNode.InnerText ) );
-                //numericUpDownRelationErrorValue.Value = ( decimal ) oCCia.GetRelationErrorAMU();
+                SetRelationErrorAMU( double.Parse( XmlNode.InnerText ) );                
             }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH2" );
             if ( XmlNode != null ) {
@@ -1960,36 +2321,31 @@ namespace CIA {
             if ( XmlNode != null ) {
                 ActiveRelationBuildingBlocks [ 6 ] = bool.Parse( XmlNode.InnerText );
             }
-            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH" );
-            if ( XmlNode != null ) {
-                ActiveRelationBuildingBlocks [ 7 ] = bool.Parse( XmlNode.InnerText );
-            }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/HN" );
             if ( XmlNode != null ) {
                 ActiveRelationBuildingBlocks [ 8 ] = bool.Parse( XmlNode.InnerText );
             }
-            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/O3P" );
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH2O" );
             if ( XmlNode != null ) {
-                ActiveRelationBuildingBlocks [ 9 ] = bool.Parse( XmlNode.InnerText );
+                ActiveRelationBuildingBlocks [ 8 ] = bool.Parse( XmlNode.InnerText );
             }
             SetActiveRelationFormulaBuildingBlocks( ActiveRelationBuildingBlocks );
-            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/IndividualFileReports" );
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/GenerateReports" );
             if ( XmlNode != null ) {
-                SetGenerateIndividualFileReports( bool.Parse( XmlNode.InnerText ) );
+                SetGenerateReports( bool.Parse( XmlNode.InnerText ) );
             }
-            //XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/LogReports" );
-            //if( XmlNode != null ) {
-            //    oCCia.SetLogReportStatus( bool.Parse( XmlNode.InnerText ) );
+            //XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/Delimiters" );
+            //if ( XmlNode != null ) {
+            //    SetOutputFileDelimiterType( OutputFileDelimiterToEnum( XmlNode.InnerText ) );
             //}
-            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/Delimiters" );
-            if ( XmlNode != null ) {
-                SetOutputFileDelimiterType( OutputFileDelimiterToEnum( XmlNode.InnerText ) );
-            }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/Error" );
             if ( XmlNode != null ) {
                 SetErrorType( ( CCia.EErrorType ) Enum.Parse( typeof( CCia.EErrorType ), XmlNode.InnerText ) );
+            }            
+            XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/IpaTab/IpaDBFilename" );
+            if ( XmlNode != null ) {
+                IpaDBFilename = XmlNode.InnerText.Replace( "\u0020", " " );
             }
-
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/IpaTab/MassTol" );
             if ( XmlNode != null ) {
                 Ipa.m_ppm_tol = double.Parse( XmlNode.InnerText );
@@ -2015,7 +2371,6 @@ namespace CIA {
                 Ipa.m_IPDB_ec_filter = XmlNode.InnerText;
             }
         }
-
         //Filter 1: check number of elements possible within mass range
         //C>=1 AND H>=1 AND IIF(Mass<=500, C+C13<39 AND H<72 AND O<20 AND N< 20 AND S<10 AND P<9, IIF(Mass>1000,C+C13<156 AND H<180 AND O<63 AND N<32 AND S<14 AND P<9, C+C13<78 AND H<126 AND O<27 AND N<25 AND S<14 AND P<9))
         /*function [good goodformulas] = Check7GR_KL2(formulas, mass)
@@ -2055,7 +2410,7 @@ namespace CIA {
                         & ( Formula [ ( int ) EElemIndex.S ] < UpLimitFormula [ ( int ) EElemIndex.S ] )
                         & ( Formula [ ( int ) EElemIndex.P ] < UpLimitFormula [ ( int ) EElemIndex.P ] );
 
-                if( result == false ) { return false; }
+                if( result == false ) { return false; } 
             }
 
             //Golden rule 2 "Valence rule"
@@ -2183,7 +2538,7 @@ namespace CIA {
                 }
             }
             return true;
-        }
+        } 
         void ProcessC13( double [] NeutralMasses, short [][] Formulas, double [] PPMErrors) {
             if( UseC13 == false ) { return; }
             double CDiff = CElements.C13 - CElements.C;
@@ -2197,8 +2552,9 @@ namespace CIA {
                 }
                 double PeakMass = NeutralMasses [ Peak ];
                 double C13PeakMass = PeakMass + CDiff;
-                double MinPeakMass = C13PeakMass - CPpmError.PpmToError( C13PeakMass, C13Tolerance );
-                double MaxPeakMass = C13PeakMass + CPpmError.PpmToError( C13PeakMass, C13Tolerance );
+                double CurC13Tolerance = GetRealC13Tolerance( PeakMass );
+                double MinPeakMass = C13PeakMass - CPpmError.PpmToError( C13PeakMass, CurC13Tolerance );
+                double MaxPeakMass = C13PeakMass + CPpmError.PpmToError( C13PeakMass, CurC13Tolerance );
                 for( int C13Peak = Peak + 1; C13Peak < NeutralMasses.Length; C13Peak++ ) {
                     if( NeutralMasses [ C13Peak] < MinPeakMass ) {
                         continue;
@@ -2238,13 +2594,15 @@ namespace CIA {
         //*******************************************************************
         //DB
         //*******************************************************************
-        List<string> DBFilenames = new List<string>();
+        //List<string> DBFilenames = new List<string>();
+        string CiaDBFilename = "";
+        public string GetCiaDBFilename(){ return CiaDBFilename;}
+        public void SetCiaDBFilename( string CiaDBFilename ) { this.CiaDBFilename = CiaDBFilename; }
         public double [] DBMasses = null;
         public double GetDBMass( int Index ) { return DBMasses [ Index ]; }
         public short [] [] DBFormulas = null;
         public short [] GetDBFormula( int Index ) { return DBFormulas [ Index ]; }
         public string GetDBFormulaName( int Index ) { return FormulaToName( DBFormulas [ Index ] ); }
-        public string [] GetDBFilenames() { return DBFilenames.ToArray(); }
         static int DBBytesPerRecord = sizeof( double ) + ElementCount * sizeof( short );
         static int DBRecordPerBlock = 1000;
         int DBBlockBytes = DBRecordPerBlock * DBBytesPerRecord;
@@ -2309,7 +2667,10 @@ namespace CIA {
             }
             return Formula;
         }
-        public int GetDBRecords() { return DBMasses.Length; }
+        public int GetDBRecords() {
+            if ( DBMasses == null ) { return 0; }
+            return DBMasses.Length;
+        }
         public double GetDBMinMass() {
             if( DBMasses == null ) { return 0; }
             return DBMasses [ 0 ];
@@ -2325,6 +2686,7 @@ namespace CIA {
         public bool GetDBLimitIndexes( double Mass, out int LowerIndex, out int UpperIndex ) {
             //double FormulaError = Mass * FormulaErrorPPM / PPM;
             double LowerMZ = Mass - CPpmError.PpmToError( Mass, FormulaPPMTolerance );
+            //double LowerMZ = Mass - CPpmError.PpmToError( Mass, GetRealFormulaPpmError( Mass) );            
             LowerIndex = Array.BinarySearch( DBMasses, LowerMZ );
             UpperIndex = -1;//can't return without assigment
             if( LowerIndex < 0 ) {
@@ -2336,11 +2698,12 @@ namespace CIA {
                 return false;
             }
             double UpperMZ = Mass + CPpmError.PpmToError( Mass, FormulaPPMTolerance );
+            //double UpperMZ = Mass + CPpmError.PpmToError( Mass, GetRealFormulaPpmError( Mass ) );
             UpperIndex = Array.BinarySearch( DBMasses, UpperMZ );
             if( UpperIndex < 0 ) {
                 UpperIndex = ~UpperIndex;
             }
-            UpperIndex = UpperIndex - 1;//must be less
+            UpperIndex = UpperIndex - 1;//must be less     
 
             if( UpperIndex >= DBMasses.Length ) {
                 UpperIndex = DBMasses.Length - 1;
@@ -2350,146 +2713,76 @@ namespace CIA {
             }
             return true;
         }
+        public void LoadCiaDB( string CiaDBFilename ) {
+            if( ( Path.GetFileName( CiaDBFilename ) != Path.GetFileName( this.CiaDBFilename ) )
+                    || ( GetDBRecords() == 0) ) {
+                if(  File.Exists( CiaDBFilename ) == true){
+                    SetCiaDBFilename( CiaDBFilename );
+                    LoadCiaDB();
+                }
+            }
+        }
+        public bool LoadCiaDB() {
+            if ( CiaDBFilename.Length == 0 ) { return false; }
+            if ( File.Exists( CiaDBFilename ) == false ) { return false; }
 
-        public void LoadDBs( string [] NewDBFilenames ) {
-            if( ( NewDBFilenames == null ) || ( NewDBFilenames.Length == 0 ) ) { return; }
-            DBFilenames.Clear();
-            if( DBMasses != null ) { DBMasses = null; }
-            if( DBFormulas != null ) {
-                for( int Formula = 0; Formula < DBFormulas.Length; Formula++ ) {
-                    if( DBFormulas [ Formula ] != null ) {
+            if ( DBMasses != null ) { DBMasses = null; }
+            if ( DBFormulas != null ) {
+                for ( int Formula = 0; Formula < DBFormulas.Length; Formula++ ) {
+                    if ( DBFormulas [ Formula ] != null ) {
                         DBFormulas [ Formula ] = null;
                     }
                 }
                 DBFormulas = null;
             }
             GC.Collect();
-
-            if (NewDBFilenames.Length == 1)
-                Console.WriteLine("Reading database {0}", NewDBFilenames[0]);
-            else
-                Console.WriteLine("Reading {0} databases", NewDBFilenames.Length);
-
-            int [] DBRecords = new int [ NewDBFilenames.Length ];
-            int MaxRecords = 0;
-            for( int DBFilename = 0; DBFilename < NewDBFilenames.Length; DBFilename++ ) {
-                DBRecords [ DBFilename ] = ( int ) ( new FileInfo( NewDBFilenames [ DBFilename ] ).Length / DBBytesPerRecord );
-                MaxRecords = MaxRecords + DBRecords [ DBFilename ];
-            }
-            DBMasses = new double [ MaxRecords ];
-            DBFormulas = new short [ MaxRecords ] [];
+            Console.WriteLine( "Reading database {0}", CiaDBFilename );
+            long RecordCount = ( new System.IO.FileInfo( CiaDBFilename ) ).Length / DBBytesPerRecord;
+            DBMasses = new double [ RecordCount];
+            DBFormulas = new short [ RecordCount] [];
             int NextRecord = 0;
-            bool CheckForDuplicates = true;
             byte [] TempBytes = new byte [ DBBlockBytes ];
-            for( int DBFilename = 0; DBFilename < NewDBFilenames.Length; DBFilename++ ) {
-                BinaryReader oBinaryReader = new BinaryReader( File.Open( NewDBFilenames [ DBFilename ], FileMode.Open ) );
-                for( int FileRecord = 0; FileRecord < DBRecords [ DBFilename ]; FileRecord = FileRecord + DBRecordPerBlock ) {
-                    int RealBytes = oBinaryReader.Read( TempBytes, 0, DBBlockBytes );
-                    int RealBlockRecords = RealBytes / DBBytesPerRecord;
-                    for( int RecordInBlock = 0; RecordInBlock < RealBlockRecords; RecordInBlock++ ) {
-                        int ArrayShift = RecordInBlock * DBBytesPerRecord;
-                        DBMasses [ NextRecord ] = BytesToDouble( TempBytes, ArrayShift );
-                        ArrayShift = ArrayShift + sizeof( double );
-                        DBFormulas [ NextRecord ] = FormulaCovertFromBinary( TempBytes, ArrayShift );
-                        NextRecord = NextRecord + 1;
-                    }
+            BinaryReader oBinaryReader = new BinaryReader( File.Open( CiaDBFilename, FileMode.Open ) );
+            int RealBytes;
+            do {
+                RealBytes = oBinaryReader.Read( TempBytes, 0, DBBlockBytes );
+                int RealRecords = RealBytes / DBBytesPerRecord;
+                for ( int RecordIndex = 0; RecordIndex < RealRecords; RecordIndex++ ) {
+                    int ArrayShift = RecordIndex * DBBytesPerRecord;
+                    DBMasses [ NextRecord ] = BytesToDouble( TempBytes, ArrayShift );
+                    ArrayShift = ArrayShift + sizeof( double );
+                    DBFormulas [ NextRecord ] = FormulaCovertFromBinary( TempBytes, ArrayShift );
+                    NextRecord = NextRecord + 1;
                 }
-                oBinaryReader.Close();
-
-                if (NewDBFilenames.Length == 1)
-                {
-                    // Look for a file named DBFileName_VerifiedNoDuplicates.txt
-                    // in the same directory as the database file
-                    // If it exists, change CheckForDuplicates to false
-                    var verificationFilePath = GetNoDupsVerificationFilePath(NewDBFilenames[0]);
-                    if (!string.IsNullOrWhiteSpace(verificationFilePath))
-                    {
-                        var duplicateCheckFile = new FileInfo(verificationFilePath);
-                        if (duplicateCheckFile.Exists)
-                        {
-                            CheckForDuplicates = false;
-                        }
-                    }
-                }
-            }
-            TempBytes = null;
-
-            DBSortAndClean( ref DBMasses, ref DBFormulas, CheckForDuplicates, out bool DuplicatesFound);
-            if (NewDBFilenames.Length == 1 && CheckForDuplicates && !DuplicatesFound)
-            {
-                var verificationFilePath = GetNoDupsVerificationFilePath(NewDBFilenames[0]);
-                if (!string.IsNullOrWhiteSpace(verificationFilePath))
-                {
-                    try
-                    {
-                        using (var writer = new StreamWriter(new FileStream(verificationFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite)))
-                        {
-                            var statusMsg = string.Format("Verified no duplicate formulas in {0} on {1:yyyy-MM-dd hh:mm:ss tt}",
-                                                          Path.GetFileName(NewDBFilenames[0]), DateTime.Now);
-                            writer.WriteLine(statusMsg);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        FormularityProgram.ReportError(string.Format("Unable to create file {0}: {1}", verificationFilePath, ex.Message));
-                    }
-                }
-            }
-            DBMassError( DBMasses, DBFormulas, ref DBMinError, ref DBMaxError );
-            DBFilenames.AddRange( NewDBFilenames );
+            } while ( RealBytes == DBBlockBytes );            
+            oBinaryReader.Close();
+            //DBSortAndClean( ref DBMasses, ref DBFormulas );
+            //DBMassError( DBMasses, DBFormulas, ref DBMinError, ref DBMaxError );
+            return true;
         }
-        private string GetNoDupsVerificationFilePath(string dbFilePath)
-        {
-            const string NO_DUPLICATIONS_EXTENSION = "_VerifiedNoDuplicates.txt";
-
-            var noDupsVerificationFilePath = Path.ChangeExtension(dbFilePath, null) + NO_DUPLICATIONS_EXTENSION;
-            return noDupsVerificationFilePath;
-        }
-        void DBSortAndClean( ref double [] Masses, ref short [][] Formulas, bool CheckForDuplicates, out bool DuplicatesFound)
-        {
-            Console.WriteLine("Sorting {0:N0} DB entries", Masses.Length);
+        void DBSortAndClean( ref double [] Masses, ref short [][] Formulas){
             Array.Sort( Masses, Formulas );
-            if (!CheckForDuplicates) {
-                Console.WriteLine("Skipping check for duplicate formulas; database was previously validated");
-                DuplicatesFound = false;
-                return;
-            }
-            Console.WriteLine("Looking for duplicate formulas");
             int RemovedFormulas = 0;
             int MaxRecords = Masses.Length;
-            int ComparedFormulas = 0;
-            DateTime LastProgress = DateTime.UtcNow;
             for( int Record = 0; Record < MaxRecords - 1; Record++ ) {
                 double Mass = Masses [ Record ];
                 if( Mass < 0 ) { continue; }
-                double MassPlusPpmError = Mass + CPpmError.PpmToError( Mass, FormulaPPMTolerance );
+                //double MassPlusPpmError = Mass + CPpmError.PpmToError( Mass, FormulaPPMTolerance );
                 for( int TempRecord = Record + 1; TempRecord < MaxRecords; TempRecord++ ) {
                     if( Masses [ TempRecord ] < 0 ) {
                         continue;
                     }
-                    if( Masses [ TempRecord ] > MassPlusPpmError ) {
+                    //if( Masses [ TempRecord ] > MassPlusPpmError ) {
+                    if( Masses [ TempRecord ] > Support.CPpmError.MassPlusPpmError( Mass, FormulaPPMTolerance) ) {                      
                         break;
                     }
-                    ComparedFormulas++;
-                    if (AreFormulasEqual(Formulas[Record], Formulas[TempRecord]) == true) {
-                        Masses[TempRecord] = -1;
+                    if( AreFormulasEqual( Formulas [ Record ], Formulas [ TempRecord ] ) == true ) {
+                        Masses [ TempRecord ] = -1;
                         RemovedFormulas = RemovedFormulas + 1;
                     }
                 }
-                if (Record % 10000 != 0 || DateTime.UtcNow.Subtract(LastProgress).TotalSeconds < 2) {
-                    continue;
-                }
-                double PercentComplete = Record / (double)MaxRecords * 100;
-                Console.WriteLine("  {0:F0}% complete", PercentComplete);
-                LastProgress = DateTime.UtcNow;
             }
-            Console.WriteLine("Compared {0:N0} formulas while looking for duplicates", ComparedFormulas);
-            if (RemovedFormulas == 0) {
-                Console.WriteLine("No duplicate formulas were found");
-                DuplicatesFound = false;
-                return;
-            }
-            DuplicatesFound = true;
+            if ( RemovedFormulas == 0 ) { return; }
             int RealRecords = MaxRecords - RemovedFormulas;
             double [] TempDBMasses = new double [ RealRecords ];
             short [][] TempDBFormulas = new short [ RealRecords ] [];
@@ -2512,7 +2805,7 @@ namespace CIA {
             MaxError = 0;
             for( int Record = 0; Record < Masses.Length; Record++ ) {
                 double DBError = Masses[ Record] - FormulaToNeutralMass( Formulas [ Record ] );
-                if( MinError > DBError ) { MinError = DBError; }
+                if( MinError > DBError ) { MinError = DBError; } 
                 else if( MaxError < DBError ) { MaxError = DBError; }
             }
         }
@@ -2538,12 +2831,8 @@ namespace CIA {
             //2. column 1 = mass as double; column 2 = formula like C1H1O8P1 or CH1O8P
             //also checks last empty line
             //read file of text and csv files
-            if( File.Exists( Filename ) == false ) {
-                FormularityProgram.ReportError( "File does not exist. " + Filename );
-            }
-            if( new FileInfo( Filename ).Length == 0 ) {
-                FormularityProgram.ReportError( "File is empty. " + Filename );
-            }
+            if( File.Exists( Filename ) == false ) { throw new Exception( "File is not exist. " + Filename ); }
+            if( new FileInfo( Filename ).Length == 0 ) { throw new Exception( "File is empty. " + Filename ); }
 
             string FileExtension = Path.GetExtension( Filename );
             List<double> ListMasses = new List<double>();
@@ -2575,18 +2864,15 @@ namespace CIA {
                         }
                         ListFormulas.Add( Formula );
                     } else {
-                        FormularityProgram.ReportError( "File format is wrong. " + Filename );
+                        throw new Exception( "File format is wrong. " + Filename );
                     }
                 }
                 oStreamReader.Close();
-            } else if( FileExtension == ".xlsx" || FileExtension == ".xls" ) {
-#if NoExcel
-                FormularityProgram.ReportError("This version of Formularity was compiled without Excel support; cannot open " + Filename);
-#else
+            } /*else if( FileExtension == ".xlsx" || FileExtension == ".xls" ) {
                 Microsoft.Office.Interop.Excel.Application MyApp = new Microsoft.Office.Interop.Excel.Application();
                 MyApp.Visible = false;
                 Microsoft.Office.Interop.Excel.Workbook MyBook = MyApp.Workbooks.Open( Filename );
-                Microsoft.Office.Interop.Excel.Worksheet MySheet = (Microsoft.Office.Interop.Excel.Worksheet)MyBook.Sheets [ 1 ];
+                Microsoft.Office.Interop.Excel.Worksheet MySheet = MyBook.Sheets [ 1 ];
                 Microsoft.Office.Interop.Excel.Range MyRange = MySheet.UsedRange;
                 int FormulaCount = MyRange.Rows.Count;
                 int Columns = MyRange.Columns.Count;
@@ -2631,11 +2917,10 @@ namespace CIA {
                 MyApp = null;
                 GC.Collect();
                 if( ExceptionMesssage.Length > 0 ) {
-                    FormularityProgram.ReportError( ExceptionMesssage );
+                    throw new Exception( ExceptionMesssage );
                 }
-#endif
-            } else {
-                FormularityProgram.ReportError( "File type is not supported. " + Filename );
+            } */else {
+                throw new Exception( "File type is not supported. " + Filename );
             }
             Masses = ListMasses.ToArray();
             Formulas = ListFormulas.ToArray();
@@ -2650,7 +2935,7 @@ namespace CIA {
                 }
             }
             if( DBSort == true ) {
-                DBSortAndClean( ref Masses, ref Formulas, true, out _);
+                DBSortAndClean( ref Masses, ref Formulas);
             }
             double MinError = 0;
             double MaxError = 0;
@@ -2686,13 +2971,13 @@ namespace CIA {
                 }
             }
             if( DBSort == true ) {
-                DBSortAndClean( ref Masses, ref Formulas, true, out _);
+                DBSortAndClean( ref Masses, ref Formulas);
             }
             double MinError = 0;
             double MaxError = 0;
             if( DBCalculateMassFromFormula == false ) {
                 DBMassError( Masses, Formulas, ref MinError, ref MaxError );
-            }
+            }            
 
             //write
             string DBBinaryFilename = Path.GetFullPath( AsciiFilenames [ 0 ] ).Substring( 0, AsciiFilenames [ 0 ].Length - Path.GetExtension( AsciiFilenames [ 0 ] ).Length ) + ".bin";
@@ -2737,72 +3022,14 @@ namespace CIA {
             oStreamWriter.Close();
             oBinaryReader.Close();
         }
-        public void ReportFormulas() {
-            for( int FileIndex = 0; FileIndex < oData.FileCount; FileIndex++ ) {
-                StreamWriter oStreamWriter;
-                string Filename = oData.Filenames [ FileIndex ];
-                int FileExtentionLength = Path.GetExtension( Filename ).Length;
-                if( oEOutputFileDelimiter == EDelimiters.Comma ) {
-                    oStreamWriter = new StreamWriter( Filename.Substring( 0, Filename.Length - FileExtentionLength ) + "FormulaReport.csv" );
-                } else {
-                    oStreamWriter = new StreamWriter( Filename.Substring( 0, Filename.Length - FileExtentionLength ) + "FormulaReport.txt" );
-                }
 
-                string HeaderLine = "Mass" + OutputFileDelimiter + "Abundance";
-                for( int Element = 0; Element < ElementCount; Element++ ) {
-                    HeaderLine = HeaderLine + OutputFileDelimiter + Enum.GetName( typeof( EElemIndex ), Element );
-                }
-                HeaderLine = HeaderLine + OutputFileDelimiter + "Error_ppm"/* + OutputFileDelimiter + "Candidates";
-                HeaderLine = HeaderLine + OutputFileDelimiter + "CalMass" + OutputFileDelimiter + "AlignMasses"*/ + OutputFileDelimiter + "NeutralMass";
-                if( oData.SNs [ FileIndex ] [ 0 ] > 0 ) {
-                    HeaderLine = HeaderLine + OutputFileDelimiter + "sn" + OutputFileDelimiter + "resolution" + OutputFileDelimiter + "rel_abu";
-                }
-                oStreamWriter.WriteLine( HeaderLine );
-
-                double [] Masses = oData.Masses [ FileIndex ];
-                double [] Abundances = oData.Abundances [ FileIndex ];
-                double [] SNs = oData.SNs [ FileIndex ];
-                double [] Resolutions = oData.Resolutions [ FileIndex ];
-                double [] RelAbundances = oData.RelAbundances [ FileIndex ];
-
-                for( int Peak = 0; Peak < Masses.Length; Peak++ ) {
-                    string LineStart = Masses [ Peak ].ToString() + OutputFileDelimiter + Abundances [ Peak ].ToString();
-                    double NeutralMass = Ipa.GetNeutralMass( Masses [ Peak ] );
-                    double Error = CPpmError.PpmToError( NeutralMass, GetFormulaPPMTolerance() );
-                    int LowerIndex, UpperIndex;
-                    if( GetDBLimitIndexes( NeutralMass, out LowerIndex, out UpperIndex ) == false ) {
-                        string Line = LineStart;
-                        for( int Element = 0; Element < ElementCount; Element++ ) {
-                            Line = Line + OutputFileDelimiter + "0";
-                        }
-                        Line = Line + OutputFileDelimiter + "0";
-                        Line = Line + OutputFileDelimiter + NeutralMass.ToString();
-                        if( SNs [ 0 ] > 0 ) {
-                            Line = Line + OutputFileDelimiter + SNs [ Peak ].ToString();
-                            Line = Line + OutputFileDelimiter + Resolutions [ Peak ].ToString();
-                            Line = Line + OutputFileDelimiter + RelAbundances [ Peak ].ToString();
-                        }
-                        oStreamWriter.WriteLine( Line );
-                    } else {
-                        for( int Index = LowerIndex; Index <= UpperIndex; Index++ ) {
-                            string Line = LineStart;
-                            short [] Formula = DBFormulas [ Index ];
-                            for( int Element = 0; Element < ElementCount; Element++ ) {
-                                Line = Line + OutputFileDelimiter + Formula [ Element ].ToString();
-                            }
-                            Line = Line + OutputFileDelimiter + ( NeutralMass - FormulaToNeutralMass( Formula ) ).ToString();
-                            Line = Line + OutputFileDelimiter + NeutralMass.ToString();
-                            if( SNs [ 0 ] > 0 ) {
-                                Line = Line + OutputFileDelimiter + SNs [ Peak ].ToString();
-                                Line = Line + OutputFileDelimiter + Resolutions [ Peak ].ToString();
-                                Line = Line + OutputFileDelimiter + RelAbundances [ Peak ].ToString();
-                            }
-                            oStreamWriter.WriteLine( Line );
-                        }
-                    }
-                }
-                oStreamWriter.Close();
-            }
+        string IpaDBFilename = "";
+        public string GetIpaDBFilename(){ return IpaDBFilename;}
+        public void SetIpaDBFilename( string IpaDBFilename){ this.IpaDBFilename = IpaDBFilename;}
+        public void LoadIpaDB(){
+            if ( IpaDBFilename.Length <= 0 ) { return; }
+            if ( File.Exists( IpaDBFilename ) == false ) { return; }
+            Ipa.LoadTabulatedDB( IpaDBFilename );
         }
     }
 }

@@ -28,148 +28,175 @@ namespace CiaUi {
         public enum EPlotType{ ErrorVsNeutralMass, ErrorVs};
         public FormularityUIForm() {
             InitializeComponent();
-            oCiaAdvancedForm = new CiaAdvancedForm( this);
-            this.SuspendLayout();
-            //================
-            //CIA tab
-            //================
-            //Alignment
-            checkBoxAlignment.Checked = oCCia.GetAlignment();
-            numericUpDownAlignmentTolerance.Value = ( decimal ) oCCia.GetAlignmentPpmTolerance();
+            try {
+                oCiaAdvancedForm = new CiaAdvancedForm( this );
+                this.SuspendLayout();
 
-            //Formula assignment
-            textBoxDropDB.Text = "Drop DB files";
-            if( oCCia.GetDBFilenames().Length > 0 ) {
-                textBoxDropDB.AppendText( "\n\rLoaded:" );
-                foreach( string Filename in oCCia.GetDBFilenames() ) {
-                    textBoxDropDB.AppendText( "\n\r" + Filename );
+                comboBoxIonization.DataSource = Enum.GetValues( typeof( TestFSDBSearch.TotalSupport.IonizationMethod ) );
+
+                //Calibration
+                comboBoxCalRegressionModel.DataSource = Enum.GetValues( typeof( TotalCalibration.ttlRegressionType ) );
+
+                //================
+                //CIA tab 
+                //================
+                //Formula assignment     
+                //textBoxDropDB.Text = Path.GetFileName( oCCia.GetCiaDBFilename() );
+
+                comboBoxFormulaScore.DataSource = oCCia.GetFormulaScoreNames();
+                comboBoxRelationErrorType.DataSource = Enum.GetNames( typeof( CCia.RelationErrorType ) );
+                for ( int Relation = 0; Relation < CCia.RelationBuildingBlockFormulas.Length; Relation++ ) {
+                    checkedListBoxRelations.Items.Add( oCCia.FormulaToName( CCia.RelationBuildingBlockFormulas [ Relation ] ), oCCia.GetActiveRelationFormulaBuildingBlocks() [ Relation ] );
                 }
-            }
 
-            //Calibration
-            comboBoxCalRegressionModel.DataSource = Enum.GetValues( typeof( TotalCalibration.ttlRegressionType ) );
-            comboBoxFormulaScore.DataSource = oCCia.GetFormulaScoreNames();
-            comboBoxRelationshipErrorType.DataSource = Enum.GetNames( typeof( CCia.RelationshipErrorType) );
-            for ( int Relation = 0; Relation < CCia.RelationBuildingBlockFormulas.Length; Relation++ ) {
-                checkedListBoxRelations.Items.Add( oCCia.FormulaToName( CCia.RelationBuildingBlockFormulas [ Relation ] ), oCCia.GetActiveRelationFormulaBuildingBlocks()[ Relation] );
-            }
+                comboBoxSpecialFilters.Items.Clear();
+                string [] SpecialFilterNames = Enum.GetNames( typeof( CCia.ESpecialFilters ) );
+                string [] SpecialFilterRules = oCCia.GetSpecialFilterRules();
+                for ( int SpecialFilter = 0; SpecialFilter < SpecialFilterRules.Length; SpecialFilter++ ) {
+                    comboBoxSpecialFilters.Items.Add( SpecialFilterNames [ SpecialFilter ] + ": " + SpecialFilterRules [ SpecialFilter ] );
+                }
+                checkBoxGenerateReports.Checked = oCCia.GetGenerateReports();
 
-            comboBoxSpecialFilters.Items.Clear();
-            string [] SpecialFilterNames = Enum.GetNames( typeof( CCia.ESpecialFilters ) );
-            string [] SpecialFilterRules = oCCia.GetSpecialFilterRules();
-            for( int SpecialFilter = 0; SpecialFilter < SpecialFilterRules.Length; SpecialFilter++ ) {
-                comboBoxSpecialFilters.Items.Add( SpecialFilterNames [ SpecialFilter ] + ": " + SpecialFilterRules [ SpecialFilter ] );
-            }
+                //================
+                //IPA tab (Isotopic pattern algorithm)
+                //============
+                buttonIpaMergeWithCIA.Visible = false;
 
-            //================
-            //IPA tab (Isotopic pattern algorithm)
-            //============
-            buttonIpaMergeWithCIA.Visible = false;
+                string DefaultParametersFile = Path.GetDirectoryName( System.Reflection.Assembly.GetEntryAssembly().Location ) + "\\DefaultParameters.xml";
+                if ( File.Exists( DefaultParametersFile ) == true ) {
+                    oCCia.LoadParameters( DefaultParametersFile );
+                }
 
-            string DefaultParametersFile = Path.GetDirectoryName( System.Reflection.Assembly.GetEntryAssembly().Location ) + "\\DefaultParameters.xml";
-            if ( File.Exists( DefaultParametersFile ) == true ) {
-                oCCia.LoadParameters( DefaultParametersFile );
-            }
-            UpdateCiaAndIpaDialogs();
-            //===============
-            //chartError tab`
-            //=============
-            comboBoxPlotType.DataSource = Enum.GetNames( typeof( EPlotType ) );
-            comboBoxPlotType.SelectedIndex = 0;
+                //===============
+                //Spectra files area
+                //===============
 
-            //================
-            //DB inspector tab
-            //================
-            numericDBUpDownMass.Enabled = false;
-            tableLayoutPanelDBPeaks.Enabled = false;
-            tableLayoutPanelDBPeaks.AutoScroll = true;
-            tableLayoutPanelDBPeaks.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            tableLayoutPanelDBPeaks.ColumnStyles.Clear();
-            tableLayoutPanelDBPeaks.ColumnCount = DBPeaksTableHeaders.Length;
-            for( int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++ ) {
-                tableLayoutPanelDBPeaks.ColumnStyles.Add( new System.Windows.Forms.ColumnStyle( SizeType.Percent, ( float ) 100.0 / DBPeaksTableHeaders.Length) );
-            }
-            tableLayoutPanelDBPeaks.RowStyles.Clear();
-            tableLayoutPanelDBPeaks.RowCount = 5 + 1;//Extra Row without RowStyle!!!
-            for( int iRow = 0; iRow < tableLayoutPanelDBPeaks.RowCount; iRow++ ) {
-                tableLayoutPanelDBPeaks.RowStyles.Add( new System.Windows.Forms.RowStyle( SizeType.Absolute, ( new System.Windows.Forms.TextBox() ).Height + 2 * ( new System.Windows.Forms.TextBox() ).Margin.Top ) );
-            }
-            for( int iRow = 0; iRow < tableLayoutPanelDBPeaks.RowCount - 1; iRow++ ) {// "-1" Extra Row without Controls!!!
-                for( int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++ ) {
-                    System.Windows.Forms.TextBox oTextBox = new System.Windows.Forms.TextBox();
-                    oTextBox.Anchor = AnchorStyles.None;
-                    oTextBox.ReadOnly = true;
-                    oTextBox.AutoSize = true;
-                    oTextBox.TextAlign = HorizontalAlignment.Center;
-                    if( iRow == 0){
+                //checkBoxCIA
+                //checkBoxIpa
+
+                UpdateCiaAndIpaDialogs();
+                //===============
+                //chartError tab
+                //=============
+                comboBoxPlotType.DataSource = Enum.GetNames( typeof( EPlotType ) );
+                comboBoxPlotType.SelectedIndex = 0;
+
+                //================
+                //DB inspector tab
+                //================
+                numericUpDownDBMass.Enabled = false;
+                tableLayoutPanelDBPeaks.Enabled = false;
+                tableLayoutPanelDBPeaks.AutoScroll = true;
+                tableLayoutPanelDBPeaks.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+                tableLayoutPanelDBPeaks.ColumnStyles.Clear();
+                tableLayoutPanelDBPeaks.ColumnCount = DBPeaksTableHeaders.Length;
+                for ( int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++ ) {
+                    tableLayoutPanelDBPeaks.ColumnStyles.Add( new System.Windows.Forms.ColumnStyle( SizeType.Percent, ( float ) 100.0 / DBPeaksTableHeaders.Length ) );
+                }
+                tableLayoutPanelDBPeaks.RowStyles.Clear();
+                tableLayoutPanelDBPeaks.RowCount = 5 + 1;//Extra Row without RowStyle!!!
+                for ( int iRow = 0; iRow < tableLayoutPanelDBPeaks.RowCount; iRow++ ) {
+                    tableLayoutPanelDBPeaks.RowStyles.Add( new System.Windows.Forms.RowStyle( SizeType.Absolute, ( new System.Windows.Forms.TextBox() ).Height + 2 * ( new System.Windows.Forms.TextBox() ).Margin.Top ) );
+                }
+                for ( int iRow = 0; iRow < tableLayoutPanelDBPeaks.RowCount - 1; iRow++ ) {// "-1" Extra Row without Controls!!!
+                    for ( int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++ ) {
+                        System.Windows.Forms.TextBox oTextBox = new System.Windows.Forms.TextBox();
+                        oTextBox.Anchor = AnchorStyles.None;
                         oTextBox.ReadOnly = true;
-                        oTextBox.Text = DBPeaksTableHeaders [ iColumn ];
+                        oTextBox.AutoSize = true;
+                        oTextBox.TextAlign = HorizontalAlignment.Center;
+                        if ( iRow == 0 ) {
+                            oTextBox.ReadOnly = true;
+                            oTextBox.Text = DBPeaksTableHeaders [ iColumn ];
+                        }
+                        tableLayoutPanelDBPeaks.Controls.Add( oTextBox, iColumn, iRow );
                     }
-                    tableLayoutPanelDBPeaks.Controls.Add( oTextBox, iColumn, iRow );
                 }
+
+                //================
+                //File convertor tab
+                //================
+                comboBoxDBAction.DataSource = DBActionMenu;
+                comboBoxDBAction.SelectedIndex = 0;
+                checkBoxDBCalculateMassFromFormula.Checked = oCCia.GetDBCalculateMassFromFormula();
+                checkBoxDBSortByMass.Checked = oCCia.GetDBSort();
+                checkBoxDBMassRangePerCsvFile.Checked = oCCia.GetDBMassRangePerCsvFile();
+                numericUpDownDBMassRange.Value = ( decimal ) oCCia.GetDBMassRange();
+
+                //================
+                //Filter check tab
+                //================
+
+                //================
+                //About tab
+                //================
+                richTextBoxAbout.SelectionFont = new System.Drawing.Font( "Microsoft Sans Seri", 10, FontStyle.Bold );
+                richTextBoxAbout.SelectedText = "Authors:\n\n";
+                richTextBoxAbout.SelectionFont = new System.Drawing.Font( "Microsoft Sans Seri", 8, FontStyle.Regular );
+                richTextBoxAbout.SelectedText = "Andrey Liyu (Program user interface & CIA conversion from Matlab)";
+                richTextBoxAbout.SelectedText = "\rNikola Tolic (Internal calibration, IPA function and DB)";
+                richTextBoxAbout.SelectedText = "\rElizabeth Kujawinski & Krista Longnecker (original CIA Matlab code and DB)";
+                richTextBoxAbout.SelectedText = "\r\rCompiled: 4/12/2017";
+
+
+                richTextBoxAbout.SelectionFont = new System.Drawing.Font( "Microsoft Sans Seri", 10, FontStyle.Bold );
+                richTextBoxAbout.SelectedText = "\r\rDisclaimer:\n";
+                richTextBoxAbout.SelectionFont = new System.Drawing.Font( "Microsoft Sans Seri", 8, FontStyle.Regular );
+                richTextBoxAbout.SelectedText = "This material was prepared as an account of work sponsored by an agency of the United States Government.";
+                richTextBoxAbout.SelectedText = "Neither the United States Government nor the United States Department of Energy, nor the Contractor, nor any or their employees, ";
+                richTextBoxAbout.SelectedText = "nor any jurisdiction or organization that has cooperated in the development of these materials, ";
+                richTextBoxAbout.SelectedText = "makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, ";
+                richTextBoxAbout.SelectedText = "completeness, or usefulness or any information, apparatus, product, software, or process disclosed, or represents that its use ";
+                richTextBoxAbout.SelectedText = "would not infringe privately owned rights.";
+                richTextBoxAbout.SelectedText = "Reference herein to any specific commercial product, process, or service by trade name, trademark,";
+                richTextBoxAbout.SelectedText = "manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, ";
+                richTextBoxAbout.SelectedText = "or favoring by the United States Government or any agency thereof, or Battelle Memorial Institute. The ";
+                richTextBoxAbout.SelectedText = "views and opinions of authors expressed herein do not necessarily state or reflect those of the United ";
+                richTextBoxAbout.SelectedText = "States Government or any agency thereof.";
+
+
+                richTextBoxAbout.SelectionFont = new System.Drawing.Font( "Microsoft Sans Seri", 10, FontStyle.Regular );
+                richTextBoxAbout.SelectedText = "\r\r\rPACIFIC NORTHWEST NATIONAL LABORATORY";
+                richTextBoxAbout.SelectedText = "\roperated by BATTELLE";
+                richTextBoxAbout.SelectedText = "\rfor the UNITED STATES DEPARTMENT OF ENERGY";
+                richTextBoxAbout.SelectedText = "\runder Contract DE-AC05-76RL01830";
+
+                //==============
+                //Chains
+                //=============
+                tableLayoutPanelChains.Enabled = false;
+                tableLayoutPanelChains.AutoScroll = true;
+                tableLayoutPanelChains.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+                tableLayoutPanelChains.ColumnStyles.Clear();
+                string [] ChainColumnNames = new string [] { "Types", "PairCount", "PairDistance", "Formula", "FormulaDistance", "ChainCount" };
+                tableLayoutPanelChains.ColumnCount = ChainColumnNames.Length;//PairCount,PairDistance,Formula,FormulaDistance,ChainCount
+                for ( int iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++ ) {
+                    tableLayoutPanelChains.ColumnStyles.Add( new System.Windows.Forms.ColumnStyle( SizeType.Percent, ( float ) 100.0 / ChainColumnNames.Length ) );
+                }
+                tableLayoutPanelChains.RowStyles.Clear();
+                tableLayoutPanelChains.RowCount = 5 + 1;//Extra Row without RowStyle!!!
+                for ( int RowIndex = 0; RowIndex < tableLayoutPanelChains.RowCount; RowIndex++ ) {
+                    tableLayoutPanelChains.RowStyles.Add( new System.Windows.Forms.RowStyle( SizeType.Absolute, ( new System.Windows.Forms.TextBox() ).Height + 2 * ( new System.Windows.Forms.TextBox() ).Margin.Top ) );
+                }
+                for ( int iRow = 0; iRow < tableLayoutPanelChains.RowCount - 1; iRow++ ) {// "-1" Extra Row without Controls!!!
+                    for ( int ColumnIndex = 0; ColumnIndex < tableLayoutPanelChains.ColumnCount; ColumnIndex++ ) {
+                        System.Windows.Forms.TextBox oTextBox = new System.Windows.Forms.TextBox();
+                        oTextBox.Anchor = AnchorStyles.None;
+                        oTextBox.ReadOnly = true;
+                        oTextBox.AutoSize = true;
+                        oTextBox.TextAlign = HorizontalAlignment.Center;
+                        if ( iRow == 0 ) {
+                            oTextBox.ReadOnly = true;
+                            oTextBox.Text = ChainColumnNames [ ColumnIndex ];
+                        }
+                        tableLayoutPanelChains.Controls.Add( oTextBox, ColumnIndex, iRow );
+                    }
+                }
+
+                this.ResumeLayout();
+            } catch ( Exception ex ) {
+                MessageBox.Show( "Something (" + ex.Message + ") was wrong during UI initilization." );
             }
-
-            //================
-            //File convertor tab
-            //================
-            comboBoxDBAction.DataSource = DBActionMenu;
-            comboBoxDBAction.SelectedIndex = 0;
-            checkBoxDBCalculateMassFromFormula.Checked = oCCia.GetDBCalculateMassFromFormula();
-            checkBoxDBSortByMass.Checked = oCCia.GetDBSort();
-            checkBoxDBMassRangePerCsvFile.Checked = oCCia.GetDBMassRangePerCsvFile();
-            numericUpDownDBMassRange.Value = (decimal) oCCia.GetDBMassRange();
-
-            //================
-            //Filter check tab
-            //================
-
-            //================
-            //About tab
-            //================
-            richTextBoxAbout.SelectionFont = new System.Drawing.Font("Microsoft Sans Seri", 10, FontStyle.Bold);
-            richTextBoxAbout.SelectedText = "Authors:\n\n";
-            richTextBoxAbout.SelectionFont = new System.Drawing.Font("Microsoft Sans Seri", 8, FontStyle.Regular);
-            richTextBoxAbout.SelectedText = "Andrey Liyu (Program user interface & CIA conversion from Matlab)";
-            richTextBoxAbout.SelectedText = "\rNikola Tolic (Internal calibration, IPA function and DB)";
-            richTextBoxAbout.SelectedText = "\rElizabeth Kujawinski & Krista Longnecker (original CIA Matlab code and DB)";
-            richTextBoxAbout.SelectedText = "\r\rCompiled: 4/12/2017";
-
-
-            richTextBoxAbout.SelectionFont = new System.Drawing.Font("Microsoft Sans Seri", 10, FontStyle.Bold);
-            richTextBoxAbout.SelectedText = "\r\rDisclaimer:\n";
-            richTextBoxAbout.SelectionFont = new System.Drawing.Font("Microsoft Sans Seri", 8, FontStyle.Regular);
-            richTextBoxAbout.SelectedText = "This material was prepared as an account of work sponsored by an agency of the United States Government.";
-            richTextBoxAbout.SelectedText = "Neither the United States Government nor the United States Department of Energy, nor the Contractor, nor any or their employees, ";
-            richTextBoxAbout.SelectedText = "nor any jurisdiction or organization that has cooperated in the development of these materials, ";
-            richTextBoxAbout.SelectedText = "makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, ";
-            richTextBoxAbout.SelectedText = "completeness, or usefulness or any information, apparatus, product, software, or process disclosed, or represents that its use ";
-            richTextBoxAbout.SelectedText = "would not infringe privately owned rights.";
-            richTextBoxAbout.SelectedText = "Reference herein to any specific commercial product, process, or service by trade name, trademark,";
-            richTextBoxAbout.SelectedText = "manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, ";
-            richTextBoxAbout.SelectedText = "or favoring by the United States Government or any agency thereof, or Battelle Memorial Institute. The ";
-            richTextBoxAbout.SelectedText = "views and opinions of authors expressed herein do not necessarily state or reflect those of the United ";
-            richTextBoxAbout.SelectedText = "States Government or any agency thereof.";
-
-
-            richTextBoxAbout.SelectionFont = new System.Drawing.Font("Microsoft Sans Seri", 10, FontStyle.Regular);
-            richTextBoxAbout.SelectedText = "\r\r\rPACIFIC NORTHWEST NATIONAL LABORATORY";
-            richTextBoxAbout.SelectedText = "\roperated by BATTELLE";
-            richTextBoxAbout.SelectedText = "\rfor the UNITED STATES DEPARTMENT OF ENERGY";
-            richTextBoxAbout.SelectedText = "\runder Contract DE-AC05-76RL01830";
-
-
-            //===============
-            //Spectra files area
-            //===============
-            comboBoxIonization.DataSource = Enum.GetValues( typeof( TestFSDBSearch.TotalSupport.IonizationMethod) );
-            comboBoxIonization.Text = oCCia.Ipa.Ionization.ToString();
-            textBoxAdduct.Text = oCCia.Ipa.Adduct;
-            numericUpDownCharge.Value = oCCia.Ipa.CS;
-
-            //checkBoxCIA
-            //checkBoxIpa
-
-            this.ResumeLayout();
         }
         private void UpdateCiaAndIpaDialogs() {
             //this.SuspendLayout();
@@ -177,7 +204,13 @@ namespace CiaUi {
             textBoxAdduct.Text = oCCia.Ipa.Adduct;
             comboBoxIonization.Text = oCCia.Ipa.Ionization.ToString();
             numericUpDownCharge.Value = oCCia.Ipa.CS;
+
+            checkBoxPreAlignment.Checked = oCCia.GetPreAlignment();
             //calibration
+            //if ( textBoxRefPeakFilename.Text != Path.GetFileName( oCCia.GetRefPeakFilename() ) ){
+                //oCCia.oTotalCalibration.Load( oCCia.GetRefPeakFilename() );
+                textBoxRefPeakFilename.Text = Path.GetFileName( oCCia.GetRefPeakFilename() );
+            //}
             comboBoxCalRegressionModel.Text = oCCia.oTotalCalibration.ttl_cal_regression.ToString();
             numericUpDownCalRelFactor.Value = ( decimal ) oCCia.oTotalCalibration.ttl_cal_rf;
             numericUpDownCalStartTolerance.Value = ( decimal ) oCCia.oTotalCalibration.ttl_cal_start_ppm;
@@ -186,11 +219,21 @@ namespace CiaUi {
             numericUpDownCalMinRelAbun.Value = ( decimal ) oCCia.oTotalCalibration.ttl_cal_min_abu_pct;
             numericUpDownCalMaxRelAbun.Value = ( decimal ) oCCia.oTotalCalibration.ttl_cal_max_abu_pct;
             //CIA
+            //Alignment
             checkBoxAlignment.Checked = oCCia.GetAlignment();
             numericUpDownAlignmentTolerance.Value = ( decimal ) oCCia.GetAlignmentPpmTolerance();
-            oCiaAdvancedForm.checkBoxCIAAdvAddChains.Checked = oCCia.GetGenerateChainReport();
             oCiaAdvancedForm.numericUpDownCIAAdvMinPeaksPerChain.Value = oCCia.GetMinPeaksPerChain();
 
+            if ( oCCia.GetCiaDBFilename().Length != 0 ) {
+                if ( textBoxCiaDBFilename.Text  != Path.GetFileName( oCCia.GetCiaDBFilename() ) ){
+                    oCCia.LoadCiaDB();
+                    textBoxCiaDBFilename.Text = Path.GetFileName( oCCia.GetCiaDBFilename() );
+                }
+            }
+
+            checkBoxStaticDynamicFormulaTolerance.Checked = oCCia.GetStaticDynamicPpmError();
+            numericUpDownFormulaToleranceStdDevGain.Value = ( decimal ) oCCia.GetStdDevErrorGain();
+            //numericUpDownFormulaToleranceStdDevGain.Enabled = checkBoxStaticDynamicFormulaTolerance.Checked;//???
             numericUpDownFormulaTolerance.Value = ( decimal ) oCCia.GetFormulaPPMTolerance();
             numericUpDownDBMassLimit.Value = ( decimal ) oCCia.GetMassLimit();
             comboBoxFormulaScore.SelectedIndex = ( int ) oCCia.GetFormulaScore();
@@ -209,36 +252,32 @@ namespace CiaUi {
             textBoxUserDefinedFilter.Text = oCCia.GetUserDefinedFilter();
 
             checkBoxUseRelation.Checked = oCCia.GetUseRelation();
-            numericUpDownMaxRelationshipGaps.Value = oCCia.GetMaxRelationGaps();
+            numericUpDownMaxRelationGaps.Value = oCCia.GetMaxRelationGaps();
             numericUpDownRelationErrorValue.Value = ( decimal ) oCCia.GetRelationErrorAMU();
-            comboBoxRelationshipErrorType.SelectedIndex = ( int ) oCCia.GetRelationshipErrorType();
+            comboBoxRelationErrorType.SelectedIndex = ( int ) oCCia.GetRelationErrorType();            
             oCiaAdvancedForm.checkBoxCIAAdvBackward.Checked = oCCia.GetUseBackward();
             for ( int BlockIndex = 0; BlockIndex < oCCia.GetActiveRelationFormulaBuildingBlocks().Length; BlockIndex++ ) {
                 checkedListBoxRelations.SetItemChecked( BlockIndex, oCCia.GetActiveRelationFormulaBuildingBlocks() [ BlockIndex ] );
             }
-            oCiaAdvancedForm.checkBoxIndividualFileReport.Checked = oCCia.GetGenerateIndividualFileReports();
+            oCiaAdvancedForm.checkBoxGenerateReports.Checked = oCCia.GetGenerateReports();
             //checkBoxLogReport.Checked = oCCia.GetLogReportStatus();
-            oCiaAdvancedForm.comboBoxOutputFileDelimiter.Text = oCCia.GetOutputFileDelimiterType().ToString();
+            //oCiaAdvancedForm.comboBoxOutputFileDelimiter.Text = oCCia.GetOutputFileDelimiterType().ToString();
             oCiaAdvancedForm.comboBoxErrorType.Text = oCCia.GetErrorType().ToString();
 
             //IPA
+            oCCia.LoadIpaDB();
             numericUpDownIpaMassTolerance.Value = ( decimal ) oCCia.Ipa.m_ppm_tol;
             numericUpDownIpaMajorPeaksMinSN.Value = ( decimal ) oCCia.Ipa.m_min_major_sn;
             numericUpDownIpaMinorPeaksMinSN.Value = ( decimal ) oCCia.Ipa.m_min_minor_sn;
-
             numericUpDownIpaMinMajorPeaksToAbsToReport.Value = ( decimal ) oCCia.Ipa.m_min_major_pa_mm_abs_2_report;
             checkBoxIpaMatchedPeakReport.Checked = oCCia.Ipa.m_matched_peaks_report;
-
             numericUpDownIpaMinPeakProbabilityToScore.Value = ( decimal ) oCCia.Ipa.m_min_p_to_score;
             textBoxIpaFilter.Text = oCCia.Ipa.m_IPDB_ec_filter;
-
             buttonIpaMergeWithCIA.Visible = false;
-
-            //this.ResumeLayout();
         }
         private void CIAUIForm_FormClosing( object sender, FormClosingEventArgs e ) {
             string DefaultParametersFile = Path.GetDirectoryName( System.Reflection.Assembly.GetEntryAssembly().Location ) + "\\DefaultParameters.xml";
-            oCCia.SaveParameters( DefaultParametersFile );
+            oCCia.GetSaveParameterText( DefaultParametersFile );
         }
 
         //Input files
@@ -247,7 +286,7 @@ namespace CiaUi {
                 if( e.KeyCode == Keys.Return ) {
                     oCCia.Ipa.Adduct = textBoxAdduct.Text;
                     textBoxResult.Text = oCCia.Ipa.ChargedMassFormula_Descriptive;
-                    //numericUpDownMass_ValueChanged( sender, e );//to update DB instector tab
+                    //numericUpDownDBMass_ValueChanged( sender, e );//to update DB instector tab
                 }
             } catch( Exception ex ) {
                 MessageBox.Show( ex.Message );
@@ -257,7 +296,7 @@ namespace CiaUi {
             try {
                 oCCia.Ipa.Adduct = textBoxAdduct.Text;
                 textBoxResult.Text = oCCia.Ipa.ChargedMassFormula_Descriptive;
-                //numericUpDownMass_ValueChanged( sender, e );//to update DB instector tab
+                //numericUpDownDBMass_ValueChanged( sender, e );//to update DB instector tab
             } catch( Exception ex ) {
                 MessageBox.Show( ex.Message );
             }
@@ -265,18 +304,18 @@ namespace CiaUi {
         private void comboBoxIonization_SelectedIndexChanged( object sender, EventArgs e ) {
             oCCia.Ipa.Ionization = ( TestFSDBSearch.TotalSupport.IonizationMethod ) Enum.Parse( typeof( TestFSDBSearch.TotalSupport.IonizationMethod), comboBoxIonization.Text );
             textBoxResult.Text = oCCia.Ipa.ChargedMassFormula_Descriptive;
-            //numericUpDownMass_ValueChanged( sender, e );//to update DB instector tab
+            //numericUpDownDBMass_ValueChanged( sender, e );//to update DB instector tab
         }
         private void numericUpDownCharge_ValueChanged( object sender, EventArgs e ) {
             oCCia.Ipa.CS = ( int ) Math.Abs( numericUpDownCharge.Value );
             textBoxResult.Text = oCCia.Ipa.ChargedMassFormula_Descriptive;
-            //numericUpDownMass_ValueChanged( sender, e );//to update DB instector tab
+            //numericUpDownDBMass_ValueChanged( sender, e );//to update DB instector tab
         }
         void CheckToProcess() {
             bool CalibrationReady = ( ( ( TotalCalibration.ttlRegressionType ) comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none )
-                        | ( ( ( TotalCalibration.ttlRegressionType ) comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none ) & ( textBoxCalFile.TextLength > "Drop calibration file: ".Length ) ) );
+                        | ( ( ( TotalCalibration.ttlRegressionType ) comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none ) & ( textBoxRefPeakFilename.TextLength > 0) ) );
 
-            bool CIAReady = ( oCCia.GetDBFilenames().Length > 0 ) & CalibrationReady;
+            bool CIAReady = ( oCCia.GetCiaDBFilename().Length > 0 ) & CalibrationReady;
             checkBoxCIA.Enabled = CIAReady;
 
             bool IpaReady = oCCia.Ipa.IPDB_Ready & CalibrationReady;
@@ -291,8 +330,8 @@ namespace CiaUi {
                 textBoxDropSpectraFiles.Enabled = false;
             }
 
-            bool ChainCalibrationReady = ( ( TotalCalibration.ttlRegressionType ) comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none )
-                    & ( textBoxCalFile.TextLength > "Drop calibration file: ".Length );
+            bool ChainCalibrationReady = ( ( TotalCalibration.ttlRegressionType ) comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none ) 
+                    & ( textBoxRefPeakFilename.TextLength > 0);
 
             if ( ChainCalibrationReady == true ){
                 textBoxChainDropSpectraFile.BackColor = Color.LightGreen;
@@ -308,20 +347,21 @@ namespace CiaUi {
         private void checkBoxIpa_CheckedChanged( object sender, EventArgs e ) {
             CheckToProcess();
         }
-        private void textBoxCalFile_DragEnter( object sender, DragEventArgs e ) {
+        private void textBoxRefPeakFilename_DragEnter( object sender, DragEventArgs e ) {
             if( e.Data.GetDataPresent( DataFormats.FileDrop ) == true ) {
                 e.Effect = DragDropEffects.Copy;
             }
         }
-        private void textBoxCalFile_DragDrop( object sender, DragEventArgs e ) {
+        private void textBoxRefPeakFilename_DragDrop( object sender, DragEventArgs e ) {
             string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
-            oCCia.oTotalCalibration.Load( Filenames [ 0 ] );
-            textBoxCalFile.Text = "Drop calibration file: " + Path.GetFileName( Filenames [ 0 ] );
+            //oCCia.oTotalCalibration.Load( Filenames [ 0 ] );
+            textBoxRefPeakFilename.Text = Path.GetFileName( Filenames [ 0 ] );
+            oCCia.SetRefPeakFilename( Filenames [ 0 ] );
             CheckToProcess();
         }
         private void comboBoxCalRegressionModel_SelectedIndexChanged( object sender, EventArgs e ) {
             if( comboBoxCalRegressionModel.Text == TotalCalibration.ttlRegressionType.none.ToString() ) {
-                textBoxCalFile.Enabled = false;
+                textBoxRefPeakFilename.Enabled = false;
                 numericUpDownCalRelFactor.Enabled = false;
                 numericUpDownCalStartTolerance.Enabled = false;
                 numericUpDownCalEndTolerance.Enabled = false;
@@ -329,7 +369,7 @@ namespace CiaUi {
                 numericUpDownCalMinRelAbun.Enabled = false;
                 numericUpDownCalMaxRelAbun.Enabled = false;
             } else {
-                textBoxCalFile.Enabled = true;
+                textBoxRefPeakFilename.Enabled = true;
                 numericUpDownCalRelFactor.Enabled = true;
                 numericUpDownCalStartTolerance.Enabled = true;
                 numericUpDownCalEndTolerance.Enabled = true;
@@ -349,23 +389,16 @@ namespace CiaUi {
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture( "ja-JP" );
             try {
                 string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
-                //log file
-                string LogFileName = DateTime.Now.ToString();
-                LogFileName = Path.GetDirectoryName( Filenames [ 0 ] ) + "\\" + "Report" + LogFileName.Replace( "/", "" ).Replace( ":", "" ).Replace( " ", "" ) + ".log";
-                StreamWriter oStreamLogWriter = new StreamWriter( LogFileName );
-
-                int FileCount = Filenames.Length;
-                double [] [] Masses = new double [ FileCount ] [];
-                double [] [] Abundances = new double [ FileCount ] [];
-                double [] [] SNs = new double [ FileCount ] [];
-                double [] [] Resolutions = new double [ FileCount ] [];
-                double [] [] RelAbundances = new double [ FileCount ] [];
 
                 //Read files & Calibration
                 oCCia.Ipa.Adduct = textBoxAdduct.Text;
                 oCCia.Ipa.Ionization = ( TestFSDBSearch.TotalSupport.IonizationMethod ) Enum.Parse( typeof( TestFSDBSearch.TotalSupport.IonizationMethod ), comboBoxIonization.Text );
                 oCCia.Ipa.CS = ( int ) Math.Abs( numericUpDownCharge.Value );
+                oCCia.SetPreAlignment( checkBoxPreAlignment.Checked );
 
+                oCCia.SetStaticDynamicPpmError( checkBoxStaticDynamicFormulaTolerance.Checked );
+                oCCia.SetInputData( null);
+                                        
                 oCCia.oTotalCalibration.ttl_cal_regression = ( TotalCalibration.ttlRegressionType ) Enum.Parse( typeof( TotalCalibration.ttlRegressionType ), comboBoxCalRegressionModel.Text );
                 oCCia.oTotalCalibration.ttl_cal_rf = ( double ) numericUpDownCalRelFactor.Value;
                 oCCia.oTotalCalibration.ttl_cal_start_ppm = ( double ) numericUpDownCalStartTolerance.Value;
@@ -373,40 +406,24 @@ namespace CiaUi {
                 oCCia.oTotalCalibration.ttl_cal_min_sn = ( double ) numericUpDownCalMinSN.Value;
                 oCCia.oTotalCalibration.ttl_cal_min_abu_pct = ( double ) numericUpDownCalMinRelAbun.Value;
                 oCCia.oTotalCalibration.ttl_cal_max_abu_pct = ( double ) numericUpDownCalMaxRelAbun.Value;
-                double [] MaxAbundances = new double [ FileCount ];
-                double [] [] CalMasses = new double [ FileCount ] [];
-                for( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
-                    //read files
-                    Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses [ FileIndex ], out Abundances [ FileIndex ], out SNs [ FileIndex ], out Resolutions [ FileIndex ], out RelAbundances [ FileIndex ] );
-                    //MaxAbundance = Abundances [ FileIndex ] [ 0 ];
-                    //foreach( double Abundabce in Abundances [ FileIndex ] ) { if( MaxAbundance < Abundabce ) { MaxAbundance = Abundabce; } }
-                    //MaxAbundances [ FileIndex ] = MaxAbundance;
-                    MaxAbundances [ FileIndex ] = Support.CArrayMath.Max( Abundances [ FileIndex ] );
-                    //Calibration
-                    if( oCCia.oTotalCalibration.ttl_cal_regression == TotalCalibration.ttlRegressionType.none ) {
-                        CalMasses [ FileIndex ] = new double [ Masses [ FileIndex ].Length ];
-                        for( int PeakIndex = 0; PeakIndex < CalMasses.Length; PeakIndex++ ) {
-                            CalMasses [ PeakIndex ] = Masses [ PeakIndex ];
-                        }
-                    } else {
-                        oCCia.oTotalCalibration.cal_log.Clear();
-                        double MaxAbundance = Support.CArrayMath.Max( Abundances [ FileIndex ] );
-                        CalMasses [ FileIndex ] = oCCia.oTotalCalibration.ttl_LQ_InternalCalibration( ref Masses [ FileIndex ], ref Abundances [ FileIndex ], ref SNs [ FileIndex ], MaxAbundances [ FileIndex ] );
-                        oStreamLogWriter.WriteLine();
-                        oStreamLogWriter.WriteLine( "Calibration of " + Path.GetFileName( Filenames [ FileIndex ] ) );
-                        oStreamLogWriter.WriteLine();
-                        oStreamLogWriter.Write( oCCia.oTotalCalibration.cal_log );
-                    }
-                }
-                if( checkBoxCIA.Checked == true ) {
+
+                if( checkBoxCIA.Checked == true ) {                    
                     //Alignment
                     oCCia.SetAlignment( checkBoxAlignment.Checked );
-                    oCCia.SetAlignmentPpmTolerance( ( double ) numericUpDownAlignmentTolerance.Value );
-                    oCCia.SetAddChains( false);
+                    oCCia.SetAlignmentPpmTolerance( ( double ) numericUpDownAlignmentTolerance.Value );                                       
 
                     //Formula assignment
                     oCCia.SetMassLimit( ( double ) numericUpDownDBMassLimit.Value );
-                    oCCia.SetFormulaScore( ( CCia.EFormulaScore ) Array.IndexOf( oCCia.GetFormulaScoreNames(), comboBoxFormulaScore.Text ) );
+                    //oCCia.SetInputData( InputData );
+                    //oCCia.SetChainBlocks( ChainBlocks );
+                    //oCCia.SetBlockMasses( BlockMasses );
+                    oCCia.SetStdDevErrorGain( ( double ) numericUpDownFormulaToleranceStdDevGain.Value );
+                    
+                    CCia.EFormulaScore CurrentFormulaScore = ( CCia.EFormulaScore ) Array.IndexOf( oCCia.GetFormulaScoreNames(), comboBoxFormulaScore.Text ); 
+                    oCCia.SetFormulaScore( CurrentFormulaScore);
+                    if ( CurrentFormulaScore == CCia.EFormulaScore.UserDefined ) {
+                        oCCia.SetUserDefinedScore( textBoxFormulaScoreUserDefined.Text );
+                    }
                     if( checkBoxCIAUseDefault.Checked == false ) {
                         oCCia.SetUseKendrick( oCiaAdvancedForm.checkBoxCIAAdvUseKendrick.Checked );
                         oCCia.SetUseC13( oCiaAdvancedForm.checkBoxCIAAdvUseC13.Checked );
@@ -441,49 +458,29 @@ namespace CiaUi {
                     oCCia.SetUserDefinedFilter( textBoxUserDefinedFilter.Text );
                     //Relationships
                     oCCia.SetUseRelation( checkBoxUseRelation.Checked );
-                    oCCia.SetMaxRelationGaps( ( int ) numericUpDownMaxRelationshipGaps.Value );
-                    oCCia.SetRelationshipErrorType( ( CCia.RelationshipErrorType ) Enum.Parse( typeof( CCia.RelationshipErrorType ), comboBoxRelationshipErrorType.Text ) );
+                    oCCia.SetMaxRelationGaps( ( int ) numericUpDownMaxRelationGaps.Value );
+                    oCCia.SetRelationErrorType( ( CCia.RelationErrorType ) Enum.Parse( typeof( CCia.RelationErrorType ), comboBoxRelationErrorType.Text ) ); 
                     oCCia.SetRelationErrorAMU( ( double ) numericUpDownRelationErrorValue.Value );
                     if( checkBoxCIAUseDefault.Checked == false ) {
-                        oCCia.SetUseBackward( oCiaAdvancedForm.checkBoxCIAAdvBackward.Checked );
+                        oCCia.SetUseBackward( oCiaAdvancedForm.checkBoxCIAAdvBackward.Checked );                        
                     } else {
                         oCCia.SetUseBackward( false );
                     }
 
-                    //short [] [] ActiveRelationBlocks = new short [ checkedListBoxRelations.CheckedItems.Count ] [];
-                    //for( int ActiveFormula = 0; ActiveFormula < checkedListBoxRelations.CheckedItems.Count; ActiveFormula++ ) {
-                    //    ActiveRelationBlocks [ ActiveFormula ] = oCCia.NameToFormula( checkedListBoxRelations.CheckedItems [ ActiveFormula ].ToString() );
-                    //}
-                    //oCCia.SetRelationFormulaBuildingBlocks( ActiveRelationBlocks );
                     bool [] ActiveRelationBlocks = new bool [ CCia.RelationBuildingBlockFormulas.Length ];
                     for ( int ActiveFormula = 0; ActiveFormula < ActiveRelationBlocks.Length; ActiveFormula++ ) {
                         ActiveRelationBlocks [ ActiveFormula ] = checkedListBoxRelations.GetItemChecked( ActiveFormula);
                     }
                     oCCia.SetActiveRelationFormulaBuildingBlocks( ActiveRelationBlocks );
 
+                    //Reports
+                    oCCia.SetGenerateReports( checkBoxGenerateReports.Checked );
                     if( checkBoxCIAUseDefault.Checked == false ) {
-                        //Reports
-                        oCCia.SetGenerateIndividualFileReports( oCiaAdvancedForm.checkBoxIndividualFileReport.Checked );
-                        oCCia.SetAddChains( oCiaAdvancedForm.checkBoxCIAAdvAddChains.Checked );
-                        //File formats
-                        oCCia.SetOutputFileDelimiterType( ( CCia.EDelimiters ) Enum.Parse( typeof( CCia.EDelimiters ), oCiaAdvancedForm.comboBoxOutputFileDelimiter.Text ) );
                         oCCia.SetErrorType( ( CCia.EErrorType ) Enum.Parse( typeof( CCia.EErrorType ), oCiaAdvancedForm.comboBoxErrorType.Text ) );
                     } else {
-                        //Reports
-                        if( checkBoxAlignment.Checked == true ) {
-                            oCCia.SetGenerateIndividualFileReports( false );
-                        } else {
-                            oCCia.SetGenerateIndividualFileReports( true);
-                        }
-                        oCCia.SetAddChains( false);
-                        //File formats
-                        oCCia.SetOutputFileDelimiterType( CCia.EDelimiters.Comma);
                         oCCia.SetErrorType( CCia.EErrorType.Signed);
                     }
-
-                    //Process
-                    oCCia.Process( Filenames, Masses, Abundances, SNs, Resolutions, RelAbundances, CalMasses, oStreamLogWriter );
-
+ 
                     //change textbox
                     textBoxDropSpectraFiles.Text = "Drop Spectra Files";
                     textBoxDropSpectraFiles.AppendText( "\r\nProcessed files:" );
@@ -504,47 +501,52 @@ namespace CiaUi {
                     oCCia.Ipa.m_min_p_to_score = ( double ) numericUpDownIpaMinPeakProbabilityToScore.Value;
 
                     oCCia.Ipa.m_IPDB_ec_filter = textBoxIpaFilter.Text;
-
-                    for( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
-                        oCCia.Ipa.IPDB_log.Clear();
-                        oCCia.Ipa.ttlSearch( ref CalMasses [ FileIndex ], ref Abundances [ FileIndex ], ref SNs [ FileIndex ], ref MaxAbundances [ FileIndex ], Filenames [ FileIndex ] );
-                        oStreamLogWriter.Write( oCCia.Ipa.IPDB_log );
-                    }
                 }
-                oStreamLogWriter.Flush();
-                oStreamLogWriter.Close();
+                if ( ( checkBoxCIA.Checked == true ) && ( checkBoxIpa.Checked == true ) ) {
+                    oCCia.SetProcessType( CCia.ProcessType.CiaIpa );
+                } else if ( ( checkBoxCIA.Checked == true ) && ( checkBoxIpa.Checked == false) ) {
+                    oCCia.SetProcessType( CCia.ProcessType.Cia);
+                } else {
+                    oCCia.SetProcessType( CCia.ProcessType.Ipa );
+                }
+                oCCia.Process( Filenames);
+
             } catch( Exception Ex ) {
                 MessageBox.Show( Ex.Message );
                 textBoxDropSpectraFiles.BackColor = Color.Pink;
-            }
+            }            
             textBoxDropSpectraFiles.BackColor = Color.LightGreen;
         }
 
-        //tab
+        //tabs
         private void tabControl1_SelectedIndexChanged( object sender, EventArgs e ) {
             string ddd = tabControl1.TabPages [ tabControl1.SelectedIndex ].Text;
             if( ddd == "CIA DB inspector" ) {
-                numericUpDownMass_ValueChanged( sender, e );
+                numericUpDownDBMass_ValueChanged( sender, e );
             }
         }
         //CIA tab
         private void checkBoxAlignment_CheckedChanged( object sender, EventArgs e ) {
             numericUpDownAlignmentTolerance.Enabled = checkBoxAlignment.Checked;
+            checkBoxStaticDynamicFormulaTolerance.Enabled = !checkBoxAlignment.Checked;            
+            if ( checkBoxAlignment.Checked == true ) {
+                //no DynamicPPM  out of public enum RelationErrorType { AMU, PPM, GapPPM, DynamicPPM };
+                comboBoxRelationErrorType.DataSource = Enum.GetNames( typeof( CCia.RelationErrorType ) ).ToList<string>().GetRange( 0, 3 );
+                checkBoxStaticDynamicFormulaTolerance.Checked = !checkBoxAlignment.Checked;
+            } else {
+                comboBoxRelationErrorType.DataSource = Enum.GetNames( typeof( CCia.RelationErrorType ) );
+            }
         }
-        private void textBoxDropDB_DragEnter( object sender, DragEventArgs e ) {
+        private void textBoxCiaDBFilename_DragEnter( object sender, DragEventArgs e ) {
             if( e.Data.GetDataPresent( DataFormats.FileDrop ) == true ) {
                 e.Effect = DragDropEffects.Copy;
             }
         }
-        private void textBoxDropDB_DragDrop( object sender, DragEventArgs e ) {
+        private void textBoxCiaDBFilename_DragDrop( object sender, DragEventArgs e ) {
             string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
-            oCCia.LoadDBs( Filenames );
-            textBoxDropDB.Text = "Drop DB files";
-            textBoxDropDB.AppendText( "\r\nLoaded:" );
-            foreach( string Filename in oCCia.GetDBFilenames() ) {
-                textBoxDropDB.AppendText( "\r\n" + Path.GetFileName( Filename ) );
-            }
-            numericDBUpDownMass.Enabled = true;
+            oCCia.LoadCiaDB( Filenames [ 0 ] );
+            textBoxCiaDBFilename.Text = Path.GetFileName( Filenames[ 0] );
+            numericUpDownDBMass.Enabled = true;
             textBoxDBRecords.Text = oCCia.GetDBRecords().ToString();
             textBoxDBMinMass.Text = oCCia.GetDBMinMass().ToString();
             textBoxDBMaxMass.Text = oCCia.GetDBMaxMass().ToString();
@@ -552,20 +554,31 @@ namespace CiaUi {
             textBoxDBMaxError.Text = oCCia.GetDBMaxError().ToString();
             CheckToProcess();
         }
-        private void numericUpDownFormulaError_ValueChanged( object sender, EventArgs e ) {
-            oCCia.SetFormulaPPMTolerance( ( double ) numericUpDownFormulaTolerance.Value );
-            numericUpDownMass_ValueChanged( sender, e );//to update DB instector tab
+        private void checkBoxStaticDynamicFormulaTolerance_CheckedChanged( object sender, EventArgs e ) {
+            numericUpDownFormulaTolerance.Enabled = !checkBoxStaticDynamicFormulaTolerance.Checked;
+            numericUpDownFormulaToleranceStdDevGain.Enabled = checkBoxStaticDynamicFormulaTolerance.Checked;
         }
-        private void checkBoxUseFormulaFilters_CheckedChanged( object sender, EventArgs e ) {
+        private void numericUpDownnumericUpDownFormulaTolerance_ValueChanged( object sender, EventArgs e ) {
+            oCCia.SetFormulaPPMTolerance( ( double ) numericUpDownFormulaTolerance.Value );
+            numericUpDownDBMass_ValueChanged( sender, e );//to update DB inspector tab
+        }
+        private void comboBoxFormulaScore_SelectedIndexChanged( object sender, EventArgs e ) {
+            textBoxFormulaScoreUserDefined.Visible = ( comboBoxFormulaScore.SelectedIndex == ( int ) CCia.EFormulaScore.UserDefined );
+            labelFormulaScoreUserDefined.Visible = textBoxFormulaScoreUserDefined.Visible;
+        }
+        private void checkBoxUseFormulaFilters_CheckedChanged( object sender, EventArgs e ) { 
             //groupBoxGoldenRuleFilters.Enabled = checkBoxUseFormulaFilters.Checked;
             comboBoxSpecialFilters.Enabled = checkBoxUseFormulaFilters.Checked;
             textBoxUserDefinedFilter.Enabled = checkBoxUseFormulaFilters.Checked;
         }
         private void checkBoxUseRelation_CheckedChanged( object sender, EventArgs e ) {
-            numericUpDownMaxRelationshipGaps.Enabled = checkBoxUseRelation.Checked;
-            comboBoxRelationshipErrorType.Enabled = checkBoxUseRelation.Checked;
+            numericUpDownMaxRelationGaps.Enabled = checkBoxUseRelation.Checked;
+            comboBoxRelationErrorType.Enabled = checkBoxUseRelation.Checked;
             numericUpDownRelationErrorValue.Enabled = checkBoxUseRelation.Checked;
             checkedListBoxRelations.Enabled = checkBoxUseRelation.Checked;
+        }
+        private void comboBoxRelationErrorType_SelectedIndexChanged( object sender, EventArgs e ) {
+            numericUpDownRelationErrorValue.Enabled = ( CCia.RelationErrorType ) Enum.Parse( typeof( CCia.RelationErrorType ), comboBoxRelationErrorType.Text ) != CCia.RelationErrorType.DynamicPPM;
         }
         private void buttonLoadCiaParameters_Click( object sender, EventArgs e ) {
             textBoxAdduct.Text = "H";
@@ -577,7 +590,7 @@ namespace CiaUi {
 
             checkBoxUseRelation.Checked = true;
             numericUpDownDBMassLimit.Value = 500;
-            comboBoxFormulaScore.SelectedIndex = ( int) CCia.EFormulaScore.HAcap;
+            comboBoxFormulaScore.SelectedIndex = ( int) CCia.EFormulaScore.MinNSPAndError;
 
             checkBoxUseFormulaFilters.Checked = true;
             //for( int GoldenRuleFilter = 0; GoldenRuleFilter < GoldenRuleFilterUsage.Length - 1; GoldenRuleFilter++ ) {
@@ -588,7 +601,7 @@ namespace CiaUi {
             textBoxUserDefinedFilter.Text = string.Empty;
 
             checkBoxUseRelation.Checked = true;
-            numericUpDownMaxRelationshipGaps.Value = 5;
+            numericUpDownMaxRelationGaps.Value = 5;
             numericUpDownRelationErrorValue.Value = ( decimal ) 0.00002;
             for( int RelationBlock = 0; RelationBlock < checkedListBoxRelations.Items.Count; RelationBlock++ ) {
                 if( ( RelationBlock == 0 ) || ( RelationBlock == 2 ) || ( RelationBlock == 6 ) ) {
@@ -598,19 +611,19 @@ namespace CiaUi {
                 }
             }
 
-            oCiaAdvancedForm.checkBoxIndividualFileReport.Checked = false;
+            oCiaAdvancedForm.checkBoxGenerateReports.Checked = false;
             oCiaAdvancedForm.checkBoxCIAAdvAddChains.Checked = false;
             oCiaAdvancedForm.numericUpDownCIAAdvMinPeaksPerChain.Value = 3;
             oCiaAdvancedForm.comboBoxErrorType.Text = CCia.EErrorType.CIA.ToString();
         }
-
+        
         private void buttonSwitchToAdvanced_Click( object sender, EventArgs e ) {
             oCiaAdvancedForm.numericUpDownCharge.Value = numericUpDownCharge.Value;
             oCiaAdvancedForm.textBoxAdduct.Text = textBoxAdduct.Text;
             oCiaAdvancedForm.comboBoxIonization.Text = comboBoxIonization.Text;
             oCiaAdvancedForm.textBoxResult.Text = textBoxResult.Text;
 
-            oCiaAdvancedForm.textBoxCalFile.Text = textBoxCalFile.Text;
+            oCiaAdvancedForm.textBoxCalFile.Text = textBoxRefPeakFilename.Text;
             oCiaAdvancedForm.comboBoxCalRegressionModel.SelectedIndex = comboBoxCalRegressionModel.SelectedIndex;
             oCiaAdvancedForm.numericUpDownCalStartTolerance.Value = numericUpDownCalStartTolerance.Value;
             oCiaAdvancedForm.numericUpDownCalRelFactor.Value = numericUpDownCalRelFactor.Value;
@@ -621,14 +634,14 @@ namespace CiaUi {
 
             oCiaAdvancedForm.checkBoxAlignment.Checked = checkBoxAlignment.Checked;
             oCiaAdvancedForm.numericUpDownAlignmentTolerance.Value = numericUpDownAlignmentTolerance.Value;
-            oCiaAdvancedForm.textBoxDropDB.Text = textBoxDropDB.Text;
+            oCiaAdvancedForm.textBoxDropDB.Text = textBoxCiaDBFilename.Text;
             oCiaAdvancedForm.numericUpDownFormulaTolerance.Value = numericUpDownFormulaTolerance.Value;
             oCiaAdvancedForm.numericUpDownDBMassLimit.Value = numericUpDownDBMassLimit.Value;
             oCiaAdvancedForm.comboBoxFormulaScore.SelectedIndex = comboBoxFormulaScore.SelectedIndex;
             oCiaAdvancedForm.checkBoxUseFormulaFilters.Checked = checkBoxUseFormulaFilters.Checked;
             oCiaAdvancedForm.checkBoxUseRelation.Checked = checkBoxUseRelation.Checked;
-            oCiaAdvancedForm.numericUpDownMaxRelationshipGaps.Value = numericUpDownMaxRelationshipGaps.Value;
-            oCiaAdvancedForm.comboBoxRelationshipErrorType.SelectedIndex = comboBoxRelationshipErrorType.SelectedIndex;
+            oCiaAdvancedForm.numericUpDownMaxRelationGaps.Value = numericUpDownMaxRelationGaps.Value;
+            oCiaAdvancedForm.comboBoxRelationErrorType.SelectedIndex = comboBoxRelationErrorType.SelectedIndex;
             oCiaAdvancedForm.numericUpDownRelationErrorValue.Value = numericUpDownRelationErrorValue.Value;
 
             for( int RelationIndex = 0; RelationIndex < checkedListBoxRelations.CheckedItems.Count; RelationIndex++ ) {
@@ -647,7 +660,7 @@ namespace CiaUi {
             comboBoxIonization.Text = oCiaAdvancedForm.comboBoxIonization.Text;
             textBoxResult.Text = oCiaAdvancedForm.textBoxResult.Text;
 
-            textBoxCalFile.Text = oCiaAdvancedForm.textBoxCalFile.Text;
+            textBoxRefPeakFilename.Text = oCiaAdvancedForm.textBoxCalFile.Text;
             comboBoxCalRegressionModel.SelectedIndex = oCiaAdvancedForm.comboBoxCalRegressionModel.SelectedIndex;
             numericUpDownCalStartTolerance.Value = oCiaAdvancedForm.numericUpDownCalStartTolerance.Value;
             numericUpDownCalRelFactor.Value = oCiaAdvancedForm.numericUpDownCalRelFactor.Value;
@@ -658,14 +671,14 @@ namespace CiaUi {
 
             checkBoxAlignment.Checked = oCiaAdvancedForm.checkBoxAlignment.Checked;
             numericUpDownAlignmentTolerance.Value = oCiaAdvancedForm.numericUpDownAlignmentTolerance.Value;
-            textBoxDropDB.Text = oCiaAdvancedForm.textBoxDropDB.Text;
+            textBoxCiaDBFilename.Text = oCiaAdvancedForm.textBoxDropDB.Text;
             numericUpDownFormulaTolerance.Value = oCiaAdvancedForm.numericUpDownFormulaTolerance.Value;
             numericUpDownDBMassLimit.Value = oCiaAdvancedForm.numericUpDownDBMassLimit.Value;
             comboBoxFormulaScore.SelectedIndex = oCiaAdvancedForm.comboBoxFormulaScore.SelectedIndex;
             checkBoxUseFormulaFilters.Checked = oCiaAdvancedForm.checkBoxUseFormulaFilters.Checked;
             checkBoxUseRelation.Checked = oCiaAdvancedForm.checkBoxUseRelation.Checked;
-            numericUpDownMaxRelationshipGaps.Value = oCiaAdvancedForm.numericUpDownMaxRelationshipGaps.Value;
-            comboBoxRelationshipErrorType.SelectedIndex = oCiaAdvancedForm.comboBoxRelationshipErrorType.SelectedIndex;
+            numericUpDownMaxRelationGaps.Value = oCiaAdvancedForm.numericUpDownMaxRelationGaps.Value;
+            comboBoxRelationErrorType.SelectedIndex = oCiaAdvancedForm.comboBoxRelationErrorType.SelectedIndex;
             numericUpDownRelationErrorValue.Value = oCiaAdvancedForm.numericUpDownRelationErrorValue.Value;
 
             for( int RelationIndex = 0; RelationIndex < checkedListBoxRelations.CheckedItems.Count; RelationIndex++ ) {
@@ -680,16 +693,17 @@ namespace CiaUi {
         }
 
         //Ipa tab
-        private void textBoxIpaDropDBFile_DragEnter( object sender, DragEventArgs e ) {
+        private void textBoxIpaDBFilename_DragEnter( object sender, DragEventArgs e ) {
             if( e.Data.GetDataPresent( DataFormats.FileDrop ) == true ) {
                 e.Effect = DragDropEffects.Copy;
             }
         }
-        private void textBoxIpaDropDBFile_DragDrop( object sender, DragEventArgs e ) {
+        private void textBoxIpaDBFilename_DragDrop( object sender, DragEventArgs e ) {
             string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
-            oCCia.Ipa.LoadTabulatedDB( Filenames [ 0 ] );//???
+            oCCia.Ipa.LoadTabulatedDB( Filenames [ 0 ] );
             CheckToProcess();
-            textBoxIpaDropDBFile.Text = Filenames [ 0 ];
+            textBoxIpaDBFilename.Text = Filenames [ 0 ];
+            oCCia.SetIpaDBFilename( Filenames [ 0 ] );
         }
 
         //Error plot tab
@@ -722,7 +736,7 @@ namespace CiaUi {
                 MessageBox.Show( "There is not " + textBoxYAxisColumnHeader.Text + " column header" );
                 return;
             }
-
+            
             for( int Line = 1; Line < Lines.Length; Line++ ) {
                 string [] Words = Lines [ Line ].Split( new char [] { ',' } );
                 if( Words [ YAxisColumnIndex ] == "0" ) { continue; }
@@ -741,7 +755,7 @@ namespace CiaUi {
                 case EPlotType.ErrorVsNeutralMass:
                     chartError.Series [ 0 ].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
                     chartError.ChartAreas [ 0 ].AxisX.Title = "Neutral mass, Da";
-                    chartError.ChartAreas [ 0 ].AxisY.Title = "Error, ppm";
+                    chartError.ChartAreas [ 0 ].AxisY.Title = "Error, ppm";                    
                     YMin = YData [ 0];
                     YMax = YMin;
                     for( int Point = 0; Point < XData.Count;  Point++ ) {
@@ -772,7 +786,7 @@ namespace CiaUi {
                         if( BinIndex >= BinCount ) { BinIndex = BinCount - 1; }
                         Bins [ BinIndex ]++;
                         if( YMax < Bins [ BinIndex ] ) { YMax = Bins [ BinIndex ]; }
-                    }
+                    }                 
                     for( int Point = 0; Point < Bins.Length; Point++ ) {
                         double XValue = XMin + BinSize * ( Point + 0.5 );
                         chartError.Series [ 0 ].Points.AddXY( XValue, Bins [ Point ] );
@@ -788,12 +802,12 @@ namespace CiaUi {
         }
 
         //DB tools tab
-        private void numericUpDownMass_ValueChanged( object sender, EventArgs e ) {
+        private void numericUpDownDBMass_ValueChanged( object sender, EventArgs e ) {
             //textBoxResult.Text = oCCia.Ipa.ChargedMassFormula_Descriptive;
-            if( numericDBUpDownMass.Value < 0 ) { return; }
+            if ( numericUpDownDBMass.Value < 0 ) { return; }
             tableLayoutPanelDBPeaks.SuspendLayout();
             tableLayoutPanelDBPeaks.Enabled = true;
-            double Mass = (double) numericDBUpDownMass.Value;
+            double Mass = ( double ) numericUpDownDBMass.Value;
             double NeutralMass = oCCia.Ipa.GetNeutralMass( Mass );
             textBoxDBNeutralMass.Text = NeutralMass.ToString();
             double Error = CPpmError.PpmToError( NeutralMass, oCCia.GetFormulaPPMTolerance() );
@@ -801,26 +815,26 @@ namespace CiaUi {
             textBoxDBNeutralMassMinusError.Text = ( NeutralMass - Error ).ToString();
             int LowerIndex, UpperIndex;
             int Records;
-            if( oCCia.GetDBLimitIndexes( NeutralMass, out LowerIndex, out UpperIndex ) == false ) {
+            if ( oCCia.GetDBLimitIndexes( NeutralMass, out LowerIndex, out UpperIndex ) == false ) {
                 Records = 0;
             } else {
                 Records = UpperIndex - LowerIndex + 1;
             }
             int Rows = Records + 2;//+ Head + Last Row without Controls
             textBoxDBRecordsInErrorRange.Text = Records.ToString();
-            if( tableLayoutPanelDBPeaks.RowStyles.Count > Rows) {
-                for( int Row = tableLayoutPanelDBPeaks.RowCount - 1; Row >= Rows; Row-- ) {
-                    for( int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++ ) {
-                        tableLayoutPanelDBPeaks.Controls.RemoveAt( tableLayoutPanelDBPeaks.Controls.Count - 1);
+            if ( tableLayoutPanelDBPeaks.RowStyles.Count > Rows ) {
+                for ( int Row = tableLayoutPanelDBPeaks.RowCount - 1; Row >= Rows; Row-- ) {
+                    for ( int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++ ) {
+                        tableLayoutPanelDBPeaks.Controls.RemoveAt( tableLayoutPanelDBPeaks.Controls.Count - 1 );
                     }
-                    tableLayoutPanelDBPeaks.RowStyles.RemoveAt( Row);
+                    tableLayoutPanelDBPeaks.RowStyles.RemoveAt( Row );
                 }
                 tableLayoutPanelDBPeaks.RowCount = Rows;
-            } else if( tableLayoutPanelDBPeaks.RowStyles.Count < Rows ) {
+            } else if ( tableLayoutPanelDBPeaks.RowStyles.Count < Rows ) {
                 tableLayoutPanelDBPeaks.RowCount = Rows;
-                for( int Row = tableLayoutPanelDBPeaks.RowStyles.Count - 1; Row < Rows - 1; Row++ ) {//"Count-1" due Last Row without Controls
+                for ( int Row = tableLayoutPanelDBPeaks.RowStyles.Count - 1; Row < Rows - 1; Row++ ) {//"Count-1" due Last Row without Controls
                     tableLayoutPanelDBPeaks.RowStyles.Add( new System.Windows.Forms.RowStyle( SizeType.Absolute, ( new System.Windows.Forms.TextBox() ).Height + 2 * ( new System.Windows.Forms.TextBox() ).Margin.Top ) );
-                    for( int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++ ) {
+                    for ( int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++ ) {
                         System.Windows.Forms.TextBox oTextBox = new System.Windows.Forms.TextBox();
                         oTextBox.Anchor = AnchorStyles.None;
                         oTextBox.ReadOnly = true;
@@ -830,15 +844,16 @@ namespace CiaUi {
                     }
                 }
             }
-            for( int Row = 1; Row < Rows - 1; Row++ ) {
+            for ( int Row = 1; Row < Rows - 1; Row++ ) {
                 int DBIndex = LowerIndex + Row - 1;
                 tableLayoutPanelDBPeaks.GetControlFromPosition( 0, Row ).Text = DBIndex.ToString();
                 tableLayoutPanelDBPeaks.GetControlFromPosition( 1, Row ).Text = oCCia.GetDBMass( DBIndex ).ToString();
                 tableLayoutPanelDBPeaks.GetControlFromPosition( 2, Row ).Text = oCCia.GetDBFormulaName( DBIndex );
-                tableLayoutPanelDBPeaks.GetControlFromPosition( 3, Row ).Text = CPpmError.SignedMassErrorPPM( NeutralMass, oCCia.GetDBMass( DBIndex ) ).ToString( "E" );
+                tableLayoutPanelDBPeaks.GetControlFromPosition( 3, Row ).Text = CPpmError.SignedPpmPPM( NeutralMass, oCCia.GetDBMass( DBIndex ) ).ToString( "E" );
             }
             tableLayoutPanelDBPeaks.ResumeLayout();
         }
+        /*
         private void textBoxDBDropFiles_DragEnter( object sender, DragEventArgs e ) {
             if( e.Data.GetDataPresent( DataFormats.FileDrop ) == true ) {
                 e.Effect = DragDropEffects.Copy;
@@ -846,14 +861,14 @@ namespace CiaUi {
         }
         private void textBoxDBDropFiles_DragDrop( object sender, DragEventArgs e ) {
             try {
-                if( oCCia.GetDBFilenames().Length == 0 ) { throw new Exception( "Drop DB file." ); }
+                if( oCCia.GetDBFilename().Length == 0 ) { throw new Exception( "Drop DB file." ); }
                 string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
                 //???oCCia.ReadFiles( Filenames);
                 //oCCia.ReportFormulas();
             } catch {
             }
         }
-
+        */
         //File convertor tab
         string [] InputFileTextFormats = { ".txt", ".csv", ".xls", ".xlsx" };
         string [] DBActionMenu = {
@@ -900,7 +915,7 @@ namespace CiaUi {
             } else if( comboBoxDBAction.Text == DBActionMenu [ 1 ] ) {
                 bool ErrorTypeExtention = false;
                 foreach( string Filename in Filenames ) {
-                    if( InputFileTextFormats.Contains( Path.GetExtension( Filename ) ) != true ) {
+                    if( InputFileTextFormats.Contains( Path.GetExtension( Filename ) ) != true ) {                        
                         MessageBox.Show( "Extention of file (" + Path.GetFileName( Filename ) + ") is not ASCII" );
                         ErrorTypeExtention = true;
                     }
@@ -966,7 +981,7 @@ namespace CiaUi {
                     }
                     for( int Sample = 0; Sample < Samples; Sample++ ) {
                         Abundances [ StartSample + Sample ] = double.Parse( LineParts [ 10 + Sample ] );
-                    }
+                    }                    
                 }
                 StartSample = StartSample + Samples;
             }
@@ -978,7 +993,7 @@ namespace CiaUi {
             foreach( string SampleName in SampleNames ) {
                 HeaderLine = HeaderLine + Delimiter + SampleName;
             }
-            StreamWriter oStreamWriter = new StreamWriter( Path.GetDirectoryName( Filenames [ 0 ] ) + "\\Comparision.csv" );
+            StreamWriter oStreamWriter = new StreamWriter( Path.GetDirectoryName( Filenames [ 0 ] ) + "\\Comparision.csv" );            
             oStreamWriter.WriteLine( HeaderLine );
 
             foreach( KeyValuePair<double, ReportData> KVP in FormulaDict ) {
@@ -1029,9 +1044,9 @@ namespace CiaUi {
                 myArray.SetValue( double.Parse( Attributes [ "res" ].Value), Peak, 4 );
                 double Currenti = (double) myArray.GetValue( Peak, 2 );
                 if( Maxi < Currenti ) { Maxi = Currenti; }
-
+                
             }
-            XmlDoc = null;
+            XmlDoc = null;                       
             for ( int Peak = 1; Peak <= Peaks; Peak++ ){
                 double rel_ab = ( (double) myArray.GetValue( Peak, 2 ) ) / Maxi;
                 myArray.SetValue( rel_ab, Peak, 5 );
@@ -1040,12 +1055,12 @@ namespace CiaUi {
             Microsoft.Office.Interop.Excel.Application MyApp = new Microsoft.Office.Interop.Excel.Application();
             MyApp.Visible = false;
             Microsoft.Office.Interop.Excel.Workbook MyBook = MyApp.Workbooks.Add( 1);
-            Microsoft.Office.Interop.Excel.Worksheet MySheet = (Microsoft.Office.Interop.Excel.Worksheet)MyBook.Sheets [ 1 ];
-            ((Microsoft.Office.Interop.Excel.Range)MySheet.Cells [ 1, 1]).Value = "mz";
-            ((Microsoft.Office.Interop.Excel.Range)MySheet.Cells [ 1, 2]).Value = "i";
-            ((Microsoft.Office.Interop.Excel.Range)MySheet.Cells [ 1, 3]).Value = "sn";
-            ((Microsoft.Office.Interop.Excel.Range)MySheet.Cells [ 1, 4]).Value = "res";
-            ((Microsoft.Office.Interop.Excel.Range)MySheet.Cells [ 1, 5]).Value = "rel_ab";
+            Microsoft.Office.Interop.Excel.Worksheet MySheet = MyBook.Sheets [ 1 ];
+            MySheet.Cells [ 1, 1].Value = "mz";
+            MySheet.Cells [ 1, 2].Value = "i";
+            MySheet.Cells [ 1, 3].Value = "sn";
+            MySheet.Cells [ 1, 4].Value = "res";
+            MySheet.Cells [ 1, 5].Value = "rel_ab";
 
             Microsoft.Office.Interop.Excel.Range MyRange = MySheet.get_Range( "A2", "E" + Peaks.ToString() ) ;
             MyRange.Value = myArray;
@@ -1062,7 +1077,7 @@ namespace CiaUi {
             MyApp.Quit();
             oCCia.CleanComObject( MyApp );
             MyApp = null;
-            GC.Collect();
+            GC.Collect();            
         }
 
         //filter check tab
@@ -1170,99 +1185,141 @@ namespace CiaUi {
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture( "ja-JP" );
             try {
                 string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
-                string OutputFilename = Path.GetDirectoryName( Filenames [ 0 ] ) + "\\" + Path.GetFileNameWithoutExtension( Filenames [ 0 ] );
-                int FileCount = Filenames.Length;
-                //Read files & Calibration
-                oCCia.Ipa.Adduct = textBoxAdduct.Text;
-                oCCia.Ipa.Ionization = ( TestFSDBSearch.TotalSupport.IonizationMethod ) Enum.Parse( typeof( TestFSDBSearch.TotalSupport.IonizationMethod ), comboBoxIonization.Text );
-                oCCia.Ipa.CS = ( int ) Math.Abs( numericUpDownCharge.Value );
-
-                oCCia.oTotalCalibration.ttl_cal_regression = ( TotalCalibration.ttlRegressionType ) Enum.Parse( typeof( TotalCalibration.ttlRegressionType ), comboBoxCalRegressionModel.Text );
-                oCCia.oTotalCalibration.ttl_cal_rf = ( double ) numericUpDownCalRelFactor.Value;
-                oCCia.oTotalCalibration.ttl_cal_start_ppm = ( double ) numericUpDownCalStartTolerance.Value;
-                oCCia.oTotalCalibration.ttl_cal_target_ppm = ( double ) numericUpDownCalEndTolerance.Value;
-                oCCia.oTotalCalibration.ttl_cal_min_sn = ( double ) numericUpDownCalMinSN.Value;
-                oCCia.oTotalCalibration.ttl_cal_min_abu_pct = ( double ) numericUpDownCalMinRelAbun.Value;
-                oCCia.oTotalCalibration.ttl_cal_max_abu_pct = ( double ) numericUpDownCalMaxRelAbun.Value;
-
-                int ChainMinPeaks = (int) numericUpDownChainMinPeaks.Value;
-                double PeakPpmError = ( double ) numericUpDownChainPpmError.Value;
-
-                Support.InputData Data = new Support.InputData();
-                Support.CFileReader.ReadFile( Filenames [ 0 ], out Data );
-                oCCia.oTotalCalibration.cal_log.Clear();
-                double [] CalMasses = oCCia.oTotalCalibration.ttl_LQ_InternalCalibration( ref Data.Masses, ref Data.Abundances, ref Data.S2Ns, Support.CArrayMath.Max( Data.Abundances) );
-                double MinMass = 0;
-                double MaxMass = Data.Masses[ Data.Masses.Length - 1];
-
-                //non-calibrated
-                CChainBlocks oCChainBlocks = new CChainBlocks();
-                oCChainBlocks.FindChains( Data, ChainMinPeaks, PeakPpmError, PeakPpmError, MaxMass, MinMass, MaxMass, false );
-                int ChainsCount = Data.Chains.Length;
-                textBoxChainRawNoncal.Text = ChainsCount.ToString();
-                int MaxChainsPeakIndex = oCChainBlocks.GetMaxChainsPeak( Data );
-                textBoxChainRawNoncalMaxChainsPeakIndex.Text = MaxChainsPeakIndex.ToString();
-                textBoxChainRawNoncalMaxChainsPeakMass.Text = Data.Masses[ MaxChainsPeakIndex].ToString( "F6");
-                if ( ( checkBoxChainNoncalOutput.Checked == true) && ( checkBoxChainRawChainOutput.Checked == true )){
-                    if ( checkBoxChainChainOutput.Checked == true ) {
-                        oCChainBlocks.ChainsToFile( Data, OutputFilename + "NoncalRawChains.csv" );
-                    }
-                    if ( checkBoxChainChainsPerPeakOutput.Checked == true ) {
-                        oCChainBlocks.PeakChainsToFile( Data, OutputFilename + "NoncalRawPeakChains.csv" );
-                    }
-                }
-                oCChainBlocks.CreateUniqueChains( Data, PeakPpmError );
-                ChainsCount = Data.Chains.Length;
-                textBoxChainUniqueNoncal.Text = ChainsCount.ToString();
-                MaxChainsPeakIndex = oCChainBlocks.GetMaxChainsPeak( Data );
-                textBoxChainUniqueNoncalMaxChainsPeakIndex.Text = MaxChainsPeakIndex.ToString();
-                textBoxChainUniqueNoncalMaxChainsPeakMass.Text = Data.Masses [ MaxChainsPeakIndex ].ToString( "F6" );
-                if ( ( checkBoxChainNoncalOutput.Checked == true)
-                        && ( checkBoxChainUniqueChainOutput.Checked == true ) ){
-                    if ( checkBoxChainChainOutput.Checked == true ) {
-                        oCChainBlocks.ChainsToFile( Data, OutputFilename + "NoncalIniqueChains.csv" );
-                    }
-                    if ( checkBoxChainChainsPerPeakOutput.Checked == true ) {
-                        oCChainBlocks.PeakChainsToFile( Data, OutputFilename + "NoncalUniquePeakChains.csv" );
-                    }
-                }
-                //calibrated
-                Data.Masses = CalMasses;
-                oCChainBlocks.FindChains( Data, ChainMinPeaks, PeakPpmError, PeakPpmError, MaxMass, MinMass, MaxMass, false );
-                ChainsCount = Data.Chains.Length;
-                textBoxChainRawCal.Text = ChainsCount.ToString();
-                MaxChainsPeakIndex = oCChainBlocks.GetMaxChainsPeak( Data );
-                textBoxChainRawCalMaxChainsPeakIndex.Text = MaxChainsPeakIndex.ToString();
-                textBoxChainRawCalMaxChainsPeakMass.Text = Data.Masses [ MaxChainsPeakIndex ].ToString( "F6" );
-                if ( ( checkBoxChainCalOutput.Checked == true )
-                        && ( checkBoxChainRawChainOutput.Checked == true ) ){
-                    if(checkBoxChainChainOutput.Checked == true){
-                        oCChainBlocks.ChainsToFile( Data, OutputFilename + "CalRawChains.csv" );
-                    }
-                    if ( checkBoxChainChainsPerPeakOutput.Checked == true ) {
-                        oCChainBlocks.PeakChainsToFile( Data, OutputFilename + "CalRawPeakChains.csv" );
-                    }
-                }
-                oCChainBlocks.CreateUniqueChains( Data, PeakPpmError );
-                int UniqueCalChains = Data.Chains.Length;
-                textBoxChainUniqueCal.Text = UniqueCalChains.ToString();
-                MaxChainsPeakIndex = oCChainBlocks.GetMaxChainsPeak( Data );
-                textBoxChainUniqueCalMaxChainsPeakIndex.Text = MaxChainsPeakIndex.ToString();
-                textBoxChainUniqueCalMaxChainsPeakMass.Text = Data.Masses [ MaxChainsPeakIndex ].ToString( "F6" );
-                if ( ( checkBoxChainCalOutput.Checked == true )
-                        && ( checkBoxChainUniqueChainOutput.Checked == true ) ){
-                    if ( checkBoxChainChainOutput.Checked == true ) {
-                        oCChainBlocks.ChainsToFile( Data, OutputFilename + "CalUniqueChains.csv" );
-                    }
-                    if ( checkBoxChainChainsPerPeakOutput.Checked == true ) {
-                        oCChainBlocks.PeakChainsToFile( Data, OutputFilename + "CalUniquePeakChains.csv" );
-                    }
+                Support.InputData InputData;
+                Support.CFileReader.ReadFile( Filenames [ 0 ], out InputData );
+                Support.CChainBlocks ChainBlocks = new CChainBlocks();
+                ChainBlocks.KnownMassBlocksFromFile( "dmTransformations_MalakReal.csv" );
+                string IsotopeFilename = "Isotope.inf";
+                CIsotope.ConvertIsotopeFileIntoIsotopeDistanceFile( IsotopeFilename );
+                Support.CChainBlocks.PairDistance [] DistancePeaks = ChainBlocks.GetPairChainIsotopeStatistics( InputData );
+                int Records = 0;
+                foreach ( Support.CChainBlocks.PairDistance CurPairDistance in DistancePeaks ) {
+                    Records = Records + CurPairDistance.DistancePeakTypeList.Count;
                 }
 
-                textBoxChainRawResult.Text = ( Convert.ToInt32( textBoxChainRawNoncal.Text) - Convert.ToInt32( textBoxChainRawCal.Text) ).ToString();
-                textBoxChainUniqueResult.Text = ( Convert.ToInt32( textBoxChainUniqueNoncal.Text ) - Convert.ToInt32( textBoxChainUniqueCal.Text ) ).ToString();
+                tableLayoutPanelChains.SuspendLayout();
+                int Rows = Records + 2;//+ Head + Last Row without Controls
+                if ( tableLayoutPanelChains.RowStyles.Count > Rows ) {
+                    for ( int Row = tableLayoutPanelChains.RowCount - 1; Row >= Rows; Row-- ) {
+                        for ( int iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++ ) {
+                            tableLayoutPanelChains.Controls.RemoveAt( tableLayoutPanelChains.Controls.Count - 1 );
+                        }
+                        tableLayoutPanelChains.RowStyles.RemoveAt( Row );
+                    }
+                    tableLayoutPanelChains.RowCount = Rows;
+                } else if ( tableLayoutPanelChains.RowStyles.Count < Rows ) {
+                    tableLayoutPanelChains.RowCount = Rows;
+                    for ( int Row = tableLayoutPanelChains.RowStyles.Count - 1; Row < Rows - 1; Row++ ) {//"Count-1" due Last Row without Controls
+                        tableLayoutPanelChains.RowStyles.Add( new System.Windows.Forms.RowStyle( SizeType.Absolute, ( new System.Windows.Forms.TextBox() ).Height + 2 * ( new System.Windows.Forms.TextBox() ).Margin.Top ) );
+                        for ( int iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++ ) {
+                            System.Windows.Forms.TextBox oTextBox = new System.Windows.Forms.TextBox();
+                            oTextBox.Anchor = AnchorStyles.None;
+                            oTextBox.ReadOnly = true;
+                            oTextBox.AutoSize = true;
+                            oTextBox.TextAlign = HorizontalAlignment.Center;
+                            tableLayoutPanelChains.Controls.Add( oTextBox, iColumn, Row );
+                        }
+                    }
+                }                
+                int RecordIndex = 1;
+                foreach ( Support.CChainBlocks.PairDistance CurPairDistance in DistancePeaks ) {
+                    for( int TypeIndex = 0; TypeIndex < CurPairDistance.DistancePeakTypeList.Count; TypeIndex++ ) {
+                        //string [] ChainColumnNames = new string [] { "Types", "PairCount", "PairDistance", "Formula", "FormulaDistance", "ChainCount" };
+                        tableLayoutPanelChains.GetControlFromPosition( 0, RecordIndex ).Text = CurPairDistance.DistancePeakTypeList[ TypeIndex].ToString();
+                        tableLayoutPanelChains.GetControlFromPosition( 1, RecordIndex ).Text = CurPairDistance.PairCount.ToString();
+                        tableLayoutPanelChains.GetControlFromPosition( 2, RecordIndex ).Text = CurPairDistance.Mean.ToString( "F6");
+                        tableLayoutPanelChains.GetControlFromPosition( 3, RecordIndex ).Text = CurPairDistance.FormulaList[ TypeIndex];
+                        tableLayoutPanelChains.GetControlFromPosition( 4, RecordIndex ).Text = CurPairDistance.FormulaDistanceList[ TypeIndex].ToString( "F6");
+                        tableLayoutPanelChains.GetControlFromPosition( 5, RecordIndex ).Text = CurPairDistance.ChainCount.ToString();
+                        RecordIndex++;
+                    }
+                }
                 textBoxChainDropSpectraFile.BackColor = Color.LightGreen;
-             } catch( Exception Ex ) {
+                tableLayoutPanelChains.Enabled = true;
+                tableLayoutPanelChains.ResumeLayout();
+                /*
+                    string OutputFilename = Path.GetDirectoryName( Filenames [ 0 ] ) + "\\" + Path.GetFileNameWithoutExtension( Filenames [ 0 ] );
+                    int FileCount = Filenames.Length;
+                    //Read files & Calibration
+                    oCCia.Ipa.Adduct = textBoxAdduct.Text;
+                    oCCia.Ipa.Ionization = ( TestFSDBSearch.TotalSupport.IonizationMethod ) Enum.Parse( typeof( TestFSDBSearch.TotalSupport.IonizationMethod ), comboBoxIonization.Text );
+                    oCCia.Ipa.CS = ( int ) Math.Abs( numericUpDownCharge.Value );
+                                        
+                    oCCia.oTotalCalibration.ttl_cal_regression = ( TotalCalibration.ttlRegressionType ) Enum.Parse( typeof( TotalCalibration.ttlRegressionType ), comboBoxCalRegressionModel.Text );
+                    oCCia.oTotalCalibration.ttl_cal_rf = ( double ) numericUpDownCalRelFactor.Value;
+                    oCCia.oTotalCalibration.ttl_cal_start_ppm = ( double ) numericUpDownCalStartTolerance.Value;
+                    oCCia.oTotalCalibration.ttl_cal_target_ppm = ( double ) numericUpDownCalEndTolerance.Value;
+                    oCCia.oTotalCalibration.ttl_cal_min_sn = ( double ) numericUpDownCalMinSN.Value;
+                    oCCia.oTotalCalibration.ttl_cal_min_abu_pct = ( double ) numericUpDownCalMinRelAbun.Value;
+                    oCCia.oTotalCalibration.ttl_cal_max_abu_pct = ( double ) numericUpDownCalMaxRelAbun.Value;
+
+                    int ChainMinPeaks = (int) numericUpDownChainMinPeaks.Value;
+                    double PeakPpmError = ( double ) numericUpDownChainPpmError.Value;
+
+                    Support.InputData Data = new Support.InputData();
+                    Support.CFileReader.ReadFile( Filenames [ 0 ], out Data );
+                    oCCia.oTotalCalibration.cal_log.Clear();
+                    double [] CalMasses = oCCia.oTotalCalibration.ttl_LQ_InternalCalibration( ref Data.Masses, ref Data.Abundances, ref Data.S2Ns, Support.CArrayMath.Max( Data.Abundances) );
+                    double MinMass = 0;
+                    double MaxMass = Data.Masses[ Data.Masses.Length - 1];
+
+                    //non-calibrated
+                    CChainBlocks oCChainBlocks = new CChainBlocks();
+                    oCChainBlocks.FindChains( Data, ChainMinPeaks, PeakPpmError, PeakPpmError, MaxMass, MinMass, MaxMass, false );
+                    int ChainsCount = Data.Chains.Length;
+                    textBoxChainRawNoncal.Text = ChainsCount.ToString();
+                    int MaxChainsPeakIndex = Data.GetMaxChainLength();
+                    textBoxChainRawNoncalMaxChainsPeakIndex.Text = MaxChainsPeakIndex.ToString();
+                    textBoxChainRawNoncalMaxChainsPeakMass.Text = Data.Masses[ MaxChainsPeakIndex].ToString( "F8");
+                    if ( ( checkBoxChainNoncalOutput.Checked == true) && ( checkBoxChainRawChainOutput.Checked == true )){
+                        if ( checkBoxChainChainOutput.Checked == true ) {
+                            File.WriteAllText( OutputFilename + "NoncalRawChains.csv", Data.ChainsToString() );
+                        }
+                    }
+                    oCChainBlocks.CreateUniqueChains( Data, 3 * PeakPpmError );
+                    ChainsCount = Data.Chains.Length;
+                    textBoxChainUniqueNoncal.Text = ChainsCount.ToString();
+                    MaxChainsPeakIndex = Data.GetMaxChainLength();
+                    textBoxChainUniqueNoncalMaxChainsPeakIndex.Text = MaxChainsPeakIndex.ToString();
+                    textBoxChainUniqueNoncalMaxChainsPeakMass.Text = Data.Masses [ MaxChainsPeakIndex ].ToString( "F8" );
+                    if ( ( checkBoxChainNoncalOutput.Checked == true)  
+                            && ( checkBoxChainUniqueChainOutput.Checked == true ) ){
+                        if ( checkBoxChainChainOutput.Checked == true ) {
+                            File.WriteAllText( OutputFilename + "NoncalIniqueChains.csv", Data.ChainsToString() );
+                        }
+                    }
+                    //calibrated
+                    Data.Masses = CalMasses;
+                    oCChainBlocks.FindChains( Data, ChainMinPeaks, PeakPpmError, PeakPpmError, MaxMass, MinMass, MaxMass, false );
+                    ChainsCount = Data.Chains.Length;
+                    textBoxChainRawCal.Text = ChainsCount.ToString();
+                    MaxChainsPeakIndex = Data.GetMaxChainLength();
+                    textBoxChainRawCalMaxChainsPeakIndex.Text = MaxChainsPeakIndex.ToString();
+                    textBoxChainRawCalMaxChainsPeakMass.Text = Data.Masses [ MaxChainsPeakIndex ].ToString( "F8" );
+                    if ( ( checkBoxChainCalOutput.Checked == true ) 
+                            && ( checkBoxChainRawChainOutput.Checked == true ) ){
+                        if(checkBoxChainChainOutput.Checked == true){
+                            File.WriteAllText( OutputFilename + "CalRawChains.csv", Data.ChainsToString() );
+                        }
+                    }
+                    oCChainBlocks.CreateUniqueChains( Data, PeakPpmError );
+                    int UniqueCalChains = Data.Chains.Length;
+                    textBoxChainUniqueCal.Text = UniqueCalChains.ToString();
+                    MaxChainsPeakIndex = Data.GetMaxChainLength();
+                    textBoxChainUniqueCalMaxChainsPeakIndex.Text = MaxChainsPeakIndex.ToString();
+                    textBoxChainUniqueCalMaxChainsPeakMass.Text = Data.Masses [ MaxChainsPeakIndex ].ToString( "F8" );
+                    if ( ( checkBoxChainCalOutput.Checked == true ) 
+                            && ( checkBoxChainUniqueChainOutput.Checked == true ) ){
+                        if ( checkBoxChainChainOutput.Checked == true ) {
+                            File.WriteAllText( OutputFilename + "CalUniqueChains.csv", Data.ChainsToString() );
+                        }
+                    }
+
+                    textBoxChainRawResult.Text = ( Convert.ToInt32( textBoxChainRawNoncal.Text) - Convert.ToInt32( textBoxChainRawCal.Text) ).ToString();
+                    textBoxChainUniqueResult.Text = ( Convert.ToInt32( textBoxChainUniqueNoncal.Text ) - Convert.ToInt32( textBoxChainUniqueCal.Text ) ).ToString();
+                    textBoxChainDropSpectraFile.BackColor = Color.LightGreen;
+                 */
+            } catch ( Exception Ex ) {
                 MessageBox.Show( Ex.Message );
                 textBoxChainDropSpectraFile.BackColor = Color.Pink;
             }
@@ -1270,31 +1327,42 @@ namespace CiaUi {
 
         //Save/restore parameters
         private void buttonSaveParameters_Click( object sender, EventArgs e ) {
-            SaveFileDialog OSD = new SaveFileDialog();
-            OSD.Title = "Save parameters";
-            OSD.InitialDirectory = System.IO.Path.GetDirectoryName( System.Reflection.Assembly.GetEntryAssembly().Location );
-            OSD.Filter = "XML Files (.xml)|*.xml|All Files (*.*)|*.*";
-            OSD.FilterIndex = 1;
-            if( OSD.ShowDialog() == System.Windows.Forms.DialogResult.OK ) {
-                oCCia.SaveParameters( OSD.FileName);
+            try {
+                SaveFileDialog OSD = new SaveFileDialog();
+                OSD.Title = "Save parameters";
+                OSD.InitialDirectory = System.IO.Path.GetDirectoryName( System.Reflection.Assembly.GetEntryAssembly().Location );
+                OSD.Filter = "XML Files (.xml)|*.xml|All Files (*.*)|*.*";
+                OSD.FilterIndex = 1;
+                if ( OSD.ShowDialog() == System.Windows.Forms.DialogResult.OK ) {
+                    oCCia.GetSaveParameterText( OSD.FileName );
+                }
+            } catch ( Exception ex ) {
+                MessageBox.Show( "Parameters weren't saved correctly." );
             }
         }
-        private void buttonLoadParameters_Click( object sender, EventArgs e ) {
-            OpenFileDialog OFD = new OpenFileDialog();
-            OFD.Title = "Load parameters";
-            OFD.InitialDirectory = System.IO.Path.GetDirectoryName( System.Reflection.Assembly.GetEntryAssembly().Location );
-            OFD.Filter = "XML Files (.xml)|*.xml|All Files (*.*)|*.*";
-            OFD.FilterIndex = 1;
-            OFD.Multiselect = false;
-            if( OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK){
-                oCCia.LoadParameters( OFD.FileName );
-                UpdateCiaAndIpaDialogs();
+        private void textBoxParameterFile_DragEnter( object sender, DragEventArgs e ) {
+            if ( e.Data.GetDataPresent( DataFormats.FileDrop ) == true ) {
+                e.Effect = DragDropEffects.Copy;
             }
-
+        }
+        private void textBoxParameterFile_DragDrop( object sender, DragEventArgs e ) {
+            try {
+                string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
+                string ParameterFilename = Filenames [ 0 ];
+                textBoxParameterFile.Text = "Parameter file:" + ParameterFilename;
+                if ( Path.GetExtension( ParameterFilename ) != ".xml" ) {
+                    MessageBox.Show( "Parameter file must have xml extension" );
+                    return;
+                }
+                oCCia.LoadParameters( ParameterFilename );
+                UpdateCiaAndIpaDialogs();
+            } catch ( Exception ex ) {
+                MessageBox.Show( "Parameters weren't loaded correctly. Error - " + ex.Message );
+            }
         }
     }
     class ReportData {
         public short [] Formula;
         public double [] Abundances;
-    }
+    }     
 }

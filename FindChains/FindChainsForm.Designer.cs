@@ -52,6 +52,8 @@
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.checkBoxUseKnownChainBlocks = new System.Windows.Forms.CheckBox();
+            this.textBoxChainBlockMasses = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.numericUpDownMinRelAbundance = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownS2N = new System.Windows.Forms.NumericUpDown();
@@ -60,9 +62,8 @@
             this.checkBoxS2N = new System.Windows.Forms.CheckBox();
             this.checkBoxPPMProcess = new System.Windows.Forms.CheckBox();
             this.checkBoxAmuProcess = new System.Windows.Forms.CheckBox();
-            this.textBoxChainBlockMasses = new System.Windows.Forms.TextBox();
             this.textBoxSpectraFile = new System.Windows.Forms.TextBox();
-            this.checkBoxUseKnownChainBlocks = new System.Windows.Forms.CheckBox();
+            this.buttonCalLogParser = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAbsError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRangeMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRangeMax)).BeginInit();
@@ -446,6 +447,28 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "PPM process";
             // 
+            // checkBoxUseKnownChainBlocks
+            // 
+            this.checkBoxUseKnownChainBlocks.AutoSize = true;
+            this.checkBoxUseKnownChainBlocks.Location = new System.Drawing.Point(7, 126);
+            this.checkBoxUseKnownChainBlocks.Name = "checkBoxUseKnownChainBlocks";
+            this.checkBoxUseKnownChainBlocks.Size = new System.Drawing.Size(143, 17);
+            this.checkBoxUseKnownChainBlocks.TabIndex = 30;
+            this.checkBoxUseKnownChainBlocks.Text = "Use known chain blocks";
+            this.checkBoxUseKnownChainBlocks.UseVisualStyleBackColor = true;
+            // 
+            // textBoxChainBlockMasses
+            // 
+            this.textBoxChainBlockMasses.AllowDrop = true;
+            this.textBoxChainBlockMasses.Location = new System.Drawing.Point(7, 146);
+            this.textBoxChainBlockMasses.Name = "textBoxChainBlockMasses";
+            this.textBoxChainBlockMasses.ReadOnly = true;
+            this.textBoxChainBlockMasses.Size = new System.Drawing.Size(213, 20);
+            this.textBoxChainBlockMasses.TabIndex = 24;
+            this.textBoxChainBlockMasses.Text = "Drag&Drop chain block mass file";
+            this.textBoxChainBlockMasses.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxChainBlockMasses_DragDrop);
+            this.textBoxChainBlockMasses.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxChainBlockMasses_DragEnter);
+            // 
             // label12
             // 
             this.label12.AutoSize = true;
@@ -542,18 +565,6 @@
             this.checkBoxAmuProcess.Text = "AMU process";
             this.checkBoxAmuProcess.UseVisualStyleBackColor = true;
             // 
-            // textBoxChainBlockMasses
-            // 
-            this.textBoxChainBlockMasses.AllowDrop = true;
-            this.textBoxChainBlockMasses.Location = new System.Drawing.Point(7, 146);
-            this.textBoxChainBlockMasses.Name = "textBoxChainBlockMasses";
-            this.textBoxChainBlockMasses.ReadOnly = true;
-            this.textBoxChainBlockMasses.Size = new System.Drawing.Size(213, 20);
-            this.textBoxChainBlockMasses.TabIndex = 24;
-            this.textBoxChainBlockMasses.Text = "Drag&Drop chain block mass file";
-            this.textBoxChainBlockMasses.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxChainBlockMasses_DragDrop);
-            this.textBoxChainBlockMasses.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxChainBlockMasses_DragEnter);
-            // 
             // textBoxSpectraFile
             // 
             this.textBoxSpectraFile.AllowDrop = true;
@@ -566,22 +577,25 @@
             this.textBoxSpectraFile.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxSpectraFile_DragDrop);
             this.textBoxSpectraFile.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxSpectraFile_DragEnter);
             // 
-            // checkBoxUseKnownChainBlocks
+            // buttonCalLogParser
             // 
-            this.checkBoxUseKnownChainBlocks.AutoSize = true;
-            this.checkBoxUseKnownChainBlocks.Location = new System.Drawing.Point(7, 126);
-            this.checkBoxUseKnownChainBlocks.Name = "checkBoxUseKnownChainBlocks";
-            this.checkBoxUseKnownChainBlocks.Size = new System.Drawing.Size(143, 17);
-            this.checkBoxUseKnownChainBlocks.TabIndex = 30;
-            this.checkBoxUseKnownChainBlocks.Text = "Use known chain blocks";
-            this.checkBoxUseKnownChainBlocks.UseVisualStyleBackColor = true;
+            this.buttonCalLogParser.AllowDrop = true;
+            this.buttonCalLogParser.Location = new System.Drawing.Point(348, 461);
+            this.buttonCalLogParser.Name = "buttonCalLogParser";
+            this.buttonCalLogParser.Size = new System.Drawing.Size(223, 82);
+            this.buttonCalLogParser.TabIndex = 26;
+            this.buttonCalLogParser.Text = "Calibration log parser";
+            this.buttonCalLogParser.UseVisualStyleBackColor = true;
+            this.buttonCalLogParser.DragDrop += new System.Windows.Forms.DragEventHandler(this.buttonCalLogParser_DragDrop);
+            this.buttonCalLogParser.DragEnter += new System.Windows.Forms.DragEventHandler(this.buttonCalLogParser_DragEnter);
             // 
             // FindChainsForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(595, 492);
+            this.ClientSize = new System.Drawing.Size(647, 595);
+            this.Controls.Add(this.buttonCalLogParser);
             this.Controls.Add(this.textBoxSpectraFile);
             this.Controls.Add(this.checkBoxAmuProcess);
             this.Controls.Add(this.checkBoxPPMProcess);
@@ -662,6 +676,7 @@
         private System.Windows.Forms.TextBox textBoxChainBlockMasses;
         private System.Windows.Forms.TextBox textBoxSpectraFile;
         private System.Windows.Forms.CheckBox checkBoxUseKnownChainBlocks;
+        private System.Windows.Forms.Button buttonCalLogParser;
     }
 }
 

@@ -57,13 +57,11 @@
             this.label28 = new System.Windows.Forms.Label();
             this.comboBoxErrorType = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.checkBoxIndividualFileReport = new System.Windows.Forms.CheckBox();
-            this.comboBoxOutputFileDelimiter = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.checkBoxGenerateReports = new System.Windows.Forms.CheckBox();
             this.checkBoxCIAAdvAddChains = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.checkBoxCIAAdvBackward = new System.Windows.Forms.CheckBox();
-            this.comboBoxRelationshipErrorType = new System.Windows.Forms.ComboBox();
+            this.comboBoxRelationErrorType = new System.Windows.Forms.ComboBox();
             this.label58 = new System.Windows.Forms.Label();
             this.numericUpDownCIAAdvC13Tolerance = new System.Windows.Forms.NumericUpDown();
             this.checkBoxCIAAdvUseC13 = new System.Windows.Forms.CheckBox();
@@ -98,7 +96,7 @@
             this.checkBoxGoldenRule3 = new System.Windows.Forms.CheckBox();
             this.checkBoxGoldenRule2 = new System.Windows.Forms.CheckBox();
             this.checkBoxGoldenRule1 = new System.Windows.Forms.CheckBox();
-            this.numericUpDownMaxRelationshipGaps = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownMaxRelationGaps = new System.Windows.Forms.NumericUpDown();
             this.checkBoxUseRelation = new System.Windows.Forms.CheckBox();
             this.buttonSwitchToSimple = new System.Windows.Forms.Button();
             this.buttonSetAdvancedDefault = new System.Windows.Forms.Button();
@@ -122,7 +120,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRelationErrorValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDBMassLimit)).BeginInit();
             this.groupBoxGoldenRuleFilters.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationshipGaps)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationGaps)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox9
@@ -446,9 +444,7 @@
             this.groupBox6.Controls.Add(this.label28);
             this.groupBox6.Controls.Add(this.comboBoxErrorType);
             this.groupBox6.Controls.Add(this.label9);
-            this.groupBox6.Controls.Add(this.checkBoxIndividualFileReport);
-            this.groupBox6.Controls.Add(this.comboBoxOutputFileDelimiter);
-            this.groupBox6.Controls.Add(this.label8);
+            this.groupBox6.Controls.Add(this.checkBoxGenerateReports);
             this.groupBox6.Location = new System.Drawing.Point(30, 552);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(560, 69);
@@ -512,38 +508,17 @@
             this.label9.TabIndex = 33;
             this.label9.Text = "Error";
             // 
-            // checkBoxIndividualFileReport
+            // checkBoxGenerateReports
             // 
-            this.checkBoxIndividualFileReport.AutoSize = true;
-            this.checkBoxIndividualFileReport.BackColor = System.Drawing.Color.Gold;
-            this.checkBoxIndividualFileReport.Location = new System.Drawing.Point(19, 17);
-            this.checkBoxIndividualFileReport.Name = "checkBoxIndividualFileReport";
-            this.checkBoxIndividualFileReport.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxIndividualFileReport.Size = new System.Drawing.Size(122, 17);
-            this.checkBoxIndividualFileReport.TabIndex = 50;
-            this.checkBoxIndividualFileReport.Text = "Individual file reports";
-            this.checkBoxIndividualFileReport.UseVisualStyleBackColor = false;
-            // 
-            // comboBoxOutputFileDelimiter
-            // 
-            this.comboBoxOutputFileDelimiter.BackColor = System.Drawing.Color.Gold;
-            this.comboBoxOutputFileDelimiter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxOutputFileDelimiter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.comboBoxOutputFileDelimiter.FormattingEnabled = true;
-            this.comboBoxOutputFileDelimiter.Location = new System.Drawing.Point(264, 15);
-            this.comboBoxOutputFileDelimiter.Name = "comboBoxOutputFileDelimiter";
-            this.comboBoxOutputFileDelimiter.Size = new System.Drawing.Size(75, 21);
-            this.comboBoxOutputFileDelimiter.TabIndex = 32;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.BackColor = System.Drawing.Color.Gold;
-            this.label8.Location = new System.Drawing.Point(186, 18);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(47, 13);
-            this.label8.TabIndex = 31;
-            this.label8.Text = "Delimiter";
+            this.checkBoxGenerateReports.AutoSize = true;
+            this.checkBoxGenerateReports.BackColor = System.Drawing.Color.Gold;
+            this.checkBoxGenerateReports.Location = new System.Drawing.Point(19, 17);
+            this.checkBoxGenerateReports.Name = "checkBoxGenerateReports";
+            this.checkBoxGenerateReports.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxGenerateReports.Size = new System.Drawing.Size(105, 17);
+            this.checkBoxGenerateReports.TabIndex = 50;
+            this.checkBoxGenerateReports.Text = "Generate reports";
+            this.checkBoxGenerateReports.UseVisualStyleBackColor = false;
             // 
             // checkBoxCIAAdvAddChains
             // 
@@ -560,7 +535,7 @@
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.checkBoxCIAAdvBackward);
-            this.groupBox5.Controls.Add(this.comboBoxRelationshipErrorType);
+            this.groupBox5.Controls.Add(this.comboBoxRelationErrorType);
             this.groupBox5.Controls.Add(this.label58);
             this.groupBox5.Controls.Add(this.numericUpDownCIAAdvC13Tolerance);
             this.groupBox5.Controls.Add(this.checkBoxCIAAdvUseC13);
@@ -584,7 +559,7 @@
             this.groupBox5.Controls.Add(this.numericUpDownDBMassLimit);
             this.groupBox5.Controls.Add(this.label5);
             this.groupBox5.Controls.Add(this.groupBoxGoldenRuleFilters);
-            this.groupBox5.Controls.Add(this.numericUpDownMaxRelationshipGaps);
+            this.groupBox5.Controls.Add(this.numericUpDownMaxRelationGaps);
             this.groupBox5.Controls.Add(this.checkBoxUseRelation);
             this.groupBox5.Location = new System.Drawing.Point(30, 196);
             this.groupBox5.Name = "groupBox5";
@@ -607,12 +582,12 @@
             // 
             // comboBoxRelationshipErrorType
             // 
-            this.comboBoxRelationshipErrorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxRelationshipErrorType.FormattingEnabled = true;
-            this.comboBoxRelationshipErrorType.Location = new System.Drawing.Point(332, 84);
-            this.comboBoxRelationshipErrorType.Name = "comboBoxRelationshipErrorType";
-            this.comboBoxRelationshipErrorType.Size = new System.Drawing.Size(73, 21);
-            this.comboBoxRelationshipErrorType.TabIndex = 52;
+            this.comboBoxRelationErrorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxRelationErrorType.FormattingEnabled = true;
+            this.comboBoxRelationErrorType.Location = new System.Drawing.Point(332, 84);
+            this.comboBoxRelationErrorType.Name = "comboBoxRelationErrorType";
+            this.comboBoxRelationErrorType.Size = new System.Drawing.Size(73, 21);
+            this.comboBoxRelationErrorType.TabIndex = 52;
             // 
             // label58
             // 
@@ -888,7 +863,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(109, 13);
             this.label5.TabIndex = 12;
-            this.label5.Text = "Max relationship gaps";
+            this.label5.Text = "Max relation gaps";
             // 
             // groupBoxGoldenRuleFilters
             // 
@@ -973,10 +948,10 @@
             // 
             // numericUpDownMaxRelationshipGaps
             // 
-            this.numericUpDownMaxRelationshipGaps.Location = new System.Drawing.Point(411, 65);
-            this.numericUpDownMaxRelationshipGaps.Name = "numericUpDownMaxRelationshipGaps";
-            this.numericUpDownMaxRelationshipGaps.Size = new System.Drawing.Size(120, 20);
-            this.numericUpDownMaxRelationshipGaps.TabIndex = 13;
+            this.numericUpDownMaxRelationGaps.Location = new System.Drawing.Point(411, 65);
+            this.numericUpDownMaxRelationGaps.Name = "numericUpDownMaxRelationshipGaps";
+            this.numericUpDownMaxRelationGaps.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDownMaxRelationGaps.TabIndex = 13;
             // 
             // checkBoxUseRelation
             // 
@@ -1053,7 +1028,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDBMassLimit)).EndInit();
             this.groupBoxGoldenRuleFilters.ResumeLayout(false);
             this.groupBoxGoldenRuleFilters.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationshipGaps)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationGaps)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1079,7 +1054,6 @@
         private System.Windows.Forms.ComboBox comboBoxShowProgress;
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label label58;
         private System.Windows.Forms.GroupBox groupBox4;
@@ -1099,9 +1073,8 @@
         public System.Windows.Forms.CheckBox checkBoxCIAAdvUseC13;
         public System.Windows.Forms.CheckBox checkBoxLogReport;
         public System.Windows.Forms.CheckBox checkBoxCIAAdvAddChains;
-        public System.Windows.Forms.ComboBox comboBoxOutputFileDelimiter;
         public System.Windows.Forms.ComboBox comboBoxErrorType;
-        public System.Windows.Forms.CheckBox checkBoxIndividualFileReport;
+        public System.Windows.Forms.CheckBox checkBoxGenerateReports;
         public System.Windows.Forms.NumericUpDown numericUpDownCharge;
         public System.Windows.Forms.TextBox textBoxAdduct;
         public System.Windows.Forms.ComboBox comboBoxIonization;
@@ -1122,8 +1095,8 @@
         public System.Windows.Forms.ComboBox comboBoxFormulaScore;
         public System.Windows.Forms.CheckBox checkBoxUseFormulaFilters;
         public System.Windows.Forms.CheckBox checkBoxUseRelation;
-        public System.Windows.Forms.NumericUpDown numericUpDownMaxRelationshipGaps;
-        public System.Windows.Forms.ComboBox comboBoxRelationshipErrorType;
+        public System.Windows.Forms.NumericUpDown numericUpDownMaxRelationGaps;
+        public System.Windows.Forms.ComboBox comboBoxRelationErrorType;
         public System.Windows.Forms.NumericUpDown numericUpDownRelationErrorValue;
         public System.Windows.Forms.CheckedListBox checkedListBoxRelations;
         public System.Windows.Forms.CheckBox checkBoxGoldenRule6;

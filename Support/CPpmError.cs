@@ -5,71 +5,87 @@ using System.Text;
 
 namespace Support {
     public class CPpmError {
-        const double PPM = 1e6;//parts per million
-        public static double PpmToError( double Mass, double ErrorPPM ) { return Mass * ErrorPPM / PPM; }
-        public static double ErrorToPpm( double Mass, double Error ) { return Error * PPM / Mass; }
-        public static double SignedMassErrorPPM( double ReferenceMass, double Mass ) { return ( Mass - ReferenceMass ) / ReferenceMass * PPM; }
-        public static double AbsMassErrorPPM( double ReferenceMass, double Mass ) { return Math.Abs( SignedMassErrorPPM( ReferenceMass, Mass)); }
-        public static double LeftPpmMass( double Mass, double PpmError ) { return Mass / ( 1 + PpmError / PPM ); }
-        public static double RightPpmMass( double Mass, double PpmError ) { return Mass * ( 1 + PpmError / PPM ); }
-        public static int SearchIndex( double [] InputArray, double Value, double PpmError ) {
-            int Index = Array.BinarySearch( InputArray, Value );
-            if ( Index < 0 ) {
-                Index = ~Index;
-                if ( Index >= InputArray.Length ) {
-                    if ( CPpmError.AbsMassErrorPPM( Value, InputArray [ InputArray.Length - 1 ] ) >  PpmError ) {
-                        return -1;
-                    } else {
-                        Index = InputArray.Length - 1;
-                    }
-                } else if ( Index == 0 ) {
-                    if ( CPpmError.AbsMassErrorPPM( Value, InputArray [ 0 ]) >  PpmError ) {
-                        return -1;
+        const double PPM = 1000000.0;//parts per million
+        
+        public static double PpmToError( double Mass, double PpmError) {return Mass * PpmError / PPM;}
+        public static double ErrorToPpm( double Mass, double Error) { return Error * PPM / Mass; }
+
+        public static double SignedPpmPPM( double ReferenceMass, double Mass ) { return ( Mass - ReferenceMass ) / ReferenceMass * PPM; }
+        public static double AbsPpmError( double ReferenceMass, double Mass ) { return Math.Abs( SignedPpmPPM( ReferenceMass, Mass)); }
+
+        public static double MassMinusPpmError( double Mass, double PpmError ) { return Mass / ( 1.0 + PpmError / PPM ); }
+        public static double MassPlusPpmError( double Mass, double PpmError ) { return Mass * ( 1.0 + PpmError / PPM ); }
+
+        //===================================================
+        public enum EMassType{ MinMass, BestMass, MaxMass};
+        public static double CalculateRangePpmError( double Mass1, double Mass2 ) {
+            if ( Mass2 >= Mass1 ) {
+                return ( Mass2 - Mass1 ) / Mass1 * PPM;
+            } else {
+                return ( Mass2 - Mass1 ) / Mass2 * PPM;
+            }
+        }
+        public static double CalculateAbsRangePpmError( double Mass1, double Mass2 ) {
+            return Math.Abs( CalculateRangePpmError( Mass1, Mass2 ) );
+        }
+        public enum EMassArgument{ None, First, Second};
+        public static EMassArgument FindBetterMass( double ReferenceMass, double FirstMass, double SecondMass, double MaxPpmError ) {
+            double FirstMassPpmError = CalculateAbsRangePpmError( ReferenceMass, FirstMass);
+            double SecondMassPpmError = CalculateAbsRangePpmError( ReferenceMass, SecondMass);
+            if( ( FirstMassPpmError <= SecondMassPpmError ) && ( FirstMassPpmError <= MaxPpmError ) ){                
+                return EMassArgument.First;
+            } else if ( ( FirstMassPpmError > SecondMassPpmError ) && ( SecondMassPpmError <= MaxPpmError ) ) {
+                return EMassArgument.Second;
+            }
+            return EMassArgument.None;
+        }
+        public static double CalculateMass( double Mass, double PpmError, EMassType MassType = EMassType.MaxMass ) {
+            switch( MassType){
+                case EMassType.BestMass: return Mass;
+                case EMassType.MaxMass: return Mass * ( 1.0 + PpmError / PPM );
+                case EMassType.MinMass: return Mass / ( 1.0 + PpmError / PPM );
+                default: throw new Exception( EMassType.MaxMass.GetType().ToString() + " has incorrect value: " + MassType.ToString() );
+            }
+        }
+        public static bool IsMassInRange( double Mass1, double Mass2, double PpmError ) {
+            if ( CalculateAbsRangePpmError( Mass1, Mass2 ) <= PpmError ) { return true; }
+            return false;
+        }
+        public static int SearchPeakIndex( double [] Masses, double PeakMass, double MaxPpmError, int StartIndex = 0) {
+            int Index = Array.BinarySearch( Masses, StartIndex, Masses.Length - StartIndex, PeakMass );
+            if ( Index >= 0 ) { return Index; }
+            else{ Index = ~Index; }
+            if ( Index >= Masses.Length ) {
+                if ( IsMassInRange( Masses [ Masses.Length - 1 ], PeakMass, MaxPpmError ) == true ) {
+                    return Masses.Length - 1; 
+                }
+            } else if ( Index == StartIndex ){
+                if ( StartIndex == 0 ) {
+                    if ( IsMassInRange( Masses [ StartIndex ], PeakMass, MaxPpmError ) == true ) {
+                        return Index;
                     }
                 } else {
-                    if ( ( Value - InputArray [ Index - 1 ] ) < ( InputArray [ Index ] - Value ) ) {
-                        Index = Index - 1;
-                        if ( CPpmError.AbsMassErrorPPM( InputArray [ Index ], Value) >  PpmError ) {
-                            return -1;
-                        }
-                    } else {
-                        if ( CPpmError.AbsMassErrorPPM( Value, InputArray [ Index ] ) >  PpmError ) {
-                            return -1;
-                        }
+                    if ( FindBetterMass( PeakMass, Masses [ StartIndex - 1 ], Masses [ StartIndex ], MaxPpmError ) == EMassArgument.Second ) {
+                        return Index;
                     }
                 }
+            } else {
+                EMassArgument MassArgument = FindBetterMass( PeakMass, Masses [ Index - 1 ], Masses [ Index ], MaxPpmError );
+                if( MassArgument == EMassArgument.First){
+                    return Index - 1;
+                } else if ( MassArgument == EMassArgument.Second){
+                    return Index;
+                }                
             }
-            return Index;
+            return -1;
+        }        
+        public static int SearchPeakIndexBasedOnErrorDistribution( Support.InputData Data, double PeakMass, int StartIndex = 0) {
+            double [] InputArray = Data.Masses;
+            double MaxPpmError = Data.GetErrorStdDev( PeakMass ) * Data.MaxPpmErrorGain;
+            return SearchPeakIndex( Data.Masses, PeakMass, MaxPpmError, StartIndex );//add StartIndex
         }
-        public static int SearchIndex( double [] InputArray, int StartIndex, double Value, double PpmError ) {
-            int Index = Array.BinarySearch( InputArray, StartIndex, InputArray.Length - StartIndex - 1, Value );
-            if ( Index < 0 ) {
-                Index = ~Index;
-                if ( Index >= InputArray.Length ) {
-                    if ( CPpmError.AbsMassErrorPPM( InputArray [ Index], Value ) >  PpmError ) {
-                        return -1;
-                    } else {
-                        Index = Index - 1;
-                    }
-                } else if ( Index == StartIndex ) {
-                    if ( CPpmError.AbsMassErrorPPM( Value, InputArray [ StartIndex ] ) >  PpmError ) {
-                        return -1;
-                    }
-                } else {
-                    double LeftError = CPpmError.AbsMassErrorPPM( InputArray [ Index - 1], Value );
-                    double RightError = CPpmError.AbsMassErrorPPM( Value, InputArray [ Index ] );
-                    if( LeftError < RightError){
-                        if( LeftError > PpmError){ return -1;}
-                        Index = Index - 1;
-                    } else {
-                        if ( RightError > PpmError ) { return -1; }
-                    }
-                }
-            }
-            return Index;
-        }
-        public static int SearchNextIndex( double [] InputArray, int StartIndex, double Value) {
-            int Index = Array.BinarySearch( InputArray, StartIndex, InputArray.Length - StartIndex - 1, Value );
+        public static int SearchNearPeakIndex( double [] InputArray, double Mass, int StartIndex = 0) {
+            int Index = Array.BinarySearch( InputArray, StartIndex, InputArray.Length - StartIndex - 1, Mass );
             if ( Index < 0 ) {
                 Index = ~Index;
                 if ( Index >= InputArray.Length ) {
@@ -78,5 +94,13 @@ namespace Support {
             }
             return Index;
         }
+        public static int SearchNearPeakIndex( double [] InputArray, double Mass ){
+            if ( Mass <= InputArray.First() ) { return 0; } else if ( Mass >= InputArray.Last() ) { return InputArray.Length - 1; }
+            int Index = Array.BinarySearch( InputArray, Mass );
+            if ( Index >= 0 ) { return Index; }            
+            Index = ~Index;
+            if ( AbsPpmError( Mass, InputArray [ Index - 1 ] ) <= AbsPpmError( Mass, InputArray [ Index ] ) ) { return Index - 1; }            
+            return Index;
+        } 
     }
 }

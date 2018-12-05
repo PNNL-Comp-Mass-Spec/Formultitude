@@ -33,15 +33,15 @@ namespace CiaUi {
             comboBoxIonization.DataSource = Enum.GetValues( typeof( TestFSDBSearch.TotalSupport.IonizationMethod ) );
             comboBoxCalRegressionModel.DataSource = Enum.GetValues( typeof( TotalCalibration.ttlRegressionType ) );
             comboBoxFormulaScore.DataSource = oCCia.GetFormulaScoreNames();
-            comboBoxRelationshipErrorType.DataSource = Enum.GetNames( typeof( CCia.RelationshipErrorType ) );
+            comboBoxRelationErrorType.DataSource = Enum.GetNames( typeof( CCia.RelationErrorType ) );
 
-            //Formula assignment
+            //Formula assignment     
             for ( int Relation = 0; Relation < CCia.RelationBuildingBlockFormulas.Length; Relation++ ) {
                 bool bb = false;
                 if( Relation == 0 || Relation == 2 || Relation == 6 ) { bb = true; }
                 checkedListBoxRelations.Items.Add( oCCia.FormulaToName( CCia.RelationBuildingBlockFormulas [ Relation ] ), bb );
             }
-            checkBoxCIAAdvAddChains.Checked = oCCia.GetGenerateChainReport();
+            //checkBoxCIAAdvAddChains.Checked = oCCia.GetGenerateChainReport();
             numericUpDownCIAAdvMinPeaksPerChain.Value  = oCCia.GetMinPeaksPerChain();
 
             //Golden rules
@@ -62,11 +62,11 @@ namespace CiaUi {
             comboBoxSpecialFilters.Text = oCCia.GetSpecialFilter().ToString();
 
             //Reports
-            checkBoxIndividualFileReport.Checked = oCCia.GetGenerateIndividualFileReports();
+            checkBoxGenerateReports.Checked = oCCia.GetGenerateReports();
 
             //Out file formats
-            comboBoxOutputFileDelimiter.DataSource = Enum.GetNames( typeof( CCia.EDelimiters ) );
-            comboBoxOutputFileDelimiter.Text = oCCia.GetOutputFileDelimiterType().ToString();
+            //comboBoxOutputFileDelimiter.DataSource = Enum.GetNames( typeof( CCia.EDelimiters ) );
+            //comboBoxOutputFileDelimiter.Text = oCCia.GetOutputFileDelimiterType().ToString();
             comboBoxErrorType.DataSource = Enum.GetNames( typeof( CCia.EErrorType ) );
             comboBoxErrorType.Text = oCCia.GetErrorType().ToString();
 
@@ -107,9 +107,9 @@ namespace CiaUi {
 
         private void checkBoxAlignment_CheckedChanged( object sender, EventArgs e ) {
             numericUpDownAlignmentTolerance.Enabled = checkBoxAlignment.Checked;
-            checkBoxIndividualFileReport.Enabled = checkBoxAlignment.Checked;
+            checkBoxGenerateReports.Enabled = checkBoxAlignment.Checked;
             if( checkBoxAlignment.Checked == false ) {
-                checkBoxIndividualFileReport.Checked = true;
+                checkBoxGenerateReports.Checked = true;
             }
         }
         private void textBoxDropSpectraFiles_DragEnter( object sender, DragEventArgs e ) {
@@ -133,7 +133,7 @@ namespace CiaUi {
                 double [] [] SNs = new double [ FileCount ] [];
                 double [] [] Resolutions = new double [ FileCount ] [];
                 double [] [] RelAbundances = new double [ FileCount ] [];
-                //Read files & Calibration
+                //Read files & Calibration 
                 oCCia.Ipa.Adduct = textBoxAdduct.Text;
                 oCCia.Ipa.Ionization = ( TestFSDBSearch.TotalSupport.IonizationMethod ) Enum.Parse( typeof( TestFSDBSearch.TotalSupport.IonizationMethod ), comboBoxIonization.Text );
                 oCCia.Ipa.CS = ( int ) Math.Abs( numericUpDownCharge.Value );
@@ -173,7 +173,7 @@ namespace CiaUi {
                 //Alignment
                 oCCia.SetAlignment( checkBoxAlignment.Checked );
                 oCCia.SetAlignmentPpmTolerance( ( double ) numericUpDownAlignmentTolerance.Value );
-                oCCia.SetAddChains( checkBoxCIAAdvAddChains.Checked );
+                //oCCia.SetAddChains( checkBoxCIAAdvAddChains.Checked );
                 oCCia.SetMinPeaksPerChain( ( int ) numericUpDownCIAAdvMinPeaksPerChain.Value );
 
                 //Formula assignment
@@ -196,8 +196,8 @@ namespace CiaUi {
                 oCCia.SetUserDefinedFilter( textBoxUserDefinedFilter.Text );
                 //Relationships
                 oCCia.SetUseRelation( checkBoxUseRelation.Checked );
-                oCCia.SetMaxRelationGaps( ( int ) numericUpDownMaxRelationshipGaps.Value );
-                oCCia.SetRelationshipErrorType( ( CCia.RelationshipErrorType ) Enum.Parse( typeof( CCia.RelationshipErrorType ), comboBoxRelationshipErrorType.Text ) );
+                oCCia.SetMaxRelationGaps( ( int ) numericUpDownMaxRelationGaps.Value );
+                oCCia.SetRelationErrorType( ( CCia.RelationErrorType ) Enum.Parse( typeof( CCia.RelationErrorType ), comboBoxRelationErrorType.Text ) );
                 oCCia.SetRelationErrorAMU( ( double ) numericUpDownRelationErrorValue.Value );
                 oCCia.SetUseBackward( checkBoxCIAAdvBackward.Checked );
 
@@ -213,15 +213,15 @@ namespace CiaUi {
                 oCCia.SetActiveRelationFormulaBuildingBlocks( ActiveRelationBlocks );
 
                 //Reports
-                oCCia.SetGenerateIndividualFileReports( checkBoxIndividualFileReport.Checked );
+                oCCia.SetGenerateReports( checkBoxGenerateReports.Checked );                             
 
                 //File formats
-                oCCia.SetOutputFileDelimiterType( ( CCia.EDelimiters ) Enum.Parse( typeof( CCia.EDelimiters ), comboBoxOutputFileDelimiter.Text ) );
+                //oCCia.SetOutputFileDelimiterType( ( CCia.EDelimiters ) Enum.Parse( typeof( CCia.EDelimiters ), comboBoxOutputFileDelimiter.Text ) );
                 oCCia.SetErrorType( ( CCia.EErrorType ) Enum.Parse( typeof( CCia.EErrorType ), comboBoxErrorType.Text ) );
 
                 //oCCia.SetLogReportStatus( checkBoxLogReport.Checked );
 
-                //Process
+                //Process                    
                 oCCia.Process( Filenames, Masses, Abundances, SNs, Resolutions, RelAbundances, CalMasses, oStreamLogWriter );
 
                 //change textbox
@@ -246,7 +246,7 @@ namespace CiaUi {
         }
         private void textBoxCalFile_DragDrop( object sender, DragEventArgs e ) {
             string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
-            oCCia.oTotalCalibration.Load( Filenames [ 0 ] );
+            //oCCia.oTotalCalibration.Load( Filenames [ 0 ] );
             textBoxCalFile.Text = "Drop calibration file: " + Path.GetFileName( Filenames [ 0 ] );
             CheckToProcess();
         }
@@ -277,18 +277,17 @@ namespace CiaUi {
         }
         private void textBoxDropDB_DragDrop( object sender, DragEventArgs e ) {
             string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
-            oCCia.LoadDBs( Filenames );
-            textBoxDropDB.Text = "Drop DB files";
+            oCCia.SetCiaDBFilename( Filenames [ 0 ] );
+            oCCia.LoadCiaDB();
+            textBoxDropDB.Text = "Drop DB file";
             textBoxDropDB.AppendText( "\r\nLoaded:" );
-            foreach( string Filename in oCCia.GetDBFilenames() ) {
-                textBoxDropDB.AppendText( "\r\n" + Path.GetFileName( Filename ) );
-            }
+            textBoxDropDB.AppendText( "\r\n" + Path.GetFileName( Filenames [ 0 ] ) );
             CheckToProcess();
         }
         public void CheckToProcess() {
             bool CalibrationReady = ( ( ( TotalCalibration.ttlRegressionType ) comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none )
                         | ( ( ( TotalCalibration.ttlRegressionType ) comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none ) & ( textBoxCalFile.TextLength > "Drop calibration file: ".Length ) ) );
-            bool CIAReady = ( oCCia.GetDBFilenames().Length > 0 ) & CalibrationReady;
+            bool CIAReady = ( oCCia.GetCiaDBFilename().Length > 0 ) & CalibrationReady;
             if( CIAReady == true) {
                 textBoxDropSpectraFiles.BackColor = Color.LightGreen;
                 textBoxDropSpectraFiles.Enabled = true;
@@ -304,8 +303,8 @@ namespace CiaUi {
             numericUpDownAlignmentTolerance.Enabled = checkBoxAlignment.Checked;
         }
         private void checkBoxUseRelation_CheckedChanged( object sender, EventArgs e ) {
-            numericUpDownMaxRelationshipGaps.Enabled = checkBoxUseRelation.Checked;
-            comboBoxRelationshipErrorType.Enabled = checkBoxUseRelation.Checked;
+            numericUpDownMaxRelationGaps.Enabled = checkBoxUseRelation.Checked;
+            comboBoxRelationErrorType.Enabled = checkBoxUseRelation.Checked;
             numericUpDownRelationErrorValue.Enabled = checkBoxUseRelation.Checked;
             checkedListBoxRelations.Enabled = checkBoxUseRelation.Checked;
             checkBoxCIAAdvBackward.Enabled = checkBoxUseRelation.Checked;
@@ -315,14 +314,9 @@ namespace CiaUi {
             checkBoxCIAAdvUseKendrick.Checked = true;
             checkBoxCIAAdvUseC13.Checked = true;
             numericUpDownCIAAdvC13Tolerance.Value = numericUpDownFormulaTolerance.Value;
-            if( checkBoxAlignment.Checked == true ) {
-                oCCia.SetGenerateIndividualFileReports( false );
-            } else {
-                oCCia.SetGenerateIndividualFileReports( true );
-            }
-            oCCia.SetAddChains( false );
+            oCCia.SetGenerateReports( false );
             oCCia.SetMinPeaksPerChain( 5);
-            oCCia.SetOutputFileDelimiterType( CCia.EDelimiters.Comma );
+            //oCCia.SetOutputFileDelimiterType( CCia.EDelimiters.Comma );
             oCCia.SetErrorType( CCia.EErrorType.Signed );
         }
     }

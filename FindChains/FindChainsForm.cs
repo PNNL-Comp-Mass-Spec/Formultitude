@@ -15,12 +15,7 @@ using System.Collections.Concurrent;
 //using System.Threading.Tasks;
 //using System.Data;
 using System.Runtime.InteropServices;
-
-#if NoExcel
-#else
-using Microsoft.Office.Interop.Excel;
-#endif
-
+//using Microsoft.Office.Interop.Excel;
 using System.Xml;
 using Support;
 
@@ -28,6 +23,7 @@ namespace FindChains {
     public partial class FindChainsForm : Form {
         public FindChainsForm() {
             InitializeComponent();
+            double Error = CPpmError.ErrorToPpm( 100, 1 );
             numericUpDownFrequencyError.Enabled = checkBoxFrequency.Checked;
             oCChainBlocks = new CChainBlocks();
         }
@@ -81,7 +77,7 @@ namespace FindChains {
         }
         private void textBoxChainBlockMasses_DragDrop( object sender, DragEventArgs e ) {
             string Filename = ( ( string [] ) e.Data.GetData( DataFormats.FileDrop ))[ 0];
-            oCChainBlocks.ReadFile( Filename );
+            oCChainBlocks.KnownMassBlocksFromFile( Filename );
         }
 
         private void textBoxSpectraFile_DragEnter( object sender, DragEventArgs e ) {
@@ -91,10 +87,10 @@ namespace FindChains {
         }
         private void textBoxSpectraFile_DragDrop( object sender, DragEventArgs e ) {
             string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );
-
+            
             for( int FileIndex = 0; FileIndex < Filenames.Length; FileIndex++ ) {
                 string FileExtension = Path.GetExtension( Filenames [ FileIndex ] );
-                //read from files
+                //read from files        
 
                 Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses, out Abundances, out S2Ns, out Resolutions, out RelAbundances );
                 Support.InputData RawData = new Support.InputData();
@@ -119,7 +115,7 @@ namespace FindChains {
                     CurSettings [ SettingIndex ].Min = ( double ) numericUpDownMinRelAbundance.Value;
                     CurSettings [ SettingIndex ].Max = -1;
                 }
-
+                
                 string Filename = Path.GetDirectoryName( Filenames [ FileIndex ] ) + "\\" + Path.GetFileNameWithoutExtension( Filenames [ FileIndex ] );
                 if ( checkBoxPPMProcess.Checked == true ) {
                     double MaxChainStartMass = ( double ) numericUpDownMaxPeakToStartChain.Value;
@@ -129,13 +125,17 @@ namespace FindChains {
                     Support.InputData Data;
                     Support.CFileReader.CutData( RawData, out Data, CurSettings );
                     oCChainBlocks.FindChains( RawData, MinPeaksInChain, PeakPpmError, 3 * PeakPpmError, MaxChainStartMass, 0, RawData.Masses [ RawData.Masses.Length - 1 ], checkBoxUseKnownChainBlocks.Checked );
-                    //CFindChains.ChainsToFile( RawData, Filename + "RawChains.csv" );
 
                     oCChainBlocks.CreateUniqueChains( RawData, PeakPpmError );
-                    oCChainBlocks.ChainsToFile( RawData, Filename + "UniqueChains.csv" );
+                    File.WriteAllText( Filename + "UniqueChains.csv" , RawData.ChainsToString() );
 
                     //find clusters based on chains
+                    oCChainBlocks.FindClusters( RawData );
                     bool [] IsInChainCluster = new bool [ RawData.Chains.Length ];
+
+
+
+
                     List<List<int>> ChainClusters = new List<List<int>>();
 
                     for ( int LeftChainIndex = 0; LeftChainIndex < RawData.Chains.Length; LeftChainIndex++ ) {
@@ -183,7 +183,7 @@ namespace FindChains {
                             oStreamWriterClusters.WriteLine( "Cluster " + ( ClusterIndex + 1 ).ToString() );
                             for ( int ChainIndex = 0; ChainIndex < ChainClusters [ ClusterIndex ].Count; ChainIndex++ ) {
                                 int ChainNumber = ChainClusters [ ClusterIndex ] [ ChainIndex ];
-                                string Line = ChainNumber.ToString() + ',' + RawData.Chains [ ChainNumber ].BlockMass.ToString( "F6" );
+                                string Line = ChainNumber.ToString() + ',' + RawData.Chains [ ChainNumber ].BlockMassMean.ToString( "F8" );
                                 foreach ( int PeakIndex in RawData.Chains [ ChainNumber ].PeakIndexes ) {
                                     Line = Line + ',' + PeakIndex;
                                 }
@@ -251,10 +251,10 @@ namespace FindChains {
                         for ( int CurIndex = StartPeakMzErrorArrayIndex; CurIndex < EndPeakMzErrorArrayIndex; CurIndex++ ) {
                             for ( int ClusterChainIndex = 1; ClusterChainIndex < BiggestChainCluster.Count; ClusterChainIndex++ ) {
                                 if ( ClusterChains [ ClusterChainIndex ] == true ) { continue; }
-                                int SearchPeakIndex = Array.BinarySearch( RawData.Chains [ BiggestChainCluster [ ClusterChainIndex ] ].PeakIndexes, PeakMzErrorArray [ CurIndex ].PeakIndex );
-                                if ( SearchPeakIndex < 0 ) { continue; }
+                                int SearchPeakIndex1 = Array.BinarySearch( RawData.Chains [ BiggestChainCluster [ ClusterChainIndex ] ].PeakIndexes, PeakMzErrorArray [ CurIndex ].PeakIndex );
+                                if ( SearchPeakIndex1 < 0 ) { continue; }
                                 int [] PeakIndexes = RawData.Chains [ BiggestChainCluster [ ClusterChainIndex ] ].PeakIndexes;
-                                double FirstPeakMz = PeakMzErrorArray [ CurIndex ].NewMz - SearchPeakIndex * RawData.Chains [ BiggestChainCluster [ ClusterChainIndex ] ].IdealBlockMass;
+                                double FirstPeakMz = PeakMzErrorArray [ CurIndex ].NewMz - SearchPeakIndex1 * RawData.Chains [ BiggestChainCluster [ ClusterChainIndex ] ].IdealBlockMass;
                                 for ( int PeakIndex = 0; PeakIndex < PeakIndexes.Length; PeakIndex++ ) {
                                     PeakMzError NewPeakMzError = new PeakMzError();
                                     NewPeakMzError.PeakIndex = PeakIndexes [ PeakIndex ];
@@ -275,9 +275,9 @@ namespace FindChains {
                         oStreamWriterErrors.WriteLine( HeadLine );
                         for ( int PeakIndex = 0; PeakIndex < PeakMzErrorArray.Length; PeakIndex++ ) {
                             PeakMzError CurPeakMzError = PeakMzErrorArray [ PeakIndex ];
-                            oStreamWriterErrors.WriteLine( CurPeakMzError.PeakIndex.ToString() + "," + CurPeakMzError.Mz.ToString( "F6" ) + "," + RawData.Abundances[CurPeakMzError.PeakIndex]
-                                    + "," + CurPeakMzError.NewMz.ToString( "F6" ) + "," + CurPeakMzError.Chain +
-                                    "," + RawData.Chains[CurPeakMzError.Chain].IdealBlockMass.ToString( "F6") + "," + CurPeakMzError.PpmError.ToString( "F6" ) );
+                            oStreamWriterErrors.WriteLine( CurPeakMzError.PeakIndex.ToString() + "," + CurPeakMzError.Mz.ToString( "F8" ) + "," + RawData.Abundances[CurPeakMzError.PeakIndex]
+                                    + "," + CurPeakMzError.NewMz.ToString( "F8" ) + "," + CurPeakMzError.Chain + 
+                                    "," + RawData.Chains[CurPeakMzError.Chain].IdealBlockMass.ToString( "F8") + "," + CurPeakMzError.PpmError.ToString( "F8" ) );
                         }
                         oStreamWriterErrors.Close();
                     }
@@ -382,7 +382,7 @@ namespace FindChains {
                     //                        }
                     //                        oStreamWriterPrimaryChains.Close();
                     //                    }
-                    //Combine distances
+                    //Combine distances                
                     //                    if( checkBoxFrequency.Checked == true){
                     //                        List <int> LDistancePeaks = new List<int> ( LChains.Count);
                     //                        for( int ChainIndex = 0; ChainIndex < LChains.Count; ChainIndex++ ) {
@@ -422,7 +422,7 @@ namespace FindChains {
                     //                        oStreamWriterPrimaryChains.Close();
                     //                    }
                 }
-
+                
                 if( checkBoxAmuProcess.Checked == true ) {
                     CalculatePpmError( Masses );
                     double Error = ( double ) numericUpDownAbsError.Value;
@@ -432,7 +432,7 @@ namespace FindChains {
                     int BinsPerErrorRange = ( int ) numericUpDownBinsPerErrorRange.Value;
                     int MinPeaksInChain = ( int ) numericUpDownMinPeaksInChain.Value;
 
-                    //create Bin distances ( = left and right peaks)
+                    //create Bin distances ( = left and right peaks)           
                     double BinSize = Error / BinsPerErrorRange;
                     int BinCount = ( int ) Math.Ceiling( ( RangeMax - RangeMin ) / BinSize );
                     BinLeftPeaks = new List<int> [ BinCount ];
@@ -523,8 +523,8 @@ namespace FindChains {
                     for( int BinIndex = 0; BinIndex < BinCount; BinIndex++ ) {
                         //double BinDistance = RangeMin + BinIndex * BinSize;
                         for( int PairIndex = 0; PairIndex < BinLeftPeaks [ BinIndex ].Count; PairIndex++ ) {
-                            if( BinLeftLinks [ BinIndex ] [ PairIndex ].Count != 0 ) { continue; }//chain starts when left peak doesn't have link
-                            if( BinRightLinks [ BinIndex ] [ PairIndex ].Count == 0 ) { continue; }//chain doesn't start when right peak doesn't have link
+                            if( BinLeftLinks [ BinIndex ] [ PairIndex ].Count != 0 ) { continue; }//chain starts when left peak doesn't have link    
+                            if( BinRightLinks [ BinIndex ] [ PairIndex ].Count == 0 ) { continue; }//chain doesn't start when right peak doesn't have link   
                             for( int LinkIndex = 0; LinkIndex < BinRightLinks [ BinIndex ] [ PairIndex ].Count; LinkIndex++ ) {
                                 if( LinkIndex > 0 ) { break; }//??? take only first
                                 PeakLink temp = BinRightLinks [ BinIndex ] [ PairIndex ] [ LinkIndex ];
@@ -590,7 +590,7 @@ namespace FindChains {
                 }
             }
         }
-
+                      
         public double CalculatePpmError( double [] Masses ) {
             int MassesCount = Masses.Length;
             double RangeMin = 0;
@@ -675,7 +675,7 @@ namespace FindChains {
             //Save BinLinks to file
             string FilenameBinLinks =  "c:\\temp\\BinLinks.csv";
             StreamWriter oStreamWriterBinLinks = new StreamWriter( FilenameBinLinks );
-            oStreamWriterBinLinks.WriteLine( "Block size,Counts" );
+            oStreamWriterBinLinks.WriteLine( "Block size,Counts" );                        
             for( int BinIndex = 0; BinIndex < BinCount; BinIndex++ ) {
                 oStreamWriterBinLinks.WriteLine( ( RangeMin + BinSize * BinIndex + BinSize / 2 ).ToString() + "," +   BinLeftLinks [ BinIndex ].Length  );
             }
@@ -688,7 +688,7 @@ namespace FindChains {
                 if( MaxBinCount < BinLeftPeaks [ BinIndex ].Count ) {
                     MaxBinCount = BinLeftPeaks [ BinIndex ].Count;
                     MaxBinIndex1 = BinIndex;
-                }
+                }  
             }
             //find wigth on 10% MaxBinCount
             int Level10MaxBinCount = MaxBinCount / 10;
@@ -718,7 +718,7 @@ namespace FindChains {
                     double RightMass = Masses [ BinRightPeaks [ BinIndex ] [ PairIndex ] ];
                     double LeftMass= Masses [ BinLeftPeaks [ BinIndex ] [ PairIndex ] ];
                     double CurDistance = RightMass - LeftMass;
-                    double LinkError = CPpmError.AbsMassErrorPPM( BestDistance, CurDistance );
+                    double LinkError = CPpmError.AbsPpmError( BestDistance, CurDistance );
                     LinkErrors.Add( LinkError );
                 }
             }
@@ -738,6 +738,41 @@ namespace FindChains {
 
             return MeanError;
         }
-
+        private void buttonCalLogParser_DragEnter( object sender, DragEventArgs e ) {
+            if ( e.Data.GetDataPresent( DataFormats.FileDrop ) == true ) {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+        private void buttonCalLogParser_DragDrop( object sender, DragEventArgs e ) {
+            string [] Filenames = ( string [] ) e.Data.GetData( DataFormats.FileDrop );            
+            string StartFile = "Calibration of ";
+            for ( int FileIndex = 0; FileIndex < Filenames.Length; FileIndex++ ) {
+                string [] Lines = File.ReadAllLines( Filenames[ FileIndex]);
+                string Text = "Filename,MatchedPeaks,BeforeErrorAverage,BeforeErrorStdDev,AfterErrorAverage,AfterStdDev";
+                for ( int LineIndex = 0; LineIndex < Lines.Length; LineIndex++ ) {
+                    if( Lines[ LineIndex].StartsWith( StartFile) == false){ continue;}
+                    string [] HeaderParts = Lines [ LineIndex ].Split( new char [] { ' ' } );
+                    Text = Text + "\r\n" + HeaderParts [ 2 ];
+                    string [] MatchedPeaksParts = Lines[ LineIndex + 2].Split( new char[] { ' ', '(' });
+                    Text = Text + ',' + MatchedPeaksParts [ 5 ];
+                    LineIndex = LineIndex + 12;
+                    List<double> ErrorsBeforeCal = new List<double>();
+                    List<double> ErrorsAfterCal = new List<double>();
+                    for(; LineIndex < Lines.Length; LineIndex++){
+                        if( Lines[ LineIndex].StartsWith( "quadratic_calibration") == true) { break;}
+                        string[] CalibrantParts = Lines[ LineIndex].Split( new char[] { '\t'} );
+                        ErrorsBeforeCal.Add( double.Parse( CalibrantParts [ 3 ] ) );
+                        ErrorsAfterCal.Add( double.Parse( CalibrantParts [ 5 ] ) );
+                    }
+                    double AverageErrorBeforeCal = Support.CArrayMath.Mean( ErrorsBeforeCal.ToArray() );
+                    double StdDevErrorBeforeCal = Support.CArrayMath.StandardDeviation( ErrorsBeforeCal.ToArray(), AverageErrorBeforeCal );
+                    double AverageErrorAfterCal = Support.CArrayMath.Mean( ErrorsAfterCal.ToArray() );
+                    double StdDevErrorAfterCal = Support.CArrayMath.StandardDeviation( ErrorsAfterCal.ToArray(), AverageErrorAfterCal );
+                    Text = Text + ',' + AverageErrorBeforeCal.ToString( "F8") + ',' + StdDevErrorBeforeCal.ToString( "F8")
+                            + ',' + AverageErrorAfterCal.ToString( "F8") + ',' + StdDevErrorAfterCal.ToString( "F8");
+                }
+                File.WriteAllText( Filenames [ FileIndex ] + ".csv", Text );
+            }
+        }
     }
 }
