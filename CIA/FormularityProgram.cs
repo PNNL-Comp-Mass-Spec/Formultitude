@@ -2758,8 +2758,13 @@ namespace CIA {
                 }
             } while ( RealBytes == DBBlockBytes );
             oBinaryReader.Close();
-            //DBSortAndClean( ref DBMasses, ref DBFormulas );
-            //DBMassError( DBMasses, DBFormulas, ref DBMinError, ref DBMaxError );
+
+            // Sort, but do not check for duplicates
+            // DBSortAndClean( ref DBMasses, ref DBFormulas );
+            Array.Sort(DBMasses, DBFormulas);
+
+            // Determine the minimum and maximum errors
+            DBMassError( DBMasses, DBFormulas, ref DBMinError, ref DBMaxError );
             return true;
         }
         void DBSortAndClean( ref double [] Masses, ref short [][] Formulas){
