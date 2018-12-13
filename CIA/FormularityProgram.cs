@@ -179,12 +179,16 @@ namespace CIA {
                         }
                         //oCCia.oTotalCalibration.Load( oCCia.GetRefPeakFilename() );
                     }
-                }else{
+                } else {
                     System.Console.WriteLine( "Calibration is not required." );
                 }
 
+                System.Console.WriteLine("Checked arguments.");
+
                 string [] Filenames = DatasetsList.ToArray();
                 oCCia.Process( Filenames );
+
+                System.Console.WriteLine("Finished.");
                 return 0;
             } catch ( Exception ex ) {
                 //System.Console.WriteLine( "Error: " + ex.Message );
@@ -886,6 +890,7 @@ namespace CIA {
             }
             for ( int FileIndex = 0; FileIndex < FileCount; FileIndex++ ) {
                 //read files
+                Console.WriteLine("Opening " + Filenames[FileIndex]);
                 Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses [ FileIndex ], out Abundances [ FileIndex ], out SNs [ FileIndex ], out Resolutions [ FileIndex ], out RelAbundances [ FileIndex ] );
                 if ( Masses [ FileIndex ].Length == 0 ) {
                     Console.WriteLine( "Warning: no data points found in " + Path.GetFileName( Filenames [ FileIndex ] ) );
@@ -1029,10 +1034,17 @@ namespace CIA {
 
                 //Alignment + Formula finding
                 if( Alignment == true ) {
+                    Console.WriteLine("Aligning");
                     AlignmentByPeak();
                     for( int PeakIndex = 0; PeakIndex < oAlignData.AlignMasses.Length; PeakIndex++ ) {
                         oAlignData.NeutralMasses [ PeakIndex ] = Ipa.GetNeutralMass( oAlignData.AlignMasses [ PeakIndex ] );
                     }
+                    if (oAlignData.NeutralMasses.Length == 0)
+                    {
+                        FormularityProgram.ReportError("Nothing to align; aborting");
+                        return;
+                    }
+                    Console.WriteLine("Formula Finding");
                     //FindFormulas( oAlignData.NeutralMasses, oAlignData.Formulas, oAlignData.PPMErrors, oAlignData.Candidates, FormulaPPMTolerance, RelationErrorAMU, MassLimit );
                     FindFormulas( oAlignData.NeutralMasses, oAlignData.Formulas, oAlignData.PPMErrors, oAlignData.Candidates, RelationErrorAMU, MassLimit );
                     ProcessC13( oAlignData.NeutralMasses, oAlignData.Formulas, oAlignData.PPMErrors );
@@ -1043,6 +1055,7 @@ namespace CIA {
                             oData.NeutralMasses [ FileIndex ] [ PeakIndex ] = Ipa.GetNeutralMass( oData.AlignMasses [ FileIndex ] [ PeakIndex ] );
                             oData.Formulas [ FileIndex ] [ PeakIndex ] = ( short [] ) NullFormula.Clone();
                         }
+                        Console.WriteLine("Formula Finding");
                         //FindFormulas( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ], oData.Candidates [ FileIndex ], FormulaPPMTolerance, RelationErrorAMU, MassLimit );
                         FindFormulas( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ], oData.Candidates [ FileIndex ], RelationErrorAMU, MassLimit );
                         ProcessC13( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ] );
@@ -1141,7 +1154,9 @@ namespace CIA {
                     //} else {
                     //    oStreamWriter = new StreamWriter( Path.GetDirectoryName( Filenames [ 0 ] ) + "\\Report.txt" );
                     //}
-                    StreamWriter oStreamWriter = new StreamWriter( Path.Combine( OutputSubfolder, "Out.csv" ) );
+                    string OutputFilePath = Path.Combine(OutputSubfolder, "Out.csv");
+                    Console.WriteLine("Writing results to " + OutputFilePath);
+                    StreamWriter oStreamWriter = new StreamWriter( OutputFilePath );
                     string HeaderLine = "Mass";
                     foreach( string Element in Enum.GetNames( typeof( CCia.EElemIndex ) ) ) {
                         HeaderLine = HeaderLine + OutputFileDelimiter + Element;
