@@ -2769,13 +2769,12 @@ namespace CIA {
             for( int Record = 0; Record < MaxRecords - 1; Record++ ) {
                 double Mass = Masses [ Record ];
                 if( Mass < 0 ) { continue; }
-                //double MassPlusPpmError = Mass + CPpmError.PpmToError( Mass, FormulaPPMTolerance );
+                double MassPlusPpmError = Support.CPpmError.MassPlusPpmError( Mass, FormulaPPMTolerance );
                 for( int TempRecord = Record + 1; TempRecord < MaxRecords; TempRecord++ ) {
                     if( Masses [ TempRecord ] < 0 ) {
                         continue;
                     }
-                    //if( Masses [ TempRecord ] > MassPlusPpmError ) {
-                    if( Masses [ TempRecord ] > Support.CPpmError.MassPlusPpmError( Mass, FormulaPPMTolerance) ) {
+                    if( Masses [ TempRecord ] > MassPlusPpmError ) {
                         break;
                     }
                     if( AreFormulasEqual( Formulas [ Record ], Formulas [ TempRecord ] ) == true ) {
