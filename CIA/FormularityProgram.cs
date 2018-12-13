@@ -122,9 +122,9 @@ namespace CIA {
                 if ( CiaOrIpa == false ) {
                     if ( oCCia.GetAlignment() == true ) {
                         if ( oCCia.GetRelationErrorType() == CCia.RelationErrorType.DynamicPPM ){
-                            throw new Exception( "in parameter fie: multiple file aligment can't be used dynamic ppm relationship error." );
+                            throw new Exception( "in parameter file: multiple file alignment can't be used dynamic ppm relationship error." );
                         }else if( oCCia.GetStaticDynamicPpmError() == true ){
-                            throw new Exception( "in parameter file: multiple file aligment can't be used dynamic ppm formula tolerance." );
+                            throw new Exception( "in parameter file: multiple file alignment can't be used dynamic ppm formula tolerance." );
                         }
                     }
                 }
@@ -136,7 +136,7 @@ namespace CIA {
                     }
                 }
 
-                //optional args[ 3] - db file (optional if it is in Parameter file)
+                //optional args[ 3 ] - db file (optional if it is in Parameter file)
                 if( args.Length > 3){
                     if ( CiaOrIpa == false ) {
                         if(  File.Exists( args [ 3 ] ) == false ) {
@@ -2690,7 +2690,7 @@ namespace CIA {
             double LowerMZ = Mass - CPpmError.PpmToError( Mass, FormulaPPMTolerance );
             //double LowerMZ = Mass - CPpmError.PpmToError( Mass, GetRealFormulaPpmError( Mass) );
             LowerIndex = Array.BinarySearch( DBMasses, LowerMZ );
-            UpperIndex = -1;//can't return without assigment
+            UpperIndex = -1;//can't return without assignment
             if( LowerIndex < 0 ) {
                 LowerIndex = ~LowerIndex;
             } else {
