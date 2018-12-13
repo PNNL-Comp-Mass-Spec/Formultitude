@@ -60,7 +60,7 @@ namespace CIA {
                     //File.GetAttributes() also check File.Exists();
                 } catch ( Exception ex ) {
                     throw new Exception( "Argument 2 exception: " + ex.Message );
-                }               
+                }
                 List<string> DatasetsList = new List<string>();
                 if ( FileOrDirectory == false ) {
                     //if ( ( Path.GetExtension( args [ 1 ] ) == ".csv" )
@@ -251,7 +251,7 @@ namespace CIA {
         public double [] PPMErrors;
         public short [] Candidates;
     }
-    public class CCia{        
+    public class CCia{
         //Elements
         public const int ElementCount = 8;
         public enum EElemIndex { C = 0, H, O, N, C13, S, P, Na};
@@ -294,7 +294,7 @@ namespace CIA {
             }
             return FormulaName;
         }
-        public short [] NameToFormula( string FormulaName) {                   
+        public short [] NameToFormula( string FormulaName) {
             short [] Formula = (short []) NullFormula.Clone();
             if( FormulaName.Length == 0){ return Formula;}
 
@@ -354,7 +354,7 @@ namespace CIA {
         //string [] Filenames;
         //******************************************************************************************
         //Pre-alignment
-        //******************************************************************************************    
+        //******************************************************************************************
         public bool PreAlignment = true;
         public bool GetPreAlignment() { return PreAlignment; }
         public void SetPreAlignment( bool PreAlignment ) { this.PreAlignment = PreAlignment; }
@@ -549,7 +549,7 @@ namespace CIA {
                     Candidates = Candidates + oData.Candidates[ Index][ oAlignData.Indexes [ PeakIndex][ Index] ];
                 }
                 oAlignData.PPMErrors [ PeakIndex] = Error / ValueableFiles;
-                oAlignData.Candidates [ PeakIndex] = (short) Math.Round( (double) Candidates / ValueableFiles); 
+                oAlignData.Candidates [ PeakIndex] = (short) Math.Round( (double) Candidates / ValueableFiles);
                 PeakIndex ++;
             }
         }
@@ -560,7 +560,7 @@ namespace CIA {
         //Formula error
         bool StaticDynamicPpmError = false;
         public bool GetStaticDynamicPpmError() { return StaticDynamicPpmError; }
-        public void SetStaticDynamicPpmError( bool StaticDynamicPpmError ) { this.StaticDynamicPpmError = StaticDynamicPpmError; }        
+        public void SetStaticDynamicPpmError( bool StaticDynamicPpmError ) { this.StaticDynamicPpmError = StaticDynamicPpmError; }
         double FormulaPPMTolerance = 1;//default
         public double GetFormulaPPMTolerance() { return FormulaPPMTolerance; }
         public void SetFormulaPPMTolerance( double PPMTolerance ) { FormulaPPMTolerance = PPMTolerance;}
@@ -601,7 +601,7 @@ namespace CIA {
         public bool GetUseBackward() { return UseBackward; }
         public void SetUseBackward( bool UseBackward ) { this.UseBackward = UseBackward; }
 
-        public static short [] [] RelationBuildingBlockFormulas = { 
+        public static short [] [] RelationBuildingBlockFormulas = {
                 new short [] { 1, 2, 0, 0, 0, 0, 0, 0 },//CH2
                 new short [] { 1, 4, -1, 0, 0, 0, 0, 0},//CH4O- or CH4O-1
                 new short [] { 0, 2, 0, 0, 0, 0, 0, 0 },//H2
@@ -620,7 +620,7 @@ namespace CIA {
             ListActiveRelationFormulaBuildingBlocks = new List<short []>();
             List<double> ActiveRelationFormulaBuildingBlockMassesList = new List<double>();
             //ActiveRelationFormulaBuildingBlockMasses = new double [ ListActiveRelationFormulaBuildingBlocks.Count ];
-            for ( int ActiveBlock = 0; ActiveBlock < ActiveBlocks.Length; ActiveBlock++ ) {                
+            for ( int ActiveBlock = 0; ActiveBlock < ActiveBlocks.Length; ActiveBlock++ ) {
                 if ( ActiveBlocks [ ActiveBlock ] == false ) { continue; }
                 double Mass = 0;
                 for ( int Element = 0; Element < ElementCount; Element++ ) {
@@ -642,7 +642,7 @@ namespace CIA {
             for( int Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++ ) {
                 ActiveRelationFormulaBuildingBlockMasses [ Relation ] = 0;
                 for( int Element = 0; Element < ElementCount; Element++ ) {
-                    ActiveRelationFormulaBuildingBlockMasses [ Relation ] = ActiveRelationFormulaBuildingBlockMasses [ Relation ] + 
+                    ActiveRelationFormulaBuildingBlockMasses [ Relation ] = ActiveRelationFormulaBuildingBlockMasses [ Relation ] +
                             ListActiveRelationFormulaBuildingBlocks [ Relation ] [ Element ] * ElementMasses [ Element ];
                 }
             }
@@ -683,7 +683,7 @@ namespace CIA {
                 return;
             }
             UserDefinedScoreTable = new System.Data.DataTable();
-            //PrefixFirst            
+            //PrefixFirst
             UserDefinedScoreTable.Columns.Add( PrefixFirst + "Mass", typeof( double ) );
             UserDefinedScoreTable.Columns.Add( PrefixFirst + "Error", typeof( double ) );
             foreach ( string Name in Enum.GetNames( typeof( EElemIndex ) ) ) {
@@ -721,7 +721,7 @@ namespace CIA {
         }
 
         //Golden rule filters
-        public string [] GoldenRuleFilterNames = new string []{ 
+        public string [] GoldenRuleFilterNames = new string []{
                 "Elemental counts",
                 "Valence rules",
                 "Elemental ratios",
@@ -760,7 +760,7 @@ namespace CIA {
             if( oESpecialFilter != ESpecialFilters.None ) {
                 DataTableSpecialFilter.Columns.Add( "SpecialFilter", typeof( bool ), SpecialFilterRules [ ( int ) oESpecialFilter ] );
             }
-            DataTableSpecialFilter.Rows.Add( DataTableSpecialFilter.NewRow() );           
+            DataTableSpecialFilter.Rows.Add( DataTableSpecialFilter.NewRow() );
         }
         //User-defined filters
         System.Data.DataTable UserDefinedFilterTable;
@@ -815,7 +815,7 @@ namespace CIA {
         //Output file delimiter
         string OutputFileDelimiter = ",";
         /*public enum EDelimiters { Comma, Tab, Space};
-        EDelimiters oEOutputFileDelimiter = EDelimiters.Comma;        
+        EDelimiters oEOutputFileDelimiter = EDelimiters.Comma;
         public static string OutputFileDelimiterToString( EDelimiters oo){
             switch ( oo ) {
                 case EDelimiters.Comma: return ",";
@@ -845,7 +845,7 @@ namespace CIA {
         public CCia() {
             Ipa = new TotalIPDBSearch();
             foreach( short Element in NullFormula ) { NullFormula [ Element ] = 0; }
-            //SetRelationFormulaBuildingBlocks( RelationBuildingBlockFormulas );           
+            //SetRelationFormulaBuildingBlocks( RelationBuildingBlockFormulas );
         }
         public enum ProcessType { Cia, Ipa, CiaIpa };
         ProcessType oProcessType = ProcessType.Cia;
@@ -898,10 +898,10 @@ namespace CIA {
                 //Pre-Aligment
                 //oStreamLogWriter.Write( "Pre-alignment:" );
                 FormularityProgram.AppendToLog( oStreamLogWriter, "Pre-alignment:\n" );
-                if ( ( PreAlignment == true ) 
-                        || ( StaticDynamicPpmError == true ) 
+                if ( ( PreAlignment == true )
+                        || ( StaticDynamicPpmError == true )
                         || ( oRelationErrorType == RelationErrorType.DynamicPPM) ) {
-                    //spectra alignment                            
+                    //spectra alignment
                     InputData.Masses = Masses [ FileIndex ];
                     InputData.Abundances = Abundances [ FileIndex ];
                     InputData.Init();
@@ -1042,7 +1042,7 @@ namespace CIA {
                             oData.AlignMasses [ FileIndex ] [ PeakIndex ] = oData.CalMasses [ FileIndex ] [ PeakIndex ];
                             oData.NeutralMasses [ FileIndex ] [ PeakIndex ] = Ipa.GetNeutralMass( oData.AlignMasses [ FileIndex ] [ PeakIndex ] );
                             oData.Formulas [ FileIndex ] [ PeakIndex ] = ( short [] ) NullFormula.Clone();
-                        } 
+                        }
                         //FindFormulas( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ], oData.Candidates [ FileIndex ], FormulaPPMTolerance, RelationErrorAMU, MassLimit );
                         FindFormulas( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ], oData.Candidates [ FileIndex ], RelationErrorAMU, MassLimit );
                         ProcessC13( oData.NeutralMasses [ FileIndex ], oData.Formulas [ FileIndex ], oData.PPMErrors [ FileIndex ] );
@@ -1102,7 +1102,7 @@ namespace CIA {
                         oStreamWriter.WriteLine( HeaderLine );
 
                         for( int Peak = 0; Peak < Masses1.Length; Peak++ ) {
-                            string Line = Masses1 [ Peak ].ToString();                            
+                            string Line = Masses1 [ Peak ].ToString();
                             for( int Element = 0; Element < ElementCount; Element++ ) {
                                 Line = Line + OutputFileDelimiter + Formulas [ Peak ] [ Element ].ToString();
                             }
@@ -1120,7 +1120,7 @@ namespace CIA {
                             }
                             Line = Line + OutputFileDelimiter + Candidates [ Peak ].ToString();
                             Line = Line + OutputFileDelimiter + CalMasses1 [ Peak ].ToString();
-                            Line = Line + OutputFileDelimiter + AlignMasses [ Peak ].ToString();                            
+                            Line = Line + OutputFileDelimiter + AlignMasses [ Peak ].ToString();
                             Line = Line + OutputFileDelimiter + Abundances1 [ Peak ].ToString();
                             if( SNs1 [ 0 ] > 0 ) {
                                 Line = Line + OutputFileDelimiter + SNs1 [ Peak ].ToString();
@@ -1216,7 +1216,7 @@ namespace CIA {
                             } else {
                                 Line = Line + OutputFileDelimiter + oData.Abundances [ FileIndex ] [ Indexes [ FileIndex ] ];
                             }
-                        } 
+                        }
                         oStreamWriter.WriteLine( Line );
                     }
                     oStreamWriter.Close();
@@ -1294,11 +1294,11 @@ namespace CIA {
             } catch { } finally {
                 o = null;
             }
-        }        
+        }
         class CGrpdiffK {
             public bool IsEmpty;
             public List<int> [] Indexes;
-        }; 
+        };
         bool CheckPeakMassByEvenOdd( double [] Masses) {
             int Even = 0;
             int Odd = 0;
@@ -1309,9 +1309,9 @@ namespace CIA {
                     Odd = Odd + 1;
                 }
             }
-            if( Odd > Even ) { 
-                return false; 
-            } else { 
+            if( Odd > Even ) {
+                return false;
+            } else {
                 return true;
             }
         }
@@ -1322,28 +1322,28 @@ namespace CIA {
             //AFTER AUTOMATION THIS DILEMA SHOULD BE RESOLVED ON A PARAMETER FILE LEVEL(N.T.)
 
             //input the following variables:
-            //    peak_mass - list of masses 
+            //    peak_mass - list of masses
             //    peak_int - intensity of each peak (can currently be set to zeros)
-            //    FORMULA_ERROR is the error for the elemental formula determination by the function, chemform, in ppm; 
+            //    FORMULA_ERROR is the error for the elemental formula determination by the function, chemform, in ppm;
             //    RELATION_ERROR is the window allowed % for identification of a relationship between two peaks, in ppm.
             //    MASS_LIMIT is the maximum mass for the brute force calculation
             //    fullCompoundList - the database of possible compounds calculated by K Longnecker (LongneckerKujawinski_fullCompoundList.mat)
             //    sortType can be one of the following choices:
-            //        1) 'lowestSP' select the formula with the lowest # of S and P 
+            //        1) 'lowestSP' select the formula with the lowest # of S and P
             //        2) 'HAcap' sorts based on the lowest number of S,P,N, and then only formulas with P <= 1 or S <= 3 are considered valid
             //        3) 'lowestError' to sort on the formula which has the lowest error from the measured mass
             //    This iteration % of the program uses only chemical relationships that are common to refractory DOM such as humic acids. It does not include many biologically-relevant (i.e., metabolic) reactions.
 
-            //output is 
+            //output is
             //    formula : the elemental formulas for the peak list [C H O N C13 S P Na Error].
             //    elementOrder : a reminder of the order of elements by column
 
-            //Original version of this algorithm published as: Kujawinski and Behn. 2006. Automated analysis of electrospray ionization Fourier-transform ion cyclotron resonance mass spectra 
-            //of natural organic matter. Analytical Chemistry 78:4363-4373. 
+            //Original version of this algorithm published as: Kujawinski and Behn. 2006. Automated analysis of electrospray ionization Fourier-transform ion cyclotron resonance mass spectra
+            //of natural organic matter. Analytical Chemistry 78:4363-4373.
             //Largest change has been to use a database to find the formulas rather than recalculating all of the possible formulas each time.
             //Elizabeth Kujawinski Behn, May 2005
-         
-            //Last updated: 
+
+            //Last updated:
             //November 6, 2005 updated version received by K Longnecker from LK 8/8/08 KL changing relations to structures 9/12/08
             //KL added 9/12/08: put in a check to make sure that the format of the data are as needed for this function. peak_int and peak_mass both need to be multiple rows and one column
 
@@ -1351,17 +1351,17 @@ namespace CIA {
             //    can have different formulas with the same number of non-oxygen heteroatoms
             //KL 1/6/09 - convert the results of getMATfile to double precision to get the right answer in the mass calculations! and added a line to Check7GR to
             //    require all elements to be positive (bc can't have negative number of elements in a compound, so why allow it)
-            //KL 1/17/09 findformula_uselist_KL7_SPsort - Still finding too much S and P  at the expense of N, try sorting to bias against S and P, but not N this involves changes both 
+            //KL 1/17/09 findformula_uselist_KL7_SPsort - Still finding too much S and P  at the expense of N, try sorting to bias against S and P, but not N this involves changes both
             //    in the useMATfile function embedded and in the loops for building at the higher masses
             //KL 1/20/09 - had a requirement that to keep a new peak, has to be within half of the given formula_error if there already is an old formula IF the
             //    formula is a comparison bw an existing formula found through the relations and a new formula found with the database (previously brute force)
-            //KL 4/15/09 - IF there is more than one formula, cap the number of S and P, and then select based on lowest number of N, S, and P (sortType = 'HA_cap') 
+            //KL 4/15/09 - IF there is more than one formula, cap the number of S and P, and then select based on lowest number of N, S, and P (sortType = 'HA_cap')
             //    (will also test an overall cap on the number of S and P). Also, get rid of the relation which switches H for Na (will deal with that later)
             //KL 4/30/09 - cleaning up, and changing the names of the sortTypes KL 5/1/09 - only change is to correct the neutral mass check bc sent out the wrong version yesterday
             //KL 5/11/09 - changing the neutral mass check yet again
             //KL 9/23/09 - change useMATfile to send out startform as double precision
-            //KL 9/1/2011 - correcting problem found by Dan Baluha (Univ. of Maryland) where in one of the calculations, the error calculation was multiplied by 1e-6, rather than 1e6, 
-            //    therefore the error calculations were off by 1e-12.          
+            //KL 9/1/2011 - correcting problem found by Dan Baluha (Univ. of Maryland) where in one of the calculations, the error calculation was multiplied by 1e-6, rather than 1e6,
+            //    therefore the error calculations were off by 1e-12.
             //??? log
             CheckPeakMassByEvenOdd( NeutralMasses );
             //Create relations
@@ -1380,7 +1380,7 @@ namespace CIA {
                     double NeutralMassToMax = MaxMass - NeutralMass;
                     CurrentGrpdiffK.Indexes = new List<int> [ ListActiveRelationFormulaBuildingBlocks.Count ];
                     for( int Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++ ) {
-                        //KL note: look for differences, and keep those less than the defined relation_error                 
+                        //KL note: look for differences, and keep those less than the defined relation_error
                         List<int> CurIndexes = new List<int>();
                         int NeutralMassToMinGrp = ( int ) Math.Ceiling( NeutralMassToMin / ActiveRelationFormulaBuildingBlockMasses [ Relation ] );
                         int NeutralMassToMaxGrp = ( int ) Math.Floor( NeutralMassToMax / ActiveRelationFormulaBuildingBlockMasses [ Relation ] );
@@ -1390,23 +1390,23 @@ namespace CIA {
                             switch( oRelationErrorType){
                                 case RelationErrorType.AMU:
                                     GrpMinNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp - RelationErrorAMU);
-                                    GrpMaxNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp + RelationErrorAMU);                              
+                                    GrpMaxNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp + RelationErrorAMU);
                                     break;
                                 case RelationErrorType.GapPPM:
-                                    double GapPPMError = CPpmError.PpmToError( ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp, RelationErrorAMU );                                
+                                    double GapPPMError = CPpmError.PpmToError( ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp, RelationErrorAMU );
                                     GrpMinNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp - GapPPMError);
                                     GrpMaxNeutralMass = NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * (CurrentGrp + GapPPMError);
                                     break;
                                 case RelationErrorType.DynamicPPM:
                                     double GapNeutralMass =  NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp;
-                                    double PPMError = StdDevErrorGain * InputData.GetErrorStdDev( GapNeutralMass ); 
+                                    double PPMError = StdDevErrorGain * InputData.GetErrorStdDev( GapNeutralMass );
                                     GrpMinNeutralMass = GapNeutralMass - PPMError;
                                     GrpMaxNeutralMass = GapNeutralMass + PPMError;
                                     break;
                                 case RelationErrorType.PPM:
                                 default:
                                     GapNeutralMass =  NeutralMass + ActiveRelationFormulaBuildingBlockMasses [ Relation ] * CurrentGrp;
-                                    PPMError = CPpmError.PpmToError( GapNeutralMass, RelationErrorAMU ); 
+                                    PPMError = CPpmError.PpmToError( GapNeutralMass, RelationErrorAMU );
                                     GrpMinNeutralMass = GapNeutralMass - PPMError;
                                     GrpMaxNeutralMass = GapNeutralMass + PPMError;
                                     break;
@@ -1462,13 +1462,13 @@ namespace CIA {
                             //first get the brute force formula from the table
                             //short [] tempform = PickDBFormula( NeutralMasses [ Peak ], out Candidates [ Peak ] );
                             //double tempmass = FormulaToNeutralMass( tempform );
-                            //double tempmass = FormulaToNeutralMass( DBFormula );                            
+                            //double tempmass = FormulaToNeutralMass( DBFormula );
                             //double errornew = AbsMassErrorPPM( tempmass, NeutralMasses [ Peak ]);
-                            //bool check = CheckFormulaByFilters( Formulas [ Peak ], NeutralMasses [ Peak ]);//this seems redundant...but leave in      
-                            //attempt to address incorrect propagation without eliminating NH propagation            
+                            //bool check = CheckFormulaByFilters( Formulas [ Peak ], NeutralMasses [ Peak ]);//this seems redundant...but leave in
+                            //attempt to address incorrect propagation without eliminating NH propagation
                             //Nikola Tolic(1/17/14)
                             //improvement on sub-ppm level is not that easy to evaluate; keep brute force formula if heteroatom evaluation makes it better choice
-                            //if we have resolved peaks this is where decision by "fine isotopic structure" could come handy     
+                            //if we have resolved peaks this is where decision by "fine isotopic structure" could come handy
                             //This was original LK decision tree with comments; then decide whether to keep the brute force formula or the formula which is already present (from the relations)
                             //if( check == false ) {
                             //    Formulas [ Peak ] = ( short [] ) DBFormula/*tempform*/.Clone();
@@ -1478,8 +1478,8 @@ namespace CIA {
                                 //if( tempform [ ( int ) EElemNumber.S ] + tempform [ ( int ) EElemNumber.P ] < Formulas [ Peak ] [ ( int ) EElemNumber.S ] + Formulas [ Peak ] [ ( int ) EElemNumber.P ]
                                 if( DBFormula [ ( int ) EElemIndex.S ] + DBFormula [ ( int ) EElemIndex.P ] < Formulas [ Peak ] [ ( int ) EElemIndex.S ] + Formulas [ Peak ] [ ( int ) EElemIndex.P ]
                                         //&& Math.Abs( DBFormulaMassError/*errornew*/ ) < FormulaErrorPPM / 2 ) {
-                                        && Math.Abs( DBFormulaMassError/*errornew*/ ) < GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) {                                    
-                                    //KL adding this last line 1/20/09 - only keep brute force if it 'really' improves the formula (much smaller error)                                                                         
+                                        && Math.Abs( DBFormulaMassError/*errornew*/ ) < GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) {
+                                    //KL adding this last line 1/20/09 - only keep brute force if it 'really' improves the formula (much smaller error)
                                     Formulas [ Peak ] = ( short [] ) DBFormula/*tempform*/.Clone();
                                     PPMErrors [ Peak ] = DBFormulaMassError/*errornew*/;
                                 }
@@ -1539,7 +1539,7 @@ namespace CIA {
                     if( GrpdiffK [ Peak ].IsEmpty == false) {
                         if( IsFormula( Formulas[ Peak ] ) == true ) {//if the formula is already known
                             short [] startform = ( short [] ) ( Formulas [ Peak ].Clone() );
-                            //KL change to only do this for the places where Grpdiff is not empty                                 
+                            //KL change to only do this for the places where Grpdiff is not empty
                             for( int Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++ ) {
                                 foreach( int relpk in GrpdiffK [ Peak ].Indexes [ Relation ] ) {
                                     //relpk > Peak???
@@ -1554,7 +1554,7 @@ namespace CIA {
                                     double newmass = FormulaToNeutralMass( newform );
                                     double errornew = CPpmError.AbsPpmError( newmass, NeutralMasses [ relpk ] );
                                     //if( ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) {
-                                    if ( ( checknew == true ) && ( Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) ) {                                        
+                                    if ( ( checknew == true ) && ( Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) ) {
                                         if( checkold == true ) {
                                             if( UseCIAFormulaScore == true) {
                                                 if( newform [ ( int ) EElemIndex.S ] + newform [ ( int ) EElemIndex.P ] < Formulas [ relpk ] [ ( int ) EElemIndex.S ] + Formulas [ relpk ] [ ( int ) EElemIndex.P ] ) {
@@ -1574,8 +1574,8 @@ namespace CIA {
                                     }
                                 }
                             }
-                        } else {//formula is not known - check for formulas in lower masses                            
-                            //KL change to only do this for the places where Grpdiff is not empty       
+                        } else {//formula is not known - check for formulas in lower masses
+                            //KL change to only do this for the places where Grpdiff is not empty
                             if( UseRelation == true ) {
                                 for( int Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++ ) {
                                     foreach( int low_m in GrpdiffK [ Peak ].Indexes [ Relation ] ) {
@@ -1596,7 +1596,7 @@ namespace CIA {
                                                 //if( Math.Abs( numGps ) <= MaxNumGps && checknew == true && errornew <= FormulaError ) {
                                                 bool bIsFormula = IsFormula( Formulas [ Peak ] );
                                                 //if( ( ( bIsFormula == false ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) || ( ( bIsFormula == true ) && ( errornew < PPMErrors [ Peak ] ) ) ) {
-                                                if ( ( ( bIsFormula == false ) && ( Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) ) || ( ( bIsFormula == true ) && ( errornew < PPMErrors [ Peak ] ) ) ) {                                                   
+                                                if ( ( ( bIsFormula == false ) && ( Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) ) ) || ( ( bIsFormula == true ) && ( errornew < PPMErrors [ Peak ] ) ) ) {
                                                     Formulas [ Peak ] = ( short [] ) newform.Clone();
                                                     PPMErrors [ Peak ] = errornew;
                                                 }
@@ -1639,7 +1639,7 @@ namespace CIA {
                             continue;
                         }
                         //int numCH2 = ( int ) Math.Floor( ( AKendrick_matrix [ relpk ].peak_mass - AKendrick_matrix [ FirstRelpk ].peak_mass ) / 14 );
-                        int numCH2 = ( int ) Math.Floor( ( NeutralMasses [ relpk ] - NeutralMasses[ FirstRelpk ]) / 14 );                        
+                        int numCH2 = ( int ) Math.Floor( ( NeutralMasses [ relpk ] - NeutralMasses[ FirstRelpk ]) / 14 );
                         short [] newform = ( short [] ) startform.Clone();
                         //KL change this to be more general
                         newform [ ( int ) EElemIndex.C ] = ( short ) ( newform [ ( int ) EElemIndex.C ] + 1 * numCH2 );
@@ -1661,7 +1661,7 @@ namespace CIA {
                                 }
                             }
                         //} else if( ( checkold == false ) && ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM / 2 ) ) {
-                        } else if ( ( checkold == false ) && ( checknew == true ) && ( Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) / 2 ) ) {                            
+                        } else if ( ( checkold == false ) && ( checknew == true ) && ( Math.Abs( errornew ) <= GetRealFormulaPpmError( NeutralMasses [ Peak ] ) / 2 ) ) {
                             Formulas [ relpk ] = ( short [] ) newform.Clone();
                             PPMErrors [ relpk ] = errornew;
                         }
@@ -1675,7 +1675,7 @@ namespace CIA {
             short [] BestFormula = ( short[]) NullFormula.Clone();
             //using the master list of compounds - can keep them in the array and then use arrayfun to search through the different cells in sData
             //KL 12/15/08
-            //1/2/09 - can have the case where multiple compounds have the same number of non-oxygen heteroatoms, so that isn't always the best way to sort. 
+            //1/2/09 - can have the case where multiple compounds have the same number of non-oxygen heteroatoms, so that isn't always the best way to sort.
             //If that happens, from the options with the lowest number of non-oxygen heteroatoms, chose the one with the lowest error
             //KL 1/6/09 - convert elemformula to double to get the precision I need
 
@@ -1707,19 +1707,19 @@ namespace CIA {
                     BestFormula = ( short [] ) DBFormula.Clone();
                     BestErrorPPM = ErrorPPMToDBMass;
                 }
-            }        
+            }
             return BestFormula;
         }
         private bool IsNewFormulaScoreBetter( short [] Formula, double FormulaError, short [] NewFormula, double NewFormulaError ) {
             switch ( FormulaScore ) {
                 case EFormulaScore.MinSPAndError:
                     //select the first elemental formula on the list (lowest # of non oxygen heteroatoms
-                    //1/20/09: change to test if only sort based on S and P 
+                    //1/20/09: change to test if only sort based on S and P
                     //KL 1/2/09 addition - if multiple with the same, low, # of non-oxygen heteroatoms, sort based on the lowest error AND
                     //lowest number of non-oyxgen heteroatoms (S and P only here).
                     int SPSum = Formula [ ( int ) EElemIndex.S ] + Formula [ ( int ) EElemIndex.P ];
                     int NewSPSum = NewFormula [ ( int ) EElemIndex.S ] + NewFormula [ ( int ) EElemIndex.P ];
-                    if ( NewSPSum < SPSum ) { return true; } 
+                    if ( NewSPSum < SPSum ) { return true; }
                     else if ( NewSPSum == SPSum ) {
                         //then only consider formulas with P <= 1 or S <= 3
                         bool Sle3AndPle1 = ( Formula [ ( int ) EElemIndex.S ] <= 3 ) & ( Formula [ ( int ) EElemIndex.P ] <= 1 );
@@ -1802,7 +1802,7 @@ namespace CIA {
             //Settings.Encoding = Encoding.UTF8;
             //XmlWriter xmlWriter = XmlWriter.Create( XmlString, Settings );
             //XmlWriter xmlWriter = XmlWriter.Create( XmlString);
-            //xmlWriter.WriteStartDocument();            
+            //xmlWriter.WriteStartDocument();
             XmlDocument XmlDoc = new XmlDocument();
             //xmlWriter.WriteStartElement( "DefaultParameters" );
             XmlNode RootNode = XmlDoc.CreateElement( "DefaultParameters" );
@@ -2131,7 +2131,7 @@ namespace CIA {
             }
             return XmlDoc.InnerXml;
         }
-        public void LoadParameters( string Filename ) {            
+        public void LoadParameters( string Filename ) {
             XmlDocument XmlDoc = new XmlDocument();
             XmlDoc.Load( Filename );
             XmlNode XmlDocRoot = XmlDoc.DocumentElement;
@@ -2282,7 +2282,7 @@ namespace CIA {
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/UseBackward" );
             if ( XmlNode != null ) {
                 SetUseBackward( bool.Parse( XmlNode.InnerText ) );
-            } 
+            }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/MaxRelationGaps" );
             if ( XmlNode != null ) {
                 SetMaxRelationGaps( int.Parse( XmlNode.InnerText ) );
@@ -2293,7 +2293,7 @@ namespace CIA {
             }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/RelationError" );
             if ( XmlNode != null ) {
-                SetRelationErrorAMU( double.Parse( XmlNode.InnerText ) );                
+                SetRelationErrorAMU( double.Parse( XmlNode.InnerText ) );
             }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH2" );
             if ( XmlNode != null ) {
@@ -2343,7 +2343,7 @@ namespace CIA {
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/Error" );
             if ( XmlNode != null ) {
                 SetErrorType( ( CCia.EErrorType ) Enum.Parse( typeof( CCia.EErrorType ), XmlNode.InnerText ) );
-            }            
+            }
             XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/IpaTab/IpaDBFilename" );
             if ( XmlNode != null ) {
                 IpaDBFilename = XmlNode.InnerText.Replace( "\u0020", " " );
@@ -2412,7 +2412,7 @@ namespace CIA {
                         & ( Formula [ ( int ) EElemIndex.S ] < UpLimitFormula [ ( int ) EElemIndex.S ] )
                         & ( Formula [ ( int ) EElemIndex.P ] < UpLimitFormula [ ( int ) EElemIndex.P ] );
 
-                if( result == false ) { return false; } 
+                if( result == false ) { return false; }
             }
 
             //Golden rule 2 "Valence rule"
@@ -2540,7 +2540,7 @@ namespace CIA {
                 }
             }
             return true;
-        } 
+        }
         void ProcessC13( double [] NeutralMasses, short [][] Formulas, double [] PPMErrors) {
             if( UseC13 == false ) { return; }
             double CDiff = CElements.C13 - CElements.C;
@@ -2688,7 +2688,7 @@ namespace CIA {
         public bool GetDBLimitIndexes( double Mass, out int LowerIndex, out int UpperIndex ) {
             //double FormulaError = Mass * FormulaErrorPPM / PPM;
             double LowerMZ = Mass - CPpmError.PpmToError( Mass, FormulaPPMTolerance );
-            //double LowerMZ = Mass - CPpmError.PpmToError( Mass, GetRealFormulaPpmError( Mass) );            
+            //double LowerMZ = Mass - CPpmError.PpmToError( Mass, GetRealFormulaPpmError( Mass) );
             LowerIndex = Array.BinarySearch( DBMasses, LowerMZ );
             UpperIndex = -1;//can't return without assigment
             if( LowerIndex < 0 ) {
@@ -2705,7 +2705,7 @@ namespace CIA {
             if( UpperIndex < 0 ) {
                 UpperIndex = ~UpperIndex;
             }
-            UpperIndex = UpperIndex - 1;//must be less     
+            UpperIndex = UpperIndex - 1;//must be less
 
             if( UpperIndex >= DBMasses.Length ) {
                 UpperIndex = DBMasses.Length - 1;
@@ -2756,7 +2756,7 @@ namespace CIA {
                     DBFormulas [ NextRecord ] = FormulaCovertFromBinary( TempBytes, ArrayShift );
                     NextRecord = NextRecord + 1;
                 }
-            } while ( RealBytes == DBBlockBytes );            
+            } while ( RealBytes == DBBlockBytes );
             oBinaryReader.Close();
             //DBSortAndClean( ref DBMasses, ref DBFormulas );
             //DBMassError( DBMasses, DBFormulas, ref DBMinError, ref DBMaxError );
@@ -2775,7 +2775,7 @@ namespace CIA {
                         continue;
                     }
                     //if( Masses [ TempRecord ] > MassPlusPpmError ) {
-                    if( Masses [ TempRecord ] > Support.CPpmError.MassPlusPpmError( Mass, FormulaPPMTolerance) ) {                      
+                    if( Masses [ TempRecord ] > Support.CPpmError.MassPlusPpmError( Mass, FormulaPPMTolerance) ) {
                         break;
                     }
                     if( AreFormulasEqual( Formulas [ Record ], Formulas [ TempRecord ] ) == true ) {
@@ -2807,7 +2807,7 @@ namespace CIA {
             MaxError = 0;
             for( int Record = 0; Record < Masses.Length; Record++ ) {
                 double DBError = Masses[ Record] - FormulaToNeutralMass( Formulas [ Record ] );
-                if( MinError > DBError ) { MinError = DBError; } 
+                if( MinError > DBError ) { MinError = DBError; }
                 else if( MaxError < DBError ) { MaxError = DBError; }
             }
         }
@@ -2979,7 +2979,7 @@ namespace CIA {
             double MaxError = 0;
             if( DBCalculateMassFromFormula == false ) {
                 DBMassError( Masses, Formulas, ref MinError, ref MaxError );
-            }            
+            }
 
             //write
             string DBBinaryFilename = Path.GetFullPath( AsciiFilenames [ 0 ] ).Substring( 0, AsciiFilenames [ 0 ].Length - Path.GetExtension( AsciiFilenames [ 0 ] ).Length ) + ".bin";
