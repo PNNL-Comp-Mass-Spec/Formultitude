@@ -94,14 +94,16 @@ namespace CIA {
                     } else {
                         if ( ( Path.GetExtension( args [ 1 ] ) == ".csv" )
                             || ( Path.GetExtension( args [ 1 ] ) == ".txt" )
+                            || ( Path.GetExtension( args[1]    ) == ".tsv")
                             || ( Path.GetExtension( args [ 1 ] ) == ".xml" ) ) {
                             DatasetsList.Add( args [ 1 ] );
                         } else {
-                            throw new Exception( "File in argument 2 must be xml, csv or txt type file" );
+                            throw new Exception( "File in argument 2 must be xml, csv, tsv (ThermoPeakDataExporter .tsv), or txt (DeconTools _peaks.txt) file." );
                         }
                     }
                 } else {
                     DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.csv" ) );
+                    DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.tsv" ) );
                     DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.txt" ) );
                     DatasetsList.AddRange( Directory.GetFiles( args [ 1 ], "*.xml" ) );
                     if ( DatasetsList.Count == 0 ) {
