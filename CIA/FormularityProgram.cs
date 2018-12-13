@@ -2759,7 +2759,7 @@ namespace CIA {
             DBFormulas = new short [ RecordCount] [];
             int NextRecord = 0;
             byte [] TempBytes = new byte [ DBBlockBytes ];
-            BinaryReader oBinaryReader = new BinaryReader( File.Open( CiaDBFilename, FileMode.Open ) );
+            BinaryReader oBinaryReader = new BinaryReader( File.Open( CiaDBFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite ) );
             int RealBytes;
             do {
                 RealBytes = oBinaryReader.Read( TempBytes, 0, DBBlockBytes );
