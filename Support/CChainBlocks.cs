@@ -8,8 +8,8 @@ using MathNet.Numerics.Statistics;
 
 namespace Support {
     public class CChainBlocks {
-        public string [] ElementNames = new string [] { 
-                "H", "C", "N", "O", "Na", 
+        public string [] ElementNames = new string [] {
+                "H", "C", "N", "O", "Na",
                 "P", "S", "Cl", "K", "Br",
                 "I"
         };
@@ -18,18 +18,18 @@ namespace Support {
                 30.97376151, 31.97207069, 34.96885271, 38.9637069, 78.9183376,
                 126.904473
         };
-        
-        public string [] Known4BlockNames = new string [] { 
-                "H2", 
-                "C", 
-                "CH2", 
+
+        public string [] Known4BlockNames = new string [] {
+                "H2",
+                "C",
+                "CH2",
                 "O"
         };
-        public double [] Known4BlockMasses = new double [] { 
-                CElements.H *2, 
-                CElements.C, 
-                CElements.C + 2 * CElements.H, 
-                CElements.O, 
+        public double [] Known4BlockMasses = new double [] {
+                CElements.H *2,
+                CElements.C,
+                CElements.C + 2 * CElements.H,
+                CElements.O,
         };
         public string [] KnownBlockNames = new string[0];
         public double [] KnownBlockMasses = new double[0];
@@ -44,7 +44,7 @@ namespace Support {
             int Subrange = Data.ErrDisMassMedians.Length / 2;
             double NewMass = Data.ErrDisMassMedians [ Subrange ] + MassDif;
             double NewAbsMassPpmError = Math.Abs( CPpmError.CalculateRangePpmError( Data.ErrDisMassMedians [ Subrange ], NewMass ) );
-            if ( NewAbsMassPpmError < Data.ErrDisStdDevs [ Subrange ] *  Data.MaxPpmErrorGain ) { return Index; } 
+            if ( NewAbsMassPpmError < Data.ErrDisStdDevs [ Subrange ] *  Data.MaxPpmErrorGain ) { return Index; }
             return -1;
         }
         public CChainBlocks() {
@@ -59,7 +59,7 @@ namespace Support {
             foreach ( string Line in Lines ) {
                 string Formula = Line.Split( WordSeparators )[0];
                 FormulaNameList.Add( Formula );
-                try{                   
+                try{
                     FormulaMassList.Add( Math.Abs( CalculateFormulaMass( Formula) ) );
                 }catch{}
             }
@@ -72,10 +72,10 @@ namespace Support {
             string [] Lines = new string [ KnownBlockMasses.Length ];
             for ( int Index = 0; Index < KnownBlockMasses.Length; Index++ ) {
                 Lines [ Index ] = KnownBlockNames [ Index ] + "," + KnownBlockMasses [ Index ].ToString( "F8" );
-            }                                       
+            }
             int FileExtentionLength = Path.GetExtension( Filename).Length;
             Filename = Filename.Substring( 0, Filename.Length - FileExtentionLength ) + "Real.csv";
-            //File.WriteAllLines( Filename, Lines );               
+            //File.WriteAllLines( Filename, Lines );
         }
         double CalculateFormulaMass( string Formula ) {
             //formula example N1H_3O
@@ -94,7 +94,7 @@ namespace Support {
                 }else{
                     ElementName = Formula [ SymbolIndex ].ToString();
                     if ( char.IsUpper( Formula [ SymbolIndex + 1 ] ) == true ) {
-                        //next element                        
+                        //next element
                         //NegPos = 1;
                         //Atoms = 1;
                     } else {
@@ -104,7 +104,7 @@ namespace Support {
                             SymbolIndex = SymbolIndex + 1;
                         }
                         if ( SymbolIndex + 1 >= Formula.Length ) {
-                            //last symbol                            
+                            //last symbol
                             //NegPos = 1;
                             //Atoms = 1;
                         } else {
@@ -215,7 +215,7 @@ namespace Support {
             }
             Data.Chains = Chains;
             CreateUniqueChains( Data, ChainPpmError);
-        }     
+        }
         public int AreChainsDuplicated( Support.InputData Data, Chain FirstChain, Chain SecondChain, double PeakPpmError ) {
             bool FirstTheSamePeakIndex = false;
             bool AreBlockSizesTheSame = false;
@@ -276,7 +276,7 @@ namespace Support {
             }
             Data.Chains = UniqueChains.ToArray();
         }
-        
+
         //StdDev error
         const int UniquePeaksInRange = 200;
         //return Tuple where
@@ -297,7 +297,7 @@ namespace Support {
             }
             return new Tuple<int [], int [], double []>( ParentPeakIndexList.ToArray(), ChildPeakIndexList.ToArray(), PpmErrorList.ToArray() );
         }
-        
+
         //return Tuple where
         //  Item1 is low mass
         //  Item2 is upper mass
@@ -330,7 +330,7 @@ namespace Support {
                     Statistics.Mean( RealErrorList ),
                     Statistics.StandardDeviation( RealErrorList ) );
         }
-        
+
         public void CalculateErrorDistribution( Support.InputData Data, double StartPpmError, double [] BlockMasses ) {
             List<int> GlobalIndexList = new List<int>();
             List<int> ParentPeakIndexList = new List<int>();
@@ -408,7 +408,7 @@ namespace Support {
 
                 if ( ( LowPpmError < -StartPpmError ) || ( UpperPpmError > StartPpmError ) ) {
                     LowPpmError = LowPpmError;
-                }                
+                }
                 List<double> RealErrorList = new List<double>();
                 List<double> RealBlockList = new List<double>();
                 for ( int Index = 0; Index < RangePeakCount; Index++ ) {
@@ -433,9 +433,9 @@ namespace Support {
         public void FindIsotopicPeaks( Support.InputData Data) {
             //clean
             Data.IsotopicParentPeaks = Enumerable.Repeat<int>( -1, Data.Masses.Length ).ToArray();
-            Data.IsotopicChildPeaks = Enumerable.Repeat<int>( -1, Data.Masses.Length ).ToArray();  
+            Data.IsotopicChildPeaks = Enumerable.Repeat<int>( -1, Data.Masses.Length ).ToArray();
             Data.IsotopicPeaks = -1;
-            //calculation            
+            //calculation
             int IsotopicPeaks = 0;
             for ( int ParentPeakIndex = 0; ParentPeakIndex < Data.Masses.Length - 1; ParentPeakIndex++ ) {
                 int IsotopicPeakIndex = CPpmError.SearchPeakIndexBasedOnErrorDistribution( Data, Data.Masses [ ParentPeakIndex ] + Charge1Distance, ParentPeakIndex + 1 );
@@ -485,7 +485,7 @@ namespace Support {
             CurChain.PpmErrorStdDev = Statistics.StandardDeviation( PpmErrors );
             return CurChain;
         }
-        public void FindChains1( Support.InputData Data, int MinPeaksInChain, double MaxStartPeakMass, double [] BlockMasses ) {            
+        public void FindChains1( Support.InputData Data, int MinPeaksInChain, double MaxStartPeakMass, double [] BlockMasses ) {
             if ( MinPeaksInChain < 2 ) { throw new Exception( "MinPeaksInChain is less 2 : " + MinPeaksInChain ); }
             double [] Masses = Data.Masses;
             List<Chain> ChainList = new List<Chain>();
@@ -575,7 +575,7 @@ namespace Support {
                     if ( Result > 0 ) {
                         NotUniqueChains [ NextChainIndex ] = true;
                     } else if ( Result < 0 ) {
-                        NotUniqueChains [ ChainIndex ] = true;                        
+                        NotUniqueChains [ ChainIndex ] = true;
                     }
                 }
             }
@@ -590,8 +590,8 @@ namespace Support {
             }
             Array.Sort( FirstPeakIndexes, Data.Chains );
         }
-         
-        //cluster    
+
+        //cluster
         public void FindClusters( Support.InputData Data) {
             //find clusters based on chains
             bool [] IsChainInCluster = new bool [ Data.Chains.Length ];
@@ -647,7 +647,7 @@ namespace Support {
                 ClusterPeakCountList.Add( ClusterPeakSortedList.Count );
                 Cluster CurCluster = new Cluster( ClusterChains.ToArray() );
                 Array.Sort( CurCluster.ChainIndexes );
-                //add cluster statistics               
+                //add cluster statistics
                 int [] ClusterChainIndexes = CurCluster.ChainIndexes;
                 int TheBestClusterChainIndex = -1;
                 int TheBestChainPeakIndex = -1;
@@ -800,7 +800,7 @@ namespace Support {
                     if ( ChainIndexInCluster != 0 ) {
                         if ( UsedChains [ ChainIndexInCluster ] == true ) { continue; }
                         for ( ; SearchPeakIndexInChain < CurChainPeakIndexes.Length; SearchPeakIndexInChain++ ){
-                            if ( Data.IdealMasses[ CurChainPeakIndexes[ SearchPeakIndexInChain] ] > 0.1){                                
+                            if ( Data.IdealMasses[ CurChainPeakIndexes[ SearchPeakIndexInChain] ] > 0.1){
                                 SearchMass = Data.IdealMasses [ CurChainPeakIndexes [ SearchPeakIndexInChain ] ];
                                 UsedChains [ ChainIndexInCluster ] = true;
                                 UsedChainCount--;
@@ -943,7 +943,7 @@ namespace Support {
                 for ( int ChainIndexInCluster = 0; ChainIndexInCluster < ClusterChainIndexes.Length; ChainIndexInCluster++ ) {
                     if ( UsedChains [ ChainIndexInCluster ] == true ) { continue; }
                     int [] CurChainPeakIndexes = Data.Chains [ ClusterChainIndexes [ ChainIndexInCluster ] ].PeakIndexes;
-                    int SearchPeakIndexInChain = 0;                                     
+                    int SearchPeakIndexInChain = 0;
                     for ( ; SearchPeakIndexInChain < CurChainPeakIndexes.Length; SearchPeakIndexInChain++ ) {
                         if ( Data.IdealMasses [ CurChainPeakIndexes [ SearchPeakIndexInChain ] ] > 0.1 ) {
                             UsedChains [ ChainIndexInCluster ] = true;
@@ -951,7 +951,7 @@ namespace Support {
                             break;
                         }
                     }
-                    if ( UsedChains [ ChainIndexInCluster ] == false ) { continue; } 
+                    if ( UsedChains [ ChainIndexInCluster ] == false ) { continue; }
 
                     //add chain peaks
                     double CurChainIdealBlockMass = Data.Chains [ ClusterChainIndexes [ ChainIndexInCluster ] ].IdealBlockMass;
@@ -997,7 +997,7 @@ namespace Support {
                     //throw new Exception( "There is ideal mass of Search C13 peak; function AssignC13IdealMasses" );
                 }
                 Data.IdealMasses [ SearchPeakIndex ] = Data.IdealMasses [ PeakIndex ] + C13BlockMass;
-                 */ 
+                 */
                 if ( SecondClusterPeakIndexes.Contains( SearchPeakIndex ) == true) {
                     ParentPeakList.Add( PeakIndex );
                     C13PeakList.Add( SearchPeakIndex );
@@ -1012,7 +1012,7 @@ namespace Support {
             int [] MinPeakIndexesAtInteger = new int [ MaxMassInteger + 1 ];
             int [] MaxPeakIndexesAtInteger = new int [ MaxMassInteger + 1 ];
             int PeakIndex = 0;
-            for ( int MassInteger = MinMassInteger; MassInteger <= MaxMassInteger; MassInteger++ ) {                
+            for ( int MassInteger = MinMassInteger; MassInteger <= MaxMassInteger; MassInteger++ ) {
                 int FirstPeakIndex = PeakIndex;
                 for ( ; PeakIndex < Data.Masses.Length; ) {
                     int CurMassInteger = ( int) Math.Round( Data.Masses[ PeakIndex]);
@@ -1024,7 +1024,7 @@ namespace Support {
                             MinPeakIndexesAtInteger [ MassInteger ] = FirstPeakIndex;
                             MaxPeakIndexesAtInteger [ MassInteger ] = PeakIndex - 1;
                         }
-                        break; 
+                        break;
                     }
                     PeakIndex++;
                 }
@@ -1038,12 +1038,12 @@ namespace Support {
                 if ( MinPeakIndexesAtInteger [ MassInteger ] < 0 ) { continue; }
                 List<int> IdealPeakIndexes = new List<int>();
                 List<double> IdealMasses = new List<double>();
-                List<double> IdealMassErrors = new List<double>();                
+                List<double> IdealMassErrors = new List<double>();
                 for( PeakIndex = MinPeakIndexesAtInteger[ MassInteger]; PeakIndex <= MaxPeakIndexesAtInteger[ MassInteger]; PeakIndex++){
                     if ( Data.IdealMasses [ PeakIndex ] > 0.1 ) {
                         IdealPeakIndexes.Add( PeakIndex );
                         IdealMasses.Add( Data.IdealMasses [ PeakIndex ] );
-                        IdealMassErrors.Add( Data.Masses[ PeakIndex] - Data.IdealMasses [ PeakIndex ] ); 
+                        IdealMassErrors.Add( Data.Masses[ PeakIndex] - Data.IdealMasses [ PeakIndex ] );
                     }
                 }
                 if ( IdealPeakIndexes.Count == 0 ) { continue; }
@@ -1053,7 +1053,7 @@ namespace Support {
                 IdealMassMeansAtIntegers [ MassInteger ] = Support.CArrayMath.Mean( IdealMasses.ToArray() );
                 IdealMassErrorMeansAtIntegers [ MassInteger ] = Support.CArrayMath.Mean( IdealMassErrors.ToArray() );
             }
-           
+
             for ( PeakIndex = 0; PeakIndex < Data.Masses.Length; PeakIndex++ ) {
                 if ( Data.IdealMasses [ PeakIndex ] > 0.1 ) { continue; }
                 int MassInteger = (int) Math.Round( Data.Masses[ PeakIndex] );
@@ -1072,7 +1072,7 @@ namespace Support {
                         }
                         int LeftIdealPeak = IdealPeakIndexesAtIntegers [ MassInteger ] [ IdealPeakIndexAtInteger - 1 ];
                         int RightIdealPeak = IdealPeakIndexesAtIntegers [ MassInteger ] [ IdealPeakIndexAtInteger];
-                        Data.IdealMasses [ PeakIndex ] = Data.Masses [ PeakIndex ] 
+                        Data.IdealMasses [ PeakIndex ] = Data.Masses [ PeakIndex ]
                                 + Support.CArrayMath.LinearValue( Data.Masses [ PeakIndex ], Data.Masses [ LeftIdealPeak ], Data.Masses [ RightIdealPeak ],
                                 Data.IdealMasses [ LeftIdealPeak ] - Data.Masses [ LeftIdealPeak ],
                                 Data.IdealMasses [ RightIdealPeak ] - Data.Masses [ RightIdealPeak ] );
@@ -1092,7 +1092,7 @@ namespace Support {
                         for ( ; RightMassInteger <= LastIdealMassInteger; RightMassInteger++ ) {
                             if ( IdealMassMeansAtIntegers [ RightMassInteger ] > 0.1 ) { break; }
                         }
-                        Data.IdealMasses [ PeakIndex ] = Data.Masses [ PeakIndex ] 
+                        Data.IdealMasses [ PeakIndex ] = Data.Masses [ PeakIndex ]
                                 - Support.CArrayMath.LinearValue( Data.Masses [ PeakIndex ], IdealMassMeansAtIntegers [ LeftMassInteger ], IdealMassMeansAtIntegers [ RightMassInteger ],
                                 IdealMassErrorMeansAtIntegers [ LeftMassInteger ], IdealMassErrorMeansAtIntegers [ RightMassInteger ] );
                     }
@@ -1410,7 +1410,7 @@ namespace Support {
             StringBuilder UChainText = new StringBuilder(  );
             int UChainIndex = 0;
             int UPairIndex = 0;
-            StringBuilder PairText = new StringBuilder(  );            
+            StringBuilder PairText = new StringBuilder(  );
             for ( int Index = 0; Index < PairDistances.Length; Index++ ) {
                 PairDistance Cur = PairDistances [ Index ];
                 for ( int ListIndex = 0; ListIndex < Cur.FormulaList.Count; ListIndex++ ) {
