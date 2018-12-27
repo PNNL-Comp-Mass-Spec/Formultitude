@@ -1007,8 +1007,8 @@ namespace Support {
             Data.IsotopicChildPeaks = C13PeakList.ToArray();
         }
         public void AssignIdealMassesToRestPeaks( Support.InputData Data){
-            int MinMassInteger = ( int ) Math.Round( Data.Masses.First() );
-            int MaxMassInteger = ( int ) Math.Round( Data.Masses.Last() );
+            int MinMassInteger = ( int ) Math.Round( Data.Masses.Min() );
+            int MaxMassInteger = ( int ) Math.Round( Data.Masses.Max() );
             int [] MinPeakIndexesAtInteger = new int [ MaxMassInteger + 1 ];
             int [] MaxPeakIndexesAtInteger = new int [ MaxMassInteger + 1 ];
             int PeakIndex = 0;
