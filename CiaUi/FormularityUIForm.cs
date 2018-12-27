@@ -1337,7 +1337,7 @@ namespace CiaUi {
                     oCCia.GetSaveParameterText( OSD.FileName );
                 }
             } catch ( Exception ex ) {
-                MessageBox.Show( "Parameters weren't saved correctly." );
+                MessageBox.Show( "Parameters weren't saved correctly: " + ex.Message );
             }
         }
         private void textBoxParameterFile_DragEnter( object sender, DragEventArgs e ) {

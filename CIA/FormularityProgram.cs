@@ -211,8 +211,13 @@ namespace CIA {
             ReportError( ex.Message );
             if ( throwException )
                 throw ex;
+
+            Console.WriteLine();
+            Console.WriteLine(ex.StackTrace);
         }
-        public static void ReportError( string errorMessage ) {
+        public static void ReportError( string errorMessage )
+        {
+            Console.WriteLine();
             if ( errorMessage.StartsWith( "Error:" ) )
                 Console.WriteLine( errorMessage );
             else
