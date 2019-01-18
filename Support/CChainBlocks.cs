@@ -1080,9 +1080,13 @@ namespace Support {
                 } else {
                     //Integer doesn't have ideal peaks
                     if ( MassInteger < FirstIdealMassInteger ) {
-                        Data.IdealMasses [ PeakIndex ] = Data.Masses [ PeakIndex ] - IdealMassErrorMeansAtIntegers [ FirstIdealMassInteger ];
+                        if (FirstIdealMassInteger >= 0) {
+                            Data.IdealMasses[PeakIndex] = Data.Masses[PeakIndex] - IdealMassErrorMeansAtIntegers[FirstIdealMassInteger];
+                        }
                     } else if ( MassInteger > LastIdealMassInteger ) {
-                        Data.IdealMasses [ PeakIndex ] = Data.Masses [ PeakIndex ] - IdealMassErrorMeansAtIntegers [ LastIdealMassInteger ];
+                        if (LastIdealMassInteger >= 0) {
+                            Data.IdealMasses[PeakIndex] = Data.Masses[PeakIndex] - IdealMassErrorMeansAtIntegers[LastIdealMassInteger];
+                        }
                     } else {
                         int LeftMassInteger = MassInteger - 1;
                         for ( ; LeftMassInteger >= FirstIdealMassInteger; LeftMassInteger-- ) {

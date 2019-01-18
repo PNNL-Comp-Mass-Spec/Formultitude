@@ -107,6 +107,9 @@ namespace Support {
         public double [] ErrDisStdDevs;
         public int [] ErrDisPairCount;
         public double GetErrorStdDev( double Mass ) {
+            if (ErrDisMassMedians.Length == 0) {
+                return 0;
+            }
             if ( Mass <= ErrDisMassMedians.First() ) {
                 return ErrDisStdDevs.First();
             } else if ( Mass >= ErrDisMassMedians.Last() ) {

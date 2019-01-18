@@ -932,7 +932,12 @@ namespace CIA {
                     ChainBlocks.CalculateErrorDistribution( InputData, StartPpmError, StandardBlockMasses );
                     ChainBlocks.FindChains1( InputData, MinPeaksPerChain, InputData.Masses.Last() + 1, StandardBlockMasses );
                     ChainBlocks.FindClusters( InputData );
-                    ChainBlocks.AssignIdealMassesTheBiggestCluster( InputData );
+
+                    if ( InputData.Clusters.Length > 0 ) {
+                        ChainBlocks.AssignIdealMassesTheBiggestCluster(InputData);
+                    } else {
+                        FormularityProgram.AppendToLog(oStreamLogWriter,"Warning: No matches were found\n");
+                    }
 
                     //oStreamLogWriter.Write( "\r\nStart ppm error: " + ( FormulaPPMTolerance * 5 ).ToString( "F8" ) );
                     FormularityProgram.AppendToLog( oStreamLogWriter, "Start ppm error: " + ( FormulaPPMTolerance * 5 ).ToString( "F8" ) + "\n");
