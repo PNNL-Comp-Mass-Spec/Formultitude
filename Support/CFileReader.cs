@@ -126,7 +126,7 @@ namespace Support {
                         + "," + ErrDisMeans [ RangeIndex ].ToString( "F8" ) + "," + ErrDisStdDevs [ RangeIndex ].ToString( "F8" ) + "," + ErrDisPairCount [ RangeIndex ]                        ;
             }
             if ( Full == false ) { return Text; }
-            
+
             int MaxPeakIndex = 0;
             Text = Text + "\r\n\r\n";
             foreach ( int [] ErrDisParentPeakIndexesInRange in ErrDisParentPeakIndexes ) {
@@ -137,7 +137,7 @@ namespace Support {
                 Text = Text + "\r\n";
                 for ( int RangeIndex = 0; RangeIndex < ErrDisParentPeakIndexes.Length; RangeIndex++ ) {
                     if ( ErrDisParentPeakIndexes [ RangeIndex ].Length > PeakIndex ) {
-                        Text = Text + ErrDisParentPeakIndexes [ RangeIndex ][ PeakIndex] + "," + Masses [ ErrDisParentPeakIndexes [ RangeIndex ][PeakIndex] ].ToString( "F8" ) 
+                        Text = Text + ErrDisParentPeakIndexes [ RangeIndex ][ PeakIndex] + "," + Masses [ ErrDisParentPeakIndexes [ RangeIndex ][PeakIndex] ].ToString( "F8" )
                                 + "," + ErrDisChildPeakIndexes [ RangeIndex ][PeakIndex] + "," + Masses [ ErrDisChildPeakIndexes [ RangeIndex ][PeakIndex] ].ToString( "F8" )
                                 + "," + ErrDisPpmErrors [ RangeIndex ][PeakIndex].ToString( "F8" ) + "," + ErrDisBlockMasses [ RangeIndex ][PeakIndex].ToString( "F8" ) + ",,";
                     } else {
@@ -145,7 +145,7 @@ namespace Support {
                     }
                 }
             }
-            return Text; 
+            return Text;
         }
 
         //error trend
@@ -183,7 +183,7 @@ namespace Support {
             }
             return Text;
         }
-        
+
         //clusters
         public Cluster [] Clusters;
         public int [] GetClusterPeakIndexes( int ClusterIndex ) {
@@ -194,7 +194,7 @@ namespace Support {
             foreach ( int ChainIndex in Clusters [ ClusterIndex ].ChainIndexes ) {
                 Chain CurChain = Chains [ ChainIndex ];
                 foreach ( int PeakIndex in CurChain.PeakIndexes ) {
-                    if ( PeakIndexSortedList.ContainsKey( PeakIndex ) == false ) { 
+                    if ( PeakIndexSortedList.ContainsKey( PeakIndex ) == false ) {
                         PeakIndexSortedList.Add( PeakIndex, PeakIndex );
                     }
                 }
@@ -348,7 +348,7 @@ namespace Support {
                             Abundances [ Peak ] = Double.Parse( LineParts [ 3 ] );
                             if ( MaxAbundance < Abundances [ Peak ] ) { MaxAbundance = Abundances [ Peak ]; }
                             S2Ns [ Peak ] = Double.Parse( LineParts [ 5 ] );
-                            Resolutions [ Peak ] = Masses [ Peak ]  / Double.Parse( LineParts [ 4 ] );                          
+                            Resolutions [ Peak ] = Masses [ Peak ]  / Double.Parse( LineParts [ 4 ] );
                         }
                     } else {
                         for ( Peak = 0; Peak < Lines.Length - 1; Peak++ ) {

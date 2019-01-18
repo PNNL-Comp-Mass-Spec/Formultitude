@@ -898,7 +898,7 @@ namespace CIA {
                 Console.WriteLine("Opening " + Filenames[FileIndex]);
                 Support.CFileReader.ReadFile( Filenames [ FileIndex ], out Masses [ FileIndex ], out Abundances [ FileIndex ], out SNs [ FileIndex ], out Resolutions [ FileIndex ], out RelAbundances [ FileIndex ] );
                 if ( Masses [ FileIndex ].Length == 0 ) {
-                    Console.WriteLine( "Warning: no data points found in " + Path.GetFileName( Filenames [ FileIndex ] ) );
+                    FormularityProgram.AppendToLog(oStreamLogWriter,"Warning: no data points found in " + Path.GetFileName( Filenames [ FileIndex ] ) + "\n" );
                     continue;
                 }
                 MaxAbundances [ FileIndex ] = Support.CArrayMath.Max( Abundances [ FileIndex ] );
@@ -1744,7 +1744,7 @@ namespace CIA {
                     //select the first elemental formula on the list (lowest # of non oxygen heteroatoms
                     //1/20/09: change to test if only sort based on S and P
                     //KL 1/2/09 addition - if multiple with the same, low, # of non-oxygen heteroatoms, sort based on the lowest error AND
-                    //lowest number of non-oyxgen heteroatoms (S and P only here).
+                    //lowest number of non-oxygen heteroatoms (S and P only here).
                     int SPSum = Formula [ ( int ) EElemIndex.S ] + Formula [ ( int ) EElemIndex.P ];
                     int NewSPSum = NewFormula [ ( int ) EElemIndex.S ] + NewFormula [ ( int ) EElemIndex.P ];
                     if ( NewSPSum < SPSum ) { return true; }
