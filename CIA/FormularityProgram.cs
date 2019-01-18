@@ -976,11 +976,14 @@ namespace CIA {
                     CalMasses [ FileIndex ] = oTotalCalibration.ttl_LQ_InternalCalibration( ref Masses [ FileIndex ], ref Abundances [ FileIndex ], ref SNs [ FileIndex ], MaxAbundances [ FileIndex ] );
                     //oStreamLogWriter.Write( oTotalCalibration.cal_log );
                     FormularityProgram.AppendToLog( oStreamLogWriter, oTotalCalibration.cal_log + "\n");
-                    if ( CalMasses [ FileIndex ] == null ) {
-                        FormularityProgram.AppendToLog( oStreamLogWriter, "Calibration failed; using uncalibrated masses" );
-                        FormularityProgram.AppendToLog( oStreamLogWriter, "" );
+                    if ( CalMasses [ FileIndex ] == null && Masses[FileIndex].Length > 0) {
+
+                        FormularityProgram.AppendToLog(oStreamLogWriter, "Calibration failed; using uncalibrated masses\n");
+                        FormularityProgram.AppendToLog(oStreamLogWriter, "");
+
                         // Populate the calibrated mass array with the original masses
-                        Array.Copy( Masses [ FileIndex ], CalMasses [ FileIndex ], Masses [ FileIndex ].Length );
+                        CalMasses[FileIndex] = new double[Masses[FileIndex].Length];
+                        Array.Copy(Masses[FileIndex], CalMasses[FileIndex], Masses[FileIndex].Length);
                     }
                 }
             }
