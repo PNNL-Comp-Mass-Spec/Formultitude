@@ -43,7 +43,7 @@ namespace FindChainsTest
         static void Main(string[] args)
         {
             Support.InputData InputData;
-            Support.CChainBlocks ChainBlocks = new CChainBlocks();
+            var ChainBlocks = new CChainBlocks();
             //ChainBlocks.KnownMassBlocksFromFile( "\\\\picfs\\Research\\Projects\\TolicNikola\\AFAI_Manuscript\\Formularity area\\Improvements_Tests\\dmTransformations_MalakReal.csv" );
             ChainBlocks.KnownMassBlocksFromFile("dmTransformations_MalakReal.csv");
             //21 T
@@ -55,7 +55,7 @@ namespace FindChainsTest
             //string Filename = "\\\\picfs\\Research\\Projects\\TolicNikola\\AFAI_Manuscript\\Formularity area\\Testing Dynamic Error\\Testing_SN_Cutoff\\21T_allpeaks_2016-02-11_20ppm_SRFAI_AGC-2E6_400K_NSI_1000avg.txt";
 
             //12T
-            string Filename = "C:\\Temp\\textGarbage\\12T_NotCalibrated.txt";
+            var Filename = "C:\\Temp\\textGarbage\\12T_NotCalibrated.txt";
             //for Error vs SN
             //string Filename = "\\\\picfs\\Research\\Projects\\TolicNikola\\AFAI_Manuscript\\Formularity area\\Testing Dynamic Error\\Testing_SN_Cutoff\\12T_sn1_Cates_H2O_SRFAII_12Apr18_Alder_Infuse_p05_1_01_28394.xml";
             //string Filename = "\\\\picfs\\Research\\Projects\\TolicNikola\\AFAI_Manuscript\\Formularity area\\Testing Dynamic Error\\Testing_SN_Cutoff\\12T_NotCalibrated.txt";
@@ -66,22 +66,22 @@ namespace FindChainsTest
             const double MaxOffsetPpmError = 5;
             if (true)
             {
-                string IsotopeFilename = "Isotope.inf";
+                var IsotopeFilename = "Isotope.inf";
                 CIsotope.ConvertIsotopeFileIntoIsotopeDistanceFile(IsotopeFilename);
-                Support.CChainBlocks.PairDistance[] DistancePeaks = ChainBlocks.GetPairChainIsotopeStatistics(InputData);
+                var DistancePeaks = ChainBlocks.GetPairChainIsotopeStatistics(InputData);
                 File.WriteAllText(Filename + "PairIsotopes.csv", ChainBlocks.PairChainIsotopeStatisticsToString(DistancePeaks));
             }
             if (false)
             {
                 //test sn vs peak pair error
-                double[] SNs = new double[] { 1, 2, 3, 5, 10, 15, 20 };
-                double[] BlockMasses1 = new double[] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
-                string Text = "";
-                foreach (double SN in SNs)
+                var SNs = new double[] { 1, 2, 3, 5, 10, 15, 20 };
+                var BlockMasses1 = new double[] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
+                var Text = "";
+                foreach (var SN in SNs)
                 {
-                    List<double> CutMasses = new List<double>();
-                    List<double> CutSNs = new List<double>();
-                    for (int PeakIndex = 0; PeakIndex < InputData.Masses.Length; PeakIndex++)
+                    var CutMasses = new List<double>();
+                    var CutSNs = new List<double>();
+                    for (var PeakIndex = 0; PeakIndex < InputData.Masses.Length; PeakIndex++)
                     {
                         if (InputData.S2Ns[PeakIndex] > SN)
                         {
@@ -101,14 +101,14 @@ namespace FindChainsTest
             if (false)
             {
                 //peak pair distribution
-                double[] Masses = InputData.Masses;
-                List<double> DistanceList = new List<double>();
+                var Masses = InputData.Masses;
+                var DistanceList = new List<double>();
                 double MaxDistanceMass = 100;
-                for (int LowPeakIndex = 0; LowPeakIndex < Masses.Length - 1; LowPeakIndex++)
+                for (var LowPeakIndex = 0; LowPeakIndex < Masses.Length - 1; LowPeakIndex++)
                 {
-                    for (int UpperPeakIndex = LowPeakIndex + 1; UpperPeakIndex < Masses.Length; UpperPeakIndex++)
+                    for (var UpperPeakIndex = LowPeakIndex + 1; UpperPeakIndex < Masses.Length; UpperPeakIndex++)
                     {
-                        double CurDistance = Masses[UpperPeakIndex] - Masses[LowPeakIndex];
+                        var CurDistance = Masses[UpperPeakIndex] - Masses[LowPeakIndex];
                         if (MaxDistanceMass < CurDistance) { break; }
                         DistanceList.Add(CurDistance);
                     }
@@ -116,20 +116,20 @@ namespace FindChainsTest
                 DistanceList.Sort();
 
                 ChainBlocks.CalculateErrorDistribution(InputData, MaxOffsetPpmError, new double[] { 12.00 });
-                double BinSize = CPpmError.PpmToError(InputData.ErrDisMassMedians[0], InputData.ErrDisStdDevs[0]) * 3;
-                int BinCount = (int)Math.Ceiling(MaxDistanceMass / BinSize) + 1;
-                int[] BinCounts = new int[BinCount];
-                for (int Index = 0; Index < DistanceList.Count - 1; Index++)
+                var BinSize = CPpmError.PpmToError(InputData.ErrDisMassMedians[0], InputData.ErrDisStdDevs[0]) * 3;
+                var BinCount = (int)Math.Ceiling(MaxDistanceMass / BinSize) + 1;
+                var BinCounts = new int[BinCount];
+                for (var Index = 0; Index < DistanceList.Count - 1; Index++)
                 {
-                    int Bin = (int)Math.Round(DistanceList[Index] / BinSize);
+                    var Bin = (int)Math.Round(DistanceList[Index] / BinSize);
                     BinCounts[Bin]++;
                 }
 
-                int MaxCount = CArrayMath.Max(BinCounts);
-                int MinCount = MaxCount / 100;
+                var MaxCount = CArrayMath.Max(BinCounts);
+                var MinCount = MaxCount / 100;
 
-                string TextDistance = "BlockMass,Counts";
-                for (int Index = 1; Index < BinCounts.Length - 1; Index++)
+                var TextDistance = "BlockMass,Counts";
+                for (var Index = 1; Index < BinCounts.Length - 1; Index++)
                 {
                     if ((BinCounts[Index - 1] > MinCount)
                     || (BinCounts[Index] > MinCount)
@@ -140,7 +140,7 @@ namespace FindChainsTest
                 }
                 File.WriteAllText(Filename + "BlockMassDistribution.csv", TextDistance);
 
-                double[] Distances = DistanceList.ToArray();
+                var Distances = DistanceList.ToArray();
             }
             //Array.Sort( Distances );
             /*
@@ -174,9 +174,9 @@ namespace FindChainsTest
                 //special test C13 error, CH4O-1 error
                 //string [] Names = new string [] { "C13", "H2", "C", "CH2", "O" };
                 //double [] Sizes = new double [] { CElements.C13 - CElements.C, 2* CElements.H, CElements.C, 2* CElements.H + CElements.C, CElements.O };
-                string[] Names = new string[] { "CH4O-1" };
-                double[] Sizes = new double[] { 2 * CElements.H, CElements.C + 4 * CElements.H - CElements.O };
-                Tuple<int[], int[], double[]>[] BlockMassData = new Tuple<int[], int[], double[]>[Sizes.Length];
+                var Names = new string[] { "CH4O-1" };
+                var Sizes = new double[] { 2 * CElements.H, CElements.C + 4 * CElements.H - CElements.O };
+                var BlockMassData = new Tuple<int[], int[], double[]>[Sizes.Length];
 
                 InputData.MaxPpmErrorGain = 1;
                 ChainBlocks.CalculateErrorDistribution(InputData, MaxOffsetPpmError, new double[] { 2 * CElements.H });
@@ -193,8 +193,8 @@ namespace FindChainsTest
 
             //string [] BlockNames = new string [] { "H2", "C", "CH2", "O", "NH" };
             //double [] BlockMasses = new double [] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O, CElements.H + CElements.N };
-            string[] BlockNames = new string[] { "H2", "C", "CH2", "O" };
-            double[] BlockMasses = new double[] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
+            var BlockNames = new string[] { "H2", "C", "CH2", "O" };
+            var BlockMasses = new double[] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
 
             ChainBlocks.CalculateErrorDistribution(InputData, MaxOffsetPpmError, BlockMasses);
             File.WriteAllText(Filename + "ErrorDistribution.csv", InputData.ErrorDistributionToString(true));
@@ -208,7 +208,7 @@ namespace FindChainsTest
             File.WriteAllText(Filename + "Clusters.csv", InputData.ClustersToString());
             File.WriteAllText(Filename + "IdealMassesAfterCluster0.csv", InputData.IdealMassesToString());
 
-            double[] NoTrendMasses = ChainBlocks.GetNoTrendErrorMasses(InputData.Masses, InputData.IdealMasses, InputData);
+            var NoTrendMasses = ChainBlocks.GetNoTrendErrorMasses(InputData.Masses, InputData.IdealMasses, InputData);
             InputData.Masses = NoTrendMasses;
             File.WriteAllText(Filename + "ErrorTrend.csv", InputData.ErrorTrendToString());
 

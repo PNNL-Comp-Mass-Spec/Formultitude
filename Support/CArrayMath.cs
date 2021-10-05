@@ -7,8 +7,8 @@ namespace Support
         public static double Max(double[] Data)
         {
             if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
-            double Max = Data[0];
-            foreach (double Value in Data)
+            var Max = Data[0];
+            foreach (var Value in Data)
             {
                 if (Max < Value) { Max = Value; }
             }
@@ -17,8 +17,8 @@ namespace Support
         public static int Max(int[] Data)
         {
             if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
-            int Max = Data[0];
-            foreach (int Value in Data)
+            var Max = Data[0];
+            foreach (var Value in Data)
             {
                 if (Max < Value) { Max = Value; }
             }
@@ -28,7 +28,7 @@ namespace Support
         {
             if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
             double Sum = 0;
-            foreach (double Value in Data)
+            foreach (var Value in Data)
             {
                 Sum = Sum + Value;
             }
@@ -38,7 +38,7 @@ namespace Support
         {
             if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
             double Sum = 0;
-            foreach (double Value in Data)
+            foreach (var Value in Data)
             {
                 Sum = Sum + Math.Abs(Value);
             }
@@ -48,7 +48,7 @@ namespace Support
         {
             if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
             double Sum = 0;
-            foreach (double Value in Data)
+            foreach (var Value in Data)
             {
                 Sum = Sum + Math.Pow(Value - Mean, 2);
             }
@@ -58,7 +58,7 @@ namespace Support
         {
             if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
             double Sum = 0;
-            foreach (double Value in Data)
+            foreach (var Value in Data)
             {
                 Sum = Sum + Math.Pow(Math.Abs(Value) - Mean, 2);
             }
@@ -70,10 +70,10 @@ namespace Support
         }
         public static void CalcParabolaVertex(double x1, double y1, double x2, double y2, double x3, double y3, out double x, out double y)
         {
-            double denom = (x1 - x2) * (x1 - x3) * (x2 - x3);
-            double A = (x3 * (y2 - y1) + x2 * (y1 - y3) + x1 * (y3 - y2)) / denom;
-            double B = (x3 * x3 * (y1 - y2) + x2 * x2 * (y3 - y1) + x1 * x1 * (y2 - y3)) / denom;
-            double C = (x2 * x3 * (x2 - x3) * y1 + x3 * x1 * (x3 - x1) * y2 + x1 * x2 * (x1 - x2) * y3) / denom;
+            var denom = (x1 - x2) * (x1 - x3) * (x2 - x3);
+            var A = (x3 * (y2 - y1) + x2 * (y1 - y3) + x1 * (y3 - y2)) / denom;
+            var B = (x3 * x3 * (y1 - y2) + x2 * x2 * (y3 - y1) + x1 * x1 * (y2 - y3)) / denom;
+            var C = (x2 * x3 * (x2 - x3) * y1 + x3 * x1 * (x3 - x1) * y2 + x1 * x2 * (x1 - x2) * y3) / denom;
 
             x = -B / (2 * A);
             y = C - B * B / (4 * A);

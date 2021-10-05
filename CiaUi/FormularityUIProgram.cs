@@ -19,7 +19,7 @@ namespace CiaUi
             }
             catch (Exception ex)
             {
-                string sss = ex.Message;
+                var sss = ex.Message;
             }
         }
     }

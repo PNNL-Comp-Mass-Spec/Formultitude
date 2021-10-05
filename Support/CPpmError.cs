@@ -36,8 +36,8 @@ namespace Support
         public enum EMassArgument { None, First, Second };
         public static EMassArgument FindBetterMass(double ReferenceMass, double FirstMass, double SecondMass, double MaxPpmError)
         {
-            double FirstMassPpmError = CalculateAbsRangePpmError(ReferenceMass, FirstMass);
-            double SecondMassPpmError = CalculateAbsRangePpmError(ReferenceMass, SecondMass);
+            var FirstMassPpmError = CalculateAbsRangePpmError(ReferenceMass, FirstMass);
+            var SecondMassPpmError = CalculateAbsRangePpmError(ReferenceMass, SecondMass);
             if ((FirstMassPpmError <= SecondMassPpmError) && (FirstMassPpmError <= MaxPpmError))
             {
                 return EMassArgument.First;
@@ -65,7 +65,7 @@ namespace Support
         }
         public static int SearchPeakIndex(double[] Masses, double PeakMass, double MaxPpmError, int StartIndex = 0)
         {
-            int Index = Array.BinarySearch(Masses, StartIndex, Masses.Length - StartIndex, PeakMass);
+            var Index = Array.BinarySearch(Masses, StartIndex, Masses.Length - StartIndex, PeakMass);
             if (Index >= 0) { return Index; }
             else { Index = ~Index; }
             if (Index >= Masses.Length)
@@ -94,7 +94,7 @@ namespace Support
             }
             else
             {
-                EMassArgument MassArgument = FindBetterMass(PeakMass, Masses[Index - 1], Masses[Index], MaxPpmError);
+                var MassArgument = FindBetterMass(PeakMass, Masses[Index - 1], Masses[Index], MaxPpmError);
                 if (MassArgument == EMassArgument.First)
                 {
                     return Index - 1;
@@ -108,13 +108,13 @@ namespace Support
         }
         public static int SearchPeakIndexBasedOnErrorDistribution(Support.InputData Data, double PeakMass, int StartIndex = 0)
         {
-            double[] InputArray = Data.Masses;
-            double MaxPpmError = Data.GetErrorStdDev(PeakMass) * Data.MaxPpmErrorGain;
+            var InputArray = Data.Masses;
+            var MaxPpmError = Data.GetErrorStdDev(PeakMass) * Data.MaxPpmErrorGain;
             return SearchPeakIndex(Data.Masses, PeakMass, MaxPpmError, StartIndex);//add StartIndex
         }
         public static int SearchNearPeakIndex(double[] InputArray, double Mass, int StartIndex = 0)
         {
-            int Index = Array.BinarySearch(InputArray, StartIndex, InputArray.Length - StartIndex - 1, Mass);
+            var Index = Array.BinarySearch(InputArray, StartIndex, InputArray.Length - StartIndex - 1, Mass);
             if (Index < 0)
             {
                 Index = ~Index;
@@ -128,7 +128,7 @@ namespace Support
         public static int SearchNearPeakIndex(double[] InputArray, double Mass)
         {
             if (Mass <= InputArray.First()) { return 0; } else if (Mass >= InputArray.Last()) { return InputArray.Length - 1; }
-            int Index = Array.BinarySearch(InputArray, Mass);
+            var Index = Array.BinarySearch(InputArray, Mass);
             if (Index >= 0) { return Index; }
             Index = ~Index;
             if (AbsPpmError(Mass, InputArray[Index - 1]) <= AbsPpmError(Mass, InputArray[Index])) { return Index - 1; }

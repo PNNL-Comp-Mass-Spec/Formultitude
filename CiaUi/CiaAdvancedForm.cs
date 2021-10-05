@@ -32,9 +32,9 @@ namespace CiaUi
             comboBoxRelationErrorType.DataSource = Enum.GetNames(typeof(CCia.RelationErrorType));
 
             //Formula assignment
-            for (int Relation = 0; Relation < CCia.RelationBuildingBlockFormulas.Length; Relation++)
+            for (var Relation = 0; Relation < CCia.RelationBuildingBlockFormulas.Length; Relation++)
             {
-                bool bb = false;
+                var bb = false;
                 if (Relation == 0 || Relation == 2 || Relation == 6) { bb = true; }
                 checkedListBoxRelations.Items.Add(oCCia.FormulaToName(CCia.RelationBuildingBlockFormulas[Relation]), bb);
             }
@@ -43,8 +43,8 @@ namespace CiaUi
 
             //Golden rules
             GoldenRuleFilterUsage = new System.Windows.Forms.CheckBox[oCCia.GetGoldenRuleFilterUsage().Length];
-            System.Windows.Forms.GroupBox groupBoxGoldenRuleFilters = (System.Windows.Forms.GroupBox)this.Controls.Find("groupBoxGoldenRuleFilters", true)[0];
-            for (int GoldenRuleIndex = 0; GoldenRuleIndex < GoldenRuleFilterUsage.Length; GoldenRuleIndex++)
+            var groupBoxGoldenRuleFilters = (System.Windows.Forms.GroupBox)this.Controls.Find("groupBoxGoldenRuleFilters", true)[0];
+            for (var GoldenRuleIndex = 0; GoldenRuleIndex < GoldenRuleFilterUsage.Length; GoldenRuleIndex++)
             {
                 GoldenRuleFilterUsage[GoldenRuleIndex] = (System.Windows.Forms.CheckBox)groupBoxGoldenRuleFilters.Controls["checkBoxGoldenRule" + (GoldenRuleIndex + 1).ToString()];
                 GoldenRuleFilterUsage[GoldenRuleIndex].Text = oCCia.GetGoldenRuleFilterNames()[GoldenRuleIndex];
@@ -52,9 +52,9 @@ namespace CiaUi
             }
             //Special filter
             comboBoxSpecialFilters.Items.Clear();
-            string[] SpecialFilterNames = Enum.GetNames(typeof(CCia.ESpecialFilters));
-            string[] SpecialFilterRules = oCCia.GetSpecialFilterRules();
-            for (int SpecialFilter = 0; SpecialFilter < SpecialFilterRules.Length; SpecialFilter++)
+            var SpecialFilterNames = Enum.GetNames(typeof(CCia.ESpecialFilters));
+            var SpecialFilterRules = oCCia.GetSpecialFilterRules();
+            for (var SpecialFilter = 0; SpecialFilter < SpecialFilterRules.Length; SpecialFilter++)
             {
                 comboBoxSpecialFilters.Items.Add(SpecialFilterNames[SpecialFilter] + ": " + SpecialFilterRules[SpecialFilter]);
             }
@@ -138,18 +138,18 @@ namespace CiaUi
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("ja-JP");
             try
             {
-                string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+                var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
                 //log file
-                string LogFileName = DateTime.Now.ToString();
+                var LogFileName = DateTime.Now.ToString();
                 LogFileName = Path.GetDirectoryName(Filenames[0]) + "\\" + "Report" + LogFileName.Replace("/", "").Replace(":", "").Replace(" ", "") + ".log";
-                StreamWriter oStreamLogWriter = new StreamWriter(LogFileName);
+                var oStreamLogWriter = new StreamWriter(LogFileName);
 
-                int FileCount = Filenames.Length;
-                double[][] Masses = new double[FileCount][];
-                double[][] Abundances = new double[FileCount][];
-                double[][] SNs = new double[FileCount][];
-                double[][] Resolutions = new double[FileCount][];
-                double[][] RelAbundances = new double[FileCount][];
+                var FileCount = Filenames.Length;
+                var Masses = new double[FileCount][];
+                var Abundances = new double[FileCount][];
+                var SNs = new double[FileCount][];
+                var Resolutions = new double[FileCount][];
+                var RelAbundances = new double[FileCount][];
                 //Read files & Calibration
                 oCCia.Ipa.Adduct = textBoxAdduct.Text;
                 oCCia.Ipa.Ionization = (TestFSDBSearch.TotalSupport.IonizationMethod)Enum.Parse(typeof(TestFSDBSearch.TotalSupport.IonizationMethod), comboBoxIonization.Text);
@@ -162,20 +162,20 @@ namespace CiaUi
                 oCCia.oTotalCalibration.ttl_cal_min_sn = (double)numericUpDownCalMinSN.Value;
                 oCCia.oTotalCalibration.ttl_cal_min_abu_pct = (double)numericUpDownCalMinRelAbun.Value;
                 oCCia.oTotalCalibration.ttl_cal_max_abu_pct = (double)numericUpDownCalMaxRelAbun.Value;
-                double[] MaxAbundances = new double[FileCount];
-                double[][] CalMasses = new double[FileCount][];
-                for (int FileIndex = 0; FileIndex < FileCount; FileIndex++)
+                var MaxAbundances = new double[FileCount];
+                var CalMasses = new double[FileCount][];
+                for (var FileIndex = 0; FileIndex < FileCount; FileIndex++)
                 {
                     //read files
                     Support.CFileReader.ReadFile(Filenames[FileIndex], out Masses[FileIndex], out Abundances[FileIndex], out SNs[FileIndex], out Resolutions[FileIndex], out RelAbundances[FileIndex]);
-                    double MaxAbundance = Abundances[FileIndex][0];
-                    foreach (double Abundabce in Abundances[FileIndex]) { if (MaxAbundance < Abundabce) { MaxAbundance = Abundabce; } }
+                    var MaxAbundance = Abundances[FileIndex][0];
+                    foreach (var Abundabce in Abundances[FileIndex]) { if (MaxAbundance < Abundabce) { MaxAbundance = Abundabce; } }
                     MaxAbundances[FileIndex] = MaxAbundance;
                     //Calibration
                     if (oCCia.oTotalCalibration.ttl_cal_regression == TotalCalibration.ttlRegressionType.none)
                     {
                         CalMasses[FileIndex] = new double[Masses[FileIndex].Length];
-                        for (int PeakIndex = 0; PeakIndex < CalMasses.Length; PeakIndex++)
+                        for (var PeakIndex = 0; PeakIndex < CalMasses.Length; PeakIndex++)
                         {
                             CalMasses[PeakIndex] = Masses[PeakIndex];
                         }
@@ -208,8 +208,8 @@ namespace CiaUi
 
                 //Filters
                 oCCia.SetUseFormulaFilter(checkBoxUseFormulaFilters.Checked);
-                bool[] GoldenFilters = new bool[GoldenRuleFilterUsage.Length];
-                for (int DftFilter = 0; DftFilter < GoldenRuleFilterUsage.Length; DftFilter++)
+                var GoldenFilters = new bool[GoldenRuleFilterUsage.Length];
+                for (var DftFilter = 0; DftFilter < GoldenRuleFilterUsage.Length; DftFilter++)
                 {
                     GoldenFilters[DftFilter] = GoldenRuleFilterUsage[DftFilter].Checked;
                 }
@@ -229,8 +229,8 @@ namespace CiaUi
                 //    ActiveRelationBlocks [ ActiveFormula ] = oCCia.NameToFormula( checkedListBoxRelations.CheckedItems [ ActiveFormula ].ToString() );
                 //}
                 //oCCia.SetRelationFormulaBuildingBlocks( ActiveRelationBlocks );
-                bool[] ActiveRelationBlocks = new bool[CCia.RelationBuildingBlockFormulas.Length];
-                for (int ActiveFormula = 0; ActiveFormula < ActiveRelationBlocks.Length; ActiveFormula++)
+                var ActiveRelationBlocks = new bool[CCia.RelationBuildingBlockFormulas.Length];
+                for (var ActiveFormula = 0; ActiveFormula < ActiveRelationBlocks.Length; ActiveFormula++)
                 {
                     ActiveRelationBlocks[ActiveFormula] = checkedListBoxRelations.GetItemChecked(ActiveFormula);
                 }
@@ -251,7 +251,7 @@ namespace CiaUi
                 //change textbox
                 textBoxDropSpectraFiles.Text = "Drop Spectra Files";
                 textBoxDropSpectraFiles.AppendText("\r\nProcessed files:");
-                foreach (string Filename in Filenames)
+                foreach (var Filename in Filenames)
                 {
                     textBoxDropSpectraFiles.AppendText("\r\n" + Path.GetFileName(Filename));
                 }
@@ -275,7 +275,7 @@ namespace CiaUi
         }
         private void textBoxCalFile_DragDrop(object sender, DragEventArgs e)
         {
-            string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
             //oCCia.oTotalCalibration.Load( Filenames [ 0 ] );
             textBoxCalFile.Text = "Drop calibration file: " + Path.GetFileName(Filenames[0]);
             CheckToProcess();
@@ -313,7 +313,7 @@ namespace CiaUi
         }
         private void textBoxDropDB_DragDrop(object sender, DragEventArgs e)
         {
-            string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
             oCCia.SetCiaDBFilename(Filenames[0]);
             oCCia.LoadCiaDB();
             textBoxDropDB.Text = "Drop DB file";
@@ -323,9 +323,9 @@ namespace CiaUi
         }
         public void CheckToProcess()
         {
-            bool CalibrationReady = (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none)
-                        | (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none) & (textBoxCalFile.TextLength > "Drop calibration file: ".Length)));
-            bool CIAReady = (oCCia.GetCiaDBFilename().Length > 0) & CalibrationReady;
+            var CalibrationReady = (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none)
+                                    | (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none) & (textBoxCalFile.TextLength > "Drop calibration file: ".Length)));
+            var CIAReady = (oCCia.GetCiaDBFilename().Length > 0) & CalibrationReady;
             if (CIAReady == true)
             {
                 textBoxDropSpectraFiles.BackColor = Color.LightGreen;

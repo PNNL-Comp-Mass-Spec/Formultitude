@@ -14,7 +14,7 @@ namespace FindChains
         public FindChainsForm()
         {
             InitializeComponent();
-            double Error = CPpmError.ErrorToPpm(100, 1);
+            var Error = CPpmError.ErrorToPpm(100, 1);
             numericUpDownFrequencyError.Enabled = checkBoxFrequency.Checked;
             oCChainBlocks = new CChainBlocks();
         }
@@ -40,16 +40,16 @@ namespace FindChains
 
         List<int> CreateChain(PeakLink oPeakLink)
         {
-            int BinIndex = oPeakLink.BinIndex;
-            int PairIndex = oPeakLink.PairIndex;
+            var BinIndex = oPeakLink.BinIndex;
+            var PairIndex = oPeakLink.PairIndex;
             if ((BinRightLinks[BinIndex].Length == 0) || (BinRightLinks[BinIndex][PairIndex].Count == 0))
             {
-                List<int> StartChain = new List<int>();
+                var StartChain = new List<int>();
                 StartChain.Add(BinRightPeaks[BinIndex][PairIndex]);
                 return StartChain;
             }
-            PeakLink NextLink = BinRightLinks[BinIndex][PairIndex][0];
-            List<int> TempChain = CreateChain(NextLink);
+            var NextLink = BinRightLinks[BinIndex][PairIndex][0];
+            var TempChain = CreateChain(NextLink);
             TempChain.Insert(0, BinRightPeaks[BinIndex][PairIndex]);
             return TempChain;
         }
@@ -75,7 +75,7 @@ namespace FindChains
         }
         private void textBoxChainBlockMasses_DragDrop(object sender, DragEventArgs e)
         {
-            string Filename = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
+            var Filename = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
             oCChainBlocks.KnownMassBlocksFromFile(Filename);
         }
 
@@ -88,23 +88,23 @@ namespace FindChains
         }
         private void textBoxSpectraFile_DragDrop(object sender, DragEventArgs e)
         {
-            string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-            for (int FileIndex = 0; FileIndex < Filenames.Length; FileIndex++)
+            for (var FileIndex = 0; FileIndex < Filenames.Length; FileIndex++)
             {
-                string FileExtension = Path.GetExtension(Filenames[FileIndex]);
+                var FileExtension = Path.GetExtension(Filenames[FileIndex]);
                 //read from files
 
                 Support.CFileReader.ReadFile(Filenames[FileIndex], out Masses, out Abundances, out S2Ns, out Resolutions, out RelAbundances);
-                Support.InputData RawData = new Support.InputData();
+                var RawData = new Support.InputData();
                 Support.CFileReader.ReadFile(Filenames[FileIndex], out RawData);
 
                 //cut data
-                int SettingCount = 0;
+                var SettingCount = 0;
                 if (checkBoxS2N.Checked == true) { SettingCount++; }
                 if (checkBoxUseRelAbundance.Checked == true) { SettingCount++; }
-                Support.CFileReader.CutSettings[] CurSettings = new Support.CFileReader.CutSettings[SettingCount];
-                int SettingIndex = 0;
+                var CurSettings = new Support.CFileReader.CutSettings[SettingCount];
+                var SettingIndex = 0;
                 if (checkBoxS2N.Checked == true)
                 {
                     CurSettings[SettingIndex] = new CFileReader.CutSettings();
@@ -121,12 +121,12 @@ namespace FindChains
                     CurSettings[SettingIndex].Max = -1;
                 }
 
-                string Filename = Path.GetDirectoryName(Filenames[FileIndex]) + "\\" + Path.GetFileNameWithoutExtension(Filenames[FileIndex]);
+                var Filename = Path.GetDirectoryName(Filenames[FileIndex]) + "\\" + Path.GetFileNameWithoutExtension(Filenames[FileIndex]);
                 if (checkBoxPPMProcess.Checked == true)
                 {
-                    double MaxChainStartMass = (double)numericUpDownMaxPeakToStartChain.Value;
-                    int MinPeaksInChain = (int)numericUpDownMinPeaksInChain.Value;
-                    double PeakPpmError = (double)numericUpDownPpmError.Value;
+                    var MaxChainStartMass = (double)numericUpDownMaxPeakToStartChain.Value;
+                    var MinPeaksInChain = (int)numericUpDownMinPeaksInChain.Value;
+                    var PeakPpmError = (double)numericUpDownPpmError.Value;
 
                     Support.InputData Data;
                     Support.CFileReader.CutData(RawData, out Data, CurSettings);
@@ -137,38 +137,38 @@ namespace FindChains
 
                     //find clusters based on chains
                     oCChainBlocks.FindClusters(RawData);
-                    bool[] IsInChainCluster = new bool[RawData.Chains.Length];
+                    var IsInChainCluster = new bool[RawData.Chains.Length];
 
 
 
 
-                    List<List<int>> ChainClusters = new List<List<int>>();
+                    var ChainClusters = new List<List<int>>();
 
-                    for (int LeftChainIndex = 0; LeftChainIndex < RawData.Chains.Length; LeftChainIndex++)
+                    for (var LeftChainIndex = 0; LeftChainIndex < RawData.Chains.Length; LeftChainIndex++)
                     {
                         if (IsInChainCluster[LeftChainIndex] == true) { continue; }
-                        List<int> ChainCluster = new List<int>();
+                        var ChainCluster = new List<int>();
                         ChainCluster.Add(LeftChainIndex);
                         IsInChainCluster[LeftChainIndex] = true;
 
-                        Dictionary<int, int> ClusterPeaksD = new Dictionary<int, int>();
-                        foreach (int PeakIndex in RawData.Chains[LeftChainIndex].PeakIndexes)
+                        var ClusterPeaksD = new Dictionary<int, int>();
+                        foreach (var PeakIndex in RawData.Chains[LeftChainIndex].PeakIndexes)
                         {
                             ClusterPeaksD.Add(PeakIndex, PeakIndex);
                         }
-                        bool New = false;
-                        for (int RightChainIndex = LeftChainIndex + 1; RightChainIndex < RawData.Chains.Length; RightChainIndex++)
+                        var New = false;
+                        for (var RightChainIndex = LeftChainIndex + 1; RightChainIndex < RawData.Chains.Length; RightChainIndex++)
                         {
                             if (IsInChainCluster[RightChainIndex] == true) { continue; }
-                            foreach (int ComparingIndex in RawData.Chains[RightChainIndex].PeakIndexes)
+                            foreach (var ComparingIndex in RawData.Chains[RightChainIndex].PeakIndexes)
                             {
                                 if (ClusterPeaksD.Contains(new KeyValuePair<int, int>(ComparingIndex, ComparingIndex)) == true)
                                 {
                                     ChainCluster.Add(RightChainIndex);
                                     IsInChainCluster[RightChainIndex] = true;
-                                    foreach (int PeakIndex in RawData.Chains[RightChainIndex].PeakIndexes)
+                                    foreach (var PeakIndex in RawData.Chains[RightChainIndex].PeakIndexes)
                                     {
-                                        KeyValuePair<int, int> qq = new KeyValuePair<int, int>(PeakIndex, PeakIndex);
+                                        var qq = new KeyValuePair<int, int>(PeakIndex, PeakIndex);
                                         if (ClusterPeaksD.Contains(qq) == false)
                                         {
                                             ClusterPeaksD.Add(PeakIndex, PeakIndex);
@@ -190,18 +190,18 @@ namespace FindChains
                         ChainClusters.Add(ChainCluster);
                     }
                     {
-                        StreamWriter oStreamWriterClusters = new StreamWriter(Filename + "Clusters.csv");
-                        string HeadLine = "Chain,Mass,PeakIndexes";
+                        var oStreamWriterClusters = new StreamWriter(Filename + "Clusters.csv");
+                        var HeadLine = "Chain,Mass,PeakIndexes";
                         oStreamWriterClusters.WriteLine(HeadLine);
 
-                        for (int ClusterIndex = 0; ClusterIndex < ChainClusters.Count; ClusterIndex++)
+                        for (var ClusterIndex = 0; ClusterIndex < ChainClusters.Count; ClusterIndex++)
                         {
                             oStreamWriterClusters.WriteLine("Cluster " + (ClusterIndex + 1).ToString());
-                            for (int ChainIndex = 0; ChainIndex < ChainClusters[ClusterIndex].Count; ChainIndex++)
+                            for (var ChainIndex = 0; ChainIndex < ChainClusters[ClusterIndex].Count; ChainIndex++)
                             {
-                                int ChainNumber = ChainClusters[ClusterIndex][ChainIndex];
-                                string Line = ChainNumber.ToString() + ',' + RawData.Chains[ChainNumber].BlockMassMean.ToString("F8");
-                                foreach (int PeakIndex in RawData.Chains[ChainNumber].PeakIndexes)
+                                var ChainNumber = ChainClusters[ClusterIndex][ChainIndex];
+                                var Line = ChainNumber.ToString() + ',' + RawData.Chains[ChainNumber].BlockMassMean.ToString("F8");
+                                foreach (var PeakIndex in RawData.Chains[ChainNumber].PeakIndexes)
                                 {
                                     Line = Line + ',' + PeakIndex;
                                 }
@@ -212,22 +212,22 @@ namespace FindChains
                     }
 
                     //find the biggest cluster (very simple)
-                    int[] ClusterIndexes = new int[ChainClusters.Count];
-                    int[] ClusterCounts = new int[ChainClusters.Count];
-                    for (int Index = 0; Index < ClusterCounts.Length; Index++)
+                    var ClusterIndexes = new int[ChainClusters.Count];
+                    var ClusterCounts = new int[ChainClusters.Count];
+                    for (var Index = 0; Index < ClusterCounts.Length; Index++)
                     {
                         ClusterIndexes[Index] = Index;
                         ClusterCounts[Index] = ChainClusters[Index].Count;
                     }
                     Array.Sort(ClusterCounts, ClusterIndexes);
-                    List<int> BiggestChainCluster = ChainClusters[ClusterIndexes[ClusterIndexes.Length - 1]];
+                    var BiggestChainCluster = ChainClusters[ClusterIndexes[ClusterIndexes.Length - 1]];
 
                     //error
-                    int ClusterPeaks = 0;
-                    int MinClsuterChainIndex = -1;
-                    for (int ClusterChainIndex = 0; ClusterChainIndex < BiggestChainCluster.Count; ClusterChainIndex++)
+                    var ClusterPeaks = 0;
+                    var MinClsuterChainIndex = -1;
+                    for (var ClusterChainIndex = 0; ClusterChainIndex < BiggestChainCluster.Count; ClusterChainIndex++)
                     {
-                        int ChainIndex = BiggestChainCluster[ClusterChainIndex];
+                        var ChainIndex = BiggestChainCluster[ClusterChainIndex];
                         ClusterPeaks = ClusterPeaks + RawData.Chains[ChainIndex].PeakIndexes.Length;
                         if (MinClsuterChainIndex == -1)
                         {
@@ -238,30 +238,30 @@ namespace FindChains
                             MinClsuterChainIndex = ClusterChainIndex;
                         }
                     }
-                    int SwapClusterIndex = BiggestChainCluster[0];
+                    var SwapClusterIndex = BiggestChainCluster[0];
                     BiggestChainCluster[0] = BiggestChainCluster[MinClsuterChainIndex];
                     BiggestChainCluster[MinClsuterChainIndex] = SwapClusterIndex;
 
-                    bool[] ClusterChains = new bool[BiggestChainCluster.Count];
-                    int[] ClusterPeakIndexes = new int[ClusterPeaks];
-                    for (int ii = 0; ii < ClusterPeaks; ii++)
+                    var ClusterChains = new bool[BiggestChainCluster.Count];
+                    var ClusterPeakIndexes = new int[ClusterPeaks];
+                    for (var ii = 0; ii < ClusterPeaks; ii++)
                     {
                         ClusterPeakIndexes[ii] = -1;
                     }
-                    PeakMzError[] PeakMzErrorArray = new PeakMzError[ClusterPeaks];
-                    int StartPeakMzErrorArrayIndex = 0;
-                    int EndPeakMzErrorArrayIndex = 0;
-                    int NewEndPeakMzErrorArrayIndex = 0;
+                    var PeakMzErrorArray = new PeakMzError[ClusterPeaks];
+                    var StartPeakMzErrorArrayIndex = 0;
+                    var EndPeakMzErrorArrayIndex = 0;
+                    var NewEndPeakMzErrorArrayIndex = 0;
                     do
                     {
                         if (EndPeakMzErrorArrayIndex == 0)
                         {
                             //add Chain 0
-                            int[] PeakIndexes = RawData.Chains[BiggestChainCluster[0]].PeakIndexes;
-                            double FirstPeakMz = RawData.Masses[PeakIndexes[0]];
-                            for (int PeakIndex = 0; PeakIndex < PeakIndexes.Length; PeakIndex++)
+                            var PeakIndexes = RawData.Chains[BiggestChainCluster[0]].PeakIndexes;
+                            var FirstPeakMz = RawData.Masses[PeakIndexes[0]];
+                            for (var PeakIndex = 0; PeakIndex < PeakIndexes.Length; PeakIndex++)
                             {
-                                PeakMzError NewPeakMzError = new PeakMzError();
+                                var NewPeakMzError = new PeakMzError();
                                 NewPeakMzError.PeakIndex = PeakIndexes[PeakIndex];
                                 NewPeakMzError.Mz = RawData.Masses[NewPeakMzError.PeakIndex];
                                 NewPeakMzError.NewMz = FirstPeakMz + PeakIndex * RawData.Chains[BiggestChainCluster[0]].IdealBlockMass;
@@ -277,18 +277,18 @@ namespace FindChains
                             StartPeakMzErrorArrayIndex = EndPeakMzErrorArrayIndex;
                             EndPeakMzErrorArrayIndex = NewEndPeakMzErrorArrayIndex;
                         }
-                        for (int CurIndex = StartPeakMzErrorArrayIndex; CurIndex < EndPeakMzErrorArrayIndex; CurIndex++)
+                        for (var CurIndex = StartPeakMzErrorArrayIndex; CurIndex < EndPeakMzErrorArrayIndex; CurIndex++)
                         {
-                            for (int ClusterChainIndex = 1; ClusterChainIndex < BiggestChainCluster.Count; ClusterChainIndex++)
+                            for (var ClusterChainIndex = 1; ClusterChainIndex < BiggestChainCluster.Count; ClusterChainIndex++)
                             {
                                 if (ClusterChains[ClusterChainIndex] == true) { continue; }
-                                int SearchPeakIndex1 = Array.BinarySearch(RawData.Chains[BiggestChainCluster[ClusterChainIndex]].PeakIndexes, PeakMzErrorArray[CurIndex].PeakIndex);
+                                var SearchPeakIndex1 = Array.BinarySearch(RawData.Chains[BiggestChainCluster[ClusterChainIndex]].PeakIndexes, PeakMzErrorArray[CurIndex].PeakIndex);
                                 if (SearchPeakIndex1 < 0) { continue; }
-                                int[] PeakIndexes = RawData.Chains[BiggestChainCluster[ClusterChainIndex]].PeakIndexes;
-                                double FirstPeakMz = PeakMzErrorArray[CurIndex].NewMz - SearchPeakIndex1 * RawData.Chains[BiggestChainCluster[ClusterChainIndex]].IdealBlockMass;
-                                for (int PeakIndex = 0; PeakIndex < PeakIndexes.Length; PeakIndex++)
+                                var PeakIndexes = RawData.Chains[BiggestChainCluster[ClusterChainIndex]].PeakIndexes;
+                                var FirstPeakMz = PeakMzErrorArray[CurIndex].NewMz - SearchPeakIndex1 * RawData.Chains[BiggestChainCluster[ClusterChainIndex]].IdealBlockMass;
+                                for (var PeakIndex = 0; PeakIndex < PeakIndexes.Length; PeakIndex++)
                                 {
-                                    PeakMzError NewPeakMzError = new PeakMzError();
+                                    var NewPeakMzError = new PeakMzError();
                                     NewPeakMzError.PeakIndex = PeakIndexes[PeakIndex];
                                     NewPeakMzError.Mz = RawData.Masses[NewPeakMzError.PeakIndex];
                                     NewPeakMzError.NewMz = FirstPeakMz + PeakIndex * RawData.Chains[BiggestChainCluster[ClusterChainIndex]].IdealBlockMass;
@@ -302,12 +302,12 @@ namespace FindChains
                         }
                     } while (NewEndPeakMzErrorArrayIndex > EndPeakMzErrorArrayIndex);
                     {
-                        StreamWriter oStreamWriterErrors = new StreamWriter(Filename + "Errors.csv");
-                        string HeadLine = "PeakIndex,Mass,Abundance,NewMass,Chain,ChainBlockMass,PpmError";
+                        var oStreamWriterErrors = new StreamWriter(Filename + "Errors.csv");
+                        var HeadLine = "PeakIndex,Mass,Abundance,NewMass,Chain,ChainBlockMass,PpmError";
                         oStreamWriterErrors.WriteLine(HeadLine);
-                        for (int PeakIndex = 0; PeakIndex < PeakMzErrorArray.Length; PeakIndex++)
+                        for (var PeakIndex = 0; PeakIndex < PeakMzErrorArray.Length; PeakIndex++)
                         {
-                            PeakMzError CurPeakMzError = PeakMzErrorArray[PeakIndex];
+                            var CurPeakMzError = PeakMzErrorArray[PeakIndex];
                             oStreamWriterErrors.WriteLine(CurPeakMzError.PeakIndex.ToString() + "," + CurPeakMzError.Mz.ToString("F8") + "," + RawData.Abundances[CurPeakMzError.PeakIndex]
                                     + "," + CurPeakMzError.NewMz.ToString("F8") + "," + CurPeakMzError.Chain +
                                     "," + RawData.Chains[CurPeakMzError.Chain].IdealBlockMass.ToString("F8") + "," + CurPeakMzError.PpmError.ToString("F8"));
@@ -459,32 +459,32 @@ namespace FindChains
                 if (checkBoxAmuProcess.Checked == true)
                 {
                     CalculatePpmError(Masses);
-                    double Error = (double)numericUpDownAbsError.Value;
-                    double RangeMin = (double)numericUpDownRangeMin.Value;
-                    double RangeMax = (double)numericUpDownRangeMax.Value;
+                    var Error = (double)numericUpDownAbsError.Value;
+                    var RangeMin = (double)numericUpDownRangeMin.Value;
+                    var RangeMax = (double)numericUpDownRangeMax.Value;
 
-                    int BinsPerErrorRange = (int)numericUpDownBinsPerErrorRange.Value;
-                    int MinPeaksInChain = (int)numericUpDownMinPeaksInChain.Value;
+                    var BinsPerErrorRange = (int)numericUpDownBinsPerErrorRange.Value;
+                    var MinPeaksInChain = (int)numericUpDownMinPeaksInChain.Value;
 
                     //create Bin distances ( = left and right peaks)
-                    double BinSize = Error / BinsPerErrorRange;
-                    int BinCount = (int)Math.Ceiling((RangeMax - RangeMin) / BinSize);
+                    var BinSize = Error / BinsPerErrorRange;
+                    var BinCount = (int)Math.Ceiling((RangeMax - RangeMin) / BinSize);
                     BinLeftPeaks = new List<int>[BinCount];
                     BinRightPeaks = new List<int>[BinCount];
-                    for (int BinIndex = 0; BinIndex < BinCount; BinIndex++)
+                    for (var BinIndex = 0; BinIndex < BinCount; BinIndex++)
                     {
                         BinLeftPeaks[BinIndex] = new List<int>();
                         BinRightPeaks[BinIndex] = new List<int>();
                     }
-                    for (int Row = 0; Row < Masses.Length; Row++)
+                    for (var Row = 0; Row < Masses.Length; Row++)
                     {
-                        double RowMass = Masses[Row];
-                        for (int Column = Row + 1; Column < Masses.Length; Column++)
+                        var RowMass = Masses[Row];
+                        for (var Column = Row + 1; Column < Masses.Length; Column++)
                         {
-                            double Distance = Masses[Column] - RowMass;
+                            var Distance = Masses[Column] - RowMass;
                             if (Distance < RangeMin) { continue; }
                             if (Distance >= RangeMax) { break; }
-                            int BinIndex = (int)Math.Floor((Distance - RangeMin) / BinSize);
+                            var BinIndex = (int)Math.Floor((Distance - RangeMin) / BinSize);
                             BinLeftPeaks[BinIndex].Add(Row);
                             BinRightPeaks[BinIndex].Add(Column);
                         }
@@ -493,30 +493,30 @@ namespace FindChains
                     //create Bin links
                     BinLeftLinks = new List<PeakLink>[BinCount][];
                     BinRightLinks = new List<PeakLink>[BinCount][];
-                    for (int BinIndex = 0; BinIndex < BinCount; BinIndex++)
+                    for (var BinIndex = 0; BinIndex < BinCount; BinIndex++)
                     {
                         BinLeftLinks[BinIndex] = new List<PeakLink>[BinLeftPeaks[BinIndex].Count];
                         BinRightLinks[BinIndex] = new List<PeakLink>[BinLeftPeaks[BinIndex].Count];
-                        for (int PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
+                        for (var PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
                         {
                             BinRightLinks[BinIndex][PairIndex] = new List<PeakLink>();
                             BinLeftLinks[BinIndex][PairIndex] = new List<PeakLink>();
                         }
                     }
-                    for (int BinIndex = 0; BinIndex < BinCount; BinIndex++)
+                    for (var BinIndex = 0; BinIndex < BinCount; BinIndex++)
                     {
                         if (BinLeftPeaks[BinIndex].Count == 0) { continue; }//BinRightPeaks[ BinIndex ].Count == 0 must
 
-                        int MaxBinIndex = BinIndex + 2 * BinsPerErrorRange + 1;//??? 2 *
+                        var MaxBinIndex = BinIndex + 2 * BinsPerErrorRange + 1;//??? 2 *
                         if (MaxBinIndex >= BinCount) { MaxBinIndex = BinCount - 1; }
 
-                        for (int PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
+                        for (var PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
                         {
-                            int PairLeftPeak = BinLeftPeaks[BinIndex][PairIndex];
-                            int PairRightPeak = BinRightPeaks[BinIndex][PairIndex];
-                            for (int LinkBinIndex = BinIndex; LinkBinIndex < MaxBinIndex; LinkBinIndex++)
+                            var PairLeftPeak = BinLeftPeaks[BinIndex][PairIndex];
+                            var PairRightPeak = BinRightPeaks[BinIndex][PairIndex];
+                            for (var LinkBinIndex = BinIndex; LinkBinIndex < MaxBinIndex; LinkBinIndex++)
                             {
-                                int LinkPairIndex = 0;
+                                var LinkPairIndex = 0;
                                 if (BinIndex == LinkBinIndex)
                                 {
                                     LinkPairIndex = PairIndex + 1;
@@ -525,12 +525,12 @@ namespace FindChains
                                 {
                                     if (PairLeftPeak == BinRightPeaks[LinkBinIndex][LinkPairIndex])
                                     {
-                                        PeakLink ToLeftLink = new PeakLink();
+                                        var ToLeftLink = new PeakLink();
                                         ToLeftLink.BinIndex = LinkBinIndex;
                                         ToLeftLink.PairIndex = LinkPairIndex;
                                         BinLeftLinks[BinIndex][PairIndex].Add(ToLeftLink);
 
-                                        PeakLink ToRightLink = new PeakLink();
+                                        var ToRightLink = new PeakLink();
                                         ToRightLink.BinIndex = BinIndex;
                                         ToRightLink.PairIndex = PairIndex;
                                         BinRightLinks[LinkBinIndex][LinkPairIndex].Add(ToRightLink);
@@ -538,12 +538,12 @@ namespace FindChains
 
                                     if (PairRightPeak == BinLeftPeaks[LinkBinIndex][LinkPairIndex])
                                     {
-                                        PeakLink ToRightLink = new PeakLink();
+                                        var ToRightLink = new PeakLink();
                                         ToRightLink.BinIndex = LinkBinIndex;
                                         ToRightLink.PairIndex = LinkPairIndex;
                                         BinRightLinks[BinIndex][PairIndex].Add(ToRightLink);
 
-                                        PeakLink ToLeftLink = new PeakLink();
+                                        var ToLeftLink = new PeakLink();
                                         ToLeftLink.BinIndex = BinIndex;
                                         ToLeftLink.PairIndex = PairIndex;
                                         BinLeftLinks[LinkBinIndex][LinkPairIndex].Add(ToLeftLink);
@@ -554,12 +554,12 @@ namespace FindChains
                     }
                     if (checkBoxBinLinks.Checked == true)
                     {
-                        StreamWriter oStreamWriterBinLinks = new StreamWriter(Filename + "BinLinks.csv");
+                        var oStreamWriterBinLinks = new StreamWriter(Filename + "BinLinks.csv");
                         oStreamWriterBinLinks.WriteLine("Bin,Min,PairPeaks");
-                        for (int BinIndex = 0; BinIndex < BinCount; BinIndex++)
+                        for (var BinIndex = 0; BinIndex < BinCount; BinIndex++)
                         {
-                            string Line = BinIndex.ToString() + "," + (RangeMin + BinSize * BinIndex);
-                            for (int PairIndex = 0; PairIndex < BinRightLinks[BinIndex].Length; PairIndex++)
+                            var Line = BinIndex.ToString() + "," + (RangeMin + BinSize * BinIndex);
+                            for (var PairIndex = 0; PairIndex < BinRightLinks[BinIndex].Length; PairIndex++)
                             {
                                 Line = Line + "," + BinLeftPeaks[BinIndex][PairIndex] + "_" + BinRightPeaks[BinIndex][PairIndex];
                             }
@@ -568,19 +568,19 @@ namespace FindChains
                         oStreamWriterBinLinks.Close();
                     }
 
-                    List<List<int>> Chains = new List<List<int>>();
-                    for (int BinIndex = 0; BinIndex < BinCount; BinIndex++)
+                    var Chains = new List<List<int>>();
+                    for (var BinIndex = 0; BinIndex < BinCount; BinIndex++)
                     {
                         //double BinDistance = RangeMin + BinIndex * BinSize;
-                        for (int PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
+                        for (var PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
                         {
                             if (BinLeftLinks[BinIndex][PairIndex].Count != 0) { continue; }//chain starts when left peak doesn't have link
                             if (BinRightLinks[BinIndex][PairIndex].Count == 0) { continue; }//chain doesn't start when right peak doesn't have link
-                            for (int LinkIndex = 0; LinkIndex < BinRightLinks[BinIndex][PairIndex].Count; LinkIndex++)
+                            for (var LinkIndex = 0; LinkIndex < BinRightLinks[BinIndex][PairIndex].Count; LinkIndex++)
                             {
                                 if (LinkIndex > 0) { break; }//??? take only first
-                                PeakLink temp = BinRightLinks[BinIndex][PairIndex][LinkIndex];
-                                List<int> Chain = CreateChain(temp);
+                                var temp = BinRightLinks[BinIndex][PairIndex][LinkIndex];
+                                var Chain = CreateChain(temp);
                                 Chain.Insert(0, BinLeftPeaks[BinIndex][PairIndex]);
                                 Chain.Insert(1, BinRightPeaks[BinIndex][PairIndex]);
                                 if (Chain.Count < MinPeaksInChain) { continue; }
@@ -599,14 +599,14 @@ namespace FindChains
 
                     if (checkBoxFileFormatPeakIndex.Checked == true)
                     {
-                        StreamWriter oStreamWriterChains = new StreamWriter(Filename + "ChainsAmuIndex.csv");
+                        var oStreamWriterChains = new StreamWriter(Filename + "ChainsAmuIndex.csv");
                         oStreamWriterChains.WriteLine("Distance,MaxError,Indexes");
-                        for (int ChainIndex = 0; ChainIndex < Chains.Count; ChainIndex++)
+                        for (var ChainIndex = 0; ChainIndex < Chains.Count; ChainIndex++)
                         {
-                            List<int> Chain = Chains[ChainIndex];
-                            double Distance = Masses[Chain[1]] - Masses[Chain[0]];
-                            string Line = Distance.ToString();
-                            foreach (int Index in Chain)
+                            var Chain = Chains[ChainIndex];
+                            var Distance = Masses[Chain[1]] - Masses[Chain[0]];
+                            var Line = Distance.ToString();
+                            foreach (var Index in Chain)
                             {
                                 Line = Line + "," + Index;
                             }
@@ -616,14 +616,14 @@ namespace FindChains
                     }
                     if (checkBoxFileFormatPeakMass.Checked == true)
                     {
-                        StreamWriter oStreamWriterChains = new StreamWriter(Filename + "ChainsAmuMass.csv");
+                        var oStreamWriterChains = new StreamWriter(Filename + "ChainsAmuMass.csv");
                         oStreamWriterChains.WriteLine("Distance,MaxError,Mass");
-                        for (int ChainIndex = 0; ChainIndex < Chains.Count; ChainIndex++)
+                        for (var ChainIndex = 0; ChainIndex < Chains.Count; ChainIndex++)
                         {
-                            List<int> Chain = Chains[ChainIndex];
-                            double Distance = Masses[Chain[1]] - Masses[Chain[0]];
-                            string Line = Distance.ToString();
-                            foreach (int Index in Chain)
+                            var Chain = Chains[ChainIndex];
+                            var Distance = Masses[Chain[1]] - Masses[Chain[0]];
+                            var Line = Distance.ToString();
+                            foreach (var Index in Chain)
                             {
                                 Line = Line + "," + Masses[Index];
                             }
@@ -633,14 +633,14 @@ namespace FindChains
                     }
                     if (checkBoxFileFormatPeakAbundance.Checked == true)
                     {
-                        StreamWriter oStreamWriterChains = new StreamWriter(Filename + "ChainsAmuAbun.csv");
+                        var oStreamWriterChains = new StreamWriter(Filename + "ChainsAmuAbun.csv");
                         oStreamWriterChains.WriteLine("Distance,MaxError,Abundance");
-                        for (int ChainIndex = 0; ChainIndex < Chains.Count; ChainIndex++)
+                        for (var ChainIndex = 0; ChainIndex < Chains.Count; ChainIndex++)
                         {
-                            List<int> Chain = Chains[ChainIndex];
-                            double Distance = Masses[Chain[1]] - Masses[Chain[0]];
-                            string Line = Distance.ToString();
-                            foreach (int Peak in Chain)
+                            var Chain = Chains[ChainIndex];
+                            var Distance = Masses[Chain[1]] - Masses[Chain[0]];
+                            var Line = Distance.ToString();
+                            foreach (var Peak in Chain)
                             {
                                 Line = Line + "," + Abundances[Peak];
                             }
@@ -654,30 +654,30 @@ namespace FindChains
 
         public double CalculatePpmError(double[] Masses)
         {
-            int MassesCount = Masses.Length;
+            var MassesCount = Masses.Length;
             double RangeMin = 0;
-            int MinBlockPeaksInSpectrum = 5;
-            double RangeMax = Masses[MassesCount - 1] / MinBlockPeaksInSpectrum;
-            double Error = 0.0002;
-            int BinsPerErrorRange = 5;
-            double BinSize = Error / BinsPerErrorRange;
-            int BinCount = (int)Math.Ceiling((RangeMax - RangeMin) / BinSize);
+            var MinBlockPeaksInSpectrum = 5;
+            var RangeMax = Masses[MassesCount - 1] / MinBlockPeaksInSpectrum;
+            var Error = 0.0002;
+            var BinsPerErrorRange = 5;
+            var BinSize = Error / BinsPerErrorRange;
+            var BinCount = (int)Math.Ceiling((RangeMax - RangeMin) / BinSize);
             BinLeftPeaks = new List<int>[BinCount];
             BinRightPeaks = new List<int>[BinCount];
-            for (int BinIndex = 0; BinIndex < BinCount; BinIndex++)
+            for (var BinIndex = 0; BinIndex < BinCount; BinIndex++)
             {
                 BinLeftPeaks[BinIndex] = new List<int>();
                 BinRightPeaks[BinIndex] = new List<int>();
             }
-            for (int Row = 0; Row < Masses.Length; Row++)
+            for (var Row = 0; Row < Masses.Length; Row++)
             {
-                double RowMass = Masses[Row];
-                for (int Column = Row + 1; Column < Masses.Length; Column++)
+                var RowMass = Masses[Row];
+                for (var Column = Row + 1; Column < Masses.Length; Column++)
                 {
-                    double Distance = Masses[Column] - RowMass;
+                    var Distance = Masses[Column] - RowMass;
                     if (Distance < RangeMin) { continue; }
                     if (Distance >= RangeMax) { break; }
-                    int BinIndex = (int)Math.Floor((Distance - RangeMin) / BinSize);
+                    var BinIndex = (int)Math.Floor((Distance - RangeMin) / BinSize);
                     BinLeftPeaks[BinIndex].Add(Row);
                     BinRightPeaks[BinIndex].Add(Column);
                 }
@@ -686,30 +686,30 @@ namespace FindChains
             //create Bin links
             BinLeftLinks = new List<PeakLink>[BinCount][];
             BinRightLinks = new List<PeakLink>[BinCount][];
-            for (int BinIndex = 0; BinIndex < BinCount; BinIndex++)
+            for (var BinIndex = 0; BinIndex < BinCount; BinIndex++)
             {
                 BinLeftLinks[BinIndex] = new List<PeakLink>[BinLeftPeaks[BinIndex].Count];
                 BinRightLinks[BinIndex] = new List<PeakLink>[BinLeftPeaks[BinIndex].Count];
-                for (int PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
+                for (var PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
                 {
                     BinRightLinks[BinIndex][PairIndex] = new List<PeakLink>();
                     BinLeftLinks[BinIndex][PairIndex] = new List<PeakLink>();
                 }
             }
-            for (int BinIndex = 0; BinIndex < BinCount; BinIndex++)
+            for (var BinIndex = 0; BinIndex < BinCount; BinIndex++)
             {
                 if (BinLeftPeaks[BinIndex].Count == 0) { continue; }//BinRightPeaks[ BinIndex ].Count == 0 must
 
-                int MaxBinIndex = BinIndex + 2 * BinsPerErrorRange + 1;//??? 2 *
+                var MaxBinIndex = BinIndex + 2 * BinsPerErrorRange + 1;//??? 2 *
                 if (MaxBinIndex >= BinCount) { MaxBinIndex = BinCount - 1; }
 
-                for (int PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
+                for (var PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
                 {
-                    int PairLeftPeak = BinLeftPeaks[BinIndex][PairIndex];
-                    int PairRightPeak = BinRightPeaks[BinIndex][PairIndex];
-                    for (int LinkBinIndex = BinIndex; LinkBinIndex < MaxBinIndex; LinkBinIndex++)
+                    var PairLeftPeak = BinLeftPeaks[BinIndex][PairIndex];
+                    var PairRightPeak = BinRightPeaks[BinIndex][PairIndex];
+                    for (var LinkBinIndex = BinIndex; LinkBinIndex < MaxBinIndex; LinkBinIndex++)
                     {
-                        int LinkPairIndex = 0;
+                        var LinkPairIndex = 0;
                         if (BinIndex == LinkBinIndex)
                         {
                             LinkPairIndex = PairIndex + 1;
@@ -718,12 +718,12 @@ namespace FindChains
                         {
                             if (PairLeftPeak == BinRightPeaks[LinkBinIndex][LinkPairIndex])
                             {
-                                PeakLink ToLeftLink = new PeakLink();
+                                var ToLeftLink = new PeakLink();
                                 ToLeftLink.BinIndex = LinkBinIndex;
                                 ToLeftLink.PairIndex = LinkPairIndex;
                                 BinLeftLinks[BinIndex][PairIndex].Add(ToLeftLink);
 
-                                PeakLink ToRightLink = new PeakLink();
+                                var ToRightLink = new PeakLink();
                                 ToRightLink.BinIndex = BinIndex;
                                 ToRightLink.PairIndex = PairIndex;
                                 BinRightLinks[LinkBinIndex][LinkPairIndex].Add(ToRightLink);
@@ -731,12 +731,12 @@ namespace FindChains
 
                             if (PairRightPeak == BinLeftPeaks[LinkBinIndex][LinkPairIndex])
                             {
-                                PeakLink ToRightLink = new PeakLink();
+                                var ToRightLink = new PeakLink();
                                 ToRightLink.BinIndex = LinkBinIndex;
                                 ToRightLink.PairIndex = LinkPairIndex;
                                 BinRightLinks[BinIndex][PairIndex].Add(ToRightLink);
 
-                                PeakLink ToLeftLink = new PeakLink();
+                                var ToLeftLink = new PeakLink();
                                 ToLeftLink.BinIndex = BinIndex;
                                 ToLeftLink.PairIndex = PairIndex;
                                 BinLeftLinks[LinkBinIndex][LinkPairIndex].Add(ToLeftLink);
@@ -747,19 +747,19 @@ namespace FindChains
             }
 
             //Save BinLinks to file
-            string FilenameBinLinks = "c:\\temp\\BinLinks.csv";
-            StreamWriter oStreamWriterBinLinks = new StreamWriter(FilenameBinLinks);
+            var FilenameBinLinks = "c:\\temp\\BinLinks.csv";
+            var oStreamWriterBinLinks = new StreamWriter(FilenameBinLinks);
             oStreamWriterBinLinks.WriteLine("Block size,Counts");
-            for (int BinIndex = 0; BinIndex < BinCount; BinIndex++)
+            for (var BinIndex = 0; BinIndex < BinCount; BinIndex++)
             {
                 oStreamWriterBinLinks.WriteLine((RangeMin + BinSize * BinIndex + BinSize / 2).ToString() + "," + BinLeftLinks[BinIndex].Length);
             }
             oStreamWriterBinLinks.Close();
 
             //Max peak
-            int MaxBinCount = BinLeftPeaks[0].Count;
-            int MaxBinIndex1 = 0;
-            for (int BinIndex = 1; BinIndex < BinCount; BinIndex++)
+            var MaxBinCount = BinLeftPeaks[0].Count;
+            var MaxBinIndex1 = 0;
+            for (var BinIndex = 1; BinIndex < BinCount; BinIndex++)
             {
                 if (MaxBinCount < BinLeftPeaks[BinIndex].Count)
                 {
@@ -768,11 +768,11 @@ namespace FindChains
                 }
             }
             //find wigth on 10% MaxBinCount
-            int Level10MaxBinCount = MaxBinCount / 10;
-            int LeftBinIndex = MaxBinIndex1;
-            for (int BinIndexShift = 1; ; BinIndexShift++)
+            var Level10MaxBinCount = MaxBinCount / 10;
+            var LeftBinIndex = MaxBinIndex1;
+            for (var BinIndexShift = 1; ; BinIndexShift++)
             {
-                int NextLeftBinIndex = MaxBinIndex1 - BinIndexShift;
+                var NextLeftBinIndex = MaxBinIndex1 - BinIndexShift;
                 if (NextLeftBinIndex < 0) { break; }
                 if (BinLeftPeaks[NextLeftBinIndex].Count < Level10MaxBinCount)
                 {
@@ -780,10 +780,10 @@ namespace FindChains
                 }
                 LeftBinIndex = NextLeftBinIndex;
             }
-            int RightBinIndex = MaxBinIndex1;
-            for (int BinIndexShift = 1; ; BinIndexShift++)
+            var RightBinIndex = MaxBinIndex1;
+            for (var BinIndexShift = 1; ; BinIndexShift++)
             {
-                int NextRightBinIndex = MaxBinIndex1 + BinIndexShift;
+                var NextRightBinIndex = MaxBinIndex1 + BinIndexShift;
                 if (NextRightBinIndex >= BinCount) { break; }
                 if (BinLeftPeaks[NextRightBinIndex].Count < Level10MaxBinCount)
                 {
@@ -792,21 +792,21 @@ namespace FindChains
                 RightBinIndex = NextRightBinIndex;
             }
             //find error
-            List<double> LinkErrors = new List<double>();
-            double BestDistance = Masses[BinRightPeaks[MaxBinIndex1][0]] - Masses[BinLeftPeaks[MaxBinIndex1][0]];
-            for (int BinIndex = LeftBinIndex; BinIndex <= RightBinIndex; BinIndex++)
+            var LinkErrors = new List<double>();
+            var BestDistance = Masses[BinRightPeaks[MaxBinIndex1][0]] - Masses[BinLeftPeaks[MaxBinIndex1][0]];
+            for (var BinIndex = LeftBinIndex; BinIndex <= RightBinIndex; BinIndex++)
             {
-                for (int PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
+                for (var PairIndex = 0; PairIndex < BinLeftPeaks[BinIndex].Count; PairIndex++)
                 {
-                    double RightMass = Masses[BinRightPeaks[BinIndex][PairIndex]];
-                    double LeftMass = Masses[BinLeftPeaks[BinIndex][PairIndex]];
-                    double CurDistance = RightMass - LeftMass;
-                    double LinkError = CPpmError.AbsPpmError(BestDistance, CurDistance);
+                    var RightMass = Masses[BinRightPeaks[BinIndex][PairIndex]];
+                    var LeftMass = Masses[BinLeftPeaks[BinIndex][PairIndex]];
+                    var CurDistance = RightMass - LeftMass;
+                    var LinkError = CPpmError.AbsPpmError(BestDistance, CurDistance);
                     LinkErrors.Add(LinkError);
                 }
             }
             double MeanError = 0;
-            foreach (double Error1 in LinkErrors)
+            foreach (var Error1 in LinkErrors)
             {
                 MeanError = MeanError + Error1;
             }
@@ -814,9 +814,9 @@ namespace FindChains
             textBoxError.Text = MeanError.ToString();
 
             double MaxError = 0;
-            foreach (double Error1 in LinkErrors)
+            foreach (var Error1 in LinkErrors)
             {
-                double dd = Math.Abs(Error1 - MeanError);
+                var dd = Math.Abs(Error1 - MeanError);
                 if (MaxError < dd) { MaxError = dd; }
             }
             textBoxMaxError.Text = MaxError.ToString();
@@ -832,33 +832,33 @@ namespace FindChains
         }
         private void buttonCalLogParser_DragDrop(object sender, DragEventArgs e)
         {
-            string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
-            string StartFile = "Calibration of ";
-            for (int FileIndex = 0; FileIndex < Filenames.Length; FileIndex++)
+            var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var StartFile = "Calibration of ";
+            for (var FileIndex = 0; FileIndex < Filenames.Length; FileIndex++)
             {
-                string[] Lines = File.ReadAllLines(Filenames[FileIndex]);
-                string Text = "Filename,MatchedPeaks,BeforeErrorAverage,BeforeErrorStdDev,AfterErrorAverage,AfterStdDev";
-                for (int LineIndex = 0; LineIndex < Lines.Length; LineIndex++)
+                var Lines = File.ReadAllLines(Filenames[FileIndex]);
+                var Text = "Filename,MatchedPeaks,BeforeErrorAverage,BeforeErrorStdDev,AfterErrorAverage,AfterStdDev";
+                for (var LineIndex = 0; LineIndex < Lines.Length; LineIndex++)
                 {
                     if (Lines[LineIndex].StartsWith(StartFile) == false) { continue; }
-                    string[] HeaderParts = Lines[LineIndex].Split(new char[] { ' ' });
+                    var HeaderParts = Lines[LineIndex].Split(new char[] { ' ' });
                     Text = Text + "\r\n" + HeaderParts[2];
-                    string[] MatchedPeaksParts = Lines[LineIndex + 2].Split(new char[] { ' ', '(' });
+                    var MatchedPeaksParts = Lines[LineIndex + 2].Split(new char[] { ' ', '(' });
                     Text = Text + ',' + MatchedPeaksParts[5];
                     LineIndex = LineIndex + 12;
-                    List<double> ErrorsBeforeCal = new List<double>();
-                    List<double> ErrorsAfterCal = new List<double>();
+                    var ErrorsBeforeCal = new List<double>();
+                    var ErrorsAfterCal = new List<double>();
                     for (; LineIndex < Lines.Length; LineIndex++)
                     {
                         if (Lines[LineIndex].StartsWith("quadratic_calibration") == true) { break; }
-                        string[] CalibrantParts = Lines[LineIndex].Split(new char[] { '\t' });
+                        var CalibrantParts = Lines[LineIndex].Split(new char[] { '\t' });
                         ErrorsBeforeCal.Add(double.Parse(CalibrantParts[3]));
                         ErrorsAfterCal.Add(double.Parse(CalibrantParts[5]));
                     }
-                    double AverageErrorBeforeCal = Support.CArrayMath.Mean(ErrorsBeforeCal.ToArray());
-                    double StdDevErrorBeforeCal = Support.CArrayMath.StandardDeviation(ErrorsBeforeCal.ToArray(), AverageErrorBeforeCal);
-                    double AverageErrorAfterCal = Support.CArrayMath.Mean(ErrorsAfterCal.ToArray());
-                    double StdDevErrorAfterCal = Support.CArrayMath.StandardDeviation(ErrorsAfterCal.ToArray(), AverageErrorAfterCal);
+                    var AverageErrorBeforeCal = Support.CArrayMath.Mean(ErrorsBeforeCal.ToArray());
+                    var StdDevErrorBeforeCal = Support.CArrayMath.StandardDeviation(ErrorsBeforeCal.ToArray(), AverageErrorBeforeCal);
+                    var AverageErrorAfterCal = Support.CArrayMath.Mean(ErrorsAfterCal.ToArray());
+                    var StdDevErrorAfterCal = Support.CArrayMath.StandardDeviation(ErrorsAfterCal.ToArray(), AverageErrorAfterCal);
                     Text = Text + ',' + AverageErrorBeforeCal.ToString("F8") + ',' + StdDevErrorBeforeCal.ToString("F8")
                             + ',' + AverageErrorAfterCal.ToString("F8") + ',' + StdDevErrorAfterCal.ToString("F8");
                 }

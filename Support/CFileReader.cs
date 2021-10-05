@@ -14,7 +14,7 @@ namespace Support
         public bool ContainPeak(int PeakIndex)
         {
             if (PeakIndexes == null) { return false; }
-            foreach (int CurPeakIndex in PeakIndexes)
+            foreach (var CurPeakIndex in PeakIndexes)
             {
                 if (CurPeakIndex == PeakIndex)
                 {
@@ -39,11 +39,11 @@ namespace Support
         }
         public string ToString(bool FullInfo = false)
         {
-            string Text = Formula + "," + IdealBlockMass.ToString("F8") + "," + PeakIndexes.Length + "," + BlockMassMean.ToString("F8") + "," + PpmErrorStdDev.ToString("F8")
-                    + "," + ClusteringChainIndex + "," + ClusteringPeakIndex + "," + ClusteringMassError.ToString("F8");
+            var Text = Formula + "," + IdealBlockMass.ToString("F8") + "," + PeakIndexes.Length + "," + BlockMassMean.ToString("F8") + "," + PpmErrorStdDev.ToString("F8")
+                       + "," + ClusteringChainIndex + "," + ClusteringPeakIndex + "," + ClusteringMassError.ToString("F8");
             if (FullInfo == false) { return Text; }
             Text = Text + "\r\nPeak,Index,Mass";
-            for (int Index = 0; Index < PeakIndexes.Length; Index++)
+            for (var Index = 0; Index < PeakIndexes.Length; Index++)
             {
                 Text = Text + "\r\n" + Index + "," + PeakIndexes[Index] + "," + PeakMasses[Index].ToString("F8");
             }
@@ -64,12 +64,12 @@ namespace Support
         }
         public string ToString(bool FullInfo = false)
         {
-            string Text = ChainIndexes.Length + "," + PeakCount + "," + MinMass.ToString("F8") + "," + MaxMass.ToString("F8")
-                    + "," + EvenPeakCount + ", " + OddPeakCount + "," + TheBestChainIndex + "," + TheBestPeakIndex + "," + TheBestScore.ToString("F3")
-                    + "," + MaxPpmErrorGain.ToString("F8") + "," + HigherPpmErrorCount + "," + MaxOutlierPpmError;
+            var Text = ChainIndexes.Length + "," + PeakCount + "," + MinMass.ToString("F8") + "," + MaxMass.ToString("F8")
+                       + "," + EvenPeakCount + ", " + OddPeakCount + "," + TheBestChainIndex + "," + TheBestPeakIndex + "," + TheBestScore.ToString("F3")
+                       + "," + MaxPpmErrorGain.ToString("F8") + "," + HigherPpmErrorCount + "," + MaxOutlierPpmError;
             if (FullInfo == false) { return Text; }
             Text = Text + "\r\nChain indexes:\r\n";
-            foreach (int ChainIndex in ChainIndexes)
+            foreach (var ChainIndex in ChainIndexes)
             {
                 Text = Text + ChainIndex + ",";
             }
@@ -132,31 +132,31 @@ namespace Support
             {
                 return ErrDisStdDevs.Last();
             }
-            int RangeIndex = Array.BinarySearch(ErrDisMassMedians, Mass);
+            var RangeIndex = Array.BinarySearch(ErrDisMassMedians, Mass);
             if (RangeIndex < 0) { RangeIndex = ~RangeIndex; }
             return CArrayMath.LinearValue(Mass, ErrDisMassMedians[RangeIndex - 1], ErrDisMassMedians[RangeIndex], ErrDisStdDevs[RangeIndex - 1], ErrDisStdDevs[RangeIndex]);
         }
         public string ErrorDistributionToString(bool Full = false)
         {
-            string Text = "MassMedian,LowError,HighError,ErrorMean,ErrorStdDev,Count";
-            for (int RangeIndex = 0; RangeIndex < ErrDisMassMedians.Length; RangeIndex++)
+            var Text = "MassMedian,LowError,HighError,ErrorMean,ErrorStdDev,Count";
+            for (var RangeIndex = 0; RangeIndex < ErrDisMassMedians.Length; RangeIndex++)
             {
                 Text = Text + "\r\n" + ErrDisMassMedians[RangeIndex].ToString("F8") + "," + ErrDisLowPpmErrors[RangeIndex] + "," + ErrDisUpperPpmErrors[RangeIndex]
                         + "," + ErrDisMeans[RangeIndex].ToString("F8") + "," + ErrDisStdDevs[RangeIndex].ToString("F8") + "," + ErrDisPairCount[RangeIndex];
             }
             if (Full == false) { return Text; }
 
-            int MaxPeakIndex = 0;
+            var MaxPeakIndex = 0;
             Text = Text + "\r\n\r\n";
-            foreach (int[] ErrDisParentPeakIndexesInRange in ErrDisParentPeakIndexes)
+            foreach (var ErrDisParentPeakIndexesInRange in ErrDisParentPeakIndexes)
             {
                 if (MaxPeakIndex < ErrDisParentPeakIndexesInRange.Length) { MaxPeakIndex = ErrDisParentPeakIndexesInRange.Length; }
                 Text = Text + "ParentPeakIndex,ParentPeakMass,ChildPeakIndex,ChildPeakMass,PpmError,MassBlock,,";
             }
-            for (int PeakIndex = 0; PeakIndex < MaxPeakIndex; PeakIndex++)
+            for (var PeakIndex = 0; PeakIndex < MaxPeakIndex; PeakIndex++)
             {
                 Text = Text + "\r\n";
-                for (int RangeIndex = 0; RangeIndex < ErrDisParentPeakIndexes.Length; RangeIndex++)
+                for (var RangeIndex = 0; RangeIndex < ErrDisParentPeakIndexes.Length; RangeIndex++)
                 {
                     if (ErrDisParentPeakIndexes[RangeIndex].Length > PeakIndex)
                     {
@@ -177,9 +177,9 @@ namespace Support
         public double[] ErrorTrend;
         public string ErrorTrendToString()
         {
-            string Text = "MassInteger,Error(da)";
-            bool Write = false;
-            for (int Index = 0; Index < ErrorTrend.Length; Index++)
+            var Text = "MassInteger,Error(da)";
+            var Write = false;
+            for (var Index = 0; Index < ErrorTrend.Length; Index++)
             {
                 if ((Write == false) && (double.IsNaN(ErrorTrend[Index]) == true)) { continue; }
                 Write = true;
@@ -198,8 +198,8 @@ namespace Support
         public int[] ParentPeakIndexes;
         public int GetMaxChainLength()
         {
-            int MaxChainLength = 0;
-            foreach (Chain oChain in Chains)
+            var MaxChainLength = 0;
+            foreach (var oChain in Chains)
             {
                 if (MaxChainLength < oChain.PeakIndexes.Length) { MaxChainLength = oChain.PeakIndexes.Length; }
             }
@@ -207,8 +207,8 @@ namespace Support
         }
         public string ChainsToString(bool FullInfo = false)
         {
-            string Text = "Index," + Chain.HeaderToString();
-            for (int ChainIndex = 0; ChainIndex < Chains.Length; ChainIndex++)
+            var Text = "Index," + Chain.HeaderToString();
+            for (var ChainIndex = 0; ChainIndex < Chains.Length; ChainIndex++)
             {
                 Text = Text + "\r\n" + ChainIndex + "," + Chains[ChainIndex].ToString(FullInfo);
             }
@@ -223,11 +223,11 @@ namespace Support
             {
                 throw new Exception("Clusters doesn't have ClusterIndex in GetClusterPeakIndexes function");
             }
-            SortedList<int, int> PeakIndexSortedList = new SortedList<int, int>();
-            foreach (int ChainIndex in Clusters[ClusterIndex].ChainIndexes)
+            var PeakIndexSortedList = new SortedList<int, int>();
+            foreach (var ChainIndex in Clusters[ClusterIndex].ChainIndexes)
             {
-                Chain CurChain = Chains[ChainIndex];
-                foreach (int PeakIndex in CurChain.PeakIndexes)
+                var CurChain = Chains[ChainIndex];
+                foreach (var PeakIndex in CurChain.PeakIndexes)
                 {
                     if (PeakIndexSortedList.ContainsKey(PeakIndex) == false)
                     {
@@ -243,10 +243,10 @@ namespace Support
             {
                 throw new Exception("Clusters doesn't have ClusterIndex in GetClusterPeakIndexes function");
             }
-            List<int> TempChainList = new List<int>();
-            foreach (int ChainIndex in Clusters[ClusterIndex].ChainIndexes)
+            var TempChainList = new List<int>();
+            foreach (var ChainIndex in Clusters[ClusterIndex].ChainIndexes)
             {
-                Chain CurChain = Chains[ChainIndex];
+                var CurChain = Chains[ChainIndex];
                 if (CurChain.PeakIndexes.Contains(PeakIndex) == true)
                 {
                     TempChainList.Add(ChainIndex);
@@ -257,10 +257,10 @@ namespace Support
         public double MaxPpmErrorGain;
         public string ClustersToString(bool FullInfo = false)
         {
-            string Text = "Index," + Cluster.HeaderString();
-            for (int ClusterIndex = 0; ClusterIndex < Clusters.Length; ClusterIndex++)
+            var Text = "Index," + Cluster.HeaderString();
+            for (var ClusterIndex = 0; ClusterIndex < Clusters.Length; ClusterIndex++)
             {
-                Cluster CurCluster = Clusters[ClusterIndex];
+                var CurCluster = Clusters[ClusterIndex];
                 Text = Text + "\r\n" + ClusterIndex + "," + CurCluster.ToString(FullInfo);
             }
             return Text;
@@ -268,8 +268,8 @@ namespace Support
         public double[] IdealMasses;
         public string IdealMassesToString()
         {
-            string Text = "Index,Mass,IdealMass";
-            for (int PeakIndex = 0; PeakIndex < Masses.Length; PeakIndex++)
+            var Text = "Index,Mass,IdealMass";
+            for (var PeakIndex = 0; PeakIndex < Masses.Length; PeakIndex++)
             {
                 Text = Text + "\r\n" + PeakIndex + "," + Masses[PeakIndex].ToString("F8") + "," + IdealMasses[PeakIndex].ToString("F8");
             }
@@ -281,7 +281,7 @@ namespace Support
         static char[] WordSeparators = new char[] { '\t', ',', ' ' };
         public static void ReadFile(string Filename, out double[] Masses, out double[] Abundances, out double[] S2Ns, out double[] Resolutions, out double[] RelAbundances)
         {
-            int Peak = -1;
+            var Peak = -1;
             Masses = new double[0];
             Abundances = new double[0];
             S2Ns = new double[0];
@@ -289,7 +289,7 @@ namespace Support
             RelAbundances = new double[0];
             try
             {
-                string FileExtension = Path.GetExtension(Filename);
+                var FileExtension = Path.GetExtension(Filename);
                 double MaxAbundance = 0;
                 /*
                 if( FileExtension == ".xlsx" || FileExtension == ".xls" ) {
@@ -335,17 +335,17 @@ namespace Support
                 } else */
                 if (FileExtension == ".xml")
                 {
-                    XmlDocument XmlDoc = new XmlDocument();
+                    var XmlDoc = new XmlDocument();
                     XmlDoc.Load(Filename);
                     //check Bruker instrument
-                    XmlNodeList Nodes = XmlDoc.GetElementsByTagName("fileinfo");
+                    var Nodes = XmlDoc.GetElementsByTagName("fileinfo");
                     if (Nodes.Count != 1) { throw new Exception("fileinfo"); }
                     if (Nodes[0].Attributes["appname"].Value != "Bruker Compass DataAnalysis") { throw new Exception("Bruker Compass DataAnalysis"); }
                     //read peaks
-                    XmlNodeList MsPeakNodes = XmlDoc.GetElementsByTagName("ms_peaks");
+                    var MsPeakNodes = XmlDoc.GetElementsByTagName("ms_peaks");
                     if (MsPeakNodes.Count != 1) { throw new Exception("ms_peaks"); }
-                    XmlNode MsPeakNode = MsPeakNodes[0];
-                    int PeakCount = MsPeakNode.ChildNodes.Count;
+                    var MsPeakNode = MsPeakNodes[0];
+                    var PeakCount = MsPeakNode.ChildNodes.Count;
                     Masses = new double[PeakCount];
                     Abundances = new double[PeakCount];
                     S2Ns = new double[PeakCount];
@@ -354,7 +354,7 @@ namespace Support
                     for (Peak = 0; Peak < PeakCount; Peak++)
                     {
                         //<pk res="930674.5" algo="FTMS" fwhm="0.000218" a="102.53" sn="7.15" i="646225.1" mz="203.034719"/>
-                        XmlAttributeCollection Attributes = MsPeakNode.ChildNodes[Peak].Attributes;
+                        var Attributes = MsPeakNode.ChildNodes[Peak].Attributes;
                         Masses[Peak] = Double.Parse(Attributes["mz"].Value);
                         Abundances[Peak] = Double.Parse(Attributes["i"].Value);
                         if (MaxAbundance < Abundances[Peak]) { MaxAbundance = Abundances[Peak]; }
@@ -365,8 +365,8 @@ namespace Support
                 }
                 else if (FileExtension == ".tsv")
                 {
-                    string[] Lines = File.ReadAllLines(Filename);
-                    int PeakCount = Lines.Length - 1;
+                    var Lines = File.ReadAllLines(Filename);
+                    var PeakCount = Lines.Length - 1;
                     Masses = new double[PeakCount];
                     Abundances = new double[PeakCount];
                     S2Ns = new double[PeakCount];
@@ -374,8 +374,8 @@ namespace Support
                     RelAbundances = new double[PeakCount];
                     for (Peak = 0; Peak < Lines.Length - 1; Peak++)
                     {
-                        int Line = Peak + 1;
-                        string[] LineParts = Lines[Line].Split(WordSeparators);
+                        var Line = Peak + 1;
+                        var LineParts = Lines[Line].Split(WordSeparators);
                         Masses[Peak] = Double.Parse(LineParts[2]);
                         Abundances[Peak] = Double.Parse(LineParts[3]);
                         if (MaxAbundance < Abundances[Peak]) { MaxAbundance = Abundances[Peak]; }
@@ -386,20 +386,20 @@ namespace Support
                 }
                 else
                 { //if( FileExtension == ".csv" || FileExtension == ".txt" ) { and unsupported
-                    string[] Lines = File.ReadAllLines(Filename);
-                    int PeakCount = Lines.Length - 1;
+                    var Lines = File.ReadAllLines(Filename);
+                    var PeakCount = Lines.Length - 1;
                     Masses = new double[PeakCount];
                     Abundances = new double[PeakCount];
                     S2Ns = new double[PeakCount];
                     Resolutions = new double[PeakCount];
                     RelAbundances = new double[PeakCount];
-                    int ColumnCount = Lines[0].Split(WordSeparators).Length;
+                    var ColumnCount = Lines[0].Split(WordSeparators).Length;
                     if (ColumnCount == 7)
                     {
                         for (Peak = 0; Peak < Lines.Length - 1; Peak++)
                         {
-                            int Line = Peak + 1;
-                            string[] LineParts = Lines[Line].Split(WordSeparators);
+                            var Line = Peak + 1;
+                            var LineParts = Lines[Line].Split(WordSeparators);
                             Masses[Peak] = Double.Parse(LineParts[2]);
                             Abundances[Peak] = Double.Parse(LineParts[3]);
                             if (MaxAbundance < Abundances[Peak]) { MaxAbundance = Abundances[Peak]; }
@@ -411,8 +411,8 @@ namespace Support
                     {
                         for (Peak = 0; Peak < Lines.Length - 1; Peak++)
                         {
-                            int Line = Peak + 1;
-                            string[] LineParts = Lines[Line].Split(WordSeparators);
+                            var Line = Peak + 1;
+                            var LineParts = Lines[Line].Split(WordSeparators);
                             Masses[Peak] = Double.Parse(LineParts[0]);
                             Abundances[Peak] = Double.Parse(LineParts[1]);
                             if (MaxAbundance < Abundances[Peak]) { MaxAbundance = Abundances[Peak]; }
@@ -466,7 +466,7 @@ namespace Support
             CutSettings S2NCutSettings = null;
             CutSettings ResolutionCutSettings = null;
             CutSettings RelAbundanceSettings = null;
-            foreach (CutSettings TempCutSettings in CutSettings)
+            foreach (var TempCutSettings in CutSettings)
             {
                 switch (TempCutSettings.CutType)
                 {
@@ -529,9 +529,9 @@ namespace Support
             }
             if (Data.S2Ns[0] <= 0) { S2NCutSettings = null; }
             if (Data.Resolutions[0] <= 0) { ResolutionCutSettings = null; }
-            bool[] NewData = new bool[Data.Masses.Length];
-            int NewDataCount = 0;
-            for (int PeakIndex = 0; PeakIndex < Data.Masses.Length; PeakIndex++)
+            var NewData = new bool[Data.Masses.Length];
+            var NewDataCount = 0;
+            for (var PeakIndex = 0; PeakIndex < Data.Masses.Length; PeakIndex++)
             {
                 for (; ; )
                 {

@@ -43,15 +43,15 @@ namespace CiaUi
 
                 comboBoxFormulaScore.DataSource = oCCia.GetFormulaScoreNames();
                 comboBoxRelationErrorType.DataSource = Enum.GetNames(typeof(CCia.RelationErrorType));
-                for (int Relation = 0; Relation < CCia.RelationBuildingBlockFormulas.Length; Relation++)
+                for (var Relation = 0; Relation < CCia.RelationBuildingBlockFormulas.Length; Relation++)
                 {
                     checkedListBoxRelations.Items.Add(oCCia.FormulaToName(CCia.RelationBuildingBlockFormulas[Relation]), oCCia.GetActiveRelationFormulaBuildingBlocks()[Relation]);
                 }
 
                 comboBoxSpecialFilters.Items.Clear();
-                string[] SpecialFilterNames = Enum.GetNames(typeof(CCia.ESpecialFilters));
-                string[] SpecialFilterRules = oCCia.GetSpecialFilterRules();
-                for (int SpecialFilter = 0; SpecialFilter < SpecialFilterRules.Length; SpecialFilter++)
+                var SpecialFilterNames = Enum.GetNames(typeof(CCia.ESpecialFilters));
+                var SpecialFilterRules = oCCia.GetSpecialFilterRules();
+                for (var SpecialFilter = 0; SpecialFilter < SpecialFilterRules.Length; SpecialFilter++)
                 {
                     comboBoxSpecialFilters.Items.Add(SpecialFilterNames[SpecialFilter] + ": " + SpecialFilterRules[SpecialFilter]);
                 }
@@ -62,7 +62,7 @@ namespace CiaUi
                 //============
                 buttonIpaMergeWithCIA.Visible = false;
 
-                string DefaultParametersFile = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\DefaultParameters.xml";
+                var DefaultParametersFile = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\DefaultParameters.xml";
                 if (File.Exists(DefaultParametersFile) == true)
                 {
                     oCCia.LoadParameters(DefaultParametersFile);
@@ -91,21 +91,21 @@ namespace CiaUi
                 tableLayoutPanelDBPeaks.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
                 tableLayoutPanelDBPeaks.ColumnStyles.Clear();
                 tableLayoutPanelDBPeaks.ColumnCount = DBPeaksTableHeaders.Length;
-                for (int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++)
+                for (var iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++)
                 {
                     tableLayoutPanelDBPeaks.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(SizeType.Percent, (float)100.0 / DBPeaksTableHeaders.Length));
                 }
                 tableLayoutPanelDBPeaks.RowStyles.Clear();
                 tableLayoutPanelDBPeaks.RowCount = 5 + 1;//Extra Row without RowStyle!!!
-                for (int iRow = 0; iRow < tableLayoutPanelDBPeaks.RowCount; iRow++)
+                for (var iRow = 0; iRow < tableLayoutPanelDBPeaks.RowCount; iRow++)
                 {
                     tableLayoutPanelDBPeaks.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, (new System.Windows.Forms.TextBox()).Height + 2 * (new System.Windows.Forms.TextBox()).Margin.Top));
                 }
-                for (int iRow = 0; iRow < tableLayoutPanelDBPeaks.RowCount - 1; iRow++)
+                for (var iRow = 0; iRow < tableLayoutPanelDBPeaks.RowCount - 1; iRow++)
                 {// "-1" Extra Row without Controls!!!
-                    for (int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++)
+                    for (var iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++)
                     {
-                        System.Windows.Forms.TextBox oTextBox = new System.Windows.Forms.TextBox();
+                        var oTextBox = new System.Windows.Forms.TextBox();
                         oTextBox.Anchor = AnchorStyles.None;
                         oTextBox.ReadOnly = true;
                         oTextBox.AutoSize = true;
@@ -174,23 +174,23 @@ namespace CiaUi
                 tableLayoutPanelChains.AutoScroll = true;
                 tableLayoutPanelChains.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
                 tableLayoutPanelChains.ColumnStyles.Clear();
-                string[] ChainColumnNames = new string[] { "Types", "PairCount", "PairDistance", "Formula", "FormulaDistance", "ChainCount" };
+                var ChainColumnNames = new string[] { "Types", "PairCount", "PairDistance", "Formula", "FormulaDistance", "ChainCount" };
                 tableLayoutPanelChains.ColumnCount = ChainColumnNames.Length;//PairCount,PairDistance,Formula,FormulaDistance,ChainCount
-                for (int iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++)
+                for (var iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++)
                 {
                     tableLayoutPanelChains.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(SizeType.Percent, (float)100.0 / ChainColumnNames.Length));
                 }
                 tableLayoutPanelChains.RowStyles.Clear();
                 tableLayoutPanelChains.RowCount = 5 + 1;//Extra Row without RowStyle!!!
-                for (int RowIndex = 0; RowIndex < tableLayoutPanelChains.RowCount; RowIndex++)
+                for (var RowIndex = 0; RowIndex < tableLayoutPanelChains.RowCount; RowIndex++)
                 {
                     tableLayoutPanelChains.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, (new System.Windows.Forms.TextBox()).Height + 2 * (new System.Windows.Forms.TextBox()).Margin.Top));
                 }
-                for (int iRow = 0; iRow < tableLayoutPanelChains.RowCount - 1; iRow++)
+                for (var iRow = 0; iRow < tableLayoutPanelChains.RowCount - 1; iRow++)
                 {// "-1" Extra Row without Controls!!!
-                    for (int ColumnIndex = 0; ColumnIndex < tableLayoutPanelChains.ColumnCount; ColumnIndex++)
+                    for (var ColumnIndex = 0; ColumnIndex < tableLayoutPanelChains.ColumnCount; ColumnIndex++)
                     {
-                        System.Windows.Forms.TextBox oTextBox = new System.Windows.Forms.TextBox();
+                        var oTextBox = new System.Windows.Forms.TextBox();
                         oTextBox.Anchor = AnchorStyles.None;
                         oTextBox.ReadOnly = true;
                         oTextBox.AutoSize = true;
@@ -272,7 +272,7 @@ namespace CiaUi
             numericUpDownRelationErrorValue.Value = (decimal)oCCia.GetRelationErrorAMU();
             comboBoxRelationErrorType.SelectedIndex = (int)oCCia.GetRelationErrorType();
             oCiaAdvancedForm.checkBoxCIAAdvBackward.Checked = oCCia.GetUseBackward();
-            for (int BlockIndex = 0; BlockIndex < oCCia.GetActiveRelationFormulaBuildingBlocks().Length; BlockIndex++)
+            for (var BlockIndex = 0; BlockIndex < oCCia.GetActiveRelationFormulaBuildingBlocks().Length; BlockIndex++)
             {
                 checkedListBoxRelations.SetItemChecked(BlockIndex, oCCia.GetActiveRelationFormulaBuildingBlocks()[BlockIndex]);
             }
@@ -294,7 +294,7 @@ namespace CiaUi
         }
         private void CIAUIForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            string DefaultParametersFile = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\DefaultParameters.xml";
+            var DefaultParametersFile = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\DefaultParameters.xml";
             oCCia.GetSaveParameterText(DefaultParametersFile);
         }
 
@@ -342,13 +342,13 @@ namespace CiaUi
         }
         void CheckToProcess()
         {
-            bool CalibrationReady = (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none)
-                        | (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none) & (textBoxRefPeakFilename.TextLength > 0)));
+            var CalibrationReady = (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none)
+                                    | (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none) & (textBoxRefPeakFilename.TextLength > 0)));
 
-            bool CIAReady = (oCCia.GetCiaDBFilename().Length > 0) & CalibrationReady;
+            var CIAReady = (oCCia.GetCiaDBFilename().Length > 0) & CalibrationReady;
             checkBoxCIA.Enabled = CIAReady;
 
-            bool IpaReady = oCCia.Ipa.IPDB_Ready & CalibrationReady;
+            var IpaReady = oCCia.Ipa.IPDB_Ready & CalibrationReady;
             checkBoxIpa.Enabled = IpaReady;
 
             if ((CIAReady == true) && (checkBoxCIA.Checked == true)
@@ -363,8 +363,8 @@ namespace CiaUi
                 textBoxDropSpectraFiles.Enabled = false;
             }
 
-            bool ChainCalibrationReady = ((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none)
-                    & (textBoxRefPeakFilename.TextLength > 0);
+            var ChainCalibrationReady = ((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none)
+                                        & (textBoxRefPeakFilename.TextLength > 0);
 
             if (ChainCalibrationReady == true)
             {
@@ -394,7 +394,7 @@ namespace CiaUi
         }
         private void textBoxRefPeakFilename_DragDrop(object sender, DragEventArgs e)
         {
-            string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
             //oCCia.oTotalCalibration.Load( Filenames [ 0 ] );
             textBoxRefPeakFilename.Text = Path.GetFileName(Filenames[0]);
             oCCia.SetRefPeakFilename(Filenames[0]);
@@ -437,7 +437,7 @@ namespace CiaUi
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("ja-JP");
             try
             {
-                string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+                var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
 
                 //Read files & Calibration
                 oCCia.Ipa.Adduct = textBoxAdduct.Text;
@@ -469,7 +469,7 @@ namespace CiaUi
                     //oCCia.SetBlockMasses( BlockMasses );
                     oCCia.SetStdDevErrorGain((double)numericUpDownFormulaToleranceStdDevGain.Value);
 
-                    CCia.EFormulaScore CurrentFormulaScore = (CCia.EFormulaScore)Array.IndexOf(oCCia.GetFormulaScoreNames(), comboBoxFormulaScore.Text);
+                    var CurrentFormulaScore = (CCia.EFormulaScore)Array.IndexOf(oCCia.GetFormulaScoreNames(), comboBoxFormulaScore.Text);
                     oCCia.SetFormulaScore(CurrentFormulaScore);
                     if (CurrentFormulaScore == CCia.EFormulaScore.UserDefined)
                     {
@@ -490,7 +490,7 @@ namespace CiaUi
 
                     //Filters
                     oCCia.SetUseFormulaFilter(checkBoxUseFormulaFilters.Checked);
-                    bool[] GoldenFilters = new bool[oCCia.GoldenRuleFilterNames.Length];
+                    var GoldenFilters = new bool[oCCia.GoldenRuleFilterNames.Length];
                     if (checkBoxCIAUseDefault.Checked == false)
                     {
                         GoldenFilters[0] = oCiaAdvancedForm.checkBoxGoldenRule1.Checked;
@@ -527,8 +527,8 @@ namespace CiaUi
                         oCCia.SetUseBackward(false);
                     }
 
-                    bool[] ActiveRelationBlocks = new bool[CCia.RelationBuildingBlockFormulas.Length];
-                    for (int ActiveFormula = 0; ActiveFormula < ActiveRelationBlocks.Length; ActiveFormula++)
+                    var ActiveRelationBlocks = new bool[CCia.RelationBuildingBlockFormulas.Length];
+                    for (var ActiveFormula = 0; ActiveFormula < ActiveRelationBlocks.Length; ActiveFormula++)
                     {
                         ActiveRelationBlocks[ActiveFormula] = checkedListBoxRelations.GetItemChecked(ActiveFormula);
                     }
@@ -548,14 +548,14 @@ namespace CiaUi
                     //change textbox
                     textBoxDropSpectraFiles.Text = "Drop Spectra Files";
                     textBoxDropSpectraFiles.AppendText("\r\nProcessed files:");
-                    foreach (string Filename in Filenames)
+                    foreach (var Filename in Filenames)
                     {
                         textBoxDropSpectraFiles.AppendText("\r\n" + Path.GetFileName(Filename));
                     }
                 }
                 if (checkBoxIpa.Checked == true)
                 {
-                    bool b = oCCia.Ipa.SetCalculation();
+                    var b = oCCia.Ipa.SetCalculation();
 
                     oCCia.Ipa.m_ppm_tol = (double)numericUpDownIpaMassTolerance.Value;
                     oCCia.Ipa.m_min_major_sn = (double)numericUpDownIpaMajorPeaksMinSN.Value;
@@ -594,7 +594,7 @@ namespace CiaUi
         //tabs
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string ddd = tabControl1.TabPages[tabControl1.SelectedIndex].Text;
+            var ddd = tabControl1.TabPages[tabControl1.SelectedIndex].Text;
             if (ddd == "CIA DB inspector")
             {
                 numericUpDownDBMass_ValueChanged(sender, e);
@@ -625,7 +625,7 @@ namespace CiaUi
         }
         private void textBoxCiaDBFilename_DragDrop(object sender, DragEventArgs e)
         {
-            string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
             oCCia.LoadCiaDB(Filenames[0]);
             textBoxCiaDBFilename.Text = Path.GetFileName(Filenames[0]);
             numericUpDownDBMass.Enabled = true;
@@ -692,7 +692,7 @@ namespace CiaUi
             checkBoxUseRelation.Checked = true;
             numericUpDownMaxRelationGaps.Value = 5;
             numericUpDownRelationErrorValue.Value = (decimal)0.00002;
-            for (int RelationBlock = 0; RelationBlock < checkedListBoxRelations.Items.Count; RelationBlock++)
+            for (var RelationBlock = 0; RelationBlock < checkedListBoxRelations.Items.Count; RelationBlock++)
             {
                 if ((RelationBlock == 0) || (RelationBlock == 2) || (RelationBlock == 6))
                 {
@@ -738,7 +738,7 @@ namespace CiaUi
             oCiaAdvancedForm.comboBoxRelationErrorType.SelectedIndex = comboBoxRelationErrorType.SelectedIndex;
             oCiaAdvancedForm.numericUpDownRelationErrorValue.Value = numericUpDownRelationErrorValue.Value;
 
-            for (int RelationIndex = 0; RelationIndex < checkedListBoxRelations.CheckedItems.Count; RelationIndex++)
+            for (var RelationIndex = 0; RelationIndex < checkedListBoxRelations.CheckedItems.Count; RelationIndex++)
             {
                 oCiaAdvancedForm.checkedListBoxRelations.SetItemChecked(RelationIndex, checkedListBoxRelations.GetItemChecked(RelationIndex));
             }
@@ -748,7 +748,7 @@ namespace CiaUi
             oCiaAdvancedForm.CheckToProcess();
 
             this.Visible = false;
-            DialogResult sss = oCiaAdvancedForm.ShowDialog(this);
+            var sss = oCiaAdvancedForm.ShowDialog(this);
 
             numericUpDownCharge.Value = oCiaAdvancedForm.numericUpDownCharge.Value;
             textBoxAdduct.Text = oCiaAdvancedForm.textBoxAdduct.Text;
@@ -776,7 +776,7 @@ namespace CiaUi
             comboBoxRelationErrorType.SelectedIndex = oCiaAdvancedForm.comboBoxRelationErrorType.SelectedIndex;
             numericUpDownRelationErrorValue.Value = oCiaAdvancedForm.numericUpDownRelationErrorValue.Value;
 
-            for (int RelationIndex = 0; RelationIndex < checkedListBoxRelations.CheckedItems.Count; RelationIndex++)
+            for (var RelationIndex = 0; RelationIndex < checkedListBoxRelations.CheckedItems.Count; RelationIndex++)
             {
                 checkedListBoxRelations.SetItemChecked(RelationIndex, oCiaAdvancedForm.checkedListBoxRelations.GetItemChecked(RelationIndex));
             }
@@ -798,7 +798,7 @@ namespace CiaUi
         }
         private void textBoxIpaDBFilename_DragDrop(object sender, DragEventArgs e)
         {
-            string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
             oCCia.Ipa.LoadTabulatedDB(Filenames[0]);
             CheckToProcess();
             textBoxIpaDBFilename.Text = Filenames[0];
@@ -817,13 +817,13 @@ namespace CiaUi
         }
         private void chartError_DragDrop(object sender, DragEventArgs e)
         {
-            string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
-            string[] Lines = File.ReadAllLines(Filenames[0]);
-            string FileName = Path.GetFileNameWithoutExtension(Filenames[0]);
-            string[] Headers = Lines[0].Split(new char[] { ',' });
-            int XAxisColumnIndex = -1;
-            int YAxisColumnIndex = -1;
-            for (int Column = 0; Column < Headers.Length; Column++)
+            var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var Lines = File.ReadAllLines(Filenames[0]);
+            var FileName = Path.GetFileNameWithoutExtension(Filenames[0]);
+            var Headers = Lines[0].Split(new char[] { ',' });
+            var XAxisColumnIndex = -1;
+            var YAxisColumnIndex = -1;
+            for (var Column = 0; Column < Headers.Length; Column++)
             {
                 if (Headers[Column] == textBoxXAxisColumnHeader.Text) { XAxisColumnIndex = Column; }
                 if (Headers[Column] == textBoxYAxisColumnHeader.Text) { YAxisColumnIndex = Column; }
@@ -843,9 +843,9 @@ namespace CiaUi
                 return;
             }
 
-            for (int Line = 1; Line < Lines.Length; Line++)
+            for (var Line = 1; Line < Lines.Length; Line++)
             {
-                string[] Words = Lines[Line].Split(new char[] { ',' });
+                var Words = Lines[Line].Split(new char[] { ',' });
                 if (Words[YAxisColumnIndex] == "0") { continue; }
                 XData.Add(double.Parse(Words[XAxisColumnIndex]));
                 YData.Add(double.Parse(Words[YAxisColumnIndex]));
@@ -866,7 +866,7 @@ namespace CiaUi
                     chartError.ChartAreas[0].AxisY.Title = "Error, ppm";
                     YMin = YData[0];
                     YMax = YMin;
-                    for (int Point = 0; Point < XData.Count; Point++)
+                    for (var Point = 0; Point < XData.Count; Point++)
                     {
                         chartError.Series[0].Points.AddXY(XData[Point], YData[Point]);
                         if (YMin > YData[Point]) { YMin = YData[Point]; }
@@ -879,28 +879,28 @@ namespace CiaUi
                     chartError.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Column;
                     chartError.ChartAreas[0].AxisX.Title = "Error, ppm";
                     chartError.ChartAreas[0].AxisY.Title = "Counts";
-                    int BinCount = (int)Math.Ceiling(Math.Sqrt(XData.Count));
+                    var BinCount = (int)Math.Ceiling(Math.Sqrt(XData.Count));
                     XMin = YData[0];
                     XMax = XMin;
-                    for (int Index = 1; Index < YData.Count; Index++)
+                    for (var Index = 1; Index < YData.Count; Index++)
                     {
                         if (XMin > YData[Index]) { XMin = YData[Index]; }
                         if (XMax < YData[Index]) { XMax = YData[Index]; }
                     }
-                    double BinSize = (XMax - XMin) / BinCount;
-                    int[] Bins = new int[BinCount];
+                    var BinSize = (XMax - XMin) / BinCount;
+                    var Bins = new int[BinCount];
                     YMin = 0;
                     YMax = 0;
-                    foreach (double Y in YData)
+                    foreach (var Y in YData)
                     {
-                        int BinIndex = (int)Math.Floor((Y - XMin) / BinSize);
+                        var BinIndex = (int)Math.Floor((Y - XMin) / BinSize);
                         if (BinIndex >= BinCount) { BinIndex = BinCount - 1; }
                         Bins[BinIndex]++;
                         if (YMax < Bins[BinIndex]) { YMax = Bins[BinIndex]; }
                     }
-                    for (int Point = 0; Point < Bins.Length; Point++)
+                    for (var Point = 0; Point < Bins.Length; Point++)
                     {
-                        double XValue = XMin + BinSize * (Point + 0.5);
+                        var XValue = XMin + BinSize * (Point + 0.5);
                         chartError.Series[0].Points.AddXY(XValue, Bins[Point]);
                     }
                     break;
@@ -920,10 +920,10 @@ namespace CiaUi
             if (numericUpDownDBMass.Value < 0) { return; }
             tableLayoutPanelDBPeaks.SuspendLayout();
             tableLayoutPanelDBPeaks.Enabled = true;
-            double Mass = (double)numericUpDownDBMass.Value;
-            double NeutralMass = oCCia.Ipa.GetNeutralMass(Mass);
+            var Mass = (double)numericUpDownDBMass.Value;
+            var NeutralMass = oCCia.Ipa.GetNeutralMass(Mass);
             textBoxDBNeutralMass.Text = NeutralMass.ToString();
-            double Error = CPpmError.PpmToError(NeutralMass, oCCia.GetFormulaPPMTolerance());
+            var Error = CPpmError.PpmToError(NeutralMass, oCCia.GetFormulaPPMTolerance());
             textBoxDBNeutralMassPlusError.Text = (NeutralMass + Error).ToString();
             textBoxDBNeutralMassMinusError.Text = (NeutralMass - Error).ToString();
             int LowerIndex, UpperIndex;
@@ -936,13 +936,13 @@ namespace CiaUi
             {
                 Records = UpperIndex - LowerIndex + 1;
             }
-            int Rows = Records + 2;//+ Head + Last Row without Controls
+            var Rows = Records + 2;//+ Head + Last Row without Controls
             textBoxDBRecordsInErrorRange.Text = Records.ToString();
             if (tableLayoutPanelDBPeaks.RowStyles.Count > Rows)
             {
-                for (int Row = tableLayoutPanelDBPeaks.RowCount - 1; Row >= Rows; Row--)
+                for (var Row = tableLayoutPanelDBPeaks.RowCount - 1; Row >= Rows; Row--)
                 {
-                    for (int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++)
+                    for (var iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++)
                     {
                         tableLayoutPanelDBPeaks.Controls.RemoveAt(tableLayoutPanelDBPeaks.Controls.Count - 1);
                     }
@@ -953,12 +953,12 @@ namespace CiaUi
             else if (tableLayoutPanelDBPeaks.RowStyles.Count < Rows)
             {
                 tableLayoutPanelDBPeaks.RowCount = Rows;
-                for (int Row = tableLayoutPanelDBPeaks.RowStyles.Count - 1; Row < Rows - 1; Row++)
+                for (var Row = tableLayoutPanelDBPeaks.RowStyles.Count - 1; Row < Rows - 1; Row++)
                 {//"Count-1" due Last Row without Controls
                     tableLayoutPanelDBPeaks.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, (new System.Windows.Forms.TextBox()).Height + 2 * (new System.Windows.Forms.TextBox()).Margin.Top));
-                    for (int iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++)
+                    for (var iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++)
                     {
-                        System.Windows.Forms.TextBox oTextBox = new System.Windows.Forms.TextBox();
+                        var oTextBox = new System.Windows.Forms.TextBox();
                         oTextBox.Anchor = AnchorStyles.None;
                         oTextBox.ReadOnly = true;
                         oTextBox.AutoSize = true;
@@ -967,9 +967,9 @@ namespace CiaUi
                     }
                 }
             }
-            for (int Row = 1; Row < Rows - 1; Row++)
+            for (var Row = 1; Row < Rows - 1; Row++)
             {
-                int DBIndex = LowerIndex + Row - 1;
+                var DBIndex = LowerIndex + Row - 1;
                 tableLayoutPanelDBPeaks.GetControlFromPosition(0, Row).Text = DBIndex.ToString();
                 tableLayoutPanelDBPeaks.GetControlFromPosition(1, Row).Text = oCCia.GetDBMass(DBIndex).ToString();
                 tableLayoutPanelDBPeaks.GetControlFromPosition(2, Row).Text = oCCia.GetDBFormulaName(DBIndex);
@@ -1033,14 +1033,14 @@ namespace CiaUi
         }
         private void textBoxConvertDBs_DragDrop(object sender, DragEventArgs e)
         {
-            string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
             oCCia.SetDBCalculateMassFromFormula(checkBoxDBCalculateMassFromFormula.Checked);
             oCCia.SetDBSort(checkBoxDBSortByMass.Checked);
             oCCia.SetDBMassRangePerCsvFile(checkBoxDBMassRangePerCsvFile.Checked);
             oCCia.SetDBMassRange((double)numericUpDownDBMassRange.Value);
             if (comboBoxDBAction.Text == DBActionMenu[0])
             {
-                foreach (string Filename in Filenames)
+                foreach (var Filename in Filenames)
                 {
                     if (InputFileTextFormats.Contains(Path.GetExtension(Filename)) == true)
                     {
@@ -1054,8 +1054,8 @@ namespace CiaUi
             }
             else if (comboBoxDBAction.Text == DBActionMenu[1])
             {
-                bool ErrorTypeExtension = false;
-                foreach (string Filename in Filenames)
+                var ErrorTypeExtension = false;
+                foreach (var Filename in Filenames)
                 {
                     if (InputFileTextFormats.Contains(Path.GetExtension(Filename)) != true)
                     {
@@ -1070,7 +1070,7 @@ namespace CiaUi
             }
             else if (comboBoxDBAction.Text == DBActionMenu[2])
             {
-                foreach (string Filename in Filenames)
+                foreach (var Filename in Filenames)
                 {
                     if (Path.GetExtension(Filename) == ".bin")
                     {
@@ -1092,35 +1092,35 @@ namespace CiaUi
         }
         private void textBoxCompareReports_DragDrop(object sender, DragEventArgs e)
         {
-            string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
             CompareReports(Filenames);
         }
         void CompareReports(string[] Filenames)
         {
-            int TotalSamples = 0;
-            List<string> SampleNames = new List<string>();
-            foreach (string Filename in Filenames)
+            var TotalSamples = 0;
+            var SampleNames = new List<string>();
+            foreach (var Filename in Filenames)
             {
-                string[] ColumnHeaders = File.ReadAllLines(Filename)[0].Split(oCCia.WordSeparators);
-                int Samples = ColumnHeaders.Length - 10;
+                var ColumnHeaders = File.ReadAllLines(Filename)[0].Split(oCCia.WordSeparators);
+                var Samples = ColumnHeaders.Length - 10;
                 TotalSamples = TotalSamples + Samples;
-                for (int Sample = 0; Sample < Samples; Sample++)
+                for (var Sample = 0; Sample < Samples; Sample++)
                 {
                     SampleNames.Add(ColumnHeaders[10 + Sample]);
                 }
             }
-            SortedDictionary<double, ReportData> FormulaDict = new SortedDictionary<double, ReportData>();
-            int StartSample = 0;
-            foreach (string Filename in Filenames)
+            var FormulaDict = new SortedDictionary<double, ReportData>();
+            var StartSample = 0;
+            foreach (var Filename in Filenames)
             {
-                string[] LineString = File.ReadAllLines(Filename);
-                string[] ColumnHeaders = File.ReadAllLines(Filename)[0].Split(oCCia.WordSeparators);
-                int Samples = ColumnHeaders.Length - 10;
-                for (int Line = 1; Line < LineString.Length; Line++)
+                var LineString = File.ReadAllLines(Filename);
+                var ColumnHeaders = File.ReadAllLines(Filename)[0].Split(oCCia.WordSeparators);
+                var Samples = ColumnHeaders.Length - 10;
+                for (var Line = 1; Line < LineString.Length; Line++)
                 {
-                    string[] LineParts = LineString[Line].Split(oCCia.WordSeparators);
-                    short[] Formula = new short[CCia.ElementCount];
-                    for (int Element = 0; Element < CCia.ElementCount; Element++)
+                    var LineParts = LineString[Line].Split(oCCia.WordSeparators);
+                    var Formula = new short[CCia.ElementCount];
+                    for (var Element = 0; Element < CCia.ElementCount; Element++)
                     {
                         Formula[Element] = Int16.Parse(LineParts[2 + Element]);
                     }
@@ -1128,11 +1128,11 @@ namespace CiaUi
                     {
                         continue;
                     }
-                    double NeutralMass = oCCia.FormulaToNeutralMass(Formula);
+                    var NeutralMass = oCCia.FormulaToNeutralMass(Formula);
                     double[] Abundances;
                     if (FormulaDict.ContainsKey(NeutralMass) == false)
                     {
-                        ReportData Data = new ReportData();
+                        var Data = new ReportData();
                         Data.Formula = (short[])Formula.Clone();
                         Data.Abundances = new double[TotalSamples];
                         FormulaDict.Add(NeutralMass, Data);
@@ -1142,34 +1142,34 @@ namespace CiaUi
                     {
                         Abundances = FormulaDict[NeutralMass].Abundances;
                     }
-                    for (int Sample = 0; Sample < Samples; Sample++)
+                    for (var Sample = 0; Sample < Samples; Sample++)
                     {
                         Abundances[StartSample + Sample] = double.Parse(LineParts[10 + Sample]);
                     }
                 }
                 StartSample = StartSample + Samples;
             }
-            string Delimiter = ",";
-            string HeaderLine = "NeutralMass" + Delimiter + "Mass";
-            foreach (string Element in Enum.GetNames(typeof(CCia.EElemIndex)))
+            var Delimiter = ",";
+            var HeaderLine = "NeutralMass" + Delimiter + "Mass";
+            foreach (var Element in Enum.GetNames(typeof(CCia.EElemIndex)))
             {
                 HeaderLine = HeaderLine + Delimiter + Element;
             }
-            foreach (string SampleName in SampleNames)
+            foreach (var SampleName in SampleNames)
             {
                 HeaderLine = HeaderLine + Delimiter + SampleName;
             }
-            StreamWriter oStreamWriter = new StreamWriter(Path.GetDirectoryName(Filenames[0]) + "\\Comparision.csv");
+            var oStreamWriter = new StreamWriter(Path.GetDirectoryName(Filenames[0]) + "\\Comparision.csv");
             oStreamWriter.WriteLine(HeaderLine);
 
-            foreach (KeyValuePair<double, ReportData> KVP in FormulaDict)
+            foreach (var KVP in FormulaDict)
             {
-                string Line = KVP.Key.ToString() + Delimiter + oCCia.Ipa.GetChargedMass(KVP.Key).ToString();
-                foreach (short Count in KVP.Value.Formula)
+                var Line = KVP.Key.ToString() + Delimiter + oCCia.Ipa.GetChargedMass(KVP.Key).ToString();
+                foreach (var Count in KVP.Value.Formula)
                 {
                     Line = Line + Delimiter + Count.ToString();
                 }
-                foreach (double Abundance in KVP.Value.Abundances)
+                foreach (var Abundance in KVP.Value.Abundances)
                 {
                     Line = Line + Delimiter + Abundance.ToString();
                 }
@@ -1186,51 +1186,51 @@ namespace CiaUi
         }
         private void textBoxConverFiles_DragDrop(object sender, DragEventArgs e)
         {
-            string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string Filename in Filenames)
+            var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (var Filename in Filenames)
             {
                 XmlToXls(Filename);
             }
         }
         private void XmlToXls(string Filename)
         {
-            XmlDocument XmlDoc = new XmlDocument();
+            var XmlDoc = new XmlDocument();
             XmlDoc.Load(Filename);
             //check Bruker instrument
-            XmlNodeList Nodes = XmlDoc.GetElementsByTagName("fileinfo");
+            var Nodes = XmlDoc.GetElementsByTagName("fileinfo");
             if (Nodes.Count != 1) { return; }
             if (Nodes[0].Attributes["appname"].Value != "Bruker Compass DataAnalysis") { return; }
             //read peaks
-            XmlNodeList MsPeakNodes = XmlDoc.GetElementsByTagName("ms_peaks");
+            var MsPeakNodes = XmlDoc.GetElementsByTagName("ms_peaks");
             if (MsPeakNodes.Count != 1) { return; }
-            XmlNode MsPeakNode = MsPeakNodes[0];
-            int Peaks = MsPeakNode.ChildNodes.Count;
-            int[] myLengthsArray = new int[2] { Peaks, 5 };
-            int[] myBoundsArray = new int[2] { 1, 1 };
-            Array myArray = Array.CreateInstance(typeof(double), myLengthsArray, myBoundsArray);
+            var MsPeakNode = MsPeakNodes[0];
+            var Peaks = MsPeakNode.ChildNodes.Count;
+            var myLengthsArray = new int[2] { Peaks, 5 };
+            var myBoundsArray = new int[2] { 1, 1 };
+            var myArray = Array.CreateInstance(typeof(double), myLengthsArray, myBoundsArray);
             double Maxi = 0;
-            for (int Peak = 1; Peak <= Peaks; Peak++)
+            for (var Peak = 1; Peak <= Peaks; Peak++)
             {
                 //<pk res="930674.5" algo="FTMS" fwhm="0.000218" a="102.53" sn="7.15" i="646225.1" mz="203.034719"/>
-                XmlAttributeCollection Attributes = MsPeakNode.ChildNodes[Peak - 1].Attributes;
+                var Attributes = MsPeakNode.ChildNodes[Peak - 1].Attributes;
                 myArray.SetValue(double.Parse(Attributes["mz"].Value), Peak, 1);
                 myArray.SetValue(double.Parse(Attributes["i"].Value), Peak, 2);
                 myArray.SetValue(double.Parse(Attributes["sn"].Value), Peak, 3);
                 myArray.SetValue(double.Parse(Attributes["res"].Value), Peak, 4);
-                double Currenti = (double)myArray.GetValue(Peak, 2);
+                var Currenti = (double)myArray.GetValue(Peak, 2);
                 if (Maxi < Currenti) { Maxi = Currenti; }
 
             }
             XmlDoc = null;
-            for (int Peak = 1; Peak <= Peaks; Peak++)
+            for (var Peak = 1; Peak <= Peaks; Peak++)
             {
-                double rel_ab = ((double)myArray.GetValue(Peak, 2)) / Maxi;
+                var rel_ab = ((double)myArray.GetValue(Peak, 2)) / Maxi;
                 myArray.SetValue(rel_ab, Peak, 5);
             }
 
-            Microsoft.Office.Interop.Excel.Application MyApp = new Microsoft.Office.Interop.Excel.Application();
+            var MyApp = new Microsoft.Office.Interop.Excel.Application();
             MyApp.Visible = false;
-            Microsoft.Office.Interop.Excel.Workbook MyBook = MyApp.Workbooks.Add(1);
+            var MyBook = MyApp.Workbooks.Add(1);
             Microsoft.Office.Interop.Excel.Worksheet MySheet = MyBook.Sheets[1];
             MySheet.Cells[1, 1].Value = "mz";
             MySheet.Cells[1, 2].Value = "i";
@@ -1238,10 +1238,10 @@ namespace CiaUi
             MySheet.Cells[1, 4].Value = "res";
             MySheet.Cells[1, 5].Value = "rel_ab";
 
-            Microsoft.Office.Interop.Excel.Range MyRange = MySheet.get_Range("A2", "E" + Peaks.ToString());
+            var MyRange = MySheet.get_Range("A2", "E" + Peaks.ToString());
             MyRange.Value = myArray;
             MyBook.SaveAs(Filename.Substring(0, Filename.Length - Path.GetExtension(Filename).Length) + ".xls");
-            string sss = Path.GetFileNameWithoutExtension(Filename);
+            var sss = Path.GetFileNameWithoutExtension(Filename);
 
             oCCia.CleanComObject(MyRange);
             MyRange = null;
@@ -1261,22 +1261,22 @@ namespace CiaUi
         {
             try
             {
-                System.Data.DataTable UserDefinedFilter = new System.Data.DataTable();
+                var UserDefinedFilter = new System.Data.DataTable();
                 UserDefinedFilter.Columns.Add("Mass", typeof(double));
-                foreach (string Name in Enum.GetNames(typeof(CCia.EElemIndex)))
+                foreach (var Name in Enum.GetNames(typeof(CCia.EElemIndex)))
                 {
                     UserDefinedFilter.Columns.Add(Name, typeof(short));
                 }
                 UserDefinedFilter.Columns.Add("UserDefinedFilter", typeof(bool), textBoxFilter.Text);
                 UserDefinedFilter.Rows.Add(UserDefinedFilter.NewRow());
 
-                double Mass = ((int)numericUpDownCAtoms.Value) * CElements.C
-                        + ((int)numericUpDownHAtoms.Value) * CElements.H
-                        + ((int)numericUpDownOAtoms.Value) * CElements.O
-                        + ((int)numericUpDownNAtoms.Value) * CElements.N
-                        + ((int)numericUpDownSAtoms.Value) * CElements.S
-                        + ((int)numericUpDownPAtoms.Value) * CElements.P
-                        + ((int)numericUpDownNaAtoms.Value) * CElements.Na;
+                var Mass = ((int)numericUpDownCAtoms.Value) * CElements.C
+                           + ((int)numericUpDownHAtoms.Value) * CElements.H
+                           + ((int)numericUpDownOAtoms.Value) * CElements.O
+                           + ((int)numericUpDownNAtoms.Value) * CElements.N
+                           + ((int)numericUpDownSAtoms.Value) * CElements.S
+                           + ((int)numericUpDownPAtoms.Value) * CElements.P
+                           + ((int)numericUpDownNaAtoms.Value) * CElements.Na;
                 textBoxNeutralMass.Text = Mass.ToString();
 
                 UserDefinedFilter.Rows[0]["Mass"] = Mass;
@@ -1310,21 +1310,21 @@ namespace CiaUi
             {
                 return;
             }
-            System.Data.DataTable UserDefinedFilter = new System.Data.DataTable();
+            var UserDefinedFilter = new System.Data.DataTable();
             UserDefinedFilter.Columns.Add("Mass", typeof(double));
-            foreach (string Name in Enum.GetNames(typeof(CCia.EElemIndex)))
+            foreach (var Name in Enum.GetNames(typeof(CCia.EElemIndex)))
             {
                 UserDefinedFilter.Columns.Add(Name, typeof(short));
             }
             UserDefinedFilter.Columns.Add("UserDefinedFilter", typeof(bool), textBoxFilter.Text);
             UserDefinedFilter.Rows.Add(UserDefinedFilter.NewRow());
 
-            int[] CompositionCounts = new int[DBCompositions.Length];
-            for (int DBFormulaIndex = 0; DBFormulaIndex < oCCia.DBFormulas.Length; DBFormulaIndex++)
+            var CompositionCounts = new int[DBCompositions.Length];
+            for (var DBFormulaIndex = 0; DBFormulaIndex < oCCia.DBFormulas.Length; DBFormulaIndex++)
             {
                 UserDefinedFilter.Rows[0]["Mass"] = oCCia.DBMasses[DBFormulaIndex];
-                short[] CurFormula = oCCia.DBFormulas[DBFormulaIndex];
-                for (int Element = 0; Element < CCia.ElementCount; Element++)
+                var CurFormula = oCCia.DBFormulas[DBFormulaIndex];
+                for (var Element = 0; Element < CCia.ElementCount; Element++)
                 {
                     UserDefinedFilter.Rows[0][Enum.GetName(typeof(CCia.EElemIndex), Element)] = CurFormula[Element];
                 }
@@ -1333,17 +1333,17 @@ namespace CiaUi
                     continue;
                 }
 
-                bool bC = (CurFormula[(int)CCia.EElemIndex.C] > 0) | (CurFormula[(int)CCia.EElemIndex.C13] > 0);
-                bool bH = CurFormula[(int)CCia.EElemIndex.H] > 0;
-                bool bO = CurFormula[(int)CCia.EElemIndex.O] > 0;
-                bool bN = CurFormula[(int)CCia.EElemIndex.N] > 0;
-                bool bS = CurFormula[(int)CCia.EElemIndex.S] > 0;
-                bool bP = CurFormula[(int)CCia.EElemIndex.P] > 0;
-                bool bNa = CurFormula[(int)CCia.EElemIndex.Na] > 0;
+                var bC = (CurFormula[(int)CCia.EElemIndex.C] > 0) | (CurFormula[(int)CCia.EElemIndex.C13] > 0);
+                var bH = CurFormula[(int)CCia.EElemIndex.H] > 0;
+                var bO = CurFormula[(int)CCia.EElemIndex.O] > 0;
+                var bN = CurFormula[(int)CCia.EElemIndex.N] > 0;
+                var bS = CurFormula[(int)CCia.EElemIndex.S] > 0;
+                var bP = CurFormula[(int)CCia.EElemIndex.P] > 0;
+                var bNa = CurFormula[(int)CCia.EElemIndex.Na] > 0;
 
-                for (int CompositionIndex = 0; CompositionIndex < DBCompositions.Length; CompositionIndex++)
+                for (var CompositionIndex = 0; CompositionIndex < DBCompositions.Length; CompositionIndex++)
                 {
-                    string Composition = DBCompositions[CompositionIndex];
+                    var Composition = DBCompositions[CompositionIndex];
                     if (Composition.Contains("C") == true) { if (bC == false) { continue; } }
                     if (Composition.Contains("H") == true) { if (bH == false) { continue; } }
                     if (Composition.Contains("O") == true) { if (bO == false) { continue; } }
@@ -1354,10 +1354,10 @@ namespace CiaUi
                     CompositionCounts[CompositionIndex]++;
                 }
             }
-            string[] Lines = new string[DBCompositions.Length + 2];
+            var Lines = new string[DBCompositions.Length + 2];
             Lines[0] = "Total DB formulas," + oCCia.DBFormulas.Length;
             Lines[1] = "Filter," + textBoxFilter.Text;
-            for (int DBFormulaIndex = 0; DBFormulaIndex < DBCompositions.Length; DBFormulaIndex++)
+            for (var DBFormulaIndex = 0; DBFormulaIndex < DBCompositions.Length; DBFormulaIndex++)
             {
                 Lines[DBFormulaIndex + 2] = DBCompositions[DBFormulaIndex] + "," + CompositionCounts[DBFormulaIndex];
             }
@@ -1377,27 +1377,27 @@ namespace CiaUi
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("ja-JP");
             try
             {
-                string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+                var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
                 Support.InputData InputData;
                 Support.CFileReader.ReadFile(Filenames[0], out InputData);
-                Support.CChainBlocks ChainBlocks = new CChainBlocks();
+                var ChainBlocks = new CChainBlocks();
                 ChainBlocks.KnownMassBlocksFromFile("dmTransformations_MalakReal.csv");
-                string IsotopeFilename = "Isotope.inf";
+                var IsotopeFilename = "Isotope.inf";
                 CIsotope.ConvertIsotopeFileIntoIsotopeDistanceFile(IsotopeFilename);
-                Support.CChainBlocks.PairDistance[] DistancePeaks = ChainBlocks.GetPairChainIsotopeStatistics(InputData);
-                int Records = 0;
-                foreach (Support.CChainBlocks.PairDistance CurPairDistance in DistancePeaks)
+                var DistancePeaks = ChainBlocks.GetPairChainIsotopeStatistics(InputData);
+                var Records = 0;
+                foreach (var CurPairDistance in DistancePeaks)
                 {
                     Records = Records + CurPairDistance.DistancePeakTypeList.Count;
                 }
 
                 tableLayoutPanelChains.SuspendLayout();
-                int Rows = Records + 2;//+ Head + Last Row without Controls
+                var Rows = Records + 2;//+ Head + Last Row without Controls
                 if (tableLayoutPanelChains.RowStyles.Count > Rows)
                 {
-                    for (int Row = tableLayoutPanelChains.RowCount - 1; Row >= Rows; Row--)
+                    for (var Row = tableLayoutPanelChains.RowCount - 1; Row >= Rows; Row--)
                     {
-                        for (int iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++)
+                        for (var iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++)
                         {
                             tableLayoutPanelChains.Controls.RemoveAt(tableLayoutPanelChains.Controls.Count - 1);
                         }
@@ -1408,12 +1408,12 @@ namespace CiaUi
                 else if (tableLayoutPanelChains.RowStyles.Count < Rows)
                 {
                     tableLayoutPanelChains.RowCount = Rows;
-                    for (int Row = tableLayoutPanelChains.RowStyles.Count - 1; Row < Rows - 1; Row++)
+                    for (var Row = tableLayoutPanelChains.RowStyles.Count - 1; Row < Rows - 1; Row++)
                     {//"Count-1" due Last Row without Controls
                         tableLayoutPanelChains.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, (new System.Windows.Forms.TextBox()).Height + 2 * (new System.Windows.Forms.TextBox()).Margin.Top));
-                        for (int iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++)
+                        for (var iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++)
                         {
-                            System.Windows.Forms.TextBox oTextBox = new System.Windows.Forms.TextBox();
+                            var oTextBox = new System.Windows.Forms.TextBox();
                             oTextBox.Anchor = AnchorStyles.None;
                             oTextBox.ReadOnly = true;
                             oTextBox.AutoSize = true;
@@ -1422,10 +1422,10 @@ namespace CiaUi
                         }
                     }
                 }
-                int RecordIndex = 1;
-                foreach (Support.CChainBlocks.PairDistance CurPairDistance in DistancePeaks)
+                var RecordIndex = 1;
+                foreach (var CurPairDistance in DistancePeaks)
                 {
-                    for (int TypeIndex = 0; TypeIndex < CurPairDistance.DistancePeakTypeList.Count; TypeIndex++)
+                    for (var TypeIndex = 0; TypeIndex < CurPairDistance.DistancePeakTypeList.Count; TypeIndex++)
                     {
                         //string [] ChainColumnNames = new string [] { "Types", "PairCount", "PairDistance", "Formula", "FormulaDistance", "ChainCount" };
                         tableLayoutPanelChains.GetControlFromPosition(0, RecordIndex).Text = CurPairDistance.DistancePeakTypeList[TypeIndex].ToString();
@@ -1535,7 +1535,7 @@ namespace CiaUi
         {
             try
             {
-                SaveFileDialog OSD = new SaveFileDialog();
+                var OSD = new SaveFileDialog();
                 OSD.Title = "Save parameters";
                 OSD.InitialDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
                 OSD.Filter = "XML Files (.xml)|*.xml|All Files (*.*)|*.*";
@@ -1561,8 +1561,8 @@ namespace CiaUi
         {
             try
             {
-                string[] Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
-                string ParameterFilename = Filenames[0];
+                var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+                var ParameterFilename = Filenames[0];
                 textBoxParameterFile.Text = "Parameter file:" + ParameterFilename;
                 if (Path.GetExtension(ParameterFilename) != ".xml")
                 {
