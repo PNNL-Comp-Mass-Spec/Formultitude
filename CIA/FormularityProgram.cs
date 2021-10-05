@@ -1279,7 +1279,10 @@ namespace CIA
                         //    oStreamWriter = new StreamWriter( Filenames [ FileIndex ].Substring( 0, Filenames [ FileIndex ].Length - FileExtentionLength ) + "CShOut.txt" );
                         //}
 
-                        StreamWriter oStreamWriter = new StreamWriter(Path.Combine(OutputSubfolder, Path.GetFileNameWithoutExtension(Filenames[FileIndex]) + "Result.csv"));
+                        var reportFilePath = Path.Combine(OutputSubfolder, Path.GetFileNameWithoutExtension(Filenames[FileIndex]) + "Result.csv");
+                        Console.WriteLine("Writing results to " + reportFilePath);
+
+                        StreamWriter oStreamWriter = new StreamWriter(reportFilePath);
                         double[] Masses1 = oData.Masses[FileIndex];
                         double[] Abundances1 = oData.Abundances[FileIndex];
                         double[] SNs1 = oData.SNs[FileIndex];
