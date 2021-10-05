@@ -3700,7 +3700,6 @@ namespace CIA
         }
 
         public char[] WordSeparators = { '\t', ',', ' ' };
-        private char[] LineSeparators = { '\r', '\n' };
         private bool DBCalculateMassFromFormula = true;
         public bool GetDBCalculateMassFromFormula() { return DBCalculateMassFromFormula; }
 
