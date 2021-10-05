@@ -70,7 +70,7 @@ namespace FindChains
 
         private void textBoxChainBlockMasses_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -83,7 +83,7 @@ namespace FindChains
 
         private void textBoxSpectraFile_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -103,11 +103,11 @@ namespace FindChains
 
                 //cut data
                 var SettingCount = 0;
-                if (checkBoxS2N.Checked == true) { SettingCount++; }
-                if (checkBoxUseRelAbundance.Checked == true) { SettingCount++; }
+                if (checkBoxS2N.Checked) { SettingCount++; }
+                if (checkBoxUseRelAbundance.Checked) { SettingCount++; }
                 var CurSettings = new Support.CFileReader.CutSettings[SettingCount];
                 var SettingIndex = 0;
-                if (checkBoxS2N.Checked == true)
+                if (checkBoxS2N.Checked)
                 {
                     CurSettings[SettingIndex] = new CFileReader.CutSettings();
                     CurSettings[SettingIndex].CutType = Support.CFileReader.ECutType.S2N;
@@ -115,7 +115,7 @@ namespace FindChains
                     CurSettings[SettingIndex].Max = -1;
                     SettingIndex++;
                 }
-                if (checkBoxUseRelAbundance.Checked == true)
+                if (checkBoxUseRelAbundance.Checked)
                 {
                     CurSettings[SettingIndex] = new CFileReader.CutSettings();
                     CurSettings[SettingIndex].CutType = Support.CFileReader.ECutType.RelAbundance;
@@ -124,7 +124,7 @@ namespace FindChains
                 }
 
                 var Filename = Path.GetDirectoryName(Filenames[FileIndex]) + "\\" + Path.GetFileNameWithoutExtension(Filenames[FileIndex]);
-                if (checkBoxPPMProcess.Checked == true)
+                if (checkBoxPPMProcess.Checked)
                 {
                     var MaxChainStartMass = (double)numericUpDownMaxPeakToStartChain.Value;
                     var MinPeaksInChain = (int)numericUpDownMinPeaksInChain.Value;
@@ -148,7 +148,7 @@ namespace FindChains
 
                     for (var LeftChainIndex = 0; LeftChainIndex < RawData.Chains.Length; LeftChainIndex++)
                     {
-                        if (IsInChainCluster[LeftChainIndex] == true) { continue; }
+                        if (IsInChainCluster[LeftChainIndex]) { continue; }
                         var ChainCluster = new List<int>();
                         ChainCluster.Add(LeftChainIndex);
                         IsInChainCluster[LeftChainIndex] = true;
@@ -161,10 +161,10 @@ namespace FindChains
                         var New = false;
                         for (var RightChainIndex = LeftChainIndex + 1; RightChainIndex < RawData.Chains.Length; RightChainIndex++)
                         {
-                            if (IsInChainCluster[RightChainIndex] == true) { continue; }
+                            if (IsInChainCluster[RightChainIndex]) { continue; }
                             foreach (var ComparingIndex in RawData.Chains[RightChainIndex].PeakIndexes)
                             {
-                                if (ClusterPeaksD.Contains(new KeyValuePair<int, int>(ComparingIndex, ComparingIndex)) == true)
+                                if (ClusterPeaksD.Contains(new KeyValuePair<int, int>(ComparingIndex, ComparingIndex)))
                                 {
                                     ChainCluster.Add(RightChainIndex);
                                     IsInChainCluster[RightChainIndex] = true;
@@ -180,7 +180,7 @@ namespace FindChains
                                     break;
                                 }
                             }
-                            if (New == true)
+                            if (New)
                             {
                                 if (RightChainIndex == RawData.Chains.Length - 1)
                                 {
@@ -283,7 +283,7 @@ namespace FindChains
                         {
                             for (var ClusterChainIndex = 1; ClusterChainIndex < BiggestChainCluster.Count; ClusterChainIndex++)
                             {
-                                if (ClusterChains[ClusterChainIndex] == true) { continue; }
+                                if (ClusterChains[ClusterChainIndex]) { continue; }
                                 var SearchPeakIndex1 = Array.BinarySearch(RawData.Chains[BiggestChainCluster[ClusterChainIndex]].PeakIndexes, PeakMzErrorArray[CurIndex].PeakIndex);
                                 if (SearchPeakIndex1 < 0) { continue; }
                                 var PeakIndexes = RawData.Chains[BiggestChainCluster[ClusterChainIndex]].PeakIndexes;
@@ -458,7 +458,7 @@ namespace FindChains
                     //                    }
                 }
 
-                if (checkBoxAmuProcess.Checked == true)
+                if (checkBoxAmuProcess.Checked)
                 {
                     CalculatePpmError(Masses);
                     var Error = (double)numericUpDownAbsError.Value;
@@ -554,7 +554,7 @@ namespace FindChains
                             }
                         }
                     }
-                    if (checkBoxBinLinks.Checked == true)
+                    if (checkBoxBinLinks.Checked)
                     {
                         var oStreamWriterBinLinks = new StreamWriter(Filename + "BinLinks.csv");
                         oStreamWriterBinLinks.WriteLine("Bin,Min,PairPeaks");
@@ -599,7 +599,7 @@ namespace FindChains
                         }
                     }
 
-                    if (checkBoxFileFormatPeakIndex.Checked == true)
+                    if (checkBoxFileFormatPeakIndex.Checked)
                     {
                         var oStreamWriterChains = new StreamWriter(Filename + "ChainsAmuIndex.csv");
                         oStreamWriterChains.WriteLine("Distance,MaxError,Indexes");
@@ -616,7 +616,7 @@ namespace FindChains
                         }
                         oStreamWriterChains.Close();
                     }
-                    if (checkBoxFileFormatPeakMass.Checked == true)
+                    if (checkBoxFileFormatPeakMass.Checked)
                     {
                         var oStreamWriterChains = new StreamWriter(Filename + "ChainsAmuMass.csv");
                         oStreamWriterChains.WriteLine("Distance,MaxError,Mass");
@@ -633,7 +633,7 @@ namespace FindChains
                         }
                         oStreamWriterChains.Close();
                     }
-                    if (checkBoxFileFormatPeakAbundance.Checked == true)
+                    if (checkBoxFileFormatPeakAbundance.Checked)
                     {
                         var oStreamWriterChains = new StreamWriter(Filename + "ChainsAmuAbun.csv");
                         oStreamWriterChains.WriteLine("Distance,MaxError,Abundance");
@@ -827,7 +827,7 @@ namespace FindChains
         }
         private void buttonCalLogParser_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -852,7 +852,7 @@ namespace FindChains
                     var ErrorsAfterCal = new List<double>();
                     for (; LineIndex < Lines.Length; LineIndex++)
                     {
-                        if (Lines[LineIndex].StartsWith("quadratic_calibration") == true) { break; }
+                        if (Lines[LineIndex].StartsWith("quadratic_calibration")) { break; }
                         var CalibrantParts = Lines[LineIndex].Split(new[] { '\t' });
                         ErrorsBeforeCal.Add(double.Parse(CalibrantParts[3]));
                         ErrorsAfterCal.Add(double.Parse(CalibrantParts[5]));

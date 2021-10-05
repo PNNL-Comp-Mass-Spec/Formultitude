@@ -128,7 +128,7 @@ namespace CiaUi
         }
         private void textBoxDropSpectraFiles_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -269,7 +269,7 @@ namespace CiaUi
         }
         private void textBoxCalFile_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -307,7 +307,7 @@ namespace CiaUi
         }
         private void textBoxDropDB_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -327,7 +327,7 @@ namespace CiaUi
             var CalibrationReady = (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none)
                                     | (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none) & (textBoxCalFile.TextLength > "Drop calibration file: ".Length)));
             var CIAReady = (oCCia.GetCiaDBFilename().Length > 0) & CalibrationReady;
-            if (CIAReady == true)
+            if (CIAReady)
             {
                 textBoxDropSpectraFiles.BackColor = Color.LightGreen;
                 textBoxDropSpectraFiles.Enabled = true;

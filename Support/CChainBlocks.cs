@@ -110,7 +110,7 @@ namespace Support
                 else
                 {
                     ElementName = Formula[SymbolIndex].ToString();
-                    if (char.IsUpper(Formula[SymbolIndex + 1]) == true)
+                    if (char.IsUpper(Formula[SymbolIndex + 1]))
                     {
                         //next element
                         //NegPos = 1;
@@ -118,7 +118,7 @@ namespace Support
                     }
                     else
                     {
-                        if (char.IsLower(Formula[SymbolIndex + 1]) == true)
+                        if (char.IsLower(Formula[SymbolIndex + 1]))
                         {
                             //Check second small letter
                             ElementName = ElementName + Formula[SymbolIndex + 1];
@@ -143,7 +143,7 @@ namespace Support
                             {
                                 //Atoms = 1;
                             }
-                            else if (char.IsDigit(Formula[SymbolIndex + 1]) == true)
+                            else if (char.IsDigit(Formula[SymbolIndex + 1]))
                             {
                                 var Number = Formula[SymbolIndex + 1].ToString();
                                 SymbolIndex = SymbolIndex + 1;
@@ -200,7 +200,7 @@ namespace Support
                     var ChainDistance = Masses[SecondPeakIndex] - Masses[FirstPeakIndex];
                     if (CPpmError.MassMinusPpmError(ChainDistance, PeakPpmError) > MaxChainDistance) { break; }
                     var ChainBlockIndex = FindKnownChainBlockIndex(ChainDistance, ChainPpmError);
-                    if ((OnlyKnowsChains == true) && (ChainBlockIndex < 0))
+                    if (OnlyKnowsChains && (ChainBlockIndex < 0))
                     {
                         continue;
                     }
@@ -291,7 +291,7 @@ namespace Support
                         }
                         continue;
                     }
-                    if (AreBlockSizesTheSame == true)
+                    if (AreBlockSizesTheSame)
                     {
                         if (FirstChain.PeakIndexes.Length >= SecondChain.PeakIndexes.Length)
                         {
@@ -324,10 +324,10 @@ namespace Support
             //search duplicate chain in each peak
             for (var FirstChainIndex = 0; FirstChainIndex < Chains.Length - 1; FirstChainIndex++)
             {
-                if (NotUniqueChains[FirstChainIndex] == true) { continue; }
+                if (NotUniqueChains[FirstChainIndex]) { continue; }
                 for (var SecondChainIndex = FirstChainIndex + 1; SecondChainIndex < Chains.Length; SecondChainIndex++)
                 {
-                    if (NotUniqueChains[SecondChainIndex] == true) { continue; }
+                    if (NotUniqueChains[SecondChainIndex]) { continue; }
                     if (AreChainsDuplicated(Data, Chains[FirstChainIndex], Chains[SecondChainIndex], PeakPpmError) > 0)
                     {
                         NotUniqueChains[SecondChainIndex] = true;
@@ -696,10 +696,10 @@ namespace Support
             //search duplicate chain in each peak
             for (var ChainIndex = 0; ChainIndex < Chains.Length - 1; ChainIndex++)
             {
-                if (NotUniqueChains[ChainIndex] == true) { continue; }
+                if (NotUniqueChains[ChainIndex]) { continue; }
                 for (var NextChainIndex = ChainIndex + 1; NextChainIndex < Chains.Length; NextChainIndex++)
                 {
-                    if (NotUniqueChains[NextChainIndex] == true) { continue; }
+                    if (NotUniqueChains[NextChainIndex]) { continue; }
                     var Result = AreChainsTheSame(Chains[ChainIndex], Chains[NextChainIndex]);
                     if (Result > 0)
                     {
@@ -736,7 +736,7 @@ namespace Support
 
             for (var ChainIndex = 0; ChainIndex < Data.Chains.Length; ChainIndex++)
             {
-                if (IsChainInCluster[ChainIndex] == true) { continue; }
+                if (IsChainInCluster[ChainIndex]) { continue; }
                 IsChainInCluster[ChainIndex] = true;
 
                 var ClusterChains = new List<int>();
@@ -759,11 +759,11 @@ namespace Support
                     var WasAddedChain = false;
                     for (var NextChainIndex = ChainIndex + 1; NextChainIndex < Data.Chains.Length; NextChainIndex++)
                     {
-                        if (IsChainInCluster[NextChainIndex] == true) { continue; }
+                        if (IsChainInCluster[NextChainIndex]) { continue; }
                         foreach (var PeakIndex in Data.Chains[NextChainIndex].PeakIndexes)
                         {
                             int ParentChainIndex;
-                            if (ClusterPeakSortedList.TryGetValue(PeakIndex, out ParentChainIndex) == true)
+                            if (ClusterPeakSortedList.TryGetValue(PeakIndex, out ParentChainIndex))
                             {
                                 IsChainInCluster[NextChainIndex] = true;
                                 ClusterChains.Add(NextChainIndex);
@@ -1054,7 +1054,7 @@ namespace Support
             {
                 for (var ChainIndex = 0; ChainIndex < oCluster.ChainIndexes.Length; ChainIndex++)
                 {
-                    if (UsedChains[ChainIndex] == true) { continue; }
+                    if (UsedChains[ChainIndex]) { continue; }
                     var CurChain = Data.Chains[oCluster.ChainIndexes[ChainIndex]];
                     var ConnectedChainPeakIndex = -1;
                     for (var ChainPeakIndex = 0; ChainPeakIndex < CurChain.PeakIndexes.Length; ChainPeakIndex++)
@@ -1141,7 +1141,7 @@ namespace Support
             {
                 for (var ChainIndexInCluster = 0; ChainIndexInCluster < ClusterChainIndexes.Length; ChainIndexInCluster++)
                 {
-                    if (UsedChains[ChainIndexInCluster] == true) { continue; }
+                    if (UsedChains[ChainIndexInCluster]) { continue; }
                     var CurChainPeakIndexes = Data.Chains[ClusterChainIndexes[ChainIndexInCluster]].PeakIndexes;
                     var SearchPeakIndexInChain = 0;
                     for (; SearchPeakIndexInChain < CurChainPeakIndexes.Length; SearchPeakIndexInChain++)
@@ -1208,7 +1208,7 @@ namespace Support
                 }
                 Data.IdealMasses [ SearchPeakIndex ] = Data.IdealMasses [ PeakIndex ] + C13BlockMass;
                  */
-                if (SecondClusterPeakIndexes.Contains(SearchPeakIndex) == true)
+                if (SecondClusterPeakIndexes.Contains(SearchPeakIndex))
                 {
                     ParentPeakList.Add(PeakIndex);
                     C13PeakList.Add(SearchPeakIndex);
@@ -1668,7 +1668,7 @@ namespace Support
                 for (var ListIndex = 0; ListIndex < Cur.FormulaList.Count; ListIndex++)
                 {
                     var CurDistancePeakType = Cur.DistancePeakTypeList[ListIndex];
-                    if (((CurDistancePeakType == DistancePeakType.UChain) || (CurDistancePeakType == DistancePeakType.MUChain)) == true)
+                    if (((CurDistancePeakType == DistancePeakType.UChain) || (CurDistancePeakType == DistancePeakType.MUChain)))
                     {
                         if (UChainIndex >= UnknownCount)
                         {
@@ -1679,7 +1679,7 @@ namespace Support
                             UChainIndex++;
                         }
                     }
-                    else if (((CurDistancePeakType == DistancePeakType.Pair) || (CurDistancePeakType == DistancePeakType.MPair)) == true)
+                    else if (((CurDistancePeakType == DistancePeakType.Pair) || (CurDistancePeakType == DistancePeakType.MPair)))
                     {
                         if (UPairIndex >= UnknownCount)
                         {
@@ -1726,25 +1726,25 @@ namespace Support
                 for (var ListIndex = 0; ListIndex < Cur.FormulaList.Count; ListIndex++)
                 {
                     var CurDistancePeakType = Cur.DistancePeakTypeList[ListIndex];
-                    if (((CurDistancePeakType == DistancePeakType.DM) || (CurDistancePeakType == DistancePeakType.MDM)) == true)
+                    if (((CurDistancePeakType == DistancePeakType.DM) || (CurDistancePeakType == DistancePeakType.MDM)))
                     {
                         DMText.Append("\r\n" + Cur.LowBinIndex + "," + Cur.UpperBinIndex + "," + Cur.PairCount + "," + Cur.Mean.ToString("F8") + "," + Cur.StdDev.ToString("F8")
                                 + "," + Cur.DistancePeakTypeList[ListIndex].ToString() + ',' + Cur.FormulaList[ListIndex] + "," + Cur.FormulaDistanceList[ListIndex].ToString("F8")
                                 + "," + Cur.ChainCount + "," + Cur.ChainMean + "," + Cur.ChainStdDev.ToString("F8"));
                     }
-                    else if (((CurDistancePeakType == DistancePeakType.Chain) || (CurDistancePeakType == DistancePeakType.MChain)) == true)
+                    else if (((CurDistancePeakType == DistancePeakType.Chain) || (CurDistancePeakType == DistancePeakType.MChain)))
                     {
                         ChainText.Append("\r\n" + Cur.LowBinIndex + "," + Cur.UpperBinIndex + "," + Cur.PairCount + "," + Cur.Mean.ToString("F8") + "," + Cur.StdDev.ToString("F8")
                                 + "," + Cur.DistancePeakTypeList[ListIndex].ToString() + ',' + Cur.FormulaList[ListIndex] + "," + Cur.FormulaDistanceList[ListIndex].ToString("F8")
                                 + "," + Cur.ChainCount + "," + Cur.ChainMean + "," + Cur.ChainStdDev.ToString("F8"));
                     }
-                    else if (((CurDistancePeakType == DistancePeakType.Isotope) || (CurDistancePeakType == DistancePeakType.MIsotope)) == true)
+                    else if (((CurDistancePeakType == DistancePeakType.Isotope) || (CurDistancePeakType == DistancePeakType.MIsotope)))
                     {
                         IsotopeText.Append("\r\n" + Cur.LowBinIndex + "," + Cur.UpperBinIndex + "," + Cur.PairCount + "," + Cur.Mean.ToString("F8") + "," + Cur.StdDev.ToString("F8")
                                 + "," + Cur.DistancePeakTypeList[ListIndex].ToString() + ',' + Cur.FormulaList[ListIndex] + "," + Cur.FormulaDistanceList[ListIndex].ToString("F8")
                                 + "," + Cur.ChainCount + "," + Cur.ChainMean + "," + Cur.ChainStdDev.ToString("F8"));
                     }
-                    else if (((CurDistancePeakType == DistancePeakType.UChain) || (CurDistancePeakType == DistancePeakType.MUChain)) == true)
+                    else if (((CurDistancePeakType == DistancePeakType.UChain) || (CurDistancePeakType == DistancePeakType.MUChain)))
                     {
                         if (UChainIndex >= UnknownCount) { continue; }
                         UChainIndex++;
@@ -1752,7 +1752,7 @@ namespace Support
                                 + "," + Cur.DistancePeakTypeList[ListIndex].ToString() + ',' + Cur.FormulaList[ListIndex] + "," + Cur.FormulaDistanceList[ListIndex].ToString("F8")
                                 + "," + Cur.ChainCount + "," + Cur.ChainMean + "," + Cur.ChainStdDev.ToString("F8"));
                     }
-                    else if (((CurDistancePeakType == DistancePeakType.Pair) || (CurDistancePeakType == DistancePeakType.MPair)) == true)
+                    else if (((CurDistancePeakType == DistancePeakType.Pair) || (CurDistancePeakType == DistancePeakType.MPair)))
                     {
                         if (UPairIndex >= UnknownCount) { continue; }
                         UPairIndex++;

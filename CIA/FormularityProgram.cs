@@ -149,13 +149,13 @@ namespace CIA
                 System.Console.WriteLine("Loaded parameters.");
                 if (CiaOrIpa == false)
                 {
-                    if (oCCia.GetAlignment() == true)
+                    if (oCCia.GetAlignment())
                     {
                         if (oCCia.GetRelationErrorType() == CCia.RelationErrorType.DynamicPPM)
                         {
                             throw new Exception("in parameter file: multiple file alignment can't be used dynamic ppm relationship error.");
                         }
-                        else if (oCCia.GetStaticDynamicPpmError() == true)
+                        else if (oCCia.GetStaticDynamicPpmError())
                         {
                             throw new Exception("in parameter file: multiple file alignment can't be used dynamic ppm formula tolerance.");
                         }
@@ -396,7 +396,7 @@ namespace CIA
                 {
                     throw new Exception("Formula name (" + FormulaName + "is wrong");
                 }
-                if ((FormulaName.Length > CurrentSymbol + 1) && (Char.IsLetter(FormulaName[CurrentSymbol + 1]) == true))
+                if ((FormulaName.Length > CurrentSymbol + 1) && Char.IsLetter(FormulaName[CurrentSymbol + 1]))
                 {
                     //Maybe Element name consists of 2 letters
                     ElementName = FormulaName.Substring(CurrentSymbol, 2);
@@ -423,7 +423,7 @@ namespace CIA
                     }
                 }
                 var DigitCount = 0;
-                while ((FormulaName.Length > CurrentSymbol + DigitCount) && (Char.IsDigit(FormulaName[CurrentSymbol + DigitCount]) == true))
+                while ((FormulaName.Length > CurrentSymbol + DigitCount) && Char.IsDigit(FormulaName[CurrentSymbol + DigitCount]))
                 {
                     DigitCount = DigitCount + 1;
                 }
@@ -432,7 +432,7 @@ namespace CIA
                 {
                     ElementNumber = Int16.Parse(FormulaName.Substring(CurrentSymbol, DigitCount));
                 }
-                if (Negative == true)
+                if (Negative)
                 {
                     ElementNumber = (short)-ElementNumber;
                 }
@@ -594,7 +594,7 @@ namespace CIA
                         break;
                     }
                 }
-                if (IsRightPeakUnique == true)
+                if (IsRightPeakUnique)
                 {
                     Peak = Peak + 1;
                     continue;
@@ -701,7 +701,7 @@ namespace CIA
         }
         public double GetRealFormulaPpmError(double PeakMass)
         {
-            if (StaticDynamicPpmError == true)
+            if (StaticDynamicPpmError)
             {
                 return StdDevErrorGain * InputData.GetErrorStdDev(PeakMass);
             }
@@ -859,7 +859,7 @@ namespace CIA
         public void SetC13Tolerance(double C13Tolerance) { this.C13Tolerance = C13Tolerance; }
         public double GetRealC13Tolerance(double PeakMass)
         {
-            if (StaticDynamicPpmError == true)
+            if (StaticDynamicPpmError)
             {
                 return StdDevErrorGain * InputData.GetErrorStdDev(PeakMass);
             }
@@ -1041,7 +1041,7 @@ namespace CIA
                 oTotalCalibration.Load(RefPeakFilename);
             }
 
-            if (GenerateReports == true)
+            if (GenerateReports)
             {
                 string inputFileDirectoryPath;
 
@@ -1080,8 +1080,8 @@ namespace CIA
                 //Pre-Aligment
                 //oStreamLogWriter.Write( "Pre-alignment:" );
                 FormularityProgram.AppendToLog(oStreamLogWriter, "Pre-alignment:\n");
-                if ((PreAlignment == true)
-                        || (StaticDynamicPpmError == true)
+                if (PreAlignment
+                        || StaticDynamicPpmError
                         || (oRelationErrorType == RelationErrorType.DynamicPPM))
                 {
                     //spectra alignment
@@ -1093,7 +1093,7 @@ namespace CIA
                     InputData.MaxPpmErrorGain = 1;
                     var MinPeaksPerChain = 5;
 
-                    if (GenerateReports == true)
+                    if (GenerateReports)
                     {
                         //double [] StandardBlockMasses = new double [] { 2* CElements.H, CElements.C, 2* CElements.H + CElements.C, CElements.O };
                         ChainBlocks.CalculateErrorDistribution(InputData, StartPpmError, StandardBlockMasses);
@@ -1127,7 +1127,7 @@ namespace CIA
                     FormularityProgram.AppendToLog(oStreamLogWriter, "Error StdDev distribution along mass:\n");
                     //oStreamLogWriter.Write( InputData.ErrorDistributionToString() );
                     FormularityProgram.AppendToLog(oStreamLogWriter, InputData.ErrorDistributionToString());
-                    if (GenerateReports == true)
+                    if (GenerateReports)
                     {
                         File.WriteAllText(Path.Combine(OutputSubfolder, Path.GetFileNameWithoutExtension(Filenames[FileIndex]) + "ErrorDistribution.csv"), InputData.ErrorDistributionToString(true));
                         File.WriteAllText(Path.Combine(OutputSubfolder, Path.GetFileNameWithoutExtension(Filenames[FileIndex]) + "Chains.csv"), InputData.ChainsToString(true));
@@ -1135,7 +1135,7 @@ namespace CIA
                         File.WriteAllText(Path.Combine(OutputSubfolder, Path.GetFileNameWithoutExtension(Filenames[FileIndex]) + "IdealMassesAfterCluster0.csv"), InputData.IdealMassesToString());
                     }
                     ChainBlocks.AssignIdealMassesToRestPeaks(InputData);
-                    if (GenerateReports == true)
+                    if (GenerateReports)
                     {
                         File.WriteAllText(Path.Combine(OutputSubfolder, Path.GetFileNameWithoutExtension(Filenames[FileIndex]) + "IdealMasses.csv"), InputData.IdealMassesToString());
                     }
@@ -1241,7 +1241,7 @@ namespace CIA
                 }
 
                 //Alignment + Formula finding
-                if (Alignment == true)
+                if (Alignment)
                 {
                     Console.WriteLine("Aligning");
                     AlignmentByPeak();
@@ -1278,7 +1278,7 @@ namespace CIA
 
                 //Report
                 //preparation
-                if (Alignment == true)
+                if (Alignment)
                 {
                     //preparation: peak alignment into file
                     for (var Peak = 0; Peak < oAlignData.NeutralMasses.Length; Peak++)
@@ -1296,7 +1296,7 @@ namespace CIA
                     }
                 }
 
-                if ((Alignment == false) || (GenerateReports == true))
+                if ((Alignment == false) || GenerateReports)
                 {
                     for (var FileIndex = 0; FileIndex < Filenames.Length; FileIndex++)
                     {
@@ -1381,7 +1381,7 @@ namespace CIA
                     }
                 }
                 //AlignmentReport
-                if (Alignment == true)
+                if (Alignment)
                 {
                     //StreamWriter oStreamWriter;
                     //if( oEOutputFileDelimiter == EDelimiters.Comma ) {
@@ -1550,35 +1550,35 @@ namespace CIA
             }
             var HToC = Formula[(int)EElemIndex.H] / TotalC;
             var OToC = Formula[(int)EElemIndex.O] / TotalC;
-            if (((OToC >= 0) && (OToC < 0.3) && (HToC >= 1.5) && (HToC < 2.5)) == true)
+            if (((OToC >= 0) && (OToC < 0.3) && (HToC >= 1.5) && (HToC < 2.5)))
             {//Lipid
                 return "Lipid";
             }
-            else if (((OToC >= 0) && (OToC < 0.125) && (HToC >= 0.8) && (HToC < 1.5)) == true)
+            else if (((OToC >= 0) && (OToC < 0.125) && (HToC >= 0.8) && (HToC < 1.5)))
             {//UnsatHC
                 return "UnsatHC";
             }
-            else if (((OToC >= 0) && (OToC < 0.95) && (HToC >= 0.2) && (HToC < 0.8)) == true)
+            else if (((OToC >= 0) && (OToC < 0.95) && (HToC >= 0.2) && (HToC < 0.8)))
             {//CondHC
                 return "ConHC";
             }
-            else if (((OToC >= 0.3) && (OToC < 0.55) && (HToC >= 1.5) && (HToC < 2.3)) == true)
+            else if (((OToC >= 0.3) && (OToC < 0.55) && (HToC >= 1.5) && (HToC < 2.3)))
             {//Protein
                 return "Protein";
             }
-            else if (((OToC >= 0.55) && (OToC < 0.7) && (HToC >= 1.5) && (HToC < 2.2)) == true)
+            else if (((OToC >= 0.55) && (OToC < 0.7) && (HToC >= 1.5) && (HToC < 2.2)))
             {//AminoSugar
                 return "AminoSugar";
             }
-            else if (((OToC >= 0.7) && (OToC < 1.05) && (HToC >= 1.5) && (HToC < 2.2)) == true)
+            else if (((OToC >= 0.7) && (OToC < 1.05) && (HToC >= 1.5) && (HToC < 2.2)))
             {//Carb
                 return "Carb";
             }
-            else if (((OToC >= 0.125) && (OToC < 0.65) && (HToC >= 0.8) && (HToC < 1.5)) == true)
+            else if (((OToC >= 0.125) && (OToC < 0.65) && (HToC >= 0.8) && (HToC < 1.5)))
             {//Lignin
                 return "Lignin";
             }
-            else if (((OToC >= 0.65) && (OToC < 1.1) && (HToC >= 0.8) && (HToC < 1.5)) == true)
+            else if (((OToC >= 0.65) && (OToC < 1.1) && (HToC >= 0.8) && (HToC < 1.5)))
             {//Tannin
                 return "Tannin";
             }
@@ -1702,7 +1702,7 @@ namespace CIA
             {
                 var CurrentGrpdiffK = new CGrpdiffK();
                 CurrentGrpdiffK.IsEmpty = true;
-                if (UseRelation == true)
+                if (UseRelation)
                 {
                     var NeutralMass = NeutralMasses[Peak];
                     var NeutralMassToMin = MinMass - NeutralMass;
@@ -1783,7 +1783,7 @@ namespace CIA
                     double DBFormulaMassError = 0;
                     DBFormulaMass = FormulaToNeutralMass(DBFormula);
                     DBFormulaMassError = CPpmError.AbsPpmError(DBFormulaMass, NeutralMasses[Peak]);
-                    if (GrpdiffK[Peak].IsEmpty == true)
+                    if (GrpdiffK[Peak].IsEmpty)
                     {
                         //StartFormula = PickDBFormula( NeutralMasses [ Peak ], out Candidates[ Peak ]);
                         //if( IsFormula( DBFormula ) == true ) {
@@ -1822,7 +1822,7 @@ namespace CIA
                             //    Formulas [ Peak ] = ( short [] ) DBFormula/*tempform*/.Clone();
                             //    PPMErrors[ Peak ] = DBFormulaMassError/*errornew*/;
                             //} else {
-                            if (UseCIAFormulaScore == true)
+                            if (UseCIAFormulaScore)
                             {
                                 //if( tempform [ ( int ) EElemNumber.S ] + tempform [ ( int ) EElemNumber.P ] < Formulas [ Peak ] [ ( int ) EElemNumber.S ] + Formulas [ Peak ] [ ( int ) EElemNumber.P ]
                                 if (DBFormula[(int)EElemIndex.S] + DBFormula[(int)EElemIndex.P] < Formulas[Peak][(int)EElemIndex.S] + Formulas[Peak][(int)EElemIndex.P]
@@ -1836,7 +1836,7 @@ namespace CIA
                             }
                             else
                             {
-                                if (IsNewFormulaScoreBetter(Formulas[Peak], PPMErrors[Peak], DBFormula, DBFormulaMassError) == true)
+                                if (IsNewFormulaScoreBetter(Formulas[Peak], PPMErrors[Peak], DBFormula, DBFormulaMassError))
                                 {
                                     Formulas[Peak] = (short[])DBFormula/*tempform*/.Clone();
                                     PPMErrors[Peak] = DBFormulaMassError/*errornew*/;
@@ -1847,7 +1847,7 @@ namespace CIA
                         //if( IsFormula( Formulas [ Peak ] ) == false ) { continue; }
                         //DBFormula = ( short [] ) Formulas [ Peak ].Clone();
                         //now go through Grpdiff and assign those formulas...so using the formula decided to be ok - build from that using the relations
-                        if (UseRelation == true)
+                        if (UseRelation)
                         {
                             for (var Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++)
                             {
@@ -1866,11 +1866,11 @@ namespace CIA
                                         var errornew = CPpmError.AbsPpmError(newmass, NeutralMasses[relpk]);
                                         var checknew = CheckFormulaByFilters(newform, NeutralMasses[relpk]);
                                         var checkold = CheckFormulaByFilters(Formulas[relpk], NeutralMasses[relpk]);
-                                        if (checknew == true)
+                                        if (checknew)
                                         {
-                                            if (checkold == true)
+                                            if (checkold)
                                             {
-                                                if (UseCIAFormulaScore == true)
+                                                if (UseCIAFormulaScore)
                                                 {
                                                     if ((newform[(int)EElemIndex.S] + newform[(int)EElemIndex.P] < Formulas[relpk][(int)EElemIndex.S] + Formulas[relpk][(int)EElemIndex.P])
                                                             //&& ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) {
@@ -1882,7 +1882,7 @@ namespace CIA
                                                 }
                                                 else
                                                 {
-                                                    if (IsNewFormulaScoreBetter(Formulas[relpk], PPMErrors[relpk], newform, errornew) == true)
+                                                    if (IsNewFormulaScoreBetter(Formulas[relpk], PPMErrors[relpk], newform, errornew))
                                                     {
                                                         Formulas[relpk] = (short[])newform.Clone();
                                                         PPMErrors[relpk] = errornew;
@@ -1907,7 +1907,7 @@ namespace CIA
                     Candidates[Peak] = -1;//no search
                     if (GrpdiffK[Peak].IsEmpty == false)
                     {
-                        if (IsFormula(Formulas[Peak]) == true)
+                        if (IsFormula(Formulas[Peak]))
                         {//if the formula is already known
                             var startform = (short[])(Formulas[Peak].Clone());
                             //KL change to only do this for the places where Grpdiff is not empty
@@ -1928,11 +1928,11 @@ namespace CIA
                                     var newmass = FormulaToNeutralMass(newform);
                                     var errornew = CPpmError.AbsPpmError(newmass, NeutralMasses[relpk]);
                                     //if( ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) {
-                                    if ((checknew == true) && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak])))
+                                    if (checknew && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak])))
                                     {
-                                        if (checkold == true)
+                                        if (checkold)
                                         {
-                                            if (UseCIAFormulaScore == true)
+                                            if (UseCIAFormulaScore)
                                             {
                                                 if (newform[(int)EElemIndex.S] + newform[(int)EElemIndex.P] < Formulas[relpk][(int)EElemIndex.S] + Formulas[relpk][(int)EElemIndex.P])
                                                 {
@@ -1942,7 +1942,7 @@ namespace CIA
                                             }
                                             else
                                             {
-                                                if (IsNewFormulaScoreBetter(Formulas[relpk], PPMErrors[relpk], newform, errornew) == true)
+                                                if (IsNewFormulaScoreBetter(Formulas[relpk], PPMErrors[relpk], newform, errornew))
                                                 {
                                                     Formulas[relpk] = (short[])newform.Clone();
                                                     PPMErrors[relpk] = errornew;
@@ -1961,7 +1961,7 @@ namespace CIA
                         else
                         {//formula is not known - check for formulas in lower masses
                             //KL change to only do this for the places where Grpdiff is not empty
-                            if (UseRelation == true)
+                            if (UseRelation)
                             {
                                 for (var Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++)
                                 {
@@ -1970,7 +1970,7 @@ namespace CIA
                                         if (NeutralMasses[low_m] < NeutralMasses[Peak])
                                         {
                                             //int low_m = GrpdiffK [ Peak ].Indexs [Relation][ t ];
-                                            if (IsFormula(Formulas[low_m]) == true)
+                                            if (IsFormula(Formulas[low_m]))
                                             {
                                                 var startform = (short[])Formulas[low_m].Clone();
                                                 var RelationGaps = (int)Math.Round(Math.Abs(NeutralMasses[low_m] - NeutralMasses[Peak]) / ActiveRelationFormulaBuildingBlockMasses[Relation]);
@@ -1987,7 +1987,7 @@ namespace CIA
                                                 //if( Math.Abs( numGps ) <= MaxNumGps && checknew == true && errornew <= FormulaError ) {
                                                 var bIsFormula = IsFormula(Formulas[Peak]);
                                                 //if( ( ( bIsFormula == false ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) || ( ( bIsFormula == true ) && ( errornew < PPMErrors [ Peak ] ) ) ) {
-                                                if (((bIsFormula == false) && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak]))) || ((bIsFormula == true) && (errornew < PPMErrors[Peak])))
+                                                if (((bIsFormula == false) && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak]))) || (bIsFormula && (errornew < PPMErrors[Peak])))
                                                 {
                                                     Formulas[Peak] = (short[])newform.Clone();
                                                     PPMErrors[Peak] = errornew;
@@ -2002,7 +2002,7 @@ namespace CIA
                 }
             }
             //Kendrick mass stuff
-            if (UseKendrick == true)
+            if (UseKendrick)
             {
                 //KendrickParameters [] AKendrick_matrix = new KendrickParameters [ NeutralMasses.Length ];
                 var KMD = new int[NeutralMasses.Length];
@@ -2046,9 +2046,9 @@ namespace CIA
                         var checkold = CheckFormulaByFilters(Formulas[relpk], NeutralMasses[relpk]);
                         var errornew = CPpmError.AbsPpmError(FormulaToNeutralMass(newform), NeutralMasses[relpk]);
                         //if( ( checkold == true ) && ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM / 2 ) ){
-                        if ((checkold == true) && (checknew == true) && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak])))
+                        if (checkold && checknew && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak])))
                         {
-                            if (UseCIAFormulaScore == true)
+                            if (UseCIAFormulaScore)
                             {
                                 if ((newform[(int)EElemIndex.S] + newform[(int)EElemIndex.P]) < (Formulas[relpk][(int)EElemIndex.S] + Formulas[relpk][(int)EElemIndex.P]))
                                 {
@@ -2066,7 +2066,7 @@ namespace CIA
                             }
                             //} else if( ( checkold == false ) && ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM / 2 ) ) {
                         }
-                        else if ((checkold == false) && (checknew == true) && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak]) / 2))
+                        else if ((checkold == false) && checknew && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak]) / 2))
                         {
                             Formulas[relpk] = (short[])newform.Clone();
                             PPMErrors[relpk] = errornew;
@@ -2110,12 +2110,12 @@ namespace CIA
                 }
                 else
                 {
-                    if (IsNewFormulaScoreBetter(BestFormula, BestErrorPPM, DBFormula, ErrorPPMToDBMass) == true)
+                    if (IsNewFormulaScoreBetter(BestFormula, BestErrorPPM, DBFormula, ErrorPPMToDBMass))
                     {
                         Change = true;
                     }
                 }
-                if (Change == true)
+                if (Change)
                 {
                     BestMass = DBMass;
                     BestFormula = (short[])DBFormula.Clone();
@@ -2141,7 +2141,7 @@ namespace CIA
                         //then only consider formulas with P <= 1 or S <= 3
                         var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) & (Formula[(int)EElemIndex.P] <= 1);
                         var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) & (NewFormula[(int)EElemIndex.P] <= 1);
-                        if ((Sle3AndPle1 == false) && (NewSle3AndPle1 == true))
+                        if ((Sle3AndPle1 == false) && NewSle3AndPle1)
                         {
                             return true;
                         }
@@ -2171,7 +2171,7 @@ namespace CIA
                         //then only consider formulas with P <= 1 or S <= 3
                         var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) & (Formula[(int)EElemIndex.P] <= 1);
                         var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) & (NewFormula[(int)EElemIndex.P] <= 1);
-                        if ((Sle3AndPle1 == false) && (NewSle3AndPle1 == true))
+                        if ((Sle3AndPle1 == false) && NewSle3AndPle1)
                         {
                             return true;
                         }
@@ -2194,7 +2194,7 @@ namespace CIA
                         //then only consider formulas with P <= 1 or S <= 3
                         var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) & (Formula[(int)EElemIndex.P] <= 1);
                         var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) & (NewFormula[(int)EElemIndex.P] <= 1);
-                        if ((Sle3AndPle1 == false) && (NewSle3AndPle1 == true))
+                        if ((Sle3AndPle1 == false) && NewSle3AndPle1)
                         {
                             return true;
                         }
@@ -2885,7 +2885,7 @@ namespace CIA
             if (Formula == null) { return false; }
             if (UseFormulaFilters == false) { return true; }
             //Golden rule 1 "Elemental counts" within mass range
-            if (GoldenRuleFilters[0] == true)
+            if (GoldenRuleFilters[0])
             {
                 short[] LowLimitFormula = { 1, 1, 0, 0, 0, 0, 0, 0 };
                 short[] UpLimit500Formula = { 39, 72, 20, 20, 0, 10, 9, 0 };
@@ -2925,7 +2925,7 @@ namespace CIA
             //H+N%2=0 AND C*4+H*1+O*2+N*3+C13*4+S*2+P*3+Na*1
             //public enum EElemNumber { C, H, O, N, C13, S, P, Na};
             //short [] ElemValences = { 4, 1, 2, 3, 4, 2, 3, 1 };
-            if (GoldenRuleFilters[1] == true)
+            if (GoldenRuleFilters[1])
             {
                 if (((Formula[(int)EElemIndex.H] + Formula[(int)EElemIndex.N] + Formula[(int)EElemIndex.P]) % 2) != 0)
                 {
@@ -2961,7 +2961,7 @@ namespace CIA
                 }
             }
             //Godlen rule 3 "Elemental ratios"
-            if (GoldenRuleFilters[2] == true)
+            if (GoldenRuleFilters[2])
             {
                 double TotalC = Formula[(int)EElemIndex.C] + Formula[(int)EElemIndex.C13];
                 var HC = 1.0 * Formula[(int)EElemIndex.H] / TotalC;
@@ -2976,12 +2976,12 @@ namespace CIA
                 }
             }
             //Golden rule 4 "Heteroatom counts"
-            if (GoldenRuleFilters[4] == true)
+            if (GoldenRuleFilters[4])
             {
                 //manuscript has "<" instead of "<=" for ***Min calculation
                 var checkNOPSMin = (Formula[(int)EElemIndex.O] > 1) & (Formula[(int)EElemIndex.N] > 1) & (Formula[(int)EElemIndex.S] > 1) & (Formula[(int)EElemIndex.P] > 1);
                 var checkNOPSMax = (Formula[(int)EElemIndex.O] < 20) & (Formula[(int)EElemIndex.N] < 10) & (Formula[(int)EElemIndex.S] < 3) & (Formula[(int)EElemIndex.P] < 4);
-                if (checkNOPSMin == true && checkNOPSMax == false)
+                if (checkNOPSMin && checkNOPSMax == false)
                 {
                     return false;
                 }
@@ -2990,7 +2990,7 @@ namespace CIA
                 //manuscript doesn't use "S == 0"
                 var checkNOPMin = (Formula[(int)EElemIndex.O] > 3) & (Formula[(int)EElemIndex.N] > 3) & (Formula[(int)EElemIndex.P] > 3);
                 var checkNOPMax = (Formula[(int)EElemIndex.O] < 22) & (Formula[(int)EElemIndex.N] < 11) & (Formula[(int)EElemIndex.P] < 6);
-                if (checkNOPMin == true && checkNOPMax == false)
+                if (checkNOPMin && checkNOPMax == false)
                 {
                     return false;
                 }
@@ -2999,7 +2999,7 @@ namespace CIA
                 //manuscript doesn't use "N == 0"
                 var checkOPSMin = (Formula[(int)EElemIndex.O] > 1) & (Formula[(int)EElemIndex.S] > 1) & (Formula[(int)EElemIndex.P] > 1);
                 var checkOPSMax = (Formula[(int)EElemIndex.O] < 14) & (Formula[(int)EElemIndex.S] < 3) & (Formula[(int)EElemIndex.P] < 3);
-                if (checkOPSMin == true && checkOPSMax == false)
+                if (checkOPSMin && checkOPSMax == false)
                 {
                     return false;
                 }
@@ -3008,7 +3008,7 @@ namespace CIA
                 //manuscript doesn't use "O == 0"
                 var checkNPSMin = (Formula[(int)EElemIndex.N] > 1) & (Formula[(int)EElemIndex.S] > 1) & (Formula[(int)EElemIndex.P] > 1);
                 var checkNPSMax = (Formula[(int)EElemIndex.N] < 4) & (Formula[(int)EElemIndex.S] < 3) & (Formula[(int)EElemIndex.P] < 3);
-                if (checkNPSMin == true && checkNPSMax == false)
+                if (checkNPSMin && checkNPSMax == false)
                 {
                     return false;
                 }
@@ -3017,14 +3017,14 @@ namespace CIA
                 //manuscript doesn't use "P == 0"
                 var checkNOSMin = (Formula[(int)EElemIndex.O] > 6) & (Formula[(int)EElemIndex.N] > 6) & (Formula[(int)EElemIndex.S] > 6);
                 var checkNOSMax = (Formula[(int)EElemIndex.O] < 14) & (Formula[(int)EElemIndex.N] < 19) & (Formula[(int)EElemIndex.S] < 8);
-                if (checkNOSMin == true && checkNOSMax == false)
+                if (checkNOSMin && checkNOSMax == false)
                 {
                     return false;
                 }
             }
             //Golden rule 5 "Positive atoms"
             //KL 1/8/09 - checking to make sure everything is a positive number (i.e. can't have a negative number of elements in a formula)
-            if (GoldenRuleFilters[4] == true)
+            if (GoldenRuleFilters[4])
             {
                 foreach (var Element in Formula)
                 {
@@ -3035,7 +3035,7 @@ namespace CIA
                 }
             }
             //Golden rule 6 "Integer DBE"
-            if (GoldenRuleFilters[5] == true)
+            if (GoldenRuleFilters[5])
             {
                 //int DBECount = ( Formula [ ( int ) EElemNumber.C ] * 2 + Formula [ ( int ) EElemNumber.N ] + Formula [ ( int ) EElemNumber.P ] - Formula [ ( int ) EElemNumber.H ] + 2 ) % 2;
                 var DBEResudence = (Formula[(int)EElemIndex.N] + Formula[(int)EElemIndex.P] - Formula[(int)EElemIndex.H]) % 2;
@@ -3131,7 +3131,7 @@ namespace CIA
             ParentFormula[(int)EElemIndex.C] = (short)(ParentFormula[(int)EElemIndex.C] + 1);
             for (var ParentPeak = C13Peak - 1; ParentPeak >= 0; ParentPeak--)
             {
-                if (AreFormulasEqual(Formulas[C13Peak], ParentFormula) == true)
+                if (AreFormulasEqual(Formulas[C13Peak], ParentFormula))
                 {
                     return ParentPeak;
                 }
@@ -3290,7 +3290,7 @@ namespace CIA
             if ((Path.GetFileName(CiaDBFilename) != Path.GetFileName(this.CiaDBFilename))
                     || (GetDBRecords() == 0))
             {
-                if (File.Exists(CiaDBFilename) == true)
+                if (File.Exists(CiaDBFilename))
                 {
                     SetCiaDBFilename(CiaDBFilename);
                     LoadCiaDB();
@@ -3367,7 +3367,7 @@ namespace CIA
                     {
                         break;
                     }
-                    if (AreFormulasEqual(Formulas[Record], Formulas[TempRecord]) == true)
+                    if (AreFormulasEqual(Formulas[Record], Formulas[TempRecord]))
                     {
                         Masses[TempRecord] = -1;
                         RemovedFormulas = RemovedFormulas + 1;
@@ -3446,7 +3446,7 @@ namespace CIA
                     if (Line.Length == 0) { break; }
                     var Words = Line.Split(WordSeparators, StringSplitOptions.RemoveEmptyEntries);
                     double Mass;
-                    if (FirstLine == true)
+                    if (FirstLine)
                     {
                         FirstLine = false;
                         try
@@ -3543,14 +3543,14 @@ namespace CIA
             double[] Masses;
             short[][] Formulas;
             ReadDBAsciiFile(DBAsciiFilename, out Masses, out Formulas);
-            if (DBCalculateMassFromFormula == true)
+            if (DBCalculateMassFromFormula)
             {
                 for (var Record = 0; Record < Masses.Length; Record++)
                 {
                     Masses[Record] = FormulaToNeutralMass(Formulas[Record]);
                 }
             }
-            if (DBSort == true)
+            if (DBSort)
             {
                 DBSortAndClean(ref Masses, ref Formulas);
             }
@@ -3587,14 +3587,14 @@ namespace CIA
             }
             var Masses = ListMasses.ToArray();
             var Formulas = ListFormulas.ToArray();
-            if (DBCalculateMassFromFormula == true)
+            if (DBCalculateMassFromFormula)
             {
                 for (var Record = 0; Record < Masses.Length; Record++)
                 {
                     Masses[Record] = FormulaToNeutralMass(Formulas[Record]);
                 }
             }
-            if (DBSort == true)
+            if (DBSort)
             {
                 DBSortAndClean(ref Masses, ref Formulas);
             }
@@ -3637,7 +3637,7 @@ namespace CIA
                     var gg = (short)oBinaryReader.ReadInt16();
                     Line = Line + ',' + gg.ToString();
                 }
-                if (DBMassRangePerCsvFile == true)
+                if (DBMassRangePerCsvFile)
                 {
                     var NewRangeIndex = Convert.ToInt32(Math.Floor(Mass / DBMassRange) * DBMassRange);
                     if (NewRangeIndex != RangeIndex)

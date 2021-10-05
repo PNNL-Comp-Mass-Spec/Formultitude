@@ -181,7 +181,7 @@ namespace Support
             var Write = false;
             for (var Index = 0; Index < ErrorTrend.Length; Index++)
             {
-                if ((Write == false) && (double.IsNaN(ErrorTrend[Index]) == true)) { continue; }
+                if ((Write == false) && double.IsNaN(ErrorTrend[Index])) { continue; }
                 Write = true;
                 Text = Text + "\r\n" + Index + "," + ErrorTrend[Index].ToString("F8");
             }
@@ -247,7 +247,7 @@ namespace Support
             foreach (var ChainIndex in Clusters[ClusterIndex].ChainIndexes)
             {
                 var CurChain = Chains[ChainIndex];
-                if (CurChain.PeakIndexes.Contains(PeakIndex) == true)
+                if (CurChain.PeakIndexes.Contains(PeakIndex))
                 {
                     TempChainList.Add(ChainIndex);
                 }
@@ -573,7 +573,7 @@ namespace Support
             OutData.RelAbundances = new double[NewDataCount];
             for (int PeakIndex = 0, RealPeakIndex = 0; PeakIndex < Data.Masses.Length; PeakIndex++)
             {
-                if (NewData[PeakIndex] == true)
+                if (NewData[PeakIndex])
                 {
                     OutData.Masses[RealPeakIndex] = Data.Masses[PeakIndex];
                     OutData.Abundances[RealPeakIndex] = Data.Abundances[PeakIndex];

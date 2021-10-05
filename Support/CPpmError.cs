@@ -70,7 +70,7 @@ namespace Support
             else { Index = ~Index; }
             if (Index >= Masses.Length)
             {
-                if (IsMassInRange(Masses[Masses.Length - 1], PeakMass, MaxPpmError) == true)
+                if (IsMassInRange(Masses[Masses.Length - 1], PeakMass, MaxPpmError))
                 {
                     return Masses.Length - 1;
                 }
@@ -79,7 +79,7 @@ namespace Support
             {
                 if (StartIndex == 0)
                 {
-                    if (IsMassInRange(Masses[StartIndex], PeakMass, MaxPpmError) == true)
+                    if (IsMassInRange(Masses[StartIndex], PeakMass, MaxPpmError))
                     {
                         return Index;
                     }

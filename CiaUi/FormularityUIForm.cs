@@ -64,7 +64,7 @@ namespace CiaUi
                 buttonIpaMergeWithCIA.Visible = false;
 
                 var DefaultParametersFile = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\DefaultParameters.xml";
-                if (File.Exists(DefaultParametersFile) == true)
+                if (File.Exists(DefaultParametersFile))
                 {
                     oCCia.LoadParameters(DefaultParametersFile);
                 }
@@ -353,8 +353,8 @@ namespace CiaUi
             var IpaReady = oCCia.Ipa.IPDB_Ready & CalibrationReady;
             checkBoxIpa.Enabled = IpaReady;
 
-            if ((CIAReady == true) && (checkBoxCIA.Checked == true)
-                    || (IpaReady == true) && (checkBoxIpa.Checked == true))
+            if (CIAReady && checkBoxCIA.Checked
+                    || IpaReady && checkBoxIpa.Checked)
             {
                 textBoxDropSpectraFiles.BackColor = Color.LightGreen;
                 textBoxDropSpectraFiles.Enabled = true;
@@ -368,7 +368,7 @@ namespace CiaUi
             var ChainCalibrationReady = ((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none)
                                         & (textBoxRefPeakFilename.TextLength > 0);
 
-            if (ChainCalibrationReady == true)
+            if (ChainCalibrationReady)
             {
                 textBoxChainDropSpectraFile.BackColor = Color.LightGreen;
                 textBoxChainDropSpectraFile.Enabled = true;
@@ -389,7 +389,7 @@ namespace CiaUi
         }
         private void textBoxRefPeakFilename_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -428,7 +428,7 @@ namespace CiaUi
         }
         private void textBoxDropSpectraFiles_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -458,7 +458,7 @@ namespace CiaUi
                 oCCia.oTotalCalibration.ttl_cal_min_abu_pct = (double)numericUpDownCalMinRelAbun.Value;
                 oCCia.oTotalCalibration.ttl_cal_max_abu_pct = (double)numericUpDownCalMaxRelAbun.Value;
 
-                if (checkBoxCIA.Checked == true)
+                if (checkBoxCIA.Checked)
                 {
                     //Alignment
                     oCCia.SetAlignment(checkBoxAlignment.Checked);
@@ -555,7 +555,7 @@ namespace CiaUi
                         textBoxDropSpectraFiles.AppendText("\r\n" + Path.GetFileName(Filename));
                     }
                 }
-                if (checkBoxIpa.Checked == true)
+                if (checkBoxIpa.Checked)
                 {
                     var b = oCCia.Ipa.SetCalculation();
 
@@ -570,11 +570,11 @@ namespace CiaUi
 
                     oCCia.Ipa.m_IPDB_ec_filter = textBoxIpaFilter.Text;
                 }
-                if ((checkBoxCIA.Checked == true) && (checkBoxIpa.Checked == true))
+                if (checkBoxCIA.Checked && checkBoxIpa.Checked)
                 {
                     oCCia.SetProcessType(CCia.ProcessType.CiaIpa);
                 }
-                else if ((checkBoxCIA.Checked == true) && (checkBoxIpa.Checked == false))
+                else if (checkBoxCIA.Checked && (checkBoxIpa.Checked == false))
                 {
                     oCCia.SetProcessType(CCia.ProcessType.Cia);
                 }
@@ -607,7 +607,7 @@ namespace CiaUi
         {
             numericUpDownAlignmentTolerance.Enabled = checkBoxAlignment.Checked;
             checkBoxStaticDynamicFormulaTolerance.Enabled = !checkBoxAlignment.Checked;
-            if (checkBoxAlignment.Checked == true)
+            if (checkBoxAlignment.Checked)
             {
                 //no DynamicPPM  out of public enum RelationErrorType { AMU, PPM, GapPPM, DynamicPPM };
                 comboBoxRelationErrorType.DataSource = Enum.GetNames(typeof(CCia.RelationErrorType)).ToList<string>().GetRange(0, 3);
@@ -620,7 +620,7 @@ namespace CiaUi
         }
         private void textBoxCiaDBFilename_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -793,7 +793,7 @@ namespace CiaUi
         //Ipa tab
         private void textBoxIpaDBFilename_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -812,7 +812,7 @@ namespace CiaUi
         private readonly List<double> YData = new List<double>();
         private void chartError_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -1029,7 +1029,7 @@ namespace CiaUi
         }
         private void textBoxConvertDBs_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -1045,7 +1045,7 @@ namespace CiaUi
             {
                 foreach (var Filename in Filenames)
                 {
-                    if (InputFileTextFormats.Contains(Path.GetExtension(Filename)) == true)
+                    if (InputFileTextFormats.Contains(Path.GetExtension(Filename)))
                     {
                         oCCia.DBConvertAsciiToBin(Filename);
                     }
@@ -1088,7 +1088,7 @@ namespace CiaUi
         }
         private void textBoxCompareReports_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -1183,7 +1183,7 @@ namespace CiaUi
         }
         private void textBoxConverFiles_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -1349,13 +1349,13 @@ namespace CiaUi
                 for (var CompositionIndex = 0; CompositionIndex < DBCompositions.Length; CompositionIndex++)
                 {
                     var Composition = DBCompositions[CompositionIndex];
-                    if (Composition.Contains("C") == true) { if (bC == false) { continue; } }
-                    if (Composition.Contains("H") == true) { if (bH == false) { continue; } }
-                    if (Composition.Contains("O") == true) { if (bO == false) { continue; } }
-                    if (Composition.Contains("N") == true) { if (bN == false) { continue; } }
-                    if (Composition.Contains("S") == true) { if (bS == false) { continue; } }
-                    if (Composition.Contains("P") == true) { if (bP == false) { continue; } }
-                    if (Composition.Contains("Na") == true) { if (bNa == false) { continue; } }
+                    if (Composition.Contains("C")) { if (bC == false) { continue; } }
+                    if (Composition.Contains("H")) { if (bH == false) { continue; } }
+                    if (Composition.Contains("O")) { if (bO == false) { continue; } }
+                    if (Composition.Contains("N")) { if (bN == false) { continue; } }
+                    if (Composition.Contains("S")) { if (bS == false) { continue; } }
+                    if (Composition.Contains("P")) { if (bP == false) { continue; } }
+                    if (Composition.Contains("Na")) { if (bNa == false) { continue; } }
                     CompositionCounts[CompositionIndex]++;
                 }
             }
@@ -1371,7 +1371,7 @@ namespace CiaUi
         //chain tab
         private void textBoxDropSpectraFile_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -1557,7 +1557,7 @@ namespace CiaUi
         }
         private void textBoxParameterFile_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
