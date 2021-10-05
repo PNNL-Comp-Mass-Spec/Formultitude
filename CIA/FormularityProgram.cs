@@ -374,7 +374,7 @@ namespace CIA
 
             for (var Element = 0; Element < ElementCount; Element++)
             {
-                NeutralMass = NeutralMass + Formula[Element] * ElementMasses[Element];
+                NeutralMass += Formula[Element] * ElementMasses[Element];
             }
             return NeutralMass;
         }
@@ -441,7 +441,7 @@ namespace CIA
                 {
                     ElementName = FormulaName.Substring(CurrentSymbol, 1);
                 }
-                CurrentSymbol = CurrentSymbol + ElementName.Length;
+                CurrentSymbol += ElementName.Length;
                 //Element's atoms
                 var Negative = false;
 
@@ -450,13 +450,13 @@ namespace CIA
                     if (FormulaName[CurrentSymbol] == '-')
                     {
                         Negative = true;
-                        CurrentSymbol = CurrentSymbol + 1;
+                        CurrentSymbol += 1;
                     }
                 }
                 var DigitCount = 0;
                 while (FormulaName.Length > CurrentSymbol + DigitCount && Char.IsDigit(FormulaName[CurrentSymbol + DigitCount]))
                 {
-                    DigitCount = DigitCount + 1;
+                    DigitCount += 1;
                 }
                 short ElementNumber = 1;
 
@@ -470,7 +470,7 @@ namespace CIA
                     ElementNumber = (short)-ElementNumber;
                 }
                 Formula[(int)Enum.Parse(typeof(EElemIndex), ElementName)] = ElementNumber;
-                CurrentSymbol = CurrentSymbol + DigitCount;
+                CurrentSymbol += DigitCount;
             }
             return Formula;
         }
@@ -528,7 +528,7 @@ namespace CIA
             for (var FileIndex = 0; FileIndex < oData.FileCount; FileIndex++)
             {
                 IndexesTemplate[FileIndex] = -1;//Existing index can be 0 and positive
-                TotalPeakCount = TotalPeakCount + oData.Masses[FileIndex].Length;
+                TotalPeakCount += oData.Masses[FileIndex].Length;
             }
             IndexesTemplate[oData.FileCount] = 1;
             var TotalMasses = new double[TotalPeakCount];
@@ -551,7 +551,7 @@ namespace CIA
                     TotalIndexes[FilePeakShift + Peak] = (int[])IndexesTemplate.Clone();
                     TotalIndexes[FilePeakShift + Peak][FileIndex] = Peak;
                 }
-                FilePeakShift = FilePeakShift + FilePeakCount;
+                FilePeakShift += FilePeakCount;
             }
             Array.Sort(TotalMasses, TotalIndexes);
             var MassesL = TotalMasses.ToList<double>();
@@ -574,14 +574,14 @@ namespace CIA
                             NextIndexes[Index] = CurrentIndexes[Index];//move current valueable peaks to next
                         }
                     }
-                    NextIndexes[oData.FileCount] = NextIndexes[oData.FileCount] + CurrentIndexes[oData.FileCount];//for weight
+                    NextIndexes[oData.FileCount] += CurrentIndexes[oData.FileCount];//for weight
                     MassesL.RemoveAt(Peak);//remove current peak
                     IndexesL.RemoveAt(Peak);
-                    TotalPeakCount = TotalPeakCount - 1;
+                    TotalPeakCount -= 1;
                 }
                 else
                 {
-                    Peak = Peak + 1;
+                    Peak += 1;
                 }
             }
             //align peaks
@@ -622,15 +622,15 @@ namespace CIA
                             LeftIndexes[Index] = CurrentIndexes[Index];//move current peaks to left
                         }
                     }
-                    LeftIndexes[oData.FileCount] = LeftIndexes[oData.FileCount] + CurrentIndexes[oData.FileCount];//for weight
+                    LeftIndexes[oData.FileCount] += CurrentIndexes[oData.FileCount];//for weight
                     MassesL.RemoveAt(Peak);//remove current peak
                     IndexesL.RemoveAt(Peak);
-                    TotalPeakCount = TotalPeakCount - 1;
+                    TotalPeakCount -= 1;
                     continue;
                 }
 
                 //right peak
-                if (RightDistance >= PeakError) { Peak = Peak + 1; continue; }
+                if (RightDistance >= PeakError) { Peak += 1; continue; }
                 var IsRightPeakUnique = false;
                 var RightIndexes = IndexesL[Peak + 1];
 
@@ -645,7 +645,7 @@ namespace CIA
 
                 if (IsRightPeakUnique)
                 {
-                    Peak = Peak + 1;
+                    Peak += 1;
                     continue;
                 }
                 else
@@ -659,10 +659,10 @@ namespace CIA
                             RightIndexes[Index] = CurrentIndexes[Index];//move current peaks to right
                         }
                     }
-                    RightIndexes[oData.FileCount] = RightIndexes[oData.FileCount] + CurrentIndexes[oData.FileCount];//for weight
+                    RightIndexes[oData.FileCount] += CurrentIndexes[oData.FileCount];//for weight
                     MassesL.RemoveAt(Peak);
                     IndexesL.RemoveAt(Peak);
-                    TotalPeakCount = TotalPeakCount - 1;
+                    TotalPeakCount -= 1;
                     continue;
                 }
             }
@@ -840,7 +840,7 @@ namespace CIA
 
                 for (var Element = 0; Element < ElementCount; Element++)
                 {
-                    Mass = Mass + RelationBuildingBlockFormulas[ActiveBlock][Element] * ElementMasses[Element];
+                    Mass += RelationBuildingBlockFormulas[ActiveBlock][Element] * ElementMasses[Element];
                 }
                 ActiveRelationFormulaBuildingBlockMassesList.Add(Mass);
                 ListActiveRelationFormulaBuildingBlocks.Add(RelationBuildingBlockFormulas[ActiveBlock]);
@@ -1654,7 +1654,7 @@ namespace CIA
                     {
                         if (Formula[(int)EElemIndex.C] + Formula[(int)EElemIndex.C13] > 0)
                         {
-                            Answer = Answer + EElemIndex.C.ToString();
+                            Answer += EElemIndex.C.ToString();
                         }
                     }
                     else if (Element == EElemIndex.C13)
@@ -1665,7 +1665,7 @@ namespace CIA
                     {
                         if (Formula[(int)Element] > 0)
                         {
-                            Answer = Answer + Element.ToString();
+                            Answer += Element.ToString();
                         }
                     }
                 }
@@ -1760,11 +1760,11 @@ namespace CIA
             {
                 if (Math.Round(Mass) % 2 == 0)
                 {
-                    Even = Even + 1;
+                    Even += 1;
                 }
                 else
                 {
-                    Odd = Odd + 1;
+                    Odd += 1;
                 }
             }
 
@@ -3176,7 +3176,7 @@ namespace CIA
 
                 for (var Element = 0; Element < ElementCount; Element++)
                 {
-                    FormulaValences = FormulaValences + Formula[Element] * ElemValences[Element];
+                    FormulaValences += Formula[Element] * ElemValences[Element];
                 }
 
                 for (var Element = 0; Element < ElementCount; Element++)
@@ -3195,7 +3195,7 @@ namespace CIA
 
                 for (var Element = 0; Element < ElementCount; Element++)
                 {
-                    TotalAtoms = TotalAtoms + Formula[Element];
+                    TotalAtoms += Formula[Element];
                 }
                 //if( FormulaValences < 2 * TotalAtoms - 1 ) {
                 if (FormulaValences < 2 * (TotalAtoms - 1))
@@ -3491,7 +3491,7 @@ namespace CIA
             for (var Element = 0; Element < ElementCount; Element++)
             {
                 Formula[Element] = BytesToShort(TempBytes, ArrayPointer);
-                ArrayPointer = ArrayPointer + sizeof(short);
+                ArrayPointer += sizeof(short);
             }
             return Formula;
         }
@@ -3533,7 +3533,7 @@ namespace CIA
             }
             else
             {
-                LowerIndex = LowerIndex + 1;//must be more
+                LowerIndex += 1;//must be more
             }
 
             if (LowerIndex >= DBMasses.Length)
@@ -3548,7 +3548,7 @@ namespace CIA
             {
                 UpperIndex = ~UpperIndex;
             }
-            UpperIndex = UpperIndex - 1;//must be less
+            UpperIndex -= 1;//must be less
 
             if (UpperIndex >= DBMasses.Length)
             {
@@ -3610,9 +3610,9 @@ namespace CIA
                 {
                     var ArrayShift = RecordIndex * DBBytesPerRecord;
                     DBMasses[NextRecord] = BytesToDouble(TempBytes, ArrayShift);
-                    ArrayShift = ArrayShift + sizeof(double);
+                    ArrayShift += sizeof(double);
                     DBFormulas[NextRecord] = FormulaCovertFromBinary(TempBytes, ArrayShift);
-                    NextRecord = NextRecord + 1;
+                    NextRecord += 1;
                 }
             } while (RealBytes == DBBlockBytes);
             oBinaryReader.Close();
@@ -3654,7 +3654,7 @@ namespace CIA
                     if (AreFormulasEqual(Formulas[Record], Formulas[TempRecord]))
                     {
                         Masses[TempRecord] = -1;
-                        RemovedFormulas = RemovedFormulas + 1;
+                        RemovedFormulas += 1;
                     }
                 }
             }
@@ -3671,7 +3671,7 @@ namespace CIA
                 {
                     TempDBMasses[RealRecord] = Masses[Record];
                     TempDBFormulas[RealRecord] = Formulas[Record];
-                    RealRecord = RealRecord + 1;
+                    RealRecord += 1;
                 }
             }
             Masses = TempDBMasses;

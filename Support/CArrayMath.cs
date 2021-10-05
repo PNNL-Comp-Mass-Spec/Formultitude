@@ -35,7 +35,7 @@ namespace Support
 
             foreach (var Value in Data)
             {
-                Sum = Sum + Value;
+                Sum += Value;
             }
             return Sum / Data.Length;
         }
@@ -47,7 +47,7 @@ namespace Support
 
             foreach (var Value in Data)
             {
-                Sum = Sum + Math.Abs(Value);
+                Sum += Math.Abs(Value);
             }
             return Sum / Data.Length;
         }
@@ -59,7 +59,7 @@ namespace Support
 
             foreach (var Value in Data)
             {
-                Sum = Sum + Math.Pow(Value - Mean, 2);
+                Sum += Math.Pow(Value - Mean, 2);
             }
             return Math.Pow(Sum / (Data.Length - 1), 0.5);
         }
@@ -71,7 +71,7 @@ namespace Support
 
             foreach (var Value in Data)
             {
-                Sum = Sum + Math.Pow(Math.Abs(Value) - Mean, 2);
+                Sum += Math.Pow(Math.Abs(Value) - Mean, 2);
             }
             return Math.Pow(Sum / (Data.Length - 1), 0.5);
         }

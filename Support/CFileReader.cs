@@ -45,7 +45,7 @@ namespace Support
                        + "," + ClusteringChainIndex + "," + ClusteringPeakIndex + "," + ClusteringMassError.ToString("F8");
 
             if (!FullInfo) { return Text; }
-            Text = Text + "\r\nPeak,Index,Mass";
+            Text += "\r\nPeak,Index,Mass";
 
             for (var Index = 0; Index < PeakIndexes.Length; Index++)
             {
@@ -75,7 +75,7 @@ namespace Support
                        + "," + MaxPpmErrorGain.ToString("F8") + "," + HigherPpmErrorCount + "," + MaxOutlierPpmError;
 
             if (!FullInfo) { return Text; }
-            Text = Text + "\r\nChain indexes:\r\n";
+            Text += "\r\nChain indexes:\r\n";
 
             foreach (var ChainIndex in ChainIndexes)
             {
@@ -160,16 +160,16 @@ namespace Support
             if (!Full) { return Text; }
 
             var MaxPeakIndex = 0;
-            Text = Text + "\r\n\r\n";
+            Text += "\r\n\r\n";
 
             foreach (var ErrDisParentPeakIndexesInRange in ErrDisParentPeakIndexes)
             {
                 if (MaxPeakIndex < ErrDisParentPeakIndexesInRange.Length) { MaxPeakIndex = ErrDisParentPeakIndexesInRange.Length; }
-                Text = Text + "ParentPeakIndex,ParentPeakMass,ChildPeakIndex,ChildPeakMass,PpmError,MassBlock,,";
+                Text += "ParentPeakIndex,ParentPeakMass,ChildPeakIndex,ChildPeakMass,PpmError,MassBlock,,";
             }
             for (var PeakIndex = 0; PeakIndex < MaxPeakIndex; PeakIndex++)
             {
-                Text = Text + "\r\n";
+                Text += "\r\n";
 
                 for (var RangeIndex = 0; RangeIndex < ErrDisParentPeakIndexes.Length; RangeIndex++)
                 {
@@ -181,7 +181,7 @@ namespace Support
                     }
                     else
                     {
-                        Text = Text + ",,,,,,,";
+                        Text += ",,,,,,,";
                     }
                 }
             }

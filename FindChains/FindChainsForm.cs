@@ -241,7 +241,7 @@ namespace FindChains
                     for (var ClusterChainIndex = 0; ClusterChainIndex < BiggestChainCluster.Count; ClusterChainIndex++)
                     {
                         var ChainIndex = BiggestChainCluster[ClusterChainIndex];
-                        ClusterPeaks = ClusterPeaks + RawData.Chains[ChainIndex].PeakIndexes.Length;
+                        ClusterPeaks += RawData.Chains[ChainIndex].PeakIndexes.Length;
 
                         if (MinClsuterChainIndex == -1)
                         {
@@ -860,9 +860,9 @@ namespace FindChains
 
             foreach (var Error1 in LinkErrors)
             {
-                MeanError = MeanError + Error1;
+                MeanError += Error1;
             }
-            MeanError = MeanError / LinkErrors.Count;
+            MeanError /= LinkErrors.Count;
             textBoxError.Text = MeanError.ToString();
 
             double MaxError = 0;
@@ -903,7 +903,7 @@ namespace FindChains
                     Text = Text + "\r\n" + HeaderParts[2];
                     var MatchedPeaksParts = Lines[LineIndex + 2].Split(new[] { ' ', '(' });
                     Text = Text + ',' + MatchedPeaksParts[5];
-                    LineIndex = LineIndex + 12;
+                    LineIndex += 12;
                     var ErrorsBeforeCal = new List<double>();
                     var ErrorsAfterCal = new List<double>();
 

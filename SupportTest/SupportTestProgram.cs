@@ -74,7 +74,7 @@ namespace TestSupport
             var IndexStartIndexNoBefore = CPpmError.SearchPeakIndex(TestArray, MiddleValue, 40000, 60);
             var IndexStartIndexNoClose = CPpmError.SearchPeakIndex(TestArray, MiddleValue + 0.1, 10, 51);
 
-            MaxIndexAtMaxNo = MaxIndexAtMaxNo + 1;
+            MaxIndexAtMaxNo += 1;
         }
     }
 

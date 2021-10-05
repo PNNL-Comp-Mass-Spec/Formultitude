@@ -1166,7 +1166,7 @@ namespace CiaUi
             {
                 var ColumnHeaders = File.ReadAllLines(Filename)[0].Split(oCCia.WordSeparators);
                 var Samples = ColumnHeaders.Length - 10;
-                TotalSamples = TotalSamples + Samples;
+                TotalSamples += Samples;
 
                 for (var Sample = 0; Sample < Samples; Sample++)
                 {
@@ -1215,7 +1215,7 @@ namespace CiaUi
                         Abundances[StartSample + Sample] = double.Parse(LineParts[10 + Sample]);
                     }
                 }
-                StartSample = StartSample + Samples;
+                StartSample += Samples;
             }
             var Delimiter = ",";
             var HeaderLine = "NeutralMass" + Delimiter + "Mass";
@@ -1475,7 +1475,7 @@ namespace CiaUi
 
                 foreach (var CurPairDistance in DistancePeaks)
                 {
-                    Records = Records + CurPairDistance.DistancePeakTypeList.Count;
+                    Records += CurPairDistance.DistancePeakTypeList.Count;
                 }
 
                 tableLayoutPanelChains.SuspendLayout();

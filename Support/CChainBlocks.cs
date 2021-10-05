@@ -129,8 +129,8 @@ namespace Support
                         if (char.IsLower(Formula[SymbolIndex + 1]))
                         {
                             //Check second small letter
-                            ElementName = ElementName + Formula[SymbolIndex + 1];
-                            SymbolIndex = SymbolIndex + 1;
+                            ElementName += Formula[SymbolIndex + 1];
+                            SymbolIndex += 1;
                         }
                         if (SymbolIndex + 1 >= Formula.Length)
                         {
@@ -144,7 +144,7 @@ namespace Support
                             if (Formula[SymbolIndex + 1] == '_')
                             {
                                 NegPos = -1;
-                                SymbolIndex = SymbolIndex + 1;
+                                SymbolIndex += 1;
                             }
                             //Check atom number
                             if (SymbolIndex + 1 >= Formula.Length)
@@ -154,13 +154,13 @@ namespace Support
                             else if (char.IsDigit(Formula[SymbolIndex + 1]))
                             {
                                 var Number = Formula[SymbolIndex + 1].ToString();
-                                SymbolIndex = SymbolIndex + 1;
+                                SymbolIndex += 1;
 
                                 for (; SymbolIndex + 1 < Formula.Length;)
                                 {
                                     if (!char.IsDigit(Formula[SymbolIndex + 1])) { break; }
                                     SymbolIndex++;
-                                    Number = Number + Formula[SymbolIndex];
+                                    Number += Formula[SymbolIndex];
                                 }
                                 if (!int.TryParse(Number, out Atoms)) { throw new Exception(""); }
                             }
@@ -175,7 +175,7 @@ namespace Support
                 var Index = Array.BinarySearch(ElementNames, ElementName);
 
                 if (Index < 0) { throw new Exception(""); }
-                Mass = Mass + NegPos * ElementMasses[Index] * Atoms;
+                Mass += NegPos * ElementMasses[Index] * Atoms;
             }
             return Mass;
         }
@@ -229,7 +229,7 @@ namespace Support
 
                     for (var NextPeakIndex = SecondPeakIndex + 1; NextPeakIndex < Masses.Length; NextPeakIndex++)
                     {
-                        NextPeakMass = NextPeakMass + ChainDistance;
+                        NextPeakMass += ChainDistance;
                         var Index = CPpmError.SearchPeakIndex(Masses, NextPeakMass, PeakPpmError, NextPeakIndex);
 
                         if (Index < 0) { break; }
@@ -808,7 +808,7 @@ namespace Support
                         ClusterEvenPeakSortedList.Add(PeakIndex, ChainIndex);
                     }
                 }
-                TotalPeakCount = TotalPeakCount + Data.Chains[ChainIndex].PeakIndexes.Length;
+                TotalPeakCount += Data.Chains[ChainIndex].PeakIndexes.Length;
 
                 for (; ; )
                 {

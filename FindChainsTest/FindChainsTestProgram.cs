@@ -95,7 +95,7 @@ namespace FindChainsTest
                     InputData.S2Ns = CutSNs.ToArray();
                     ChainBlocks.CalculateErrorDistribution(InputData, MaxOffsetPpmError, BlockMasses1);
                     Text = Text + "\r\nSN," + SN.ToString("F2") + ",Peaks," + InputData.Masses.Length + "\r\n";
-                    Text = Text + InputData.ErrorDistributionToString();
+                    Text += InputData.ErrorDistributionToString();
                 }
                 File.WriteAllText(Filename + "ErrorDistVsSN.csv", Text);
             }
