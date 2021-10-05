@@ -43,7 +43,6 @@ namespace FindChainsTest
 
         private static void Main(string[] args)
         {
-            Support.InputData InputData;
             var ChainBlocks = new CChainBlocks();
             //ChainBlocks.KnownMassBlocksFromFile( "\\\\picfs\\Research\\Projects\\TolicNikola\\AFAI_Manuscript\\Formularity area\\Improvements_Tests\\dmTransformations_MalakReal.csv" );
             ChainBlocks.KnownMassBlocksFromFile("dmTransformations_MalakReal.csv");
@@ -61,7 +60,7 @@ namespace FindChainsTest
             //string Filename = "\\\\picfs\\Research\\Projects\\TolicNikola\\AFAI_Manuscript\\Formularity area\\Testing Dynamic Error\\Testing_SN_Cutoff\\12T_sn1_Cates_H2O_SRFAII_12Apr18_Alder_Infuse_p05_1_01_28394.xml";
             //string Filename = "\\\\picfs\\Research\\Projects\\TolicNikola\\AFAI_Manuscript\\Formularity area\\Testing Dynamic Error\\Testing_SN_Cutoff\\12T_NotCalibrated.txt";
 
-            Support.CFileReader.ReadFile(Filename, out InputData);
+            Support.CFileReader.ReadFile(Filename, out var InputData);
             //Approach with high start ppm error
             const double MaxOffsetPpmError = 5;
 

@@ -137,8 +137,7 @@ namespace FindChains
                     var MinPeaksInChain = (int)numericUpDownMinPeaksInChain.Value;
                     var PeakPpmError = (double)numericUpDownPpmError.Value;
 
-                    Support.InputData Data;
-                    Support.CFileReader.CutData(RawData, out Data, CurSettings);
+                    Support.CFileReader.CutData(RawData, out var Data, CurSettings);
                     oCChainBlocks.FindChains(RawData, MinPeaksInChain, PeakPpmError, 3 * PeakPpmError, MaxChainStartMass, 0, RawData.Masses[RawData.Masses.Length - 1], checkBoxUseKnownChainBlocks.Checked);
 
                     oCChainBlocks.CreateUniqueChains(RawData, PeakPpmError);

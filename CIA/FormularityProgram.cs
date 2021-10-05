@@ -431,9 +431,8 @@ namespace CIA
                     //Maybe Element name consists of 2 letters
                     ElementName = FormulaName.Substring(CurrentSymbol, 2);
                     //check that is not like CH2
-                    EElemIndex oEElemNumber;
 
-                    if (!Enum.TryParse<EElemIndex>(ElementName, out oEElemNumber))
+                    if (!Enum.TryParse<EElemIndex>(ElementName, out var oEElemNumber))
                     {
                         ElementName = FormulaName.Substring(CurrentSymbol, 1);
                     }
@@ -2254,10 +2253,7 @@ namespace CIA
             //If that happens, from the options with the lowest number of non-oxygen heteroatoms, chose the one with the lowest error
             //KL 1/6/09 - convert elemformula to double to get the precision I need
 
-            int DBLowerIndex;
-            int DBUpperIndex;
-
-            if (!GetDBLimitIndexes(peak_mass, out DBLowerIndex, out DBUpperIndex)) { return BestFormula; }
+            if (!GetDBLimitIndexes(peak_mass, out var DBLowerIndex, out var DBUpperIndex)) { return BestFormula; }
             Candidates = (short)(DBUpperIndex - DBLowerIndex + 1);
             double BestMass = 0;
             double BestErrorPPM = 0;
@@ -3850,9 +3846,7 @@ namespace CIA
 
         public void DBConvertAsciiToBin(string DBAsciiFilename)
         {
-            double[] Masses;
-            short[][] Formulas;
-            ReadDBAsciiFile(DBAsciiFilename, out Masses, out Formulas);
+            ReadDBAsciiFile(DBAsciiFilename, out var Masses, out var Formulas);
 
             if (DBCalculateMassFromFormula)
             {
@@ -3896,9 +3890,7 @@ namespace CIA
 
             foreach (var Filename in AsciiFilenames)
             {
-                double[] TempMasses;
-                short[][] TempFormulas;
-                ReadDBAsciiFile(Filename, out TempMasses, out TempFormulas);
+                ReadDBAsciiFile(Filename, out var TempMasses, out var TempFormulas);
                 ListMasses.AddRange(TempMasses);
                 ListFormulas.AddRange(TempFormulas.ToList<short[]>());
             }

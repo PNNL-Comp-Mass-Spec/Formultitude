@@ -819,9 +819,7 @@ namespace Support
                         if (IsChainInCluster[NextChainIndex]) { continue; }
                         foreach (var PeakIndex in Data.Chains[NextChainIndex].PeakIndexes)
                         {
-                            int ParentChainIndex;
-
-                            if (ClusterPeakSortedList.TryGetValue(PeakIndex, out ParentChainIndex))
+                            if (ClusterPeakSortedList.TryGetValue(PeakIndex, out var ParentChainIndex))
                             {
                                 IsChainInCluster[NextChainIndex] = true;
                                 ClusterChains.Add(NextChainIndex);

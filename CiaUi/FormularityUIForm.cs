@@ -975,10 +975,9 @@ namespace CiaUi
             var Error = CPpmError.PpmToError(NeutralMass, oCCia.GetFormulaPPMTolerance());
             textBoxDBNeutralMassPlusError.Text = (NeutralMass + Error).ToString();
             textBoxDBNeutralMassMinusError.Text = (NeutralMass - Error).ToString();
-            int LowerIndex, UpperIndex;
             int Records;
 
-            if (!oCCia.GetDBLimitIndexes(NeutralMass, out LowerIndex, out UpperIndex))
+            if (!oCCia.GetDBLimitIndexes(NeutralMass, out var LowerIndex, out var UpperIndex))
             {
                 Records = 0;
             }
@@ -1466,8 +1465,7 @@ namespace CiaUi
             try
             {
                 var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
-                Support.InputData InputData;
-                Support.CFileReader.ReadFile(Filenames[0], out InputData);
+                Support.CFileReader.ReadFile(Filenames[0], out var InputData);
                 var ChainBlocks = new CChainBlocks();
                 ChainBlocks.KnownMassBlocksFromFile("dmTransformations_MalakReal.csv");
                 var IsotopeFilename = "Isotope.inf";
