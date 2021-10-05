@@ -1028,10 +1028,27 @@ namespace CIA
             {
                 oTotalCalibration.Load(RefPeakFilename);
             }
-            if ( GenerateReports == true ) {
-                string IsotopeFilename = "Isotope.inf";
-                CIsotope.ConvertIsotopeFileIntoIsotopeDistanceFile( IsotopeFilename );
-                ChainBlocks.KnownMassBlocksFromFile( "dmTransformations_MalakReal.csv" );
+
+            if (GenerateReports == true)
+            {
+                string inputFileDirectoryPath;
+
+                if (Filenames.Length == 0)
+                {
+                    inputFileDirectoryPath = ".";
+                }
+                else
+                {
+                    var firstInputFile = new FileInfo(Filenames[0]);
+                    inputFileDirectoryPath = firstInputFile.Directory.FullName;
+                }
+
+                var isotopeFile = FindFile("Isotope.inf", inputFileDirectoryPath);
+
+                CIsotope.ConvertIsotopeFileIntoIsotopeDistanceFile(isotopeFile.FullName);
+
+                var dmTransformationsFile = FindFile("dmTransformations_MalakReal.csv", inputFileDirectoryPath);
+                ChainBlocks.KnownMassBlocksFromFile(dmTransformationsFile.FullName);
             }
 
             for (int FileIndex = 0; FileIndex < FileCount; FileIndex++)
