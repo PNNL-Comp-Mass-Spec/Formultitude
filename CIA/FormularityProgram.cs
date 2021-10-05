@@ -3388,7 +3388,7 @@ namespace CIA
             }
         }
 
-        private int FindC13ParentPeak(short[][] Formulas, int C13Peak)
+        private int FindC13ParentPeak(IList<short[]> Formulas, int C13Peak)
         {
             var ParentFormula = (short[])Formulas[C13Peak].Clone();
             ParentFormula[(int)EElemIndex.C13] = (short)(ParentFormula[(int)EElemIndex.C13] - 1);
