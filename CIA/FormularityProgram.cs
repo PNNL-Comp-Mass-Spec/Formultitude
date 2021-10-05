@@ -29,12 +29,12 @@ namespace CIA
 
                 //args[0] - CIA or IPA method
                 var CiaOrIpa = false;
-                if (args[0].ToLower() == "cia")
+                if (string.Equals(args[0], "cia", StringComparison.OrdinalIgnoreCase))
                 {
                     oCCia.SetProcessType(CCia.ProcessType.Cia);
                     //CiaOrIpa = false;
                 }
-                else if (args[0].ToLower() == "ipa")
+                else if (string.Equals(args[0], "ipa", StringComparison.OrdinalIgnoreCase))
                 {
                     oCCia.SetProcessType(CCia.ProcessType.Ipa);
                     //CiaOrIpa = true;
