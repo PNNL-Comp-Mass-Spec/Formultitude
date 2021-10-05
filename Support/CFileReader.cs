@@ -41,7 +41,7 @@ namespace Support
         {
             var Text = Formula + "," + IdealBlockMass.ToString("F8") + "," + PeakIndexes.Length + "," + BlockMassMean.ToString("F8") + "," + PpmErrorStdDev.ToString("F8")
                        + "," + ClusteringChainIndex + "," + ClusteringPeakIndex + "," + ClusteringMassError.ToString("F8");
-            if (FullInfo == false) { return Text; }
+            if (!FullInfo) { return Text; }
             Text = Text + "\r\nPeak,Index,Mass";
             for (var Index = 0; Index < PeakIndexes.Length; Index++)
             {
@@ -67,7 +67,7 @@ namespace Support
             var Text = ChainIndexes.Length + "," + PeakCount + "," + MinMass.ToString("F8") + "," + MaxMass.ToString("F8")
                        + "," + EvenPeakCount + ", " + OddPeakCount + "," + TheBestChainIndex + "," + TheBestPeakIndex + "," + TheBestScore.ToString("F3")
                        + "," + MaxPpmErrorGain.ToString("F8") + "," + HigherPpmErrorCount + "," + MaxOutlierPpmError;
-            if (FullInfo == false) { return Text; }
+            if (!FullInfo) { return Text; }
             Text = Text + "\r\nChain indexes:\r\n";
             foreach (var ChainIndex in ChainIndexes)
             {
@@ -144,7 +144,7 @@ namespace Support
                 Text = Text + "\r\n" + ErrDisMassMedians[RangeIndex].ToString("F8") + "," + ErrDisLowPpmErrors[RangeIndex] + "," + ErrDisUpperPpmErrors[RangeIndex]
                         + "," + ErrDisMeans[RangeIndex].ToString("F8") + "," + ErrDisStdDevs[RangeIndex].ToString("F8") + "," + ErrDisPairCount[RangeIndex];
             }
-            if (Full == false) { return Text; }
+            if (!Full) { return Text; }
 
             var MaxPeakIndex = 0;
             Text = Text + "\r\n\r\n";
@@ -181,7 +181,7 @@ namespace Support
             var Write = false;
             for (var Index = 0; Index < ErrorTrend.Length; Index++)
             {
-                if ((Write == false) && double.IsNaN(ErrorTrend[Index])) { continue; }
+                if ((!Write) && double.IsNaN(ErrorTrend[Index])) { continue; }
                 Write = true;
                 Text = Text + "\r\n" + Index + "," + ErrorTrend[Index].ToString("F8");
             }
@@ -229,7 +229,7 @@ namespace Support
                 var CurChain = Chains[ChainIndex];
                 foreach (var PeakIndex in CurChain.PeakIndexes)
                 {
-                    if (PeakIndexSortedList.ContainsKey(PeakIndex) == false)
+                    if (!PeakIndexSortedList.ContainsKey(PeakIndex))
                     {
                         PeakIndexSortedList.Add(PeakIndex, PeakIndex);
                     }

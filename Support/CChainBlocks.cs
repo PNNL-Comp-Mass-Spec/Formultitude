@@ -99,7 +99,7 @@ namespace Support
                 var NegPos = 1;
                 var Atoms = 1;
                 //start from Capital letter
-                if (char.IsUpper(Formula[SymbolIndex]) == false) { throw new Exception(""); }
+                if (!char.IsUpper(Formula[SymbolIndex])) { throw new Exception(""); }
                 if (SymbolIndex + 1 >= Formula.Length)
                 {
                     //last symbol
@@ -149,11 +149,11 @@ namespace Support
                                 SymbolIndex = SymbolIndex + 1;
                                 for (; SymbolIndex + 1 < Formula.Length;)
                                 {
-                                    if (char.IsDigit(Formula[SymbolIndex + 1]) == false) { break; }
+                                    if (!char.IsDigit(Formula[SymbolIndex + 1])) { break; }
                                     SymbolIndex++;
                                     Number = Number + Formula[SymbolIndex];
                                 }
-                                if (int.TryParse(Number, out Atoms) == false) { throw new Exception(""); }
+                                if (!int.TryParse(Number, out Atoms)) { throw new Exception(""); }
                             }
                             else
                             {
@@ -270,7 +270,7 @@ namespace Support
                 for (var SecondIndex = 0; SecondIndex < SecondChain.PeakIndexes.Length; SecondIndex++)
                 {
                     if (FirstChain.PeakIndexes[FirstIndex] != SecondChain.PeakIndexes[SecondIndex]) { continue; }
-                    if (FirstTheSamePeakIndex == false)
+                    if (!FirstTheSamePeakIndex)
                     {
                         FirstTheSamePeakIndex = true;
                         if ((FirstChain.Formula.Length != 0) && (SecondChain.Formula.Length != 0) && (FirstChain.Formula != "N/A") && (SecondChain.Formula != "N/A"))
@@ -342,7 +342,7 @@ namespace Support
             var UniqueChains = new List<Support.Chain>();
             for (var Index = 0; Index < NotUniqueChains.Length; Index++)
             {
-                if (NotUniqueChains[Index] == false) { UniqueChains.Add(Chains[Index]); }
+                if (!NotUniqueChains[Index]) { UniqueChains.Add(Chains[Index]); }
             }
             Data.Chains = UniqueChains.ToArray();
         }
@@ -714,7 +714,7 @@ namespace Support
             var UniqueChains = new List<Support.Chain>();
             for (var Index = 0; Index < NotUniqueChains.Length; Index++)
             {
-                if (NotUniqueChains[Index] == false) { UniqueChains.Add(Chains[Index]); }
+                if (!NotUniqueChains[Index]) { UniqueChains.Add(Chains[Index]); }
             }
             Data.Chains = UniqueChains.ToArray();
             var FirstPeakIndexes = new int[Data.Chains.Length];
@@ -771,7 +771,7 @@ namespace Support
                                 Data.Chains[NextChainIndex].ClusteringPeakIndex = PeakIndex;
                                 foreach (var CurPeakIndex in Data.Chains[NextChainIndex].PeakIndexes)
                                 {
-                                    if (ClusterPeakSortedList.ContainsKey(CurPeakIndex) == false)
+                                    if (!ClusterPeakSortedList.ContainsKey(CurPeakIndex))
                                     {
                                         ClusterPeakSortedList.Add(CurPeakIndex, NextChainIndex);
                                         if (((int)Math.Round(Data.Masses[CurPeakIndex])) % 2 == 0)
@@ -785,7 +785,7 @@ namespace Support
                             }
                         }
                     }
-                    if (WasAddedChain == false)
+                    if (!WasAddedChain)
                     {
                         break;
                     }
@@ -879,7 +879,7 @@ namespace Support
             var MinAssignedMassInteger = -1;
             for (var IntegerIndex = MinMassInteger; IntegerIndex < MassIntegerCount; IntegerIndex++)
             {
-                if (double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]) == false)
+                if (!double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]))
                 {
                     MinAssignedMassInteger = IntegerIndex;
                     break;
@@ -888,7 +888,7 @@ namespace Support
             var MaxAssignedMassInteger = -1;
             for (var IntegerIndex = MassIntegerCount - 1; IntegerIndex >= MinMassInteger; IntegerIndex--)
             {
-                if (double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]) == false)
+                if (!double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]))
                 {
                     MaxAssignedMassInteger = IntegerIndex;
                     break;
@@ -909,7 +909,7 @@ namespace Support
                 }
                 else
                 {
-                    if (double.IsNaN(MeanAbsErrorAtInteger[CurInteger]) == false)
+                    if (!double.IsNaN(MeanAbsErrorAtInteger[CurInteger]))
                     {
                         AbsError = MeanAbsErrorAtInteger[CurInteger];
                     }
@@ -918,7 +918,7 @@ namespace Support
                         var LowIntegerIndex = -1;
                         for (var IntegerIndex = CurInteger - 1; ; IntegerIndex--)
                         {
-                            if (double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]) == false)
+                            if (!double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]))
                             {
                                 LowIntegerIndex = IntegerIndex;
                                 break;
@@ -927,7 +927,7 @@ namespace Support
                         var UpperIntegerIndex = -1;
                         for (var IntegerIndex = CurInteger + 1; ; IntegerIndex++)
                         {
-                            if (double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]) == false)
+                            if (!double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]))
                             {
                                 UpperIntegerIndex = IntegerIndex;
                                 break;
@@ -1153,7 +1153,7 @@ namespace Support
                             break;
                         }
                     }
-                    if (UsedChains[ChainIndexInCluster] == false) { continue; }
+                    if (!UsedChains[ChainIndexInCluster]) { continue; }
 
                     //add chain peaks
                     var CurChainIdealBlockMass = Data.Chains[ClusterChainIndexes[ChainIndexInCluster]].IdealBlockMass;
@@ -1496,10 +1496,10 @@ namespace Support
             {
                 var CurDistancePeak = DistancePeakList[DistancePeakIndex];
                 if (CurDistancePeak.DistancePeakTypeList.Count == 0) { continue; }
-                if (((CurDistancePeak.DistancePeakTypeList[0] == DistancePeakType.DM)
-                            || (CurDistancePeak.DistancePeakTypeList[0] == DistancePeakType.Chain)
-                            || (CurDistancePeak.DistancePeakTypeList[0] == DistancePeakType.UChain)
-                            || (CurDistancePeak.DistancePeakTypeList[0] == DistancePeakType.Isotope)) == false)
+                if (((CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.DM)
+                            && (CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.Chain)
+                            && (CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.UChain)
+                            && (CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.Isotope)))
                 {
                     continue;
                 }

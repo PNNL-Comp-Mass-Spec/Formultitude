@@ -39,7 +39,7 @@ Mame,Distance
             for (var LineIndex = 0; LineIndex < IsotopeFileLines.Length; LineIndex++)
             {
                 //first isotipe
-                if (IsotopeFileLines[LineIndex].StartsWith("name=") == false) { continue; }
+                if (!IsotopeFileLines[LineIndex].StartsWith("name=")) { continue; }
                 var AtomicNumber = IsotopeFileLines[LineIndex + 1];
                 //Relative Atomic Mass
                 double AtomicMass = 0;
@@ -55,7 +55,7 @@ Mame,Distance
                 LineIndex = LineIndex + 10;
                 for (; LineIndex < IsotopeFileLines.Length; LineIndex++)
                 {
-                    if (IsotopeFileLines[LineIndex].StartsWith("name=") == false) { continue; }
+                    if (!IsotopeFileLines[LineIndex].StartsWith("name=")) { continue; }
                     var IsotopeAtomicNumber = IsotopeFileLines[LineIndex + 1];
                     if (AtomicNumber != IsotopeAtomicNumber)
                     {

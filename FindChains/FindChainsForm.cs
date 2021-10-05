@@ -171,7 +171,7 @@ namespace FindChains
                                     foreach (var PeakIndex in RawData.Chains[RightChainIndex].PeakIndexes)
                                     {
                                         var qq = new KeyValuePair<int, int>(PeakIndex, PeakIndex);
-                                        if (ClusterPeaksD.Contains(qq) == false)
+                                        if (!ClusterPeaksD.Contains(qq))
                                         {
                                             ClusterPeaksD.Add(PeakIndex, PeakIndex);
                                         }
@@ -842,7 +842,7 @@ namespace FindChains
                 var Text = "Filename,MatchedPeaks,BeforeErrorAverage,BeforeErrorStdDev,AfterErrorAverage,AfterStdDev";
                 for (var LineIndex = 0; LineIndex < Lines.Length; LineIndex++)
                 {
-                    if (Lines[LineIndex].StartsWith(StartFile) == false) { continue; }
+                    if (!Lines[LineIndex].StartsWith(StartFile)) { continue; }
                     var HeaderParts = Lines[LineIndex].Split(new[] { ' ' });
                     Text = Text + "\r\n" + HeaderParts[2];
                     var MatchedPeaksParts = Lines[LineIndex + 2].Split(new[] { ' ', '(' });

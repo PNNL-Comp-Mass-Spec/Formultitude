@@ -121,7 +121,7 @@ namespace CiaUi
         {
             numericUpDownAlignmentTolerance.Enabled = checkBoxAlignment.Checked;
             checkBoxGenerateReports.Enabled = checkBoxAlignment.Checked;
-            if (checkBoxAlignment.Checked == false)
+            if (!checkBoxAlignment.Checked)
             {
                 checkBoxGenerateReports.Checked = true;
             }

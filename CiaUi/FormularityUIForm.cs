@@ -477,7 +477,7 @@ namespace CiaUi
                     {
                         oCCia.SetUserDefinedScore(textBoxFormulaScoreUserDefined.Text);
                     }
-                    if (checkBoxCIAUseDefault.Checked == false)
+                    if (!checkBoxCIAUseDefault.Checked)
                     {
                         oCCia.SetUseKendrick(oCiaAdvancedForm.checkBoxCIAAdvUseKendrick.Checked);
                         oCCia.SetUseC13(oCiaAdvancedForm.checkBoxCIAAdvUseC13.Checked);
@@ -493,7 +493,7 @@ namespace CiaUi
                     //Filters
                     oCCia.SetUseFormulaFilter(checkBoxUseFormulaFilters.Checked);
                     var GoldenFilters = new bool[oCCia.GoldenRuleFilterNames.Length];
-                    if (checkBoxCIAUseDefault.Checked == false)
+                    if (!checkBoxCIAUseDefault.Checked)
                     {
                         GoldenFilters[0] = oCiaAdvancedForm.checkBoxGoldenRule1.Checked;
                         GoldenFilters[1] = oCiaAdvancedForm.checkBoxGoldenRule2.Checked;
@@ -520,7 +520,7 @@ namespace CiaUi
                     oCCia.SetMaxRelationGaps((int)numericUpDownMaxRelationGaps.Value);
                     oCCia.SetRelationErrorType((CCia.RelationErrorType)Enum.Parse(typeof(CCia.RelationErrorType), comboBoxRelationErrorType.Text));
                     oCCia.SetRelationErrorAMU((double)numericUpDownRelationErrorValue.Value);
-                    if (checkBoxCIAUseDefault.Checked == false)
+                    if (!checkBoxCIAUseDefault.Checked)
                     {
                         oCCia.SetUseBackward(oCiaAdvancedForm.checkBoxCIAAdvBackward.Checked);
                     }
@@ -538,7 +538,7 @@ namespace CiaUi
 
                     //Reports
                     oCCia.SetGenerateReports(checkBoxGenerateReports.Checked);
-                    if (checkBoxCIAUseDefault.Checked == false)
+                    if (!checkBoxCIAUseDefault.Checked)
                     {
                         oCCia.SetErrorType((CCia.EErrorType)Enum.Parse(typeof(CCia.EErrorType), oCiaAdvancedForm.comboBoxErrorType.Text));
                     }
@@ -574,7 +574,7 @@ namespace CiaUi
                 {
                     oCCia.SetProcessType(CCia.ProcessType.CiaIpa);
                 }
-                else if (checkBoxCIA.Checked && (checkBoxIpa.Checked == false))
+                else if (checkBoxCIA.Checked && (!checkBoxIpa.Checked))
                 {
                     oCCia.SetProcessType(CCia.ProcessType.Cia);
                 }
@@ -834,12 +834,12 @@ namespace CiaUi
                     break;
                 }
             }
-            if ((XAxisColumnIndex != -1) == false)
+            if ((XAxisColumnIndex == -1))
             {
                 MessageBox.Show("There is not " + textBoxXAxisColumnHeader.Text + " column header");
                 return;
             }
-            if ((YAxisColumnIndex != -1) == false)
+            if ((YAxisColumnIndex == -1))
             {
                 MessageBox.Show("There is not " + textBoxYAxisColumnHeader.Text + " column header");
                 return;
@@ -930,7 +930,7 @@ namespace CiaUi
             textBoxDBNeutralMassMinusError.Text = (NeutralMass - Error).ToString();
             int LowerIndex, UpperIndex;
             int Records;
-            if (oCCia.GetDBLimitIndexes(NeutralMass, out LowerIndex, out UpperIndex) == false)
+            if (!oCCia.GetDBLimitIndexes(NeutralMass, out LowerIndex, out UpperIndex))
             {
                 Records = 0;
             }
@@ -1060,13 +1060,13 @@ namespace CiaUi
                 var ErrorTypeExtension = false;
                 foreach (var Filename in Filenames)
                 {
-                    if (InputFileTextFormats.Contains(Path.GetExtension(Filename)) != true)
+                    if (!InputFileTextFormats.Contains(Path.GetExtension(Filename)))
                     {
                         MessageBox.Show("Extension of file (" + Path.GetFileName(Filename) + ") is not ASCII");
                         ErrorTypeExtension = true;
                     }
                 }
-                if (ErrorTypeExtension == false)
+                if (!ErrorTypeExtension)
                 {
                     oCCia.DBConvertAsciisToBin(Filenames);
                 }
@@ -1128,13 +1128,13 @@ namespace CiaUi
                     {
                         Formula[Element] = Int16.Parse(LineParts[2 + Element]);
                     }
-                    if (oCCia.IsFormula(Formula) == false)
+                    if (!oCCia.IsFormula(Formula))
                     {
                         continue;
                     }
                     var NeutralMass = oCCia.FormulaToNeutralMass(Formula);
                     double[] Abundances;
-                    if (FormulaDict.ContainsKey(NeutralMass) == false)
+                    if (!FormulaDict.ContainsKey(NeutralMass))
                     {
                         var Data = new ReportData();
                         Data.Formula = (short[])Formula.Clone();
@@ -1333,7 +1333,7 @@ namespace CiaUi
                 {
                     UserDefinedFilter.Rows[0][Enum.GetName(typeof(CCia.EElemIndex), Element)] = CurFormula[Element];
                 }
-                if ((bool)UserDefinedFilter.Rows[0]["UserDefinedFilter"] == false)
+                if (!(bool)UserDefinedFilter.Rows[0]["UserDefinedFilter"])
                 {
                     continue;
                 }
@@ -1349,13 +1349,13 @@ namespace CiaUi
                 for (var CompositionIndex = 0; CompositionIndex < DBCompositions.Length; CompositionIndex++)
                 {
                     var Composition = DBCompositions[CompositionIndex];
-                    if (Composition.Contains("C")) { if (bC == false) { continue; } }
-                    if (Composition.Contains("H")) { if (bH == false) { continue; } }
-                    if (Composition.Contains("O")) { if (bO == false) { continue; } }
-                    if (Composition.Contains("N")) { if (bN == false) { continue; } }
-                    if (Composition.Contains("S")) { if (bS == false) { continue; } }
-                    if (Composition.Contains("P")) { if (bP == false) { continue; } }
-                    if (Composition.Contains("Na")) { if (bNa == false) { continue; } }
+                    if (Composition.Contains("C")) { if (!bC) { continue; } }
+                    if (Composition.Contains("H")) { if (!bH) { continue; } }
+                    if (Composition.Contains("O")) { if (!bO) { continue; } }
+                    if (Composition.Contains("N")) { if (!bN) { continue; } }
+                    if (Composition.Contains("S")) { if (!bS) { continue; } }
+                    if (Composition.Contains("P")) { if (!bP) { continue; } }
+                    if (Composition.Contains("Na")) { if (!bNa) { continue; } }
                     CompositionCounts[CompositionIndex]++;
                 }
             }
