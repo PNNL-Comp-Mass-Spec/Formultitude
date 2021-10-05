@@ -334,11 +334,11 @@ namespace CIA
         public const int ElementCount = 8;
         public enum EElemIndex { C = 0, H, O, N, C13, S, P, Na };
 
-        private double[] ElementMasses = new double[ElementCount] { CElements.C, CElements.H, CElements.O, CElements.N, CElements.C13, CElements.S, CElements.P, CElements.Na };
-        private short[] ElemValences = { 4, 1, 2, 3, 4, 2, 3, 1 };
+        private readonly double[] ElementMasses = new double[ElementCount] { CElements.C, CElements.H, CElements.O, CElements.N, CElements.C13, CElements.S, CElements.P, CElements.Na };
+        private readonly short[] ElemValences = { 4, 1, 2, 3, 4, 2, 3, 1 };
 
         //Formula
-        private short[] NullFormula = new short[ElementCount];
+        private readonly short[] NullFormula = new short[ElementCount];
         public double FormulaToNeutralMass(short[] Formula)
         {
             if (Formula == null)
@@ -798,7 +798,7 @@ namespace CIA
         public bool GetUseCIAFormulaScore() { return UseCIAFormulaScore; }
         public void SetUseCIAFormulaScore(bool UseCIAFormulaScore) { this.UseCIAFormulaScore = UseCIAFormulaScore; }
 
-        private string[] FormulaScoreNames = new string[]{
+        private readonly string[] FormulaScoreNames = new string[]{
                 "min(S+P) & The lowest error",
                 "The lowest error",
                 "min(N+S+P) & The lowest error",
@@ -815,8 +815,8 @@ namespace CIA
         private System.Data.DataTable UserDefinedScoreTable;
         private string UserDefinedScore = "";
         public string GetUserDefinedScore() { return UserDefinedScore; }
-        private string PrefixFirst = "First";
-        private string PrefixSecond = "Second";
+        private readonly string PrefixFirst = "First";
+        private readonly string PrefixSecond = "Second";
         public void SetUserDefinedScore(string UserDefinedScore)
         {
             if (UserDefinedScore.Length == 0)
@@ -876,7 +876,7 @@ namespace CIA
                 "Integer DBE"
         };
         public string[] GetGoldenRuleFilterNames() { return GoldenRuleFilterNames; }
-        private bool[] GoldenRuleFilters = new bool[] { true, true, true, true, true, true };
+        private readonly bool[] GoldenRuleFilters = new bool[] { true, true, true, true, true, true };
         public bool[] GetGoldenRuleFilterUsage() { return GoldenRuleFilters; }
         public void SetGoldenRuleFilterUsage(bool[] GoldenRuleFilters)
         {
@@ -893,7 +893,7 @@ namespace CIA
 
         private ESpecialFilters oESpecialFilter = ESpecialFilters.None;
 
-        private string[] SpecialFilterRules = new string[]{
+        private readonly string[] SpecialFilterRules = new string[]{
                 "",
                 "O>0 AND N<=2 AND S<=1 AND P=0 AND 3*(S+N)<=O",
                 "O>0 AND N<=3 AND S<=2 AND P<=2",
@@ -970,7 +970,7 @@ namespace CIA
         */
 
         //Output file delimiter
-        private string OutputFileDelimiter = ",";
+        private readonly string OutputFileDelimiter = ",";
         /*public enum EDelimiters { Comma, Tab, Space};
         EDelimiters oEOutputFileDelimiter = EDelimiters.Comma;
         public static string OutputFileDelimiterToString( EDelimiters oo){
@@ -996,7 +996,7 @@ namespace CIA
             OutputFileDelimiter = OutputFileDelimiterToString( Delimiter );
         }
         */
-        private Data oData = new Data();//log file
+        private readonly Data oData = new Data();//log file
         public AlignData oAlignData = new AlignData();
         public TotalIPDBSearch Ipa;
         public CCia()
@@ -3150,9 +3150,9 @@ namespace CIA
         public short[][] DBFormulas = null;
         public short[] GetDBFormula(int Index) { return DBFormulas[Index]; }
         public string GetDBFormulaName(int Index) { return FormulaToName(DBFormulas[Index]); }
-        private static int DBBytesPerRecord = sizeof(double) + ElementCount * sizeof(short);
-        private static int DBRecordPerBlock = 1000;
-        private int DBBlockBytes = DBRecordPerBlock * DBBytesPerRecord;
+        private static readonly int DBBytesPerRecord = sizeof(double) + ElementCount * sizeof(short);
+        private static readonly int DBRecordPerBlock = 1000;
+        private readonly int DBBlockBytes = DBRecordPerBlock * DBBytesPerRecord;
         [StructLayout(LayoutKind.Explicit)]
         public struct DoubleAndBytes
         {

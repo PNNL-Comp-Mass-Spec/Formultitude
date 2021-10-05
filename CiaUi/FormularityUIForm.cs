@@ -19,9 +19,9 @@ namespace CiaUi
     {
         public CCia oCCia = new CCia();
 
-        private CiaAdvancedForm oCiaAdvancedForm;
+        private readonly CiaAdvancedForm oCiaAdvancedForm;
         //System.Windows.Forms.CheckBox [] GoldenRuleFilterUsage;
-        private string[] DBPeaksTableHeaders = new string[] { "Index", "Neutral mass", "Formula", "Error, ppm" };
+        private readonly string[] DBPeaksTableHeaders = new string[] { "Index", "Neutral mass", "Formula", "Error, ppm" };
         public enum EPlotType { ErrorVsNeutralMass, ErrorVs };
         public FormularityUIForm()
         {
@@ -808,8 +808,8 @@ namespace CiaUi
         }
 
         //Error plot tab
-        private List<double> XData = new List<double>();
-        private List<double> YData = new List<double>();
+        private readonly List<double> XData = new List<double>();
+        private readonly List<double> YData = new List<double>();
         private void chartError_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
@@ -996,9 +996,9 @@ namespace CiaUi
         }
         */
         //File convertor tab
-        private string[] InputFileTextFormats = { ".txt", ".csv", ".xls", ".xlsx" };
+        private readonly string[] InputFileTextFormats = { ".txt", ".csv", ".xls", ".xlsx" };
 
-        private string[] DBActionMenu = {
+        private readonly string[] DBActionMenu = {
             "One ASCII -> one binary",
             "Many ASCIIs -> one binary",
             "Binary -> CSV"};
@@ -1300,7 +1300,7 @@ namespace CiaUi
             }
         }
 
-        private string[] DBCompositions = new string[]{
+        private readonly string[] DBCompositions = new string[]{
                 "C", "H", "N", "O", "P", "S", "CH", "CN", "CO", "CP",
                 "CS", "HN", "HO", "HP", "HS", "NO", "NP", "NS", "OP", "OS",
                 "PS", "CHN", "CHO", "CHP", "CHS", "CNO", "CNP", "CNS", "COP", "COS",

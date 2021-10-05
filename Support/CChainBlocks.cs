@@ -55,7 +55,7 @@ namespace Support
             Array.Sort(ElementNames, ElementMasses);
         }
 
-        private static char[] WordSeparators = new char[] { '\t', ',', ' ' };
+        private static readonly char[] WordSeparators = new char[] { '\t', ',', ' ' };
         public void KnownMassBlocksFromFile(string Filename)
         {
             //Chain block formula is first word in line

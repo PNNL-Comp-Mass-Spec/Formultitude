@@ -19,7 +19,7 @@ namespace FindChains
             oCChainBlocks = new CChainBlocks();
         }
 
-        private CChainBlocks oCChainBlocks;
+        private readonly CChainBlocks oCChainBlocks;
 
         //PeakIndex
         private double[] Masses;
