@@ -17,7 +17,7 @@ namespace CiaUi
             InitializeComponent();
         }
 
-        private FormularityUIForm oFormularityUIForm;
+        private readonly FormularityUIForm oFormularityUIForm;
         private readonly CCia oCCia;
         private readonly System.Windows.Forms.CheckBox[] GoldenRuleFilterUsage;
 
