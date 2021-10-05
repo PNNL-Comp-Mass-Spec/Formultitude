@@ -302,7 +302,7 @@ namespace CiaUi
 
         private void comboBoxCalRegressionModel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxCalRegressionModel.Text == TotalCalibration.ttlRegressionType.none.ToString())
+            if (comboBoxCalRegressionModel.Text == nameof(TotalCalibration.ttlRegressionType.none))
             {
                 textBoxCalFile.Enabled = false;
                 numericUpDownCalRelFactor.Enabled = false;

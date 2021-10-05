@@ -420,7 +420,7 @@ namespace CiaUi
 
         private void comboBoxCalRegressionModel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxCalRegressionModel.Text == TotalCalibration.ttlRegressionType.none.ToString())
+            if (comboBoxCalRegressionModel.Text == nameof(TotalCalibration.ttlRegressionType.none))
             {
                 textBoxRefPeakFilename.Enabled = false;
                 numericUpDownCalRelFactor.Enabled = false;
@@ -708,7 +708,7 @@ namespace CiaUi
         private void buttonLoadCiaParameters_Click(object sender, EventArgs e)
         {
             textBoxAdduct.Text = "H";
-            comboBoxIonization.Text = TestFSDBSearch.TotalSupport.IonizationMethod.proton_attachment.ToString();
+            comboBoxIonization.Text = nameof(TestFSDBSearch.TotalSupport.IonizationMethod.proton_attachment);
             numericUpDownCharge.Value = 1;
 
             checkBoxAlignment.Checked = true;
@@ -745,7 +745,7 @@ namespace CiaUi
             oCiaAdvancedForm.checkBoxGenerateReports.Checked = false;
             oCiaAdvancedForm.checkBoxCIAAdvAddChains.Checked = false;
             oCiaAdvancedForm.numericUpDownCIAAdvMinPeaksPerChain.Value = 3;
-            oCiaAdvancedForm.comboBoxErrorType.Text = CCia.EErrorType.CIA.ToString();
+            oCiaAdvancedForm.comboBoxErrorType.Text = nameof(CCia.EErrorType.CIA);
         }
 
         private void buttonSwitchToAdvanced_Click(object sender, EventArgs e)
@@ -1360,13 +1360,13 @@ namespace CiaUi
                 textBoxNeutralMass.Text = Mass.ToString();
 
                 UserDefinedFilter.Rows[0]["Mass"] = Mass;
-                UserDefinedFilter.Rows[0][CCia.EElemIndex.C.ToString()] = numericUpDownCAtoms.Value;
-                UserDefinedFilter.Rows[0][CCia.EElemIndex.H.ToString()] = numericUpDownHAtoms.Value;
-                UserDefinedFilter.Rows[0][CCia.EElemIndex.O.ToString()] = numericUpDownOAtoms.Value;
-                UserDefinedFilter.Rows[0][CCia.EElemIndex.N.ToString()] = numericUpDownNAtoms.Value;
-                UserDefinedFilter.Rows[0][CCia.EElemIndex.S.ToString()] = numericUpDownSAtoms.Value;
-                UserDefinedFilter.Rows[0][CCia.EElemIndex.P.ToString()] = numericUpDownPAtoms.Value;
-                UserDefinedFilter.Rows[0][CCia.EElemIndex.Na.ToString()] = numericUpDownNaAtoms.Value;
+                UserDefinedFilter.Rows[0][nameof(CCia.EElemIndex.C)] = numericUpDownCAtoms.Value;
+                UserDefinedFilter.Rows[0][nameof(CCia.EElemIndex.H)] = numericUpDownHAtoms.Value;
+                UserDefinedFilter.Rows[0][nameof(CCia.EElemIndex.O)] = numericUpDownOAtoms.Value;
+                UserDefinedFilter.Rows[0][nameof(CCia.EElemIndex.N)] = numericUpDownNAtoms.Value;
+                UserDefinedFilter.Rows[0][nameof(CCia.EElemIndex.S)] = numericUpDownSAtoms.Value;
+                UserDefinedFilter.Rows[0][nameof(CCia.EElemIndex.P)] = numericUpDownPAtoms.Value;
+                UserDefinedFilter.Rows[0][nameof(CCia.EElemIndex.Na)] = numericUpDownNaAtoms.Value;
 
                 textBoxFilterResult.Text = ((bool)UserDefinedFilter.Rows[0]["UserDefinedFilter"]).ToString();
             }
