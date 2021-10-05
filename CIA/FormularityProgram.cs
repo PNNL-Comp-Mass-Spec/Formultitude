@@ -1289,11 +1289,11 @@ namespace CIA
                     for (int FileIndex = 0; FileIndex < Filenames.Length; FileIndex++)
                     {
                         //StreamWriter oStreamWriter;
-                        //int FileExtentionLength = Path.GetExtension( Filenames [ FileIndex ] ).Length;
+                        //int FileExtensionLength = Path.GetExtension( Filenames [ FileIndex ] ).Length;
                         //if( oEOutputFileDelimiter == EDelimiters.Comma ) {
-                        //    oStreamWriter = new StreamWriter( Filenames [ FileIndex ].Substring( 0, Filenames [ FileIndex ].Length - FileExtentionLength ) + "CShOut.csv" );
+                        //    oStreamWriter = new StreamWriter( Filenames [ FileIndex ].Substring( 0, Filenames [ FileIndex ].Length - FileExtensionLength ) + "CShOut.csv" );
                         //} else {
-                        //    oStreamWriter = new StreamWriter( Filenames [ FileIndex ].Substring( 0, Filenames [ FileIndex ].Length - FileExtentionLength ) + "CShOut.txt" );
+                        //    oStreamWriter = new StreamWriter( Filenames [ FileIndex ].Substring( 0, Filenames [ FileIndex ].Length - FileExtensionLength ) + "CShOut.txt" );
                         //}
 
                         var reportFilePath = Path.Combine(OutputSubfolder, Path.GetFileNameWithoutExtension(Filenames[FileIndex]) + "Result.csv");
