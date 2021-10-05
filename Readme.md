@@ -19,11 +19,11 @@ Related Publication(s):
 
 Formularity runs on 64-bit version of Windows; no installer is provided.
 Extract the contents of Formularity.zip, then run Formularity.exe
-Documentation is in file UserManual.docx in the Documents folder.
+Documentation is in file `UserManual.pdf` in the Documents folder [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/tree/master/Documents)
 
 To test the program, use the provided test files in the Documents folder.
 The test database is available as a separate download.
-* See file Formularity_CIA_DB.zip [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/releases)
+* See file `CIA_DB_2016_11_21_Database.zip` [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/releases)
 
 ### Analysis Steps
 
