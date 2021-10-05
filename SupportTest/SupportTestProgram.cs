@@ -32,6 +32,7 @@ namespace TestSupport
 
             var TestArrayLength = 100;
             var TestArray = new double[TestArrayLength];
+
             for (var Index = 0; Index < TestArray.Length; Index++)
             {
                 TestArray[Index] = 50 + Index;

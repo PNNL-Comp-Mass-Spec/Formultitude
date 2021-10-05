@@ -40,6 +40,7 @@ namespace FindChainsTest
             public double ChainStdDev;
         }
          * */
+
         private static void Main(string[] args)
         {
             Support.InputData InputData;
@@ -60,10 +61,10 @@ namespace FindChainsTest
             //string Filename = "\\\\picfs\\Research\\Projects\\TolicNikola\\AFAI_Manuscript\\Formularity area\\Testing Dynamic Error\\Testing_SN_Cutoff\\12T_sn1_Cates_H2O_SRFAII_12Apr18_Alder_Infuse_p05_1_01_28394.xml";
             //string Filename = "\\\\picfs\\Research\\Projects\\TolicNikola\\AFAI_Manuscript\\Formularity area\\Testing Dynamic Error\\Testing_SN_Cutoff\\12T_NotCalibrated.txt";
 
-
             Support.CFileReader.ReadFile(Filename, out InputData);
             //Approach with high start ppm error
             const double MaxOffsetPpmError = 5;
+
             if (true)
             {
                 var IsotopeFilename = "Isotope.inf";
@@ -77,10 +78,12 @@ namespace FindChainsTest
                 var SNs = new double[] { 1, 2, 3, 5, 10, 15, 20 };
                 var BlockMasses1 = new[] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
                 var Text = "";
+
                 foreach (var SN in SNs)
                 {
                     var CutMasses = new List<double>();
                     var CutSNs = new List<double>();
+
                     for (var PeakIndex = 0; PeakIndex < InputData.Masses.Length; PeakIndex++)
                     {
                         if (InputData.S2Ns[PeakIndex] > SN)
@@ -104,11 +107,13 @@ namespace FindChainsTest
                 var Masses = InputData.Masses;
                 var DistanceList = new List<double>();
                 double MaxDistanceMass = 100;
+
                 for (var LowPeakIndex = 0; LowPeakIndex < Masses.Length - 1; LowPeakIndex++)
                 {
                     for (var UpperPeakIndex = LowPeakIndex + 1; UpperPeakIndex < Masses.Length; UpperPeakIndex++)
                     {
                         var CurDistance = Masses[UpperPeakIndex] - Masses[LowPeakIndex];
+
                         if (MaxDistanceMass < CurDistance) { break; }
                         DistanceList.Add(CurDistance);
                     }
@@ -119,6 +124,7 @@ namespace FindChainsTest
                 var BinSize = CPpmError.PpmToError(InputData.ErrDisMassMedians[0], InputData.ErrDisStdDevs[0]) * 3;
                 var BinCount = (int)Math.Ceiling(MaxDistanceMass / BinSize) + 1;
                 var BinCounts = new int[BinCount];
+
                 for (var Index = 0; Index < DistanceList.Count - 1; Index++)
                 {
                     var Bin = (int)Math.Round(DistanceList[Index] / BinSize);
@@ -129,6 +135,7 @@ namespace FindChainsTest
                 var MinCount = MaxCount / 100;
 
                 var TextDistance = "BlockMass,Counts";
+
                 for (var Index = 1; Index < BinCounts.Length - 1; Index++)
                 {
                     if ((BinCounts[Index - 1] > MinCount)
@@ -148,21 +155,26 @@ namespace FindChainsTest
             double MaxDistance = 50;
             List<double> WindowStartPeakIndexList = new List<double>();
             List<int> WindowPeakList = new List<int>();
+
             for ( int DistanceIndex = 0; DistanceIndex < Distances.Length;) {
                 double UpperDistance = Distances [ DistanceIndex ] + MinDistance;
+
                 if ( UpperDistance > MaxDistance ) { break; }
                 if ( UpperDistance > Distances.Last() ) { break; }
                 int Index = Array.BinarySearch( Distances, DistanceIndex + 1, Distances.Length - DistanceIndex - 1, UpperDistance);
+
                 if ( Index < 0 ) { Index = ~Index; Index--; }
                 WindowStartPeakIndexList.Add( Distances [ DistanceIndex ] );
                 WindowPeakList.Add( Index - DistanceIndex + 1 );
                 UpperDistance = Distances [ DistanceIndex ] + MinDistance / 3;
                 int NextDistanceIndex = Array.BinarySearch( Distances, DistanceIndex + 1, Distances.Length - DistanceIndex - 1, UpperDistance );
+
                 if ( NextDistanceIndex < 0 ) { NextDistanceIndex = ~NextDistanceIndex; }
                 DistanceIndex = NextDistanceIndex;
             }
 
             string TextDistance = "BlockMass,Counts";
+
             for( int Index = 0; Index < WindowPeakList.Count; Index ++ ) {
                 TextDistance = TextDistance + "\r\n" + WindowStartPeakIndexList [ Index ].ToString( "F8") + "," + WindowPeakList [ Index ];
             }
@@ -224,7 +236,6 @@ namespace FindChainsTest
             File.WriteAllText(Filename + "ClustersNoTrend.csv", InputData.ClustersToString());
             File.WriteAllText(Filename + "IdealMassesAfterCluster0NoTrend.csv", InputData.IdealMassesToString());
 
-
             //ChainBlocks.AssignC13IdealMasses( InputData, 1 );
             //File.WriteAllText( Filename + "IdealMassesAfterCluster0C13.csv", InputData.IdealMassesToString() );
 
@@ -244,16 +255,21 @@ namespace FindChainsTest
             /*
             int [] SecondClusterPeakIndexes = InputData.GetClusterPeakIndexes( 1 );
             string Text = "Index,MassC13,Chain(ChainIndex/BlockMass/BlockMassStdDev/StartChainPeakIndex/PeakIndexes)";
+
             for ( int PeakIndex = 0; PeakIndex < InputData.Masses.Length; PeakIndex++ ) {
                 Text = Text + "\r\n" + PeakIndex + ",";
+
                 if( SecondClusterPeakIndexes.Contains( PeakIndex) == true){
                     Text = Text + InputData.Masses [ PeakIndex ].ToString( "F8" );
+
                     for ( int ChainIndex = 0; ChainIndex <InputData.Chains.Length; ChainIndex ++ ) {
                         Chain CurChain = InputData.Chains [ ChainIndex ];
+
                         if ( CurChain.ContainPeak( PeakIndex ) == false ) { continue; }
                         //if ( CurChain.StartChainPeakIndex == PeakIndex ) { continue; }
                         Text = Text + "," + ChainIndex + ";" + CurChain.BlockMassMean.ToString( "F8" ) + ";" + CurChain.PpmErrorStdDev.ToString( "F8") + ";"
                                 + CurChain.ClusteringPeakIndex;
+
                         foreach ( int CurPeakIndex in CurChain.PeakIndexes ) {
                             Text = Text + ";" + CurPeakIndex;
                         }
@@ -273,6 +289,7 @@ namespace FindChainsTest
             double Distance = 5 * ( CElements.C + 2* CElements.H);
             ChainBlocks.FindPeaksByMassDistance( InputData, Distance, PpmError, out ParentPeakIndexes, out ChildPeakIndexes, out PpmErrors );
             string Text = "Index,Mass,Abundance,ParentIndex,ParentMass,ParentAbundance,PpmError";
+
             for ( int PeakIndex = 0; PeakIndex < ParentPeakIndexes.Length; PeakIndex++ ) {
                 int ParentPeak =  ParentPeakIndexes [ PeakIndex ];
                 int ChildPeak =  ChildPeakIndexes [ PeakIndex ];
@@ -290,8 +307,10 @@ namespace FindChainsTest
             string IsotopicText = "Index,Mass,Abundance,ParentIndex,ParentMass,ParentAbundance,PpmError";
             ChainBlocks.FindIsotopicPeaks( InputData, PpmError );
             double Charge1Distance = CElements.C13 - CElements.C;
+
             for ( int PeakIndex = 0; PeakIndex < InputData.IsotopicChildPeaks.Length; PeakIndex++ ) {
                 int ParentPeakIndex = InputData.IsotopicChildPeaks [ PeakIndex ];
+
                 if ( ParentPeakIndex > 0 ){
                     IsotopicText = IsotopicText + "\r\n" + PeakIndex + "," + InputData.Masses [ PeakIndex ].ToString( "F8" ) + "," + InputData.Abundances [ PeakIndex ].ToString( "F8" )
                             + "," + ParentPeakIndex + "," + InputData.Masses[ ParentPeakIndex].ToString("F8") + "," + InputData.Abundances[ParentPeakIndex].ToString( "F8")

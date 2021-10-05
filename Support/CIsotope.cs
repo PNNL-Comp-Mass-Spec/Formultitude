@@ -8,6 +8,7 @@ namespace Support
     {
         private static string[] Names = null;
         public static string[] GetNames() { return Names; }
+
         private static double[] Distances = null;
         public static double[] GetDistances() { return Distances; }
 
@@ -36,6 +37,7 @@ Mame,Distance
             var IsotopeFileLines = File.ReadAllLines(IsotopeFilename);
             var IsotopeNameList = new List<string>();
             var IsotopeDistanceList = new List<double>();
+
             for (var LineIndex = 0; LineIndex < IsotopeFileLines.Length; LineIndex++)
             {
                 //first isotipe
@@ -53,10 +55,12 @@ Mame,Distance
                     continue;
                 }
                 LineIndex = LineIndex + 10;
+
                 for (; LineIndex < IsotopeFileLines.Length; LineIndex++)
                 {
                     if (!IsotopeFileLines[LineIndex].StartsWith("name=")) { continue; }
                     var IsotopeAtomicNumber = IsotopeFileLines[LineIndex + 1];
+
                     if (AtomicNumber != IsotopeAtomicNumber)
                     {
                         //new element
@@ -77,6 +81,7 @@ Mame,Distance
             //convert Isotope.inf into Isotope.inf.csv
             string [] IsotopeOutput = new string [ Distances.Length + 1 ];
             IsotopeOutput [ 0 ] = "Name,Distance";
+
             for ( int IsotopeIndex = 1; IsotopeIndex < Distances.Length; IsotopeIndex++ ) {
                 IsotopeOutput [ IsotopeIndex ] = Names [ IsotopeIndex ] + ',' + Distances [ IsotopeIndex ].ToString( "F6" );
             }
@@ -89,6 +94,7 @@ Mame,Distance
         {
             //public static int FindIsotopeIndex( Support.InputData Data, double [] Distances, double Distance, double StdDev ) {
             var Index = CPpmError.SearchNearPeakIndex(Distances, Distance);
+
             if (Index < 0) { return -1; }
             /*if ( Index > 0 ) {
                 if ( Distance - Distances [ Index - 1 ] < Distances [ Index ] - Distance ) {

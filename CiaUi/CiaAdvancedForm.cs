@@ -20,6 +20,7 @@ namespace CiaUi
         private FormularityUIForm oFormularityUIForm;
         private readonly CCia oCCia;
         private readonly System.Windows.Forms.CheckBox[] GoldenRuleFilterUsage;
+
         public CiaAdvancedForm(FormularityUIForm oFormularityUIForm)
         {
             InitializeComponent();
@@ -36,6 +37,7 @@ namespace CiaUi
             for (var Relation = 0; Relation < CCia.RelationBuildingBlockFormulas.Length; Relation++)
             {
                 var bb = false;
+
                 if (Relation == 0 || Relation == 2 || Relation == 6) { bb = true; }
                 checkedListBoxRelations.Items.Add(oCCia.FormulaToName(CCia.RelationBuildingBlockFormulas[Relation]), bb);
             }
@@ -45,6 +47,7 @@ namespace CiaUi
             //Golden rules
             GoldenRuleFilterUsage = new System.Windows.Forms.CheckBox[oCCia.GetGoldenRuleFilterUsage().Length];
             var groupBoxGoldenRuleFilters = (System.Windows.Forms.GroupBox)this.Controls.Find("groupBoxGoldenRuleFilters", true)[0];
+
             for (var GoldenRuleIndex = 0; GoldenRuleIndex < GoldenRuleFilterUsage.Length; GoldenRuleIndex++)
             {
                 GoldenRuleFilterUsage[GoldenRuleIndex] = (System.Windows.Forms.CheckBox)groupBoxGoldenRuleFilters.Controls["checkBoxGoldenRule" + (GoldenRuleIndex + 1).ToString()];
@@ -55,6 +58,7 @@ namespace CiaUi
             comboBoxSpecialFilters.Items.Clear();
             var SpecialFilterNames = Enum.GetNames(typeof(CCia.ESpecialFilters));
             var SpecialFilterRules = oCCia.GetSpecialFilterRules();
+
             for (var SpecialFilter = 0; SpecialFilter < SpecialFilterRules.Length; SpecialFilter++)
             {
                 comboBoxSpecialFilters.Items.Add(SpecialFilterNames[SpecialFilter] + ": " + SpecialFilterRules[SpecialFilter]);
@@ -84,6 +88,7 @@ namespace CiaUi
             oCCia.Ipa.CS = (int)Math.Abs(numericUpDownCharge.Value);
             textBoxResult.Text = oCCia.Ipa.ChargedMassFormula_Descriptive;
         }
+
         private void textBoxAdduct_KeyDown(object sender, KeyEventArgs e)
         {
             try
@@ -99,6 +104,7 @@ namespace CiaUi
                 MessageBox.Show(ex.Message);
             }
         }
+
         private void textBoxAdduct_Leave(object sender, EventArgs e)
         {
             try
@@ -111,6 +117,7 @@ namespace CiaUi
                 MessageBox.Show(ex.Message);
             }
         }
+
         private void comboBoxIonization_SelectedIndexChanged(object sender, EventArgs e)
         {
             oCCia.Ipa.Ionization = (TestFSDBSearch.TotalSupport.IonizationMethod)Enum.Parse(typeof(TestFSDBSearch.TotalSupport.IonizationMethod), comboBoxIonization.Text);
@@ -121,11 +128,13 @@ namespace CiaUi
         {
             numericUpDownAlignmentTolerance.Enabled = checkBoxAlignment.Checked;
             checkBoxGenerateReports.Enabled = checkBoxAlignment.Checked;
+
             if (!checkBoxAlignment.Checked)
             {
                 checkBoxGenerateReports.Checked = true;
             }
         }
+
         private void textBoxDropSpectraFiles_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -133,6 +142,7 @@ namespace CiaUi
                 e.Effect = DragDropEffects.Copy;
             }
         }
+
         private void textBoxDropSpectraFiles_DragDrop(object sender, DragEventArgs e)
         {
             textBoxDropSpectraFiles.BackColor = Color.Red;
@@ -165,17 +175,20 @@ namespace CiaUi
                 oCCia.oTotalCalibration.ttl_cal_max_abu_pct = (double)numericUpDownCalMaxRelAbun.Value;
                 var MaxAbundances = new double[FileCount];
                 var CalMasses = new double[FileCount][];
+
                 for (var FileIndex = 0; FileIndex < FileCount; FileIndex++)
                 {
                     //read files
                     Support.CFileReader.ReadFile(Filenames[FileIndex], out Masses[FileIndex], out Abundances[FileIndex], out SNs[FileIndex], out Resolutions[FileIndex], out RelAbundances[FileIndex]);
                     var MaxAbundance = Abundances[FileIndex][0];
+
                     foreach (var Abundabce in Abundances[FileIndex]) { if (MaxAbundance < Abundabce) { MaxAbundance = Abundabce; } }
                     MaxAbundances[FileIndex] = MaxAbundance;
                     //Calibration
                     if (oCCia.oTotalCalibration.ttl_cal_regression == TotalCalibration.ttlRegressionType.none)
                     {
                         CalMasses[FileIndex] = new double[Masses[FileIndex].Length];
+
                         for (var PeakIndex = 0; PeakIndex < CalMasses.Length; PeakIndex++)
                         {
                             CalMasses[PeakIndex] = Masses[PeakIndex];
@@ -210,6 +223,7 @@ namespace CiaUi
                 //Filters
                 oCCia.SetUseFormulaFilter(checkBoxUseFormulaFilters.Checked);
                 var GoldenFilters = new bool[GoldenRuleFilterUsage.Length];
+
                 for (var DftFilter = 0; DftFilter < GoldenRuleFilterUsage.Length; DftFilter++)
                 {
                     GoldenFilters[DftFilter] = GoldenRuleFilterUsage[DftFilter].Checked;
@@ -231,6 +245,7 @@ namespace CiaUi
                 //}
                 //oCCia.SetRelationFormulaBuildingBlocks( ActiveRelationBlocks );
                 var ActiveRelationBlocks = new bool[CCia.RelationBuildingBlockFormulas.Length];
+
                 for (var ActiveFormula = 0; ActiveFormula < ActiveRelationBlocks.Length; ActiveFormula++)
                 {
                     ActiveRelationBlocks[ActiveFormula] = checkedListBoxRelations.GetItemChecked(ActiveFormula);
@@ -252,6 +267,7 @@ namespace CiaUi
                 //change textbox
                 textBoxDropSpectraFiles.Text = "Drop Spectra Files";
                 textBoxDropSpectraFiles.AppendText("\r\nProcessed files:");
+
                 foreach (var Filename in Filenames)
                 {
                     textBoxDropSpectraFiles.AppendText("\r\n" + Path.GetFileName(Filename));
@@ -267,6 +283,7 @@ namespace CiaUi
             }
             textBoxDropSpectraFiles.BackColor = Color.LightGreen;
         }
+
         private void textBoxCalFile_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -274,6 +291,7 @@ namespace CiaUi
                 e.Effect = DragDropEffects.Copy;
             }
         }
+
         private void textBoxCalFile_DragDrop(object sender, DragEventArgs e)
         {
             var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -281,6 +299,7 @@ namespace CiaUi
             textBoxCalFile.Text = "Drop calibration file: " + Path.GetFileName(Filenames[0]);
             CheckToProcess();
         }
+
         private void comboBoxCalRegressionModel_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBoxCalRegressionModel.Text == TotalCalibration.ttlRegressionType.none.ToString())
@@ -305,6 +324,7 @@ namespace CiaUi
             }
             CheckToProcess();
         }
+
         private void textBoxDropDB_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -312,6 +332,7 @@ namespace CiaUi
                 e.Effect = DragDropEffects.Copy;
             }
         }
+
         private void textBoxDropDB_DragDrop(object sender, DragEventArgs e)
         {
             var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -322,11 +343,13 @@ namespace CiaUi
             textBoxDropDB.AppendText("\r\n" + Path.GetFileName(Filenames[0]));
             CheckToProcess();
         }
+
         public void CheckToProcess()
         {
             var CalibrationReady = (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none)
                                     | (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none) & (textBoxCalFile.TextLength > "Drop calibration file: ".Length)));
             var CIAReady = (oCCia.GetCiaDBFilename().Length > 0) & CalibrationReady;
+
             if (CIAReady)
             {
                 textBoxDropSpectraFiles.BackColor = Color.LightGreen;
@@ -338,14 +361,17 @@ namespace CiaUi
                 textBoxDropSpectraFiles.Enabled = false;
             }
         }
+
         private void checkBoxCIAUseC13_CheckedChanged(object sender, EventArgs e)
         {
             numericUpDownCIAAdvC13Tolerance.Enabled = checkBoxCIAAdvUseC13.Checked;
         }
+
         private void checkBoxAlignment_CheckedChanged_1(object sender, EventArgs e)
         {
             numericUpDownAlignmentTolerance.Enabled = checkBoxAlignment.Checked;
         }
+
         private void checkBoxUseRelation_CheckedChanged(object sender, EventArgs e)
         {
             numericUpDownMaxRelationGaps.Enabled = checkBoxUseRelation.Checked;
@@ -354,6 +380,7 @@ namespace CiaUi
             checkedListBoxRelations.Enabled = checkBoxUseRelation.Checked;
             checkBoxCIAAdvBackward.Enabled = checkBoxUseRelation.Checked;
         }
+
         private void buttonSetAdvancedDefault_Click(object sender, EventArgs e)
         {
             checkBoxCIAAdvBackward.Checked = true;

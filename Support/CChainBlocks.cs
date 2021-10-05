@@ -42,14 +42,17 @@ namespace Support
             //way: find the nearest known block mass; mass dif moves into first range median mass; find ppm error and compare - still is not good
             //next way: use middle range median mass
             var Index = CPpmError.SearchNearPeakIndex(KnownBlockMasses, Mass);
+
             if (Index < 0) { return -1; }
             var MassDif = Mass - KnownBlockMasses[Index];
             var Subrange = Data.ErrDisMassMedians.Length / 2;
             var NewMass = Data.ErrDisMassMedians[Subrange] + MassDif;
             var NewAbsMassPpmError = Math.Abs(CPpmError.CalculateRangePpmError(Data.ErrDisMassMedians[Subrange], NewMass));
+
             if (NewAbsMassPpmError < Data.ErrDisStdDevs[Subrange] * Data.MaxPpmErrorGain) { return Index; }
             return -1;
         }
+
         public CChainBlocks()
         {
             Array.Sort(ElementNames, ElementMasses);
@@ -62,6 +65,7 @@ namespace Support
             var Lines = File.ReadAllLines(Filename);
             var FormulaNameList = new List<string>(Lines.Length);
             var FormulaMassList = new List<double>(Lines.Length);
+
             foreach (var Line in Lines)
             {
                 var Formula = Line.Split(WordSeparators)[0];
@@ -77,9 +81,11 @@ namespace Support
             Array.Sort(KnownBlockMasses, KnownBlockNames);
             //KnownMassBlocksToFile( Filename );
         }
+
         public void KnownMassBlocksToFile(string Filename)
         {
             var Lines = new string[KnownBlockMasses.Length];
+
             for (var Index = 0; Index < KnownBlockMasses.Length; Index++)
             {
                 Lines[Index] = KnownBlockNames[Index] + "," + KnownBlockMasses[Index].ToString("F8");
@@ -93,6 +99,7 @@ namespace Support
         {
             //formula example N1H_3O
             double Mass = 0;
+
             for (var SymbolIndex = 0; SymbolIndex < Formula.Length; SymbolIndex++)
             {
                 string ElementName;
@@ -110,6 +117,7 @@ namespace Support
                 else
                 {
                     ElementName = Formula[SymbolIndex].ToString();
+
                     if (char.IsUpper(Formula[SymbolIndex + 1]))
                     {
                         //next element
@@ -147,6 +155,7 @@ namespace Support
                             {
                                 var Number = Formula[SymbolIndex + 1].ToString();
                                 SymbolIndex = SymbolIndex + 1;
+
                                 for (; SymbolIndex + 1 < Formula.Length;)
                                 {
                                     if (!char.IsDigit(Formula[SymbolIndex + 1])) { break; }
@@ -164,11 +173,13 @@ namespace Support
                 }
 
                 var Index = Array.BinarySearch(ElementNames, ElementName);
+
                 if (Index < 0) { throw new Exception(""); }
                 Mass = Mass + NegPos * ElementMasses[Index] * Atoms;
             }
             return Mass;
         }
+
         public int FindKnownChainBlockIndex(double ChainBlockMass, double PpmError)
         {
             return CPpmError.SearchPeakIndex(this.Known4BlockMasses, ChainBlockMass, PpmError);
@@ -185,21 +196,26 @@ namespace Support
             {
                 if (Masses[FirstPeakIndex] > MaxStartPeakMass) { break; }
                 var MaxPossibleChainDistance = (Masses[Masses.Length - 1] - Masses[FirstPeakIndex]) / (MinPeaksInChain - 1);
+
                 if (MinChainDistance > MaxPossibleChainDistance) { continue; }
                 var SecondPeakIndex = FirstPeakIndex + 1;
+
                 if (MinChainDistance > 0)
                 {
                     var SecondPeakMass = Masses[FirstPeakIndex] + MinChainDistance;
                     SecondPeakMass = CPpmError.MassMinusPpmError(SecondPeakMass, PeakPpmError);
                     SecondPeakIndex = CPpmError.SearchNearPeakIndex(Masses, SecondPeakMass, FirstPeakIndex + 1);//???
                     //???SecondPeakIndex = CPpmError.SearchPeakIndex( Masses, SecondPeakMass, PeakPpmError, FirstPeakIndex + 1, CPpmError.EMassType.MinMass );
+
                     if (SecondPeakIndex == -1) { continue; }
                 }
                 for (; SecondPeakIndex < Masses.Length - MinPeaksInChain + 1; SecondPeakIndex++)
                 {
                     var ChainDistance = Masses[SecondPeakIndex] - Masses[FirstPeakIndex];
+
                     if (CPpmError.MassMinusPpmError(ChainDistance, PeakPpmError) > MaxChainDistance) { break; }
                     var ChainBlockIndex = FindKnownChainBlockIndex(ChainDistance, ChainPpmError);
+
                     if (OnlyKnowsChains && (ChainBlockIndex < 0))
                     {
                         continue;
@@ -210,10 +226,12 @@ namespace Support
 
                     var NextPeakMass = Masses[SecondPeakIndex];
                     //int NextPeakIndex = SecondPeakIndex + 1;
+
                     for (var NextPeakIndex = SecondPeakIndex + 1; NextPeakIndex < Masses.Length; NextPeakIndex++)
                     {
                         NextPeakMass = NextPeakMass + ChainDistance;
                         var Index = CPpmError.SearchPeakIndex(Masses, NextPeakMass, PeakPpmError, NextPeakIndex);
+
                         if (Index < 0) { break; }
                         TempPeakList.Add(Index);
                         NextPeakMass = Masses[Index];
@@ -228,16 +246,19 @@ namespace Support
             var ChainPeakList = ChainPeakListList.ToArray();
             var ChainMasses = new double[ChainPeakList.Length];//for sort
             var Chains = new Chain[ChainPeakList.Length];
+
             for (var ChainIndex = 0; ChainIndex < Chains.Length; ChainIndex++)
             {
                 var NewChain = new Chain();
                 NewChain.PeakIndexes = ChainPeakList[ChainIndex].ToArray();
                 NewChain.PeakMasses = new double[NewChain.PeakIndexes.Length];
+
                 for (var ChainPeakIndex = 0; ChainPeakIndex < NewChain.PeakMasses.Length; ChainPeakIndex++)
                 {
                     NewChain.PeakMasses[ChainPeakIndex] = Masses[NewChain.PeakIndexes[ChainPeakIndex]];
                 }
                 var BlockMasses = new double[NewChain.PeakIndexes.Length - 1];
+
                 for (var BlockIndex = 0; BlockIndex < BlockMasses.Length; BlockIndex++)
                 {
                     BlockMasses[BlockIndex] = NewChain.PeakMasses[BlockIndex + 1] - NewChain.PeakMasses[BlockIndex];
@@ -246,6 +267,7 @@ namespace Support
                 ChainMasses[ChainIndex] = NewChain.BlockMassMean;//for sort
                 NewChain.PpmErrorStdDev = CArrayMath.StandardDeviation(BlockMasses, NewChain.BlockMassMean);
                 var ChainBlockIndex = FindKnownChainBlockIndex(NewChain.PeakMasses[1] - NewChain.PeakMasses[0], ChainPpmError);
+
                 if (ChainBlockIndex >= 0)
                 {
                     NewChain.IdealBlockMass = Known4BlockMasses[ChainBlockIndex];
@@ -261,10 +283,12 @@ namespace Support
             Data.Chains = Chains;
             CreateUniqueChains(Data, ChainPpmError);
         }
+
         public int AreChainsDuplicated(Support.InputData Data, Chain FirstChain, Chain SecondChain, double PeakPpmError)
         {
             var FirstTheSamePeakIndex = false;
             var AreBlockSizesTheSame = false;
+
             for (var FirstIndex = 0; FirstIndex < FirstChain.PeakIndexes.Length; FirstIndex++)
             {
                 for (var SecondIndex = 0; SecondIndex < SecondChain.PeakIndexes.Length; SecondIndex++)
@@ -273,6 +297,7 @@ namespace Support
                     if (!FirstTheSamePeakIndex)
                     {
                         FirstTheSamePeakIndex = true;
+
                         if ((FirstChain.Formula.Length != 0) && (SecondChain.Formula.Length != 0) && (FirstChain.Formula != "N/A") && (SecondChain.Formula != "N/A"))
                         {
                             if (FirstChain.Formula == SecondChain.Formula)
@@ -284,6 +309,7 @@ namespace Support
                         {
                             var BlockMassDif = FirstChain.BlockMassMean - SecondChain.BlockMassMean;
                             var MassError = CPpmError.PpmToError(Data.Masses[FirstChain.PeakIndexes[FirstIndex]], PeakPpmError);
+
                             if (Math.Abs(BlockMassDif) <= MassError)
                             {
                                 AreBlockSizesTheSame = true;
@@ -317,6 +343,7 @@ namespace Support
             }
             return 0;
         }
+
         public void CreateUniqueChains(Support.InputData Data, double PeakPpmError)
         {
             var Chains = Data.Chains;
@@ -340,6 +367,7 @@ namespace Support
                 }
             }
             var UniqueChains = new List<Support.Chain>();
+
             for (var Index = 0; Index < NotUniqueChains.Length; Index++)
             {
                 if (!NotUniqueChains[Index]) { UniqueChains.Add(Chains[Index]); }
@@ -358,10 +386,12 @@ namespace Support
             var ParentPeakIndexList = new List<int>();
             var ChildPeakIndexList = new List<int>();
             var PpmErrorList = new List<double>();
+
             for (var PeakIndex = 0; PeakIndex < Masses.Length - 1; PeakIndex++)
             {
                 if (Masses[PeakIndex] > MaxMass) { break; }
                 var SearchPeakIndex = CPpmError.SearchPeakIndex(Masses, Masses[PeakIndex] + BlockMass, MaxPpmError, PeakIndex + 1);
+
                 if (SearchPeakIndex < 0) { continue; }
                 ParentPeakIndexList.Add(PeakIndex);
                 ChildPeakIndexList.Add(SearchPeakIndex);
@@ -389,6 +419,7 @@ namespace Support
             var UpperPpmError = Five[3] + 1.5 * (Five[3] - Five[1]);
             var RealErrorList = new List<double>();
             var RealBlockMasses = new List<double>();
+
             for (var Index = 0; Index < PpmErrors.Length; Index++)
             {
                 if ((PpmErrors[Index] >= LowPpmError) & (PpmErrors[Index] <= UpperPpmError))
@@ -413,11 +444,13 @@ namespace Support
             var ChildPeakIndexList = new List<int>();
             var PpmErrorList = new List<double>();
             var BlockMassList = new List<double>();
+
             for (var BlockMassIndex = 0; BlockMassIndex < BlockMasses.Length; BlockMassIndex++)
             {
                 var BlockMass = BlockMasses[BlockMassIndex];
                 var CurData = FindPeaksByBlockMass(Data.Masses, BlockMass, StartPpmError, Data.Masses.Last() + 1);
                 var Indexes = new int[CurData.Item1.Length];
+
                 for (var Index = 0; Index < Indexes.Length; Index++)
                 {
                     Indexes[Index] = CurData.Item1[Index] * BlockMasses.Length + BlockMassIndex;
@@ -456,6 +489,7 @@ namespace Support
             Data.ErrDisBlockMasses = new double[RangeCount][];
             Data.ErrDisLowPpmErrors = new double[RangeCount];
             Data.ErrDisUpperPpmErrors = new double[RangeCount];
+
             for (var RangeIndex = 0; RangeIndex < RangeCount; RangeIndex++)
             {
                 //create subarray
@@ -471,6 +505,7 @@ namespace Support
                 Data.ErrDisChildPeakIndexes[RangeIndex] = new int[RangePeakCount];
                 Data.ErrDisPpmErrors[RangeIndex] = new double[RangePeakCount];
                 Data.ErrDisBlockMasses[RangeIndex] = new double[RangePeakCount];
+
                 for (var PeakIndex = 0; PeakIndex < RangePeakCount; PeakIndex++)
                 {
                     MedianSubsetPpmErrors[PeakIndex] = PpmErrors[LowerIndex + PeakIndex];
@@ -492,6 +527,7 @@ namespace Support
                 }
                 var RealErrorList = new List<double>();
                 var RealBlockList = new List<double>();
+
                 for (var Index = 0; Index < RangePeakCount; Index++)
                 {
                     if ((PpmErrors[LowerIndex + Index] >= LowPpmError) & (PpmErrors[LowerIndex + Index] <= UpperPpmError))
@@ -521,9 +557,11 @@ namespace Support
             Data.IsotopicPeaks = -1;
             //calculation
             var IsotopicPeaks = 0;
+
             for (var ParentPeakIndex = 0; ParentPeakIndex < Data.Masses.Length - 1; ParentPeakIndex++)
             {
                 var IsotopicPeakIndex = CPpmError.SearchPeakIndexBasedOnErrorDistribution(Data, Data.Masses[ParentPeakIndex] + Charge1Distance, ParentPeakIndex + 1);
+
                 if (IsotopicPeakIndex < 0) { continue; }
                 if (Data.Abundances[ParentPeakIndex] / Data.Abundances[IsotopicPeakIndex] > IsotopicPeakGain)
                 {
@@ -539,9 +577,11 @@ namespace Support
         {
             var PeakIndexList = new List<int>();
             PeakIndexList.Add(StartPeakIndex);
+
             for (var NextPeakIndex = StartPeakIndex; NextPeakIndex < Data.Masses.Length - 1;)
             {
                 var SearchPeakIndex = CPpmError.SearchPeakIndexBasedOnErrorDistribution(Data, Data.Masses[NextPeakIndex] + BlockMass, NextPeakIndex + 1);
+
                 if (SearchPeakIndex < 0) { break; }
                 PeakIndexList.Add(SearchPeakIndex);
                 NextPeakIndex = SearchPeakIndex;
@@ -554,9 +594,11 @@ namespace Support
             var PeakMasses = new double[CurChain.PeakIndexes.Length];
             var BlockMasses = new double[CurChain.PeakIndexes.Length - 1];
             var PpmErrors = new double[CurChain.PeakIndexes.Length - 1];
+
             for (var PeakIndex = 0; PeakIndex < CurChain.PeakIndexes.Length; PeakIndex++)
             {
                 PeakMasses[PeakIndex] = Data.Masses[CurChain.PeakIndexes[PeakIndex]];
+
                 if (PeakIndex > 0)
                 {
                     BlockMasses[PeakIndex - 1] = PeakMasses[PeakIndex] - PeakMasses[PeakIndex - 1];
@@ -579,17 +621,20 @@ namespace Support
             CurChain.PpmErrorStdDev = Statistics.StandardDeviation(PpmErrors);
             return CurChain;
         }
+
         public void FindChains1(Support.InputData Data, int MinPeaksInChain, double MaxStartPeakMass, double[] BlockMasses)
         {
             if (MinPeaksInChain < 2) { throw new Exception("MinPeaksInChain is less 2 : " + MinPeaksInChain); }
             var Masses = Data.Masses;
             var ChainList = new List<Chain>();
+
             for (var PeakIndex = 0; PeakIndex < Masses.Length - MinPeaksInChain; PeakIndex++)
             {
                 if (MaxStartPeakMass < Masses[PeakIndex]) { break; }
                 foreach (var BlockMass in BlockMasses)
                 {
                     var TempChain = FindChainBasedOnPeakAndMassDistance(Data, PeakIndex, BlockMass, MinPeaksInChain);
+
                     if (TempChain != null)
                     {
                         ChainList.Add(TempChain);
@@ -600,12 +645,14 @@ namespace Support
 
             CreateUniqueChains1(Data);
         }
+
         public int AreChainsTheSame(Chain FirstChain, Chain SecondChain)
         {
             //return 1 - chains are the same; first chain is better
             //return 0 - chains are not the same
             //return -1 - chains are the same; second chain is better
             var TheSameIndexCount = 0;
+
             for (var FirstIndex = 0; FirstIndex < FirstChain.PeakIndexes.Length; FirstIndex++)
             {
                 for (var SecondIndex = 0; SecondIndex < SecondChain.PeakIndexes.Length; SecondIndex++)
@@ -613,6 +660,7 @@ namespace Support
                     if (FirstChain.PeakIndexes[FirstIndex] == SecondChain.PeakIndexes[SecondIndex])
                     {
                         TheSameIndexCount++;
+
                         if (TheSameIndexCount >= 2)
                         {
                             break;
@@ -626,6 +674,7 @@ namespace Support
             }
             const double MaxGainOfTheSameChains = 1.01;
             double BlockMassGain;
+
             if ((FirstChain.IdealBlockMass > 0) && (SecondChain.IdealBlockMass > 0))
             {
                 if (FirstChain.IdealBlockMass > SecondChain.IdealBlockMass)
@@ -689,6 +738,7 @@ namespace Support
                 }
             }
         }
+
         public void CreateUniqueChains1(Support.InputData Data)
         {
             var Chains = Data.Chains;
@@ -701,6 +751,7 @@ namespace Support
                 {
                     if (NotUniqueChains[NextChainIndex]) { continue; }
                     var Result = AreChainsTheSame(Chains[ChainIndex], Chains[NextChainIndex]);
+
                     if (Result > 0)
                     {
                         NotUniqueChains[NextChainIndex] = true;
@@ -712,12 +763,14 @@ namespace Support
                 }
             }
             var UniqueChains = new List<Support.Chain>();
+
             for (var Index = 0; Index < NotUniqueChains.Length; Index++)
             {
                 if (!NotUniqueChains[Index]) { UniqueChains.Add(Chains[Index]); }
             }
             Data.Chains = UniqueChains.ToArray();
             var FirstPeakIndexes = new int[Data.Chains.Length];
+
             for (var ChainIndex = 0; ChainIndex < Data.Chains.Length; ChainIndex++)
             {
                 FirstPeakIndexes[ChainIndex] = Data.Chains[ChainIndex].PeakIndexes[0];
@@ -745,35 +798,42 @@ namespace Support
                 Data.Chains[ChainIndex].ClusteringPeakIndex = -1;
                 var ClusterPeakSortedList = new SortedList<int, int>();
                 var ClusterEvenPeakSortedList = new SortedList<int, int>();
+
                 foreach (var PeakIndex in Data.Chains[ChainIndex].PeakIndexes)
                 {
                     ClusterPeakSortedList.Add(PeakIndex, ChainIndex);
+
                     if (((int)Math.Round(Data.Masses[PeakIndex])) % 2 == 0)
                     {
                         ClusterEvenPeakSortedList.Add(PeakIndex, ChainIndex);
                     }
                 }
                 TotalPeakCount = TotalPeakCount + Data.Chains[ChainIndex].PeakIndexes.Length;
+
                 for (; ; )
                 {
                     var WasAddedChain = false;
+
                     for (var NextChainIndex = ChainIndex + 1; NextChainIndex < Data.Chains.Length; NextChainIndex++)
                     {
                         if (IsChainInCluster[NextChainIndex]) { continue; }
                         foreach (var PeakIndex in Data.Chains[NextChainIndex].PeakIndexes)
                         {
                             int ParentChainIndex;
+
                             if (ClusterPeakSortedList.TryGetValue(PeakIndex, out ParentChainIndex))
                             {
                                 IsChainInCluster[NextChainIndex] = true;
                                 ClusterChains.Add(NextChainIndex);
                                 Data.Chains[NextChainIndex].ClusteringChainIndex = ParentChainIndex;
                                 Data.Chains[NextChainIndex].ClusteringPeakIndex = PeakIndex;
+
                                 foreach (var CurPeakIndex in Data.Chains[NextChainIndex].PeakIndexes)
                                 {
                                     if (!ClusterPeakSortedList.ContainsKey(CurPeakIndex))
                                     {
                                         ClusterPeakSortedList.Add(CurPeakIndex, NextChainIndex);
+
                                         if (((int)Math.Round(Data.Masses[CurPeakIndex])) % 2 == 0)
                                         {
                                             ClusterEvenPeakSortedList.Add(CurPeakIndex, NextChainIndex);
@@ -800,14 +860,17 @@ namespace Support
                 var TheBestScore = double.NaN;
                 var MinMass = double.NaN;
                 var MaxMass = double.NaN;
+
                 for (var ClusterChainIndex = 0; ClusterChainIndex < ClusterChainIndexes.Length; ClusterChainIndex++)
                 {
                     var CurChainIndex = ClusterChainIndexes[ClusterChainIndex];
                     var CurChain = Data.Chains[CurChainIndex];
+
                     for (var ChainPeakIndex = 0; ChainPeakIndex < CurChain.PeakIndexes.Length; ChainPeakIndex++)
                     {
                         var CurPeakIndex = CurChain.PeakIndexes[ChainPeakIndex];
                         var CurPeakScore = GetPeakScore(Data, CurPeakIndex);
+
                         if ((ClusterChainIndex == 0) && (ChainPeakIndex == 0))
                         {
                             TheBestClusterChainIndex = ClusterChainIndex;
@@ -849,17 +912,20 @@ namespace Support
             Array.Reverse(Clusters);
             Data.Clusters = Clusters;
         }
+
         public double[] GetNoTrendErrorMasses(double[] Masses, double[] IdealMasses, Support.InputData Data)
         {
             var MinMassInteger = (int)Math.Round(Masses.First());
             var MassIntegerCount = (int)Math.Round(Masses.Last()) + 1;
             var MeanAbsErrorAtInteger = Enumerable.Repeat(double.NaN, MassIntegerCount).ToArray();
+
             for (var PeakIndex = 0; PeakIndex < Masses.Length;)
             {
                 if (IdealMasses[PeakIndex] < 0.1) { PeakIndex++; continue; }
                 //List<int> PeakIndexList = new List<int>();
                 var AbsErrorList = new List<double>();
                 var CurInteger = (int)Math.Round(IdealMasses[PeakIndex]);
+
                 for (; PeakIndex < Masses.Length; PeakIndex++)
                 {//to fill Lists specially not "NextPeakIndex = PeakIndex + 1"
                     if (IdealMasses[PeakIndex] < 0.1) { continue; }
@@ -877,6 +943,7 @@ namespace Support
             //smoothing by filter ??? MathNet.Numerics.Fit.
 
             var MinAssignedMassInteger = -1;
+
             for (var IntegerIndex = MinMassInteger; IntegerIndex < MassIntegerCount; IntegerIndex++)
             {
                 if (!double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]))
@@ -886,6 +953,7 @@ namespace Support
                 }
             }
             var MaxAssignedMassInteger = -1;
+
             for (var IntegerIndex = MassIntegerCount - 1; IntegerIndex >= MinMassInteger; IntegerIndex--)
             {
                 if (!double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]))
@@ -895,10 +963,12 @@ namespace Support
                 }
             }
             var NoTrendMasses = new double[Masses.Length];
+
             for (var PeakIndex = 0; PeakIndex < Masses.Length; PeakIndex++)
             {
                 var CurInteger = (int)Math.Round(Masses[PeakIndex]);
                 double AbsError;
+
                 if (CurInteger < MinAssignedMassInteger)
                 {
                     AbsError = MeanAbsErrorAtInteger[MinAssignedMassInteger];
@@ -916,6 +986,7 @@ namespace Support
                     else
                     {
                         var LowIntegerIndex = -1;
+
                         for (var IntegerIndex = CurInteger - 1; ; IntegerIndex--)
                         {
                             if (!double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]))
@@ -925,6 +996,7 @@ namespace Support
                             }
                         }
                         var UpperIntegerIndex = -1;
+
                         for (var IntegerIndex = CurInteger + 1; ; IntegerIndex++)
                         {
                             if (!double.IsNaN(MeanAbsErrorAtInteger[IntegerIndex]))
@@ -940,6 +1012,7 @@ namespace Support
             }
             return NoTrendMasses;
         }
+
         public double FindMeanWithoutOutlilers(double[] Values)
         {
             //int [] Indexes = new int [ Values.Length ];
@@ -948,6 +1021,7 @@ namespace Support
             var MinValue = FiveNumbers[1] - 1.5 * (FiveNumbers[3] - FiveNumbers[1]);
             var MaxValue = FiveNumbers[3] + 1.5 * (FiveNumbers[3] - FiveNumbers[1]);
             var CorrectDataset = new List<double>();
+
             foreach (var Value in Values)
             {
                 if ((Value >= MinValue) && (Value <= MaxValue))
@@ -970,11 +1044,13 @@ namespace Support
             UsedChains[ 0] = true;
             int UsedChainCount = ClusterChainIndexes.Length - 1;
             int TestDoublePeakCount = 0;
+
             for( ;;){
                 for ( int ChainIndexInCluster = 0; ChainIndexInCluster < ClusterChainIndexes.Length; ChainIndexInCluster++ ) {
                     int [] CurChainPeakIndexes = Data.Chains [ ClusterChainIndexes [ ChainIndexInCluster ] ].PeakIndexes;
                     int SearchPeakIndexInChain = 0;
                     double SearchMass = Data.Masses [ CurChainPeakIndexes [ SearchPeakIndexInChain ] ];
+
                     if ( ChainIndexInCluster != 0 ) {
                         if ( UsedChains [ ChainIndexInCluster ] == true ) { continue; }
                         for ( ; SearchPeakIndexInChain < CurChainPeakIndexes.Length; SearchPeakIndexInChain++ ){
@@ -990,9 +1066,11 @@ namespace Support
                     //add chain peaks
                     double CurChainIdealBlockMass = Data.Chains [ ClusterChainIndexes [ ChainIndexInCluster ] ].IdealBlockMass;
                     double StartMass = SearchMass - SearchPeakIndexInChain * CurChainIdealBlockMass;
+
                     for ( int CurPeakIndexInChain = 0; CurPeakIndexInChain < CurChainPeakIndexes.Length; CurPeakIndexInChain++ ) {
                         if ( CurPeakIndexInChain == SearchPeakIndexInChain ) { continue; }
                         double IdealMass = StartMass + CurPeakIndexInChain * CurChainIdealBlockMass;
+
                         if( Data.IdealMasses [ CurChainPeakIndexes[ CurPeakIndexInChain ] ] <= 0.1){
                             Data.IdealMasses [ CurChainPeakIndexes [ CurPeakIndexInChain ] ] = IdealMass;
                             MassErrors.Add( Support.CPpmError.CalculateRangePpmError( IdealMass, Data.Masses [ CurChainPeakIndexes [ CurPeakIndexInChain ] ] ) );
@@ -1031,17 +1109,21 @@ namespace Support
                 var StartChainFirstPeak = 0;
                 var BlockMass = StartChain.IdealBlockMass;
                 var FirstPeakMass = Data.Masses[StartChain.PeakIndexes[StartChainFirstPeak]] - StartChainFirstPeak * BlockMass;
+
                 for (var ChainPeakIndex = 0; ChainPeakIndex < StartChain.PeakIndexes.Length; ChainPeakIndex++)
                 {
                     var IdealMass = FirstPeakMass + ChainPeakIndex * BlockMass;
+
                     if (Data.IdealMasses[StartChain.PeakIndexes[ChainPeakIndex]] < 0.1)
                     {
                         Data.IdealMasses[StartChain.PeakIndexes[ChainPeakIndex]] = IdealMass;
                         var PpmError = CPpmError.CalculateAbsRangePpmError(Data.Masses[StartChain.PeakIndexes[ChainPeakIndex]], IdealMass);
                         var PpmErrorGain = PpmError / Data.GetErrorStdDev(IdealMass);
+
                         if (Data.MaxPpmErrorGain < PpmErrorGain)
                         {
                             HigherPpmErrorCount++;
+
                             if (Data.MaxPpmErrorGain < PpmErrorGain) { Data.MaxPpmErrorGain = PpmErrorGain; }
                         }
                     }
@@ -1057,6 +1139,7 @@ namespace Support
                     if (UsedChains[ChainIndex]) { continue; }
                     var CurChain = Data.Chains[oCluster.ChainIndexes[ChainIndex]];
                     var ConnectedChainPeakIndex = -1;
+
                     for (var ChainPeakIndex = 0; ChainPeakIndex < CurChain.PeakIndexes.Length; ChainPeakIndex++)
                     {
                         if (Data.IdealMasses[CurChain.PeakIndexes[ChainPeakIndex]] > 0.1)
@@ -1067,6 +1150,7 @@ namespace Support
                     }
                     if (ConnectedChainPeakIndex == -1) { continue; }
                     CurChain.ClusteringPeakIndex = CurChain.PeakIndexes[ConnectedChainPeakIndex];
+
                     if (Data.IdealMasses[CurChain.ClusteringPeakIndex] < 0.1)
                     {
                     }
@@ -1076,15 +1160,18 @@ namespace Support
                     for (var ChainPeakIndex = 0; ChainPeakIndex < CurChain.PeakIndexes.Length; ChainPeakIndex++)
                     {
                         var IdealMass = FirstPeakMass + ChainPeakIndex * BlockMass;
+
                         if (Data.IdealMasses[CurChain.PeakIndexes[ChainPeakIndex]] < 0.1)
                         {
                             Data.IdealMasses[CurChain.PeakIndexes[ChainPeakIndex]] = IdealMass;
                             //check error
                             var PpmError = CPpmError.CalculateAbsRangePpmError(Data.Masses[CurChain.PeakIndexes[ChainPeakIndex]], IdealMass);
                             var PpmErrorGain = PpmError / Data.GetErrorStdDev(IdealMass) * Iteration;
+
                             if (Data.MaxPpmErrorGain < PpmErrorGain)
                             {
                                 HigherPpmErrorCount++;
+
                                 if (MaxPpmErrorGain < PpmErrorGain) { MaxPpmErrorGain = PpmErrorGain; }
                             }
                         }
@@ -1092,6 +1179,7 @@ namespace Support
                         {
                             //check
                             var PpmError = CPpmError.CalculateAbsRangePpmError(Data.IdealMasses[CurChain.PeakIndexes[ChainPeakIndex]], IdealMass);
+
                             if (MaxOutlierPpmError < PpmError)
                             {
                                 MaxOutlierPpmError = PpmError;
@@ -1107,10 +1195,12 @@ namespace Support
             oCluster.MaxPpmErrorGain = MaxPpmErrorGain;
             oCluster.MaxOutlierPpmError = MaxOutlierPpmError;
         }
+
         public double GetPeakScore(Support.InputData Data, int PeakIndex)
         {
             return Data.Abundances[PeakIndex] / Data.Masses[PeakIndex];
         }
+
         public void AssignIdealMassesInClusterBasedTheBestPeak(Support.InputData Data, int ClusterIndex)
         {
             if ((Data.Clusters == null) || (Data.Clusters.Length <= ClusterIndex))
@@ -1125,9 +1215,11 @@ namespace Support
             var TheBestChainPeakIndexes = Data.Chains[ClusterChainIndexes[TheBestChainIndex]].PeakIndexes;
             var TheBestChainIdealBlockMass = Data.Chains[ClusterChainIndexes[TheBestChainIndex]].IdealBlockMass;
             var TheBestChainStartPeakMass = Data.Masses[TheBestChainPeakIndexes[TheBestChainPeakIndex]] - TheBestChainIdealBlockMass * TheBestChainPeakIndex;
+
             for (var CurPeakIndexInChain = 0; CurPeakIndexInChain < TheBestChainPeakIndexes.Length; CurPeakIndexInChain++)
             {
                 var PeakIndex = TheBestChainPeakIndexes[CurPeakIndexInChain];
+
                 if (Data.IdealMasses[PeakIndex] > 0.1) { throw new Exception("Algorithm error"); }
                 Data.IdealMasses[PeakIndex] = TheBestChainStartPeakMass + CurPeakIndexInChain * TheBestChainIdealBlockMass;
             }
@@ -1137,6 +1229,7 @@ namespace Support
             UsedChains[TheBestChainPeakIndex] = true;
             var UsedChainCount = ClusterChainIndexes.Length - 1;
             var TestDoublePeakCount = 0;
+
             for (; ; )
             {
                 for (var ChainIndexInCluster = 0; ChainIndexInCluster < ClusterChainIndexes.Length; ChainIndexInCluster++)
@@ -1144,6 +1237,7 @@ namespace Support
                     if (UsedChains[ChainIndexInCluster]) { continue; }
                     var CurChainPeakIndexes = Data.Chains[ClusterChainIndexes[ChainIndexInCluster]].PeakIndexes;
                     var SearchPeakIndexInChain = 0;
+
                     for (; SearchPeakIndexInChain < CurChainPeakIndexes.Length; SearchPeakIndexInChain++)
                     {
                         if (Data.IdealMasses[CurChainPeakIndexes[SearchPeakIndexInChain]] > 0.1)
@@ -1158,10 +1252,12 @@ namespace Support
                     //add chain peaks
                     var CurChainIdealBlockMass = Data.Chains[ClusterChainIndexes[ChainIndexInCluster]].IdealBlockMass;
                     var StartMass = Data.IdealMasses[CurChainPeakIndexes[SearchPeakIndexInChain]] - SearchPeakIndexInChain * CurChainIdealBlockMass;
+
                     for (var CurPeakIndexInChain = 0; CurPeakIndexInChain < CurChainPeakIndexes.Length; CurPeakIndexInChain++)
                     {
                         if (CurPeakIndexInChain == SearchPeakIndexInChain) { continue; }
                         var IdealMass = StartMass + CurPeakIndexInChain * CurChainIdealBlockMass;
+
                         if (Data.IdealMasses[CurChainPeakIndexes[CurPeakIndexInChain]] <= 0.1)
                         {
                             Data.IdealMasses[CurChainPeakIndexes[CurPeakIndexInChain]] = IdealMass;
@@ -1182,6 +1278,7 @@ namespace Support
                 if (UsedChainCount <= 0) { break; }
             }
         }
+
         public void AssignC13IdealMasses(Support.InputData Data, int ClusterIndex)
         {
             var FirstClusterPeakIndexes = Data.GetClusterPeakIndexes(0);
@@ -1190,6 +1287,7 @@ namespace Support
             var ParentPeakList = new List<int>();
             var C13PeakList = new List<int>();
             int TestInt;
+
             foreach (var PeakIndex in FirstClusterPeakIndexes)
             {
                 if (Data.IdealMasses[PeakIndex] < 0.1)
@@ -1201,6 +1299,7 @@ namespace Support
                 var SearchPeakIndex = CPpmError.SearchNearPeakIndex(Data.Masses, PeakMass + C13BlockMass);
                 /*
                 int SearchPeakIndex = CPpmError.SearchPeakIndex( Data, PeakMass + C13BlockMass, PeakIndex + 1 );
+
                 if ( SearchPeakIndex < 0 ) { continue; }
                 if ( Data.IdealMasses [ SearchPeakIndex ] > 0.1 ) {
                     SearchPeakIndex = SearchPeakIndex;
@@ -1217,6 +1316,7 @@ namespace Support
             Data.IsotopicParentPeaks = ParentPeakList.ToArray();
             Data.IsotopicChildPeaks = C13PeakList.ToArray();
         }
+
         public void AssignIdealMassesToRestPeaks(Support.InputData Data)
         {
             var MinMassInteger = (int)Math.Round(Data.Masses.Min());
@@ -1224,12 +1324,15 @@ namespace Support
             var MinPeakIndexesAtInteger = new int[MaxMassInteger + 1];
             var MaxPeakIndexesAtInteger = new int[MaxMassInteger + 1];
             var PeakIndex = 0;
+
             for (var MassInteger = MinMassInteger; MassInteger <= MaxMassInteger; MassInteger++)
             {
                 var FirstPeakIndex = PeakIndex;
+
                 for (; PeakIndex < Data.Masses.Length;)
                 {
                     var CurMassInteger = (int)Math.Round(Data.Masses[PeakIndex]);
+
                     if (CurMassInteger != MassInteger)
                     {
                         if (FirstPeakIndex == PeakIndex)
@@ -1252,12 +1355,14 @@ namespace Support
             var IdealMassErrorMeansAtIntegers = new double[MaxMassInteger + 1];
             var FirstIdealMassInteger = -1;
             var LastIdealMassInteger = -1;
+
             for (var MassInteger = MinMassInteger; MassInteger <= MaxMassInteger; MassInteger++)
             {
                 if (MinPeakIndexesAtInteger[MassInteger] < 0) { continue; }
                 var IdealPeakIndexes = new List<int>();
                 var IdealMasses = new List<double>();
                 var IdealMassErrors = new List<double>();
+
                 for (PeakIndex = MinPeakIndexesAtInteger[MassInteger]; PeakIndex <= MaxPeakIndexesAtInteger[MassInteger]; PeakIndex++)
                 {
                     if (Data.IdealMasses[PeakIndex] > 0.1)
@@ -1279,6 +1384,7 @@ namespace Support
             {
                 if (Data.IdealMasses[PeakIndex] > 0.1) { continue; }
                 var MassInteger = (int)Math.Round(Data.Masses[PeakIndex]);
+
                 if (IdealMassMeansAtIntegers[MassInteger] > 0.1)
                 {
                     //Integer has ideal peaks
@@ -1293,6 +1399,7 @@ namespace Support
                     else
                     {
                         var IdealPeakIndexAtInteger = Array.BinarySearch(IdealPeakIndexesAtIntegers[MassInteger], PeakIndex);
+
                         if (IdealPeakIndexAtInteger < 0)
                         {
                             IdealPeakIndexAtInteger = ~IdealPeakIndexAtInteger;
@@ -1329,11 +1436,13 @@ namespace Support
                     else
                     {
                         var LeftMassInteger = MassInteger - 1;
+
                         for (; LeftMassInteger >= FirstIdealMassInteger; LeftMassInteger--)
                         {
                             if (IdealMassMeansAtIntegers[LeftMassInteger] > 0.1) { break; }
                         }
                         var RightMassInteger = MassInteger + 1;
+
                         for (; RightMassInteger <= LastIdealMassInteger; RightMassInteger++)
                         {
                             if (IdealMassMeansAtIntegers[RightMassInteger] > 0.1) { break; }
@@ -1345,6 +1454,7 @@ namespace Support
                 }
             }
         }
+
         public enum DistancePeakType { Pair, MPair, DM, MDM, Chain, MChain, UChain, MUChain, Isotope, MIsotope, Att };
         public class PairDistance
         {
@@ -1360,6 +1470,7 @@ namespace Support
             public double ChainMean;
             public double ChainStdDev;
         }
+
         public PairDistance[] GetPairChainIsotopeStatistics(Support.InputData InputData, double MaxPairDistance = 50, int UnknownCount = 10)
         {
             const double MaxOffsetPpmError = 5;
@@ -1376,13 +1487,16 @@ namespace Support
             var BinCount = (int)(MaxPairDistance / BinSize + 2);
             var LowPeakIndexInBins = new List<int>[BinCount];
             var UpperPeakIndexInBins = new List<int>[BinCount];
+
             for (var LowIndex = 0; LowIndex < Masses.Length - 1; LowIndex++)
             {
                 for (var UpperIndex = LowIndex + 1; UpperIndex < Masses.Length; UpperIndex++)
                 {
                     var Distance = Masses[UpperIndex] - Masses[LowIndex];
+
                     if (Distance > MaxPairDistance) { break; }
                     var BinIndex = (int)(Distance / BinSize);
+
                     if (LowPeakIndexInBins[BinIndex] == null)
                     {
                         LowPeakIndexInBins[BinIndex] = new List<int>();
@@ -1396,6 +1510,7 @@ namespace Support
             var DistancePeakList = new List<PairDistance>();
             var NoiseBinPairs = 2;
             var MinPairs = 50;
+
             for (var BinIndex = 0; BinIndex < BinCount; BinIndex++)
             {
                 //find next peak
@@ -1403,6 +1518,7 @@ namespace Support
                 if (LowPeakIndexInBins[BinIndex] == null) { continue; }
                 if (LowPeakIndexInBins[BinIndex].Count < NoiseBinPairs) { continue; }
                 var StartBinIndex = BinIndex;
+
                 for (BinIndex++; BinIndex < BinCount; BinIndex++)
                 {
                     if (LowPeakIndexInBins[BinIndex] == null) { break; }
@@ -1412,9 +1528,11 @@ namespace Support
                     }
                 }
                 var EndBinIndex = BinIndex - 1;
+
                 if (EndBinIndex - StartBinIndex < 2) { continue; }
 
                 var Distances = new List<double>();
+
                 for (var CurBinIndex = StartBinIndex; CurBinIndex <= EndBinIndex; CurBinIndex++)
                 {
                     for (var PairIndex = 0; PairIndex < LowPeakIndexInBins[CurBinIndex].Count; PairIndex++)
@@ -1441,6 +1559,7 @@ namespace Support
             }
             const int MinChainPeakCount = 5;
             const int MinChainCount = 5;
+
             if (CIsotope.GetNames() == null)
             {
                 var IsotopeFilename = "Isotope.inf";
@@ -1452,13 +1571,16 @@ namespace Support
                 //search dm, chains and isotope
                 var DmIndex = FindKnownFormulaIndex(InputData, CurDistancePeak.Mean);
                 FindChains1(InputData, MinChainPeakCount, InputData.Masses.Last() + 1, new[] { CurDistancePeak.Mean });
+
                 if (InputData.Chains.Length >= MinChainCount)
                 {
                     CurDistancePeak.ChainCount = InputData.Chains.Length;
                     var Distances = new List<double>();
+
                     for (var ChainIndex = 0; ChainIndex < InputData.Chains.Length; ChainIndex++)
                     {
                         var PeakMasses = InputData.Chains[ChainIndex].PeakMasses;
+
                         for (var PeakMassIndex = 0; PeakMassIndex < PeakMasses.Length - 2; PeakMassIndex++)
                         {
                             Distances.Add(PeakMasses[PeakMassIndex + 1] - PeakMasses[PeakMassIndex]);
@@ -1469,6 +1591,7 @@ namespace Support
                 }
                 //int IsotopeIndex = CIsotope.FindIsotopeIndex( InputData, IsotopeDistances, CurDistancePeak.Mean, CurDistancePeak.StdDev );
                 var IsotopeIndex = CIsotope.FindIsotopeIndex(InputData, CurDistancePeak.Mean, CurDistancePeak.StdDev);
+
                 if (InputData.Chains.Length >= MinChainCount)
                 {
                     if (DmIndex >= 0)
@@ -1495,6 +1618,7 @@ namespace Support
             for (var DistancePeakIndex = 0; DistancePeakIndex < DistancePeakList.Count; DistancePeakIndex++)
             {
                 var CurDistancePeak = DistancePeakList[DistancePeakIndex];
+
                 if (CurDistancePeak.DistancePeakTypeList.Count == 0) { continue; }
                 if (((CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.DM)
                             && (CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.Chain)
@@ -1505,12 +1629,15 @@ namespace Support
                 }
                 var LowMultiplyDistancePeakIndex = DistancePeakIndex - 1;
                 var UpperMultiplyDistancePeakIndex = DistancePeakIndex + 1;
+
                 for (var Multiply = 2; Multiply < 10; Multiply++)
                 {
                     var LowMultiplyDistance = CurDistancePeak.Mean / Multiply;
+
                     for (; LowMultiplyDistancePeakIndex >= 0; LowMultiplyDistancePeakIndex--)
                     {
                         var TempDistancePeak = DistancePeakList[LowMultiplyDistancePeakIndex];
+
                         if (LowMultiplyDistance < TempDistancePeak.Mean - 3 * TempDistancePeak.StdDev) { continue; }
                         if (LowMultiplyDistance > TempDistancePeak.Mean + 3 * TempDistancePeak.StdDev)
                         {
@@ -1548,10 +1675,12 @@ namespace Support
                         }
                     }
                     var UpperMultiplyDistance = CurDistancePeak.Mean * Multiply;
+
                     if (UpperMultiplyDistance > MaxPairDistance) { break; }
                     for (; UpperMultiplyDistancePeakIndex < DistancePeakList.Count; UpperMultiplyDistancePeakIndex++)
                     {
                         var TempDistancePeak = DistancePeakList[UpperMultiplyDistancePeakIndex];
+
                         if (UpperMultiplyDistance > TempDistancePeak.Mean + 3 * TempDistancePeak.StdDev) { continue; }
                         if (UpperMultiplyDistance < TempDistancePeak.Mean - 3 * TempDistancePeak.StdDev)
                         {
@@ -1594,6 +1723,7 @@ namespace Support
             for (var DistancePeakIndex = 0; DistancePeakIndex < DistancePeakList.Count; DistancePeakIndex++)
             {
                 var CurDistancePeak = DistancePeakList[DistancePeakIndex];
+
                 if (CurDistancePeak.DistancePeakTypeList.Count > 0) { continue; }
                 if (CurDistancePeak.ChainCount > 0)
                 {
@@ -1606,13 +1736,16 @@ namespace Support
                 CurDistancePeak.FormulaList.Add("Unknown");
                 CurDistancePeak.FormulaDistanceList.Add(CurDistancePeak.Mean);
                 var UpperMultiplyDistancePeakIndex = DistancePeakIndex + 1;
+
                 for (var Multiply = 2; Multiply < 10; Multiply++)
                 {
                     var UpperMultiplyDistance = CurDistancePeak.Mean * Multiply;
+
                     if (UpperMultiplyDistance > MaxPairDistance) { break; }
                     for (; UpperMultiplyDistancePeakIndex < DistancePeakList.Count; UpperMultiplyDistancePeakIndex++)
                     {
                         var TempDistancePeak = DistancePeakList[UpperMultiplyDistancePeakIndex];
+
                         if (UpperMultiplyDistance > TempDistancePeak.Mean + 3 * TempDistancePeak.StdDev) { continue; }
                         if (UpperMultiplyDistance < TempDistancePeak.Mean - 3 * TempDistancePeak.StdDev)
                         {
@@ -1648,6 +1781,7 @@ namespace Support
             //sort by PairCount
             {
                 var Pairs = new int[DistancePeakList.Count];
+
                 for (var DistancePeakIndex = 0; DistancePeakIndex < DistancePeakList.Count; DistancePeakIndex++)
                 {
                     Pairs[DistancePeakIndex] = DistancePeakList[DistancePeakIndex].PairCount;
@@ -1661,13 +1795,16 @@ namespace Support
             var RemovePairDistanceList = new List<int>();
             var UChainIndex = 0;
             var UPairIndex = 0;
+
             for (var PairDistanceIndex = 0; PairDistanceIndex < DistancePeakList.Count; PairDistanceIndex++)
             {
                 var Cur = DistancePeakList[PairDistanceIndex];
                 var RemoveIndexList = new List<int>();
+
                 for (var ListIndex = 0; ListIndex < Cur.FormulaList.Count; ListIndex++)
                 {
                     var CurDistancePeakType = Cur.DistancePeakTypeList[ListIndex];
+
                     if (((CurDistancePeakType == DistancePeakType.UChain) || (CurDistancePeakType == DistancePeakType.MUChain)))
                     {
                         if (UChainIndex >= UnknownCount)
@@ -1692,6 +1829,7 @@ namespace Support
                     }
                 }
                 RemoveIndexList.Reverse();
+
                 foreach (var ListIndex in RemoveIndexList)
                 {
                     Cur.DistancePeakTypeList.RemoveAt(ListIndex);
@@ -1704,12 +1842,14 @@ namespace Support
                 }
             }
             RemovePairDistanceList.Reverse();
+
             foreach (var PairDistanceIndex in RemovePairDistanceList)
             {
                 DistancePeakList.RemoveAt(PairDistanceIndex);
             }
             return DistancePeakList.ToArray();
         }
+
         public string PairChainIsotopeStatisticsToString(PairDistance[] PairDistances, int UnknownCount = 10)
         {
             var TextHeader = "LowBinIndex,UpperBinIndex,PairCount,DistanceMean,DistanceStdDev,Type,Formula,FormulaDistance,ChainCount,ChainMean,ChainStdDev";
@@ -1720,12 +1860,15 @@ namespace Support
             var UChainIndex = 0;
             var UPairIndex = 0;
             var PairText = new StringBuilder();
+
             for (var Index = 0; Index < PairDistances.Length; Index++)
             {
                 var Cur = PairDistances[Index];
+
                 for (var ListIndex = 0; ListIndex < Cur.FormulaList.Count; ListIndex++)
                 {
                     var CurDistancePeakType = Cur.DistancePeakTypeList[ListIndex];
+
                     if (((CurDistancePeakType == DistancePeakType.DM) || (CurDistancePeakType == DistancePeakType.MDM)))
                     {
                         DMText.Append("\r\n" + Cur.LowBinIndex + "," + Cur.UpperBinIndex + "," + Cur.PairCount + "," + Cur.Mean.ToString("F8") + "," + Cur.StdDev.ToString("F8")
