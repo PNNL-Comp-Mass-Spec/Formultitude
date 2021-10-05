@@ -111,11 +111,13 @@ namespace CiaUi
                 {// "-1" Extra Row without Controls!!!
                     for (var iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++)
                     {
-                        var oTextBox = new System.Windows.Forms.TextBox();
-                        oTextBox.Anchor = AnchorStyles.None;
-                        oTextBox.ReadOnly = true;
-                        oTextBox.AutoSize = true;
-                        oTextBox.TextAlign = HorizontalAlignment.Center;
+                        var oTextBox = new System.Windows.Forms.TextBox
+                        {
+                            Anchor = AnchorStyles.None,
+                            ReadOnly = true,
+                            AutoSize = true,
+                            TextAlign = HorizontalAlignment.Center
+                        };
 
                         if (iRow == 0)
                         {
@@ -195,11 +197,13 @@ namespace CiaUi
                 {// "-1" Extra Row without Controls!!!
                     for (var ColumnIndex = 0; ColumnIndex < tableLayoutPanelChains.ColumnCount; ColumnIndex++)
                     {
-                        var oTextBox = new System.Windows.Forms.TextBox();
-                        oTextBox.Anchor = AnchorStyles.None;
-                        oTextBox.ReadOnly = true;
-                        oTextBox.AutoSize = true;
-                        oTextBox.TextAlign = HorizontalAlignment.Center;
+                        var oTextBox = new System.Windows.Forms.TextBox
+                        {
+                            Anchor = AnchorStyles.None,
+                            ReadOnly = true,
+                            AutoSize = true,
+                            TextAlign = HorizontalAlignment.Center
+                        };
 
                         if (iRow == 0)
                         {
@@ -1010,11 +1014,13 @@ namespace CiaUi
 
                     for (var iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++)
                     {
-                        var oTextBox = new System.Windows.Forms.TextBox();
-                        oTextBox.Anchor = AnchorStyles.None;
-                        oTextBox.ReadOnly = true;
-                        oTextBox.AutoSize = true;
-                        oTextBox.TextAlign = HorizontalAlignment.Center;
+                        var oTextBox = new System.Windows.Forms.TextBox
+                        {
+                            Anchor = AnchorStyles.None,
+                            ReadOnly = true,
+                            AutoSize = true,
+                            TextAlign = HorizontalAlignment.Center
+                        };
                         tableLayoutPanelDBPeaks.Controls.Add(oTextBox, iColumn, Row);
                     }
                 }
@@ -1200,9 +1206,11 @@ namespace CiaUi
 
                     if (!FormulaDict.ContainsKey(NeutralMass))
                     {
-                        var Data = new ReportData();
-                        Data.Formula = (short[])Formula.Clone();
-                        Data.Abundances = new double[TotalSamples];
+                        var Data = new ReportData
+                        {
+                            Formula = (short[])Formula.Clone(),
+                            Abundances = new double[TotalSamples]
+                        };
                         FormulaDict.Add(NeutralMass, Data);
                         Abundances = Data.Abundances;
                     }
@@ -1307,8 +1315,10 @@ namespace CiaUi
                 myArray.SetValue(rel_ab, Peak, 5);
             }
 
-            var MyApp = new Microsoft.Office.Interop.Excel.Application();
-            MyApp.Visible = false;
+            var MyApp = new Microsoft.Office.Interop.Excel.Application
+            {
+                Visible = false
+            };
             var MyBook = MyApp.Workbooks.Add(1);
             Microsoft.Office.Interop.Excel.Worksheet MySheet = MyBook.Sheets[1];
             MySheet.Cells[1, 1].Value = "mz";
@@ -1502,11 +1512,13 @@ namespace CiaUi
 
                         for (var iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++)
                         {
-                            var oTextBox = new System.Windows.Forms.TextBox();
-                            oTextBox.Anchor = AnchorStyles.None;
-                            oTextBox.ReadOnly = true;
-                            oTextBox.AutoSize = true;
-                            oTextBox.TextAlign = HorizontalAlignment.Center;
+                            var oTextBox = new System.Windows.Forms.TextBox
+                            {
+                                Anchor = AnchorStyles.None,
+                                ReadOnly = true,
+                                AutoSize = true,
+                                TextAlign = HorizontalAlignment.Center
+                            };
                             tableLayoutPanelChains.Controls.Add(oTextBox, iColumn, Row);
                         }
                     }
@@ -1629,11 +1641,13 @@ namespace CiaUi
         {
             try
             {
-                var OSD = new SaveFileDialog();
-                OSD.Title = "Save parameters";
-                OSD.InitialDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-                OSD.Filter = "XML Files (.xml)|*.xml|All Files (*.*)|*.*";
-                OSD.FilterIndex = 1;
+                var OSD = new SaveFileDialog
+                {
+                    Title = "Save parameters",
+                    InitialDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location),
+                    Filter = "XML Files (.xml)|*.xml|All Files (*.*)|*.*",
+                    FilterIndex = 1
+                };
 
                 if (OSD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

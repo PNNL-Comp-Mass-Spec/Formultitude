@@ -249,8 +249,10 @@ namespace Support
 
             for (var ChainIndex = 0; ChainIndex < Chains.Length; ChainIndex++)
             {
-                var NewChain = new Chain();
-                NewChain.PeakIndexes = ChainPeakList[ChainIndex].ToArray();
+                var NewChain = new Chain
+                {
+                    PeakIndexes = ChainPeakList[ChainIndex].ToArray()
+                };
                 NewChain.PeakMasses = new double[NewChain.PeakIndexes.Length];
 
                 for (var ChainPeakIndex = 0; ChainPeakIndex < NewChain.PeakMasses.Length; ChainPeakIndex++)
@@ -587,10 +589,12 @@ namespace Support
                 NextPeakIndex = SearchPeakIndex;
             }
             if (PeakIndexList.Count < MinPeaksInChain) { return null; }
-            var CurChain = new Chain();
-            CurChain.IdealBlockMass = BlockMass;
-            CurChain.Formula = "";//can't use "N/A" because AreChainsDuplicated use Formula for comparision
-            CurChain.PeakIndexes = PeakIndexList.ToArray();
+            var CurChain = new Chain
+            {
+                IdealBlockMass = BlockMass,
+                Formula = "",//can't use "N/A" because AreChainsDuplicated use Formula for comparision
+                PeakIndexes = PeakIndexList.ToArray()
+            };
             var PeakMasses = new double[CurChain.PeakIndexes.Length];
             var BlockMasses = new double[CurChain.PeakIndexes.Length - 1];
             var PpmErrors = new double[CurChain.PeakIndexes.Length - 1];
@@ -1544,15 +1548,17 @@ namespace Support
                 //???linear adjustment of StdDev ppm error to range 0 ppm error
                 //simple StdDev
                 var PeakStdDev = MathNet.Numerics.Statistics.Statistics.StandardDeviation(Distances);
-                var CurDistancePeak = new PairDistance();
-                CurDistancePeak.LowBinIndex = StartBinIndex;
-                CurDistancePeak.UpperBinIndex = EndBinIndex;
-                CurDistancePeak.PairCount = Distances.Count;
-                CurDistancePeak.Mean = PeakMean;
-                CurDistancePeak.StdDev = PeakStdDev;
-                CurDistancePeak.DistancePeakTypeList = new List<DistancePeakType>();
-                CurDistancePeak.FormulaList = new List<string>();
-                CurDistancePeak.FormulaDistanceList = new List<double>();
+                var CurDistancePeak = new PairDistance
+                {
+                    LowBinIndex = StartBinIndex,
+                    UpperBinIndex = EndBinIndex,
+                    PairCount = Distances.Count,
+                    Mean = PeakMean,
+                    StdDev = PeakStdDev,
+                    DistancePeakTypeList = new List<DistancePeakType>(),
+                    FormulaList = new List<string>(),
+                    FormulaDistanceList = new List<double>()
+                };
                 DistancePeakList.Add(CurDistancePeak);
             }
             const int MinChainPeakCount = 5;
@@ -1807,7 +1813,7 @@ namespace Support
                     {
                         if (UChainIndex >= UnknownCount)
                         {
-                            RemoveIndexList.Add(ListIndex); ;
+                            RemoveIndexList.Add(ListIndex);
                         }
                         else
                         {

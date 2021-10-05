@@ -1134,8 +1134,10 @@ namespace CIA
             Directory.CreateDirectory(OutputSubfolder);
 
             var LogFilename = Path.Combine(OutputSubfolder, "log.csv");
-            var oStreamLogWriter = new StreamWriter(LogFilename);
-            oStreamLogWriter.AutoFlush = true;
+            var oStreamLogWriter = new StreamWriter(LogFilename)
+            {
+                AutoFlush = true
+            };
 
             var FileCount = Filenames.Length;
             var Masses = new double[FileCount][];
@@ -1847,8 +1849,10 @@ namespace CIA
 
             for (var Peak = 0; Peak < NeutralMasses.Length; Peak++)
             {
-                var CurrentGrpdiffK = new CGrpdiffK();
-                CurrentGrpdiffK.IsEmpty = true;
+                var CurrentGrpdiffK = new CGrpdiffK
+                {
+                    IsEmpty = true
+                };
 
                 if (UseRelation)
                 {

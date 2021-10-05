@@ -614,12 +614,14 @@ namespace Support
                     break;
                 }
             }
-            OutData = new InputData();
-            OutData.Masses = new double[NewDataCount];
-            OutData.Abundances = new double[NewDataCount];
-            OutData.S2Ns = new double[NewDataCount];
-            OutData.Resolutions = new double[NewDataCount];
-            OutData.RelAbundances = new double[NewDataCount];
+            OutData = new InputData
+            {
+                Masses = new double[NewDataCount],
+                Abundances = new double[NewDataCount],
+                S2Ns = new double[NewDataCount],
+                Resolutions = new double[NewDataCount],
+                RelAbundances = new double[NewDataCount]
+            };
 
             for (int PeakIndex = 0, RealPeakIndex = 0; PeakIndex < Data.Masses.Length; PeakIndex++)
             {

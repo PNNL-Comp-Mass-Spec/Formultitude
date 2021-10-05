@@ -115,18 +115,22 @@ namespace FindChains
 
                 if (checkBoxS2N.Checked)
                 {
-                    CurSettings[SettingIndex] = new CFileReader.CutSettings();
-                    CurSettings[SettingIndex].CutType = Support.CFileReader.ECutType.S2N;
-                    CurSettings[SettingIndex].Min = (double)numericUpDownS2N.Value;
-                    CurSettings[SettingIndex].Max = -1;
+                    CurSettings[SettingIndex] = new CFileReader.CutSettings
+                    {
+                        CutType = Support.CFileReader.ECutType.S2N,
+                        Min = (double)numericUpDownS2N.Value,
+                        Max = -1
+                    };
                     SettingIndex++;
                 }
                 if (checkBoxUseRelAbundance.Checked)
                 {
-                    CurSettings[SettingIndex] = new CFileReader.CutSettings();
-                    CurSettings[SettingIndex].CutType = Support.CFileReader.ECutType.RelAbundance;
-                    CurSettings[SettingIndex].Min = (double)numericUpDownMinRelAbundance.Value;
-                    CurSettings[SettingIndex].Max = -1;
+                    CurSettings[SettingIndex] = new CFileReader.CutSettings
+                    {
+                        CutType = Support.CFileReader.ECutType.RelAbundance,
+                        Min = (double)numericUpDownMinRelAbundance.Value,
+                        Max = -1
+                    };
                 }
 
                 var Filename = Path.GetDirectoryName(Filenames[FileIndex]) + "\\" + Path.GetFileNameWithoutExtension(Filenames[FileIndex]);
@@ -277,8 +281,10 @@ namespace FindChains
 
                             for (var PeakIndex = 0; PeakIndex < PeakIndexes.Length; PeakIndex++)
                             {
-                                var NewPeakMzError = new PeakMzError();
-                                NewPeakMzError.PeakIndex = PeakIndexes[PeakIndex];
+                                var NewPeakMzError = new PeakMzError
+                                {
+                                    PeakIndex = PeakIndexes[PeakIndex]
+                                };
                                 NewPeakMzError.Mz = RawData.Masses[NewPeakMzError.PeakIndex];
                                 NewPeakMzError.NewMz = FirstPeakMz + PeakIndex * RawData.Chains[BiggestChainCluster[0]].IdealBlockMass;
                                 NewPeakMzError.Chain = BiggestChainCluster[0];
@@ -306,8 +312,10 @@ namespace FindChains
 
                                 for (var PeakIndex = 0; PeakIndex < PeakIndexes.Length; PeakIndex++)
                                 {
-                                    var NewPeakMzError = new PeakMzError();
-                                    NewPeakMzError.PeakIndex = PeakIndexes[PeakIndex];
+                                    var NewPeakMzError = new PeakMzError
+                                    {
+                                        PeakIndex = PeakIndexes[PeakIndex]
+                                    };
                                     NewPeakMzError.Mz = RawData.Masses[NewPeakMzError.PeakIndex];
                                     NewPeakMzError.NewMz = FirstPeakMz + PeakIndex * RawData.Chains[BiggestChainCluster[ClusterChainIndex]].IdealBlockMass;
                                     NewPeakMzError.Chain = BiggestChainCluster[ClusterChainIndex];
@@ -551,27 +559,35 @@ namespace FindChains
                                 {
                                     if (PairLeftPeak == BinRightPeaks[LinkBinIndex][LinkPairIndex])
                                     {
-                                        var ToLeftLink = new PeakLink();
-                                        ToLeftLink.BinIndex = LinkBinIndex;
-                                        ToLeftLink.PairIndex = LinkPairIndex;
+                                        var ToLeftLink = new PeakLink
+                                        {
+                                            BinIndex = LinkBinIndex,
+                                            PairIndex = LinkPairIndex
+                                        };
                                         BinLeftLinks[BinIndex][PairIndex].Add(ToLeftLink);
 
-                                        var ToRightLink = new PeakLink();
-                                        ToRightLink.BinIndex = BinIndex;
-                                        ToRightLink.PairIndex = PairIndex;
+                                        var ToRightLink = new PeakLink
+                                        {
+                                            BinIndex = BinIndex,
+                                            PairIndex = PairIndex
+                                        };
                                         BinRightLinks[LinkBinIndex][LinkPairIndex].Add(ToRightLink);
                                     }
 
                                     if (PairRightPeak == BinLeftPeaks[LinkBinIndex][LinkPairIndex])
                                     {
-                                        var ToRightLink = new PeakLink();
-                                        ToRightLink.BinIndex = LinkBinIndex;
-                                        ToRightLink.PairIndex = LinkPairIndex;
+                                        var ToRightLink = new PeakLink
+                                        {
+                                            BinIndex = LinkBinIndex,
+                                            PairIndex = LinkPairIndex
+                                        };
                                         BinRightLinks[BinIndex][PairIndex].Add(ToRightLink);
 
-                                        var ToLeftLink = new PeakLink();
-                                        ToLeftLink.BinIndex = BinIndex;
-                                        ToLeftLink.PairIndex = PairIndex;
+                                        var ToLeftLink = new PeakLink
+                                        {
+                                            BinIndex = BinIndex,
+                                            PairIndex = PairIndex
+                                        };
                                         BinLeftLinks[LinkBinIndex][LinkPairIndex].Add(ToLeftLink);
                                     }
                                 }
@@ -762,27 +778,35 @@ namespace FindChains
                         {
                             if (PairLeftPeak == BinRightPeaks[LinkBinIndex][LinkPairIndex])
                             {
-                                var ToLeftLink = new PeakLink();
-                                ToLeftLink.BinIndex = LinkBinIndex;
-                                ToLeftLink.PairIndex = LinkPairIndex;
+                                var ToLeftLink = new PeakLink
+                                {
+                                    BinIndex = LinkBinIndex,
+                                    PairIndex = LinkPairIndex
+                                };
                                 BinLeftLinks[BinIndex][PairIndex].Add(ToLeftLink);
 
-                                var ToRightLink = new PeakLink();
-                                ToRightLink.BinIndex = BinIndex;
-                                ToRightLink.PairIndex = PairIndex;
+                                var ToRightLink = new PeakLink
+                                {
+                                    BinIndex = BinIndex,
+                                    PairIndex = PairIndex
+                                };
                                 BinRightLinks[LinkBinIndex][LinkPairIndex].Add(ToRightLink);
                             }
 
                             if (PairRightPeak == BinLeftPeaks[LinkBinIndex][LinkPairIndex])
                             {
-                                var ToRightLink = new PeakLink();
-                                ToRightLink.BinIndex = LinkBinIndex;
-                                ToRightLink.PairIndex = LinkPairIndex;
+                                var ToRightLink = new PeakLink
+                                {
+                                    BinIndex = LinkBinIndex,
+                                    PairIndex = LinkPairIndex
+                                };
                                 BinRightLinks[BinIndex][PairIndex].Add(ToRightLink);
 
-                                var ToLeftLink = new PeakLink();
-                                ToLeftLink.BinIndex = BinIndex;
-                                ToLeftLink.PairIndex = PairIndex;
+                                var ToLeftLink = new PeakLink
+                                {
+                                    BinIndex = BinIndex,
+                                    PairIndex = PairIndex
+                                };
                                 BinLeftLinks[LinkBinIndex][LinkPairIndex].Add(ToLeftLink);
                             }
                         }
