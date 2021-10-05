@@ -1292,7 +1292,6 @@ namespace CIA
 
                     if (CalMasses[FileIndex] == null && Masses[FileIndex].Length > 0)
                     {
-
                         FormularityProgram.AppendToLog(oStreamLogWriter, "Calibration failed; using uncalibrated masses\n");
                         FormularityProgram.AppendToLog(oStreamLogWriter, "");
 

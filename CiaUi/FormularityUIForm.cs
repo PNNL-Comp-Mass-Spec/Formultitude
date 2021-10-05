@@ -611,7 +611,6 @@ namespace CiaUi
                     oCCia.SetProcessType(CCia.ProcessType.Ipa);
                 }
                 oCCia.Process(Filenames);
-
             }
             catch (Exception Ex)
             {
@@ -1305,7 +1304,6 @@ namespace CiaUi
                 var Currenti = (double)myArray.GetValue(Peak, 2);
 
                 if (Maxi < Currenti) { Maxi = Currenti; }
-
             }
             XmlDoc = null;
 

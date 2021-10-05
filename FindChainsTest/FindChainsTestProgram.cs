@@ -199,7 +199,6 @@ namespace FindChainsTest
                 File.WriteAllText(Filename + "ErrorDistributionCH4O_.csv", InputData.ErrorDistributionToString());
                 ChainBlocks.FindChains1(InputData, 5, InputData.Masses.Last() + 1, new[] { CElements.C + 4 * CElements.H - CElements.O });
                 File.WriteAllText(Filename + "ChainsCH4O_.csv", InputData.ChainsToString());
-
             }
 
             //string [] BlockNames = new string [] { "H2", "C", "CH2", "O", "NH" };
