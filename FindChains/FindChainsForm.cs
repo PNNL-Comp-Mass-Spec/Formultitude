@@ -44,7 +44,7 @@ namespace FindChains
             var BinIndex = oPeakLink.BinIndex;
             var PairIndex = oPeakLink.PairIndex;
 
-            if ((BinRightLinks[BinIndex].Length == 0) || (BinRightLinks[BinIndex][PairIndex].Count == 0))
+            if (BinRightLinks[BinIndex].Length == 0 || BinRightLinks[BinIndex][PairIndex].Count == 0)
             {
                 var StartChain = new List<int>();
                 StartChain.Add(BinRightPeaks[BinIndex][PairIndex]);

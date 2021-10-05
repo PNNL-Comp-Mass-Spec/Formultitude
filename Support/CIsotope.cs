@@ -110,7 +110,7 @@ Mame,Distance
             }
             else
             {
-                if ((Distances[Index] >= Distance - 3 * StdDev) && (Distances[Index] <= Distance + 3 * StdDev))
+                if (Distances[Index] >= Distance - 3 * StdDev && Distances[Index] <= Distance + 3 * StdDev)
                 {
                     return Index;
                 }

@@ -19,12 +19,12 @@ namespace CIA
                 System.Console.WriteLine("Started.");
                 var oCCia = new CCia();
 
-                if ((args.Length == 1) && ((args[0] == "\\h") || (args[0] == "/h") || (args[0] == "-h")))
+                if (args.Length == 1 && (args[0] == "\\h" || args[0] == "/h" || args[0] == "-h"))
                 {
                     throw new Exception("Incorrect Help argument.");
                 }
 
-                if ((args.Length < 3) || (args.Length > 5))
+                if (args.Length < 3 || args.Length > 5)
                 {
                     throw new Exception("Application uses 3, 4 or 5 arguments.");
                 }
@@ -120,10 +120,10 @@ namespace CIA
                     }
                     else
                     {
-                        if ((Path.GetExtension(args[1]) == ".csv")
-                            || (Path.GetExtension(args[1]) == ".txt")
-                            || (Path.GetExtension(args[1]) == ".tsv")
-                            || (Path.GetExtension(args[1]) == ".xml"))
+                        if (Path.GetExtension(args[1]) == ".csv"
+                            || Path.GetExtension(args[1]) == ".txt"
+                            || Path.GetExtension(args[1]) == ".tsv"
+                            || Path.GetExtension(args[1]) == ".xml")
                         {
                             DatasetsList.Add(args[1]);
                         }
@@ -426,7 +426,7 @@ namespace CIA
                     throw new Exception("Formula name (" + FormulaName + "is wrong");
                 }
 
-                if ((FormulaName.Length > CurrentSymbol + 1) && Char.IsLetter(FormulaName[CurrentSymbol + 1]))
+                if (FormulaName.Length > CurrentSymbol + 1 && Char.IsLetter(FormulaName[CurrentSymbol + 1]))
                 {
                     //Maybe Element name consists of 2 letters
                     ElementName = FormulaName.Substring(CurrentSymbol, 2);
@@ -454,7 +454,7 @@ namespace CIA
                     }
                 }
                 var DigitCount = 0;
-                while ((FormulaName.Length > CurrentSymbol + DigitCount) && Char.IsDigit(FormulaName[CurrentSymbol + DigitCount]))
+                while (FormulaName.Length > CurrentSymbol + DigitCount && Char.IsDigit(FormulaName[CurrentSymbol + DigitCount]))
                 {
                     DigitCount = DigitCount + 1;
                 }
@@ -602,7 +602,7 @@ namespace CIA
 
                     for (var Index = 0; Index < oData.FileCount; Index++)
                     {
-                        if ((LeftIndexes[Index] >= 0) && (CurrentIndexes[Index] >= 0))
+                        if (LeftIndexes[Index] >= 0 && CurrentIndexes[Index] >= 0)
                         {
                             IsLeftPeakUnique = true;
                             break;
@@ -610,7 +610,7 @@ namespace CIA
                     }
                 }
 
-                if ((!IsLeftPeakUnique) && (LeftDistance <= RightDistance))
+                if (!IsLeftPeakUnique && LeftDistance <= RightDistance)
                 {// Left + Current maybe become Left
                     var LeftIndexes = IndexesL[Peak - 1];
                     MassesL[Peak - 1] = (MassesL[Peak] * CurrentIndexes[oData.FileCount] + MassesL[Peak - 1] * LeftIndexes[oData.FileCount]) / (CurrentIndexes[oData.FileCount] + LeftIndexes[oData.FileCount]);
@@ -636,7 +636,7 @@ namespace CIA
 
                 for (var Index = 0; Index < oData.FileCount; Index++)
                 {
-                    if ((RightIndexes[Index] >= 0) && (CurrentIndexes[Index] >= 0))
+                    if (RightIndexes[Index] >= 0 && CurrentIndexes[Index] >= 0)
                     {
                         IsRightPeakUnique = true;
                         break;
@@ -1199,7 +1199,7 @@ namespace CIA
 
                 if (PreAlignment
                         || StaticDynamicPpmError
-                        || (oRelationErrorType == RelationErrorType.DynamicPPM))
+                        || oRelationErrorType == RelationErrorType.DynamicPPM)
                 {
                     //spectra alignment
                     InputData.Masses = Masses[FileIndex];
@@ -1301,12 +1301,12 @@ namespace CIA
                 }
             }
 
-            if ((oProcessType == ProcessType.Cia) || (oProcessType == ProcessType.CiaIpa))
+            if (oProcessType == ProcessType.Cia || oProcessType == ProcessType.CiaIpa)
             {
                 Process(Filenames, Masses, Abundances, SNs, Resolutions, RelAbundances, CalMasses, oStreamLogWriter);
             }
 
-            if ((oProcessType == ProcessType.Ipa) || (oProcessType == ProcessType.CiaIpa))
+            if (oProcessType == ProcessType.Ipa || oProcessType == ProcessType.CiaIpa)
             {
                 for (var FileIndex = 0; FileIndex < FileCount; FileIndex++)
                 {
@@ -1426,7 +1426,7 @@ namespace CIA
                     }
                 }
 
-                if ((!Alignment) || GenerateReports)
+                if (!Alignment || GenerateReports)
                 {
                     for (var FileIndex = 0; FileIndex < Filenames.Length; FileIndex++)
                     {
@@ -1693,35 +1693,35 @@ namespace CIA
             var HToC = Formula[(int)EElemIndex.H] / TotalC;
             var OToC = Formula[(int)EElemIndex.O] / TotalC;
 
-            if (((OToC >= 0) && (OToC < 0.3) && (HToC >= 1.5) && (HToC < 2.5)))
+            if (OToC >= 0 && OToC < 0.3 && HToC >= 1.5 && HToC < 2.5)
             {//Lipid
                 return "Lipid";
             }
-            else if (((OToC >= 0) && (OToC < 0.125) && (HToC >= 0.8) && (HToC < 1.5)))
+            else if (OToC >= 0 && OToC < 0.125 && HToC >= 0.8 && HToC < 1.5)
             {//UnsatHC
                 return "UnsatHC";
             }
-            else if (((OToC >= 0) && (OToC < 0.95) && (HToC >= 0.2) && (HToC < 0.8)))
+            else if (OToC >= 0 && OToC < 0.95 && HToC >= 0.2 && HToC < 0.8)
             {//CondHC
                 return "ConHC";
             }
-            else if (((OToC >= 0.3) && (OToC < 0.55) && (HToC >= 1.5) && (HToC < 2.3)))
+            else if (OToC >= 0.3 && OToC < 0.55 && HToC >= 1.5 && HToC < 2.3)
             {//Protein
                 return "Protein";
             }
-            else if (((OToC >= 0.55) && (OToC < 0.7) && (HToC >= 1.5) && (HToC < 2.2)))
+            else if (OToC >= 0.55 && OToC < 0.7 && HToC >= 1.5 && HToC < 2.2)
             {//AminoSugar
                 return "AminoSugar";
             }
-            else if (((OToC >= 0.7) && (OToC < 1.05) && (HToC >= 1.5) && (HToC < 2.2)))
+            else if (OToC >= 0.7 && OToC < 1.05 && HToC >= 1.5 && HToC < 2.2)
             {//Carb
                 return "Carb";
             }
-            else if (((OToC >= 0.125) && (OToC < 0.65) && (HToC >= 0.8) && (HToC < 1.5)))
+            else if (OToC >= 0.125 && OToC < 0.65 && HToC >= 0.8 && HToC < 1.5)
             {//Lignin
                 return "Lignin";
             }
-            else if (((OToC >= 0.65) && (OToC < 1.1) && (HToC >= 0.8) && (HToC < 1.5)))
+            else if (OToC >= 0.65 && OToC < 1.1 && HToC >= 0.8 && HToC < 1.5)
             {//Tannin
                 return "Tannin";
             }
@@ -1758,7 +1758,7 @@ namespace CIA
 
             foreach (var Mass in Masses)
             {
-                if ((Math.Round(Mass) % 2) == 0)
+                if (Math.Round(Mass) % 2 == 0)
                 {
                     Even = Even + 1;
                 }
@@ -2009,7 +2009,7 @@ namespace CIA
                                 foreach (var relpk in GrpdiffK[Peak].Indexes[Relation])
                                 {
                                     var diff1 = NeutralMasses[relpk] - NeutralMasses[Peak];
-                                    var numGps = (int)(Math.Round((NeutralMasses[relpk] - NeutralMasses[Peak]) / ActiveRelationFormulaBuildingBlockMasses[Relation]));
+                                    var numGps = (int)Math.Round((NeutralMasses[relpk] - NeutralMasses[Peak]) / ActiveRelationFormulaBuildingBlockMasses[Relation]);
 
                                     if (numGps > 0)
                                     {
@@ -2030,9 +2030,9 @@ namespace CIA
                                             {
                                                 if (UseCIAFormulaScore)
                                                 {
-                                                    if ((newform[(int)EElemIndex.S] + newform[(int)EElemIndex.P] < Formulas[relpk][(int)EElemIndex.S] + Formulas[relpk][(int)EElemIndex.P])
+                                                    if (newform[(int)EElemIndex.S] + newform[(int)EElemIndex.P] < Formulas[relpk][(int)EElemIndex.S] + Formulas[relpk][(int)EElemIndex.P]
                                                             //&& ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) {
-                                                            && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak])))
+                                                            && Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak]))
                                                     {
                                                         Formulas[relpk] = (short[])newform.Clone();
                                                         PPMErrors[relpk] = errornew;
@@ -2067,7 +2067,7 @@ namespace CIA
                     {
                         if (IsFormula(Formulas[Peak]))
                         {//if the formula is already known
-                            var startform = (short[])(Formulas[Peak].Clone());
+                            var startform = (short[])Formulas[Peak].Clone();
                             //KL change to only do this for the places where Grpdiff is not empty
                             for (var Relation = 0; Relation < ListActiveRelationFormulaBuildingBlocks.Count; Relation++)
                             {
@@ -2087,7 +2087,7 @@ namespace CIA
                                     var newmass = FormulaToNeutralMass(newform);
                                     var errornew = CPpmError.AbsPpmError(newmass, NeutralMasses[relpk]);
                                     //if( ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) {
-                                    if (checknew && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak])))
+                                    if (checknew && Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak]))
                                     {
                                         if (checkold)
                                         {
@@ -2150,7 +2150,7 @@ namespace CIA
                                                 //if( Math.Abs( numGps ) <= MaxNumGps && checknew == true && errornew <= FormulaError ) {
                                                 var bIsFormula = IsFormula(Formulas[Peak]);
                                                 //if( ( ( bIsFormula == false ) && ( Math.Abs( errornew ) <= FormulaErrorPPM ) ) || ( ( bIsFormula == true ) && ( errornew < PPMErrors [ Peak ] ) ) ) {
-                                                if (((!bIsFormula) && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak]))) || (bIsFormula && (errornew < PPMErrors[Peak])))
+                                                if (!bIsFormula && Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak]) || bIsFormula && errornew < PPMErrors[Peak])
                                                 {
                                                     Formulas[Peak] = (short[])newform.Clone();
                                                     PPMErrors[Peak] = errornew;
@@ -2193,7 +2193,7 @@ namespace CIA
                     for (var relpk = 0; relpk < NeutralMasses.Length; relpk++)
                     {
                         //if( ( AKendrick_matrix [ relpk ].KMD == AKendrick_matrix [ Peak ].KMD && AKendrick_matrix [ relpk ].Zstar == AKendrick_matrix [ Peak ].Zstar ) == false ) {
-                        if ((KMD[relpk] != KMD[Peak] || ZStar[relpk] != ZStar[Peak]))
+                        if (KMD[relpk] != KMD[Peak] || ZStar[relpk] != ZStar[Peak])
                         {
                             continue;
                         }
@@ -2213,11 +2213,11 @@ namespace CIA
                         var checkold = CheckFormulaByFilters(Formulas[relpk], NeutralMasses[relpk]);
                         var errornew = CPpmError.AbsPpmError(FormulaToNeutralMass(newform), NeutralMasses[relpk]);
                         //if( ( checkold == true ) && ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM / 2 ) ){
-                        if (checkold && checknew && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak])))
+                        if (checkold && checknew && Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak]))
                         {
                             if (UseCIAFormulaScore)
                             {
-                                if ((newform[(int)EElemIndex.S] + newform[(int)EElemIndex.P]) < (Formulas[relpk][(int)EElemIndex.S] + Formulas[relpk][(int)EElemIndex.P]))
+                                if (newform[(int)EElemIndex.S] + newform[(int)EElemIndex.P] < Formulas[relpk][(int)EElemIndex.S] + Formulas[relpk][(int)EElemIndex.P])
                                 {
                                     Formulas[relpk] = (short[])newform.Clone();
                                     PPMErrors[relpk] = errornew;
@@ -2233,7 +2233,7 @@ namespace CIA
                             }
                             //} else if( ( checkold == false ) && ( checknew == true ) && ( Math.Abs( errornew ) <= FormulaErrorPPM / 2 ) ) {
                         }
-                        else if ((!checkold) && checknew && (Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak]) / 2))
+                        else if (!checkold && checknew && Math.Abs(errornew) <= GetRealFormulaPpmError(NeutralMasses[Peak]) / 2)
                         {
                             Formulas[relpk] = (short[])newform.Clone();
                             PPMErrors[relpk] = errornew;
@@ -2309,14 +2309,14 @@ namespace CIA
                     else if (NewSPSum == SPSum)
                     {
                         //then only consider formulas with P <= 1 or S <= 3
-                        var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) && (Formula[(int)EElemIndex.P] <= 1);
-                        var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) && (NewFormula[(int)EElemIndex.P] <= 1);
+                        var Sle3AndPle1 = Formula[(int)EElemIndex.S] <= 3 && Formula[(int)EElemIndex.P] <= 1;
+                        var NewSle3AndPle1 = NewFormula[(int)EElemIndex.S] <= 3 && NewFormula[(int)EElemIndex.P] <= 1;
 
-                        if ((!Sle3AndPle1) && NewSle3AndPle1)
+                        if (!Sle3AndPle1 && NewSle3AndPle1)
                         {
                             return true;
                         }
-                        else if ((Sle3AndPle1 == NewSle3AndPle1) && (FormulaError > NewFormulaError))
+                        else if (Sle3AndPle1 == NewSle3AndPle1 && FormulaError > NewFormulaError)
                         {
                             return true;
                         }
@@ -2341,14 +2341,14 @@ namespace CIA
                     else if (NSPSum == NewNSPSum)
                     {
                         //then only consider formulas with P <= 1 or S <= 3
-                        var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) && (Formula[(int)EElemIndex.P] <= 1);
-                        var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) && (NewFormula[(int)EElemIndex.P] <= 1);
+                        var Sle3AndPle1 = Formula[(int)EElemIndex.S] <= 3 && Formula[(int)EElemIndex.P] <= 1;
+                        var NewSle3AndPle1 = NewFormula[(int)EElemIndex.S] <= 3 && NewFormula[(int)EElemIndex.P] <= 1;
 
-                        if ((!Sle3AndPle1) && NewSle3AndPle1)
+                        if (!Sle3AndPle1 && NewSle3AndPle1)
                         {
                             return true;
                         }
-                        else if ((Sle3AndPle1 == NewSle3AndPle1) && (FormulaError > NewFormulaError))
+                        else if (Sle3AndPle1 == NewSle3AndPle1 && FormulaError > NewFormulaError)
                         {
                             return true;
                         }
@@ -2366,14 +2366,14 @@ namespace CIA
                     else if (ONSPSum == NewONSPSum)
                     {
                         //then only consider formulas with P <= 1 or S <= 3
-                        var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) && (Formula[(int)EElemIndex.P] <= 1);
-                        var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) && (NewFormula[(int)EElemIndex.P] <= 1);
+                        var Sle3AndPle1 = Formula[(int)EElemIndex.S] <= 3 && Formula[(int)EElemIndex.P] <= 1;
+                        var NewSle3AndPle1 = NewFormula[(int)EElemIndex.S] <= 3 && NewFormula[(int)EElemIndex.P] <= 1;
 
-                        if ((!Sle3AndPle1) && NewSle3AndPle1)
+                        if (!Sle3AndPle1 && NewSle3AndPle1)
                         {
                             return true;
                         }
-                        else if ((Sle3AndPle1 == NewSle3AndPle1) && (FormulaError > NewFormulaError))
+                        else if (Sle3AndPle1 == NewSle3AndPle1 && FormulaError > NewFormulaError)
                         {
                             return true;
                         }
@@ -3147,12 +3147,12 @@ namespace CIA
                 {
                     UpLimitFormula = UpLimit_1000Formula;
                 }
-                var result = (Formula[(int)EElemIndex.C] + Formula[(int)EElemIndex.C13] < UpLimitFormula[(int)EElemIndex.C])
-                             && (Formula[(int)EElemIndex.H] < UpLimitFormula[(int)EElemIndex.H])
-                             && (Formula[(int)EElemIndex.O] < UpLimitFormula[(int)EElemIndex.O])
-                             && (Formula[(int)EElemIndex.N] < UpLimitFormula[(int)EElemIndex.N])
-                             && (Formula[(int)EElemIndex.S] < UpLimitFormula[(int)EElemIndex.S])
-                             && (Formula[(int)EElemIndex.P] < UpLimitFormula[(int)EElemIndex.P]);
+                var result = Formula[(int)EElemIndex.C] + Formula[(int)EElemIndex.C13] < UpLimitFormula[(int)EElemIndex.C]
+                             && Formula[(int)EElemIndex.H] < UpLimitFormula[(int)EElemIndex.H]
+                             && Formula[(int)EElemIndex.O] < UpLimitFormula[(int)EElemIndex.O]
+                             && Formula[(int)EElemIndex.N] < UpLimitFormula[(int)EElemIndex.N]
+                             && Formula[(int)EElemIndex.S] < UpLimitFormula[(int)EElemIndex.S]
+                             && Formula[(int)EElemIndex.P] < UpLimitFormula[(int)EElemIndex.P];
 
                 if (!result) { return false; }
             }
@@ -3167,7 +3167,7 @@ namespace CIA
 
             if (GoldenRuleFilters[1])
             {
-                if (((Formula[(int)EElemIndex.H] + Formula[(int)EElemIndex.N] + Formula[(int)EElemIndex.P]) % 2) != 0)
+                if ((Formula[(int)EElemIndex.H] + Formula[(int)EElemIndex.N] + Formula[(int)EElemIndex.P]) % 2 != 0)
                 {
                     return false;
                 }
@@ -3212,7 +3212,7 @@ namespace CIA
                 var OC = 1.0 * Formula[(int)EElemIndex.O] / TotalC;
                 var PC = 1.0 * Formula[(int)EElemIndex.P] / TotalC;
                 var SC = 1.0 * Formula[(int)EElemIndex.S] / TotalC;
-                var GoldenRule3 = (HC >= 0.2) && (HC <= 3.1) && (NC >= 0) && (NC <= 1.3) && (OC >= 0) && (OC <= 1.2) && (PC >= 0) && (PC <= 0.3) && (SC >= 0) && (SC <= 0.8);
+                var GoldenRule3 = HC >= 0.2 && HC <= 3.1 && NC >= 0 && NC <= 1.3 && OC >= 0 && OC <= 1.2 && PC >= 0 && PC <= 0.3 && SC >= 0 && SC <= 0.8;
 
                 if (!GoldenRule3)
                 {
@@ -3223,8 +3223,8 @@ namespace CIA
             if (GoldenRuleFilters[4])
             {
                 //manuscript has "<" instead of "<=" for ***Min calculation
-                var checkNOPSMin = (Formula[(int)EElemIndex.O] > 1) && (Formula[(int)EElemIndex.N] > 1) && (Formula[(int)EElemIndex.S] > 1) && (Formula[(int)EElemIndex.P] > 1);
-                var checkNOPSMax = (Formula[(int)EElemIndex.O] < 20) && (Formula[(int)EElemIndex.N] < 10) && (Formula[(int)EElemIndex.S] < 3) && (Formula[(int)EElemIndex.P] < 4);
+                var checkNOPSMin = Formula[(int)EElemIndex.O] > 1 && Formula[(int)EElemIndex.N] > 1 && Formula[(int)EElemIndex.S] > 1 && Formula[(int)EElemIndex.P] > 1;
+                var checkNOPSMax = Formula[(int)EElemIndex.O] < 20 && Formula[(int)EElemIndex.N] < 10 && Formula[(int)EElemIndex.S] < 3 && Formula[(int)EElemIndex.P] < 4;
 
                 if (checkNOPSMin && !checkNOPSMax)
                 {
@@ -3233,8 +3233,8 @@ namespace CIA
 
                 //bool checkNOPMin = ( Formula [ ( int ) EElemNumber.O ] > 3 ) & ( Formula [ ( int ) EElemNumber.N ] > 3 ) & ( Formula [ ( int ) EElemNumber.S ] == 0 ) & ( Formula [ ( int ) EElemNumber.P ] >= 3 );
                 //manuscript doesn't use "S == 0"
-                var checkNOPMin = (Formula[(int)EElemIndex.O] > 3) && (Formula[(int)EElemIndex.N] > 3) && (Formula[(int)EElemIndex.P] > 3);
-                var checkNOPMax = (Formula[(int)EElemIndex.O] < 22) && (Formula[(int)EElemIndex.N] < 11) && (Formula[(int)EElemIndex.P] < 6);
+                var checkNOPMin = Formula[(int)EElemIndex.O] > 3 && Formula[(int)EElemIndex.N] > 3 && Formula[(int)EElemIndex.P] > 3;
+                var checkNOPMax = Formula[(int)EElemIndex.O] < 22 && Formula[(int)EElemIndex.N] < 11 && Formula[(int)EElemIndex.P] < 6;
 
                 if (checkNOPMin && !checkNOPMax)
                 {
@@ -3243,8 +3243,8 @@ namespace CIA
 
                 //bool checkOPSMin = ( Formula [ ( int ) EElemNumber.O ] >= 1 ) & ( Formula [ ( int ) EElemNumber.N ] == 0 ) & ( Formula [ ( int ) EElemNumber.S ] >= 1 ) & ( Formula [ ( int ) EElemNumber.P ] >= 1 );
                 //manuscript doesn't use "N == 0"
-                var checkOPSMin = (Formula[(int)EElemIndex.O] > 1) && (Formula[(int)EElemIndex.S] > 1) && (Formula[(int)EElemIndex.P] > 1);
-                var checkOPSMax = (Formula[(int)EElemIndex.O] < 14) && (Formula[(int)EElemIndex.S] < 3) && (Formula[(int)EElemIndex.P] < 3);
+                var checkOPSMin = Formula[(int)EElemIndex.O] > 1 && Formula[(int)EElemIndex.S] > 1 && Formula[(int)EElemIndex.P] > 1;
+                var checkOPSMax = Formula[(int)EElemIndex.O] < 14 && Formula[(int)EElemIndex.S] < 3 && Formula[(int)EElemIndex.P] < 3;
 
                 if (checkOPSMin && !checkOPSMax)
                 {
@@ -3253,8 +3253,8 @@ namespace CIA
 
                 //bool checkNPSMin = ( Formula [ ( int ) EElemNumber.O ] == 0 ) & ( Formula [ ( int ) EElemNumber.N ] >= 1 ) & ( Formula [ ( int ) EElemNumber.S ] >= 1 ) & ( Formula [ ( int ) EElemNumber.P ] >= 1 );
                 //manuscript doesn't use "O == 0"
-                var checkNPSMin = (Formula[(int)EElemIndex.N] > 1) && (Formula[(int)EElemIndex.S] > 1) && (Formula[(int)EElemIndex.P] > 1);
-                var checkNPSMax = (Formula[(int)EElemIndex.N] < 4) && (Formula[(int)EElemIndex.S] < 3) && (Formula[(int)EElemIndex.P] < 3);
+                var checkNPSMin = Formula[(int)EElemIndex.N] > 1 && Formula[(int)EElemIndex.S] > 1 && Formula[(int)EElemIndex.P] > 1;
+                var checkNPSMax = Formula[(int)EElemIndex.N] < 4 && Formula[(int)EElemIndex.S] < 3 && Formula[(int)EElemIndex.P] < 3;
 
                 if (checkNPSMin && !checkNPSMax)
                 {
@@ -3263,8 +3263,8 @@ namespace CIA
 
                 //bool checkNOSMin = ( Formula [ ( int ) EElemNumber.O ] >= 6 ) & ( Formula [ ( int ) EElemNumber.N ] >= 6 ) & ( Formula [ ( int ) EElemNumber.S ] >= 6 ) & ( Formula [ ( int ) EElemNumber.P ] == 0 );
                 //manuscript doesn't use "P == 0"
-                var checkNOSMin = (Formula[(int)EElemIndex.O] > 6) && (Formula[(int)EElemIndex.N] > 6) && (Formula[(int)EElemIndex.S] > 6);
-                var checkNOSMax = (Formula[(int)EElemIndex.O] < 14) && (Formula[(int)EElemIndex.N] < 19) && (Formula[(int)EElemIndex.S] < 8);
+                var checkNOSMin = Formula[(int)EElemIndex.O] > 6 && Formula[(int)EElemIndex.N] > 6 && Formula[(int)EElemIndex.S] > 6;
+                var checkNOSMax = Formula[(int)EElemIndex.O] < 14 && Formula[(int)EElemIndex.N] < 19 && Formula[(int)EElemIndex.S] < 8;
 
                 if (checkNOSMin && !checkNOSMax)
                 {
@@ -3339,7 +3339,7 @@ namespace CIA
                     continue;
                 }
 
-                if ((PeakFormula[(int)EElemIndex.C13] > 0) || (PeakFormula[(int)EElemIndex.C] <= 0))
+                if (PeakFormula[(int)EElemIndex.C13] > 0 || PeakFormula[(int)EElemIndex.C] <= 0)
                 {
                     continue;
                 }
@@ -3564,8 +3564,8 @@ namespace CIA
 
         public void LoadCiaDB(string CiaDBFilename)
         {
-            if ((Path.GetFileName(CiaDBFilename) != Path.GetFileName(this.CiaDBFilename))
-                    || (GetDBRecords() == 0))
+            if (Path.GetFileName(CiaDBFilename) != Path.GetFileName(this.CiaDBFilename)
+                    || GetDBRecords() == 0)
             {
                 if (File.Exists(CiaDBFilename))
                 {
@@ -3594,7 +3594,7 @@ namespace CIA
             }
             GC.Collect();
             Console.WriteLine("Reading database {0}", CiaDBFilename);
-            var RecordCount = (new System.IO.FileInfo(CiaDBFilename)).Length / DBBytesPerRecord;
+            var RecordCount = new System.IO.FileInfo(CiaDBFilename).Length / DBBytesPerRecord;
             DBMasses = new double[RecordCount];
             DBFormulas = new short[RecordCount][];
             var NextRecord = 0;

@@ -137,9 +137,9 @@ namespace FindChainsTest
 
                 for (var Index = 1; Index < BinCounts.Length - 1; Index++)
                 {
-                    if ((BinCounts[Index - 1] > MinCount)
-                    || (BinCounts[Index] > MinCount)
-                    || (BinCounts[Index + 1] > MinCount))
+                    if (BinCounts[Index - 1] > MinCount
+                    || BinCounts[Index] > MinCount
+                    || BinCounts[Index + 1] > MinCount)
                     {
                         TextDistance = TextDistance + "\r\n" + (Index * BinSize).ToString("F8") + "," + BinCounts[Index];
                     }

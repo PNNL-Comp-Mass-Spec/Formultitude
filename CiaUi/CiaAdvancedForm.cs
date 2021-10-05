@@ -346,9 +346,9 @@ namespace CiaUi
 
         public void CheckToProcess()
         {
-            var CalibrationReady = (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none)
-                                    || (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none) && (textBoxCalFile.TextLength > "Drop calibration file: ".Length)));
-            var CIAReady = (oCCia.GetCiaDBFilename().Length > 0) && CalibrationReady;
+            var CalibrationReady = (TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none
+                                   || (TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none && textBoxCalFile.TextLength > "Drop calibration file: ".Length;
+            var CIAReady = oCCia.GetCiaDBFilename().Length > 0 && CalibrationReady;
 
             if (CIAReady)
             {

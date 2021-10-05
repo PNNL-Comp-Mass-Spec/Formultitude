@@ -105,7 +105,7 @@ namespace CiaUi
 
                 for (var iRow = 0; iRow < tableLayoutPanelDBPeaks.RowCount; iRow++)
                 {
-                    tableLayoutPanelDBPeaks.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, (new System.Windows.Forms.TextBox()).Height + 2 * (new System.Windows.Forms.TextBox()).Margin.Top));
+                    tableLayoutPanelDBPeaks.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, new System.Windows.Forms.TextBox().Height + 2 * new System.Windows.Forms.TextBox().Margin.Top));
                 }
                 for (var iRow = 0; iRow < tableLayoutPanelDBPeaks.RowCount - 1; iRow++)
                 {// "-1" Extra Row without Controls!!!
@@ -189,7 +189,7 @@ namespace CiaUi
                 tableLayoutPanelChains.RowCount = 5 + 1;//Extra Row without RowStyle!!!
                 for (var RowIndex = 0; RowIndex < tableLayoutPanelChains.RowCount; RowIndex++)
                 {
-                    tableLayoutPanelChains.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, (new System.Windows.Forms.TextBox()).Height + 2 * (new System.Windows.Forms.TextBox()).Margin.Top));
+                    tableLayoutPanelChains.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, new System.Windows.Forms.TextBox().Height + 2 * new System.Windows.Forms.TextBox().Margin.Top));
                 }
                 for (var iRow = 0; iRow < tableLayoutPanelChains.RowCount - 1; iRow++)
                 {// "-1" Extra Row without Controls!!!
@@ -355,10 +355,10 @@ namespace CiaUi
 
         private void CheckToProcess()
         {
-            var CalibrationReady = (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none)
-                                    || (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none) && (textBoxRefPeakFilename.TextLength > 0)));
+            var CalibrationReady = (TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none
+                                   || (TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none && textBoxRefPeakFilename.TextLength > 0;
 
-            var CIAReady = (oCCia.GetCiaDBFilename().Length > 0) && CalibrationReady;
+            var CIAReady = oCCia.GetCiaDBFilename().Length > 0 && CalibrationReady;
             checkBoxCIA.Enabled = CIAReady;
 
             var IpaReady = oCCia.Ipa.IPDB_Ready && CalibrationReady;
@@ -376,8 +376,8 @@ namespace CiaUi
                 textBoxDropSpectraFiles.Enabled = false;
             }
 
-            var ChainCalibrationReady = ((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none)
-                                        && (textBoxRefPeakFilename.TextLength > 0);
+            var ChainCalibrationReady = (TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none
+                                        && textBoxRefPeakFilename.TextLength > 0;
 
             if (ChainCalibrationReady)
             {
@@ -598,7 +598,7 @@ namespace CiaUi
                 {
                     oCCia.SetProcessType(CCia.ProcessType.CiaIpa);
                 }
-                else if (checkBoxCIA.Checked && (!checkBoxIpa.Checked))
+                else if (checkBoxCIA.Checked && !checkBoxIpa.Checked)
                 {
                     oCCia.SetProcessType(CCia.ProcessType.Cia);
                 }
@@ -681,7 +681,7 @@ namespace CiaUi
 
         private void comboBoxFormulaScore_SelectedIndexChanged(object sender, EventArgs e)
         {
-            textBoxFormulaScoreUserDefined.Visible = (comboBoxFormulaScore.SelectedIndex == (int)CCia.EFormulaScore.UserDefined);
+            textBoxFormulaScoreUserDefined.Visible = comboBoxFormulaScore.SelectedIndex == (int)CCia.EFormulaScore.UserDefined;
             labelFormulaScoreUserDefined.Visible = textBoxFormulaScoreUserDefined.Visible;
         }
 
@@ -732,7 +732,7 @@ namespace CiaUi
 
             for (var RelationBlock = 0; RelationBlock < checkedListBoxRelations.Items.Count; RelationBlock++)
             {
-                if ((RelationBlock == 0) || (RelationBlock == 2) || (RelationBlock == 6))
+                if (RelationBlock == 0 || RelationBlock == 2 || RelationBlock == 6)
                 {
                     checkedListBoxRelations.SetItemChecked(RelationBlock, true);
                 }
@@ -868,17 +868,17 @@ namespace CiaUi
             {
                 if (Headers[Column] == textBoxXAxisColumnHeader.Text) { XAxisColumnIndex = Column; }
                 if (Headers[Column] == textBoxYAxisColumnHeader.Text) { YAxisColumnIndex = Column; }
-                if ((XAxisColumnIndex != -1) && (YAxisColumnIndex != -1))
+                if (XAxisColumnIndex != -1 && YAxisColumnIndex != -1)
                 {
                     break;
                 }
             }
-            if ((XAxisColumnIndex == -1))
+            if (XAxisColumnIndex == -1)
             {
                 MessageBox.Show("There is not " + textBoxXAxisColumnHeader.Text + " column header");
                 return;
             }
-            if ((YAxisColumnIndex == -1))
+            if (YAxisColumnIndex == -1)
             {
                 MessageBox.Show("There is not " + textBoxYAxisColumnHeader.Text + " column header");
                 return;
@@ -1006,7 +1006,7 @@ namespace CiaUi
 
                 for (var Row = tableLayoutPanelDBPeaks.RowStyles.Count - 1; Row < Rows - 1; Row++)
                 {//"Count-1" due Last Row without Controls
-                    tableLayoutPanelDBPeaks.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, (new System.Windows.Forms.TextBox()).Height + 2 * (new System.Windows.Forms.TextBox()).Margin.Top));
+                    tableLayoutPanelDBPeaks.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, new System.Windows.Forms.TextBox().Height + 2 * new System.Windows.Forms.TextBox().Margin.Top));
 
                     for (var iColumn = 0; iColumn < tableLayoutPanelDBPeaks.ColumnCount; iColumn++)
                     {
@@ -1303,7 +1303,7 @@ namespace CiaUi
 
             for (var Peak = 1; Peak <= Peaks; Peak++)
             {
-                var rel_ab = ((double)myArray.GetValue(Peak, 2)) / Maxi;
+                var rel_ab = (double)myArray.GetValue(Peak, 2) / Maxi;
                 myArray.SetValue(rel_ab, Peak, 5);
             }
 
@@ -1350,13 +1350,13 @@ namespace CiaUi
                 UserDefinedFilter.Columns.Add("UserDefinedFilter", typeof(bool), textBoxFilter.Text);
                 UserDefinedFilter.Rows.Add(UserDefinedFilter.NewRow());
 
-                var Mass = ((int)numericUpDownCAtoms.Value) * CElements.C
-                           + ((int)numericUpDownHAtoms.Value) * CElements.H
-                           + ((int)numericUpDownOAtoms.Value) * CElements.O
-                           + ((int)numericUpDownNAtoms.Value) * CElements.N
-                           + ((int)numericUpDownSAtoms.Value) * CElements.S
-                           + ((int)numericUpDownPAtoms.Value) * CElements.P
-                           + ((int)numericUpDownNaAtoms.Value) * CElements.Na;
+                var Mass = (int)numericUpDownCAtoms.Value * CElements.C
+                           + (int)numericUpDownHAtoms.Value * CElements.H
+                           + (int)numericUpDownOAtoms.Value * CElements.O
+                           + (int)numericUpDownNAtoms.Value * CElements.N
+                           + (int)numericUpDownSAtoms.Value * CElements.S
+                           + (int)numericUpDownPAtoms.Value * CElements.P
+                           + (int)numericUpDownNaAtoms.Value * CElements.Na;
                 textBoxNeutralMass.Text = Mass.ToString();
 
                 UserDefinedFilter.Rows[0]["Mass"] = Mass;
@@ -1417,7 +1417,7 @@ namespace CiaUi
                     continue;
                 }
 
-                var bC = (CurFormula[(int)CCia.EElemIndex.C] > 0) || (CurFormula[(int)CCia.EElemIndex.C13] > 0);
+                var bC = CurFormula[(int)CCia.EElemIndex.C] > 0 || CurFormula[(int)CCia.EElemIndex.C13] > 0;
                 var bH = CurFormula[(int)CCia.EElemIndex.H] > 0;
                 var bO = CurFormula[(int)CCia.EElemIndex.O] > 0;
                 var bN = CurFormula[(int)CCia.EElemIndex.N] > 0;
@@ -1498,7 +1498,7 @@ namespace CiaUi
 
                     for (var Row = tableLayoutPanelChains.RowStyles.Count - 1; Row < Rows - 1; Row++)
                     {//"Count-1" due Last Row without Controls
-                        tableLayoutPanelChains.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, (new System.Windows.Forms.TextBox()).Height + 2 * (new System.Windows.Forms.TextBox()).Margin.Top));
+                        tableLayoutPanelChains.RowStyles.Add(new System.Windows.Forms.RowStyle(SizeType.Absolute, new System.Windows.Forms.TextBox().Height + 2 * new System.Windows.Forms.TextBox().Margin.Top));
 
                         for (var iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++)
                         {

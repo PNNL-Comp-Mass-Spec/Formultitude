@@ -197,7 +197,7 @@ namespace Support
 
             for (var Index = 0; Index < ErrorTrend.Length; Index++)
             {
-                if ((!Write) && double.IsNaN(ErrorTrend[Index])) { continue; }
+                if (!Write && double.IsNaN(ErrorTrend[Index])) { continue; }
                 Write = true;
                 Text = Text + "\r\n" + Index + "," + ErrorTrend[Index].ToString("F8");
             }
@@ -238,7 +238,7 @@ namespace Support
         public Cluster[] Clusters;
         public int[] GetClusterPeakIndexes(int ClusterIndex)
         {
-            if ((Clusters == null) || (Clusters.Length <= ClusterIndex))
+            if (Clusters == null || Clusters.Length <= ClusterIndex)
             {
                 throw new Exception("Clusters doesn't have ClusterIndex in GetClusterPeakIndexes function");
             }
@@ -261,7 +261,7 @@ namespace Support
 
         public int[] GetClusterChains(int ClusterIndex, int PeakIndex)
         {
-            if ((Clusters == null) || (Clusters.Length <= ClusterIndex))
+            if (Clusters == null || Clusters.Length <= ClusterIndex)
             {
                 throw new Exception("Clusters doesn't have ClusterIndex in GetClusterPeakIndexes function");
             }
@@ -581,33 +581,33 @@ namespace Support
                 {
                     if (MZCutSettings != null)
                     {
-                        if ((MZCutSettings.Min >= 0) && (MZCutSettings.Min > Data.Masses[PeakIndex])) break;
+                        if (MZCutSettings.Min >= 0 && MZCutSettings.Min > Data.Masses[PeakIndex]) break;
 
-                        if ((MZCutSettings.Max >= 0) && (MZCutSettings.Max < Data.Masses[PeakIndex])) break;
+                        if (MZCutSettings.Max >= 0 && MZCutSettings.Max < Data.Masses[PeakIndex]) break;
                     }
                     if (AbundanceCutSettings != null)
                     {
-                        if ((AbundanceCutSettings.Min >= 0) && (AbundanceCutSettings.Min > Data.Abundances[PeakIndex])) break;
+                        if (AbundanceCutSettings.Min >= 0 && AbundanceCutSettings.Min > Data.Abundances[PeakIndex]) break;
 
-                        if ((AbundanceCutSettings.Max >= 0) && (AbundanceCutSettings.Max < Data.Abundances[PeakIndex])) break;
+                        if (AbundanceCutSettings.Max >= 0 && AbundanceCutSettings.Max < Data.Abundances[PeakIndex]) break;
                     }
                     if (S2NCutSettings != null)
                     {
-                        if ((S2NCutSettings.Min >= 0) && (S2NCutSettings.Min > Data.Abundances[PeakIndex])) break;
+                        if (S2NCutSettings.Min >= 0 && S2NCutSettings.Min > Data.Abundances[PeakIndex]) break;
 
-                        if ((S2NCutSettings.Max >= 0) && (S2NCutSettings.Max < Data.Abundances[PeakIndex])) break;
+                        if (S2NCutSettings.Max >= 0 && S2NCutSettings.Max < Data.Abundances[PeakIndex]) break;
                     }
                     if (ResolutionCutSettings != null)
                     {
-                        if ((ResolutionCutSettings.Min >= 0) && (ResolutionCutSettings.Min > Data.Abundances[PeakIndex])) break;
+                        if (ResolutionCutSettings.Min >= 0 && ResolutionCutSettings.Min > Data.Abundances[PeakIndex]) break;
 
-                        if ((ResolutionCutSettings.Max >= 0) && (ResolutionCutSettings.Max < Data.Abundances[PeakIndex])) break;
+                        if (ResolutionCutSettings.Max >= 0 && ResolutionCutSettings.Max < Data.Abundances[PeakIndex]) break;
                     }
                     if (RelAbundanceSettings != null)
                     {
-                        if ((RelAbundanceSettings.Min >= 0) && (RelAbundanceSettings.Min > Data.Abundances[PeakIndex])) break;
+                        if (RelAbundanceSettings.Min >= 0 && RelAbundanceSettings.Min > Data.Abundances[PeakIndex]) break;
 
-                        if ((RelAbundanceSettings.Max >= 0) && (RelAbundanceSettings.Max < Data.Abundances[PeakIndex])) break;
+                        if (RelAbundanceSettings.Max >= 0 && RelAbundanceSettings.Max < Data.Abundances[PeakIndex]) break;
                     }
                     NewData[PeakIndex] = true;
                     NewDataCount++;

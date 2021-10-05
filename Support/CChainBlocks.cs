@@ -37,7 +37,7 @@ namespace Support
         public double[] KnownBlockMasses = new double[0];
         public int FindKnownFormulaIndex(Support.InputData Data, double Mass)
         {
-            if ((KnownBlockNames.Length == 0) || (KnownBlockMasses.Length == 0)) { return -1; }
+            if (KnownBlockNames.Length == 0 || KnownBlockMasses.Length == 0) { return -1; }
             //block mass is very low when peak mass is much higher. so block mass ppm error can't be used.
             //way: find the nearest known block mass; mass dif moves into first range median mass; find ppm error and compare - still is not good
             //next way: use middle range median mass
@@ -216,7 +216,7 @@ namespace Support
                     if (CPpmError.MassMinusPpmError(ChainDistance, PeakPpmError) > MaxChainDistance) { break; }
                     var ChainBlockIndex = FindKnownChainBlockIndex(ChainDistance, ChainPpmError);
 
-                    if (OnlyKnowsChains && (ChainBlockIndex < 0))
+                    if (OnlyKnowsChains && ChainBlockIndex < 0)
                     {
                         continue;
                     }
@@ -298,7 +298,7 @@ namespace Support
                     {
                         FirstTheSamePeakIndex = true;
 
-                        if ((FirstChain.Formula.Length != 0) && (SecondChain.Formula.Length != 0) && (FirstChain.Formula != "N/A") && (SecondChain.Formula != "N/A"))
+                        if (FirstChain.Formula.Length != 0 && SecondChain.Formula.Length != 0 && FirstChain.Formula != "N/A" && SecondChain.Formula != "N/A")
                         {
                             if (FirstChain.Formula == SecondChain.Formula)
                             {
@@ -422,7 +422,7 @@ namespace Support
 
             for (var Index = 0; Index < PpmErrors.Length; Index++)
             {
-                if ((PpmErrors[Index] >= LowPpmError) && (PpmErrors[Index] <= UpperPpmError))
+                if (PpmErrors[Index] >= LowPpmError && PpmErrors[Index] <= UpperPpmError)
                 {
                     RealErrorList.Add(PpmErrors[Index]);
                     RealBlockMasses.Add(Masses[ChildPeaks[Index]] - Masses[ParentPeaks[Index]]);
@@ -521,7 +521,7 @@ namespace Support
                 Data.ErrDisLowPpmErrors[RangeIndex] = LowPpmError;
                 Data.ErrDisUpperPpmErrors[RangeIndex] = UpperPpmError;
 
-                if ((LowPpmError < -StartPpmError) || (UpperPpmError > StartPpmError))
+                if (LowPpmError < -StartPpmError || UpperPpmError > StartPpmError)
                 {
                     LowPpmError = LowPpmError;
                 }
@@ -530,7 +530,7 @@ namespace Support
 
                 for (var Index = 0; Index < RangePeakCount; Index++)
                 {
-                    if ((PpmErrors[LowerIndex + Index] >= LowPpmError) && (PpmErrors[LowerIndex + Index] <= UpperPpmError))
+                    if (PpmErrors[LowerIndex + Index] >= LowPpmError && PpmErrors[LowerIndex + Index] <= UpperPpmError)
                     {
                         RealErrorList.Add(PpmErrors[LowerIndex + Index]);
                         RealBlockList.Add(PeakBlockMasses[LowerIndex + Index]);
@@ -675,7 +675,7 @@ namespace Support
             const double MaxGainOfTheSameChains = 1.01;
             double BlockMassGain;
 
-            if ((FirstChain.IdealBlockMass > 0) && (SecondChain.IdealBlockMass > 0))
+            if (FirstChain.IdealBlockMass > 0 && SecondChain.IdealBlockMass > 0)
             {
                 if (FirstChain.IdealBlockMass > SecondChain.IdealBlockMass)
                 {
@@ -803,7 +803,7 @@ namespace Support
                 {
                     ClusterPeakSortedList.Add(PeakIndex, ChainIndex);
 
-                    if (((int)Math.Round(Data.Masses[PeakIndex])) % 2 == 0)
+                    if ((int)Math.Round(Data.Masses[PeakIndex]) % 2 == 0)
                     {
                         ClusterEvenPeakSortedList.Add(PeakIndex, ChainIndex);
                     }
@@ -832,7 +832,7 @@ namespace Support
                                     {
                                         ClusterPeakSortedList.Add(CurPeakIndex, NextChainIndex);
 
-                                        if (((int)Math.Round(Data.Masses[CurPeakIndex])) % 2 == 0)
+                                        if ((int)Math.Round(Data.Masses[CurPeakIndex]) % 2 == 0)
                                         {
                                             ClusterEvenPeakSortedList.Add(CurPeakIndex, NextChainIndex);
                                         }
@@ -869,7 +869,7 @@ namespace Support
                         var CurPeakIndex = CurChain.PeakIndexes[ChainPeakIndex];
                         var CurPeakScore = GetPeakScore(Data, CurPeakIndex);
 
-                        if ((ClusterChainIndex == 0) && (ChainPeakIndex == 0))
+                        if (ClusterChainIndex == 0 && ChainPeakIndex == 0)
                         {
                             TheBestClusterChainIndex = ClusterChainIndex;
                             TheBestChainPeakIndex = ChainPeakIndex;
@@ -1022,7 +1022,7 @@ namespace Support
 
             foreach (var Value in Values)
             {
-                if ((Value >= MinValue) && (Value <= MaxValue))
+                if (Value >= MinValue && Value <= MaxValue)
                 {
                     CorrectDataset.Add(Value);
                 }
@@ -1088,7 +1088,7 @@ namespace Support
         */
         public void AssignIdealMassesTheBiggestCluster(Support.InputData Data)
         {//new
-            if ((Data.Clusters == null) || (Data.Clusters.Length <= 1))
+            if (Data.Clusters == null || Data.Clusters.Length <= 1)
             {
                 throw new Exception("Cluster index 0 is out ot range");
             }
@@ -1201,7 +1201,7 @@ namespace Support
 
         public void AssignIdealMassesInClusterBasedTheBestPeak(Support.InputData Data, int ClusterIndex)
         {
-            if ((Data.Clusters == null) || (Data.Clusters.Length <= ClusterIndex))
+            if (Data.Clusters == null || Data.Clusters.Length <= ClusterIndex)
             {
                 throw new Exception("Cluster index " + ClusterIndex + " is out ot range");
             }
@@ -1605,7 +1605,7 @@ namespace Support
                     CurDistancePeak.FormulaList.Add(CIsotope.GetNames()[IsotopeIndex]);
                     CurDistancePeak.FormulaDistanceList.Add(CIsotope.GetDistances()[IsotopeIndex]);
                 }
-                if ((DmIndex >= 0) && (IsotopeIndex < 0) && (InputData.Chains.Length < MinChainCount))
+                if (DmIndex >= 0 && IsotopeIndex < 0 && InputData.Chains.Length < MinChainCount)
                 {
                     CurDistancePeak.DistancePeakTypeList.Add(DistancePeakType.DM);
                     CurDistancePeak.FormulaList.Add(KnownBlockNames[DmIndex]);
@@ -1618,10 +1618,10 @@ namespace Support
                 var CurDistancePeak = DistancePeakList[DistancePeakIndex];
 
                 if (CurDistancePeak.DistancePeakTypeList.Count == 0) { continue; }
-                if (((CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.DM)
-                            && (CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.Chain)
-                            && (CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.UChain)
-                            && (CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.Isotope)))
+                if (CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.DM
+                    && CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.Chain
+                    && CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.UChain
+                    && CurDistancePeak.DistancePeakTypeList[0] != DistancePeakType.Isotope)
                 {
                     continue;
                 }
@@ -1803,7 +1803,7 @@ namespace Support
                 {
                     var CurDistancePeakType = Cur.DistancePeakTypeList[ListIndex];
 
-                    if (((CurDistancePeakType == DistancePeakType.UChain) || (CurDistancePeakType == DistancePeakType.MUChain)))
+                    if (CurDistancePeakType == DistancePeakType.UChain || CurDistancePeakType == DistancePeakType.MUChain)
                     {
                         if (UChainIndex >= UnknownCount)
                         {
@@ -1814,7 +1814,7 @@ namespace Support
                             UChainIndex++;
                         }
                     }
-                    else if (((CurDistancePeakType == DistancePeakType.Pair) || (CurDistancePeakType == DistancePeakType.MPair)))
+                    else if (CurDistancePeakType == DistancePeakType.Pair || CurDistancePeakType == DistancePeakType.MPair)
                     {
                         if (UPairIndex >= UnknownCount)
                         {
@@ -1867,25 +1867,25 @@ namespace Support
                 {
                     var CurDistancePeakType = Cur.DistancePeakTypeList[ListIndex];
 
-                    if (((CurDistancePeakType == DistancePeakType.DM) || (CurDistancePeakType == DistancePeakType.MDM)))
+                    if (CurDistancePeakType == DistancePeakType.DM || CurDistancePeakType == DistancePeakType.MDM)
                     {
                         DMText.Append("\r\n" + Cur.LowBinIndex + "," + Cur.UpperBinIndex + "," + Cur.PairCount + "," + Cur.Mean.ToString("F8") + "," + Cur.StdDev.ToString("F8")
                                 + "," + Cur.DistancePeakTypeList[ListIndex].ToString() + ',' + Cur.FormulaList[ListIndex] + "," + Cur.FormulaDistanceList[ListIndex].ToString("F8")
                                 + "," + Cur.ChainCount + "," + Cur.ChainMean + "," + Cur.ChainStdDev.ToString("F8"));
                     }
-                    else if (((CurDistancePeakType == DistancePeakType.Chain) || (CurDistancePeakType == DistancePeakType.MChain)))
+                    else if (CurDistancePeakType == DistancePeakType.Chain || CurDistancePeakType == DistancePeakType.MChain)
                     {
                         ChainText.Append("\r\n" + Cur.LowBinIndex + "," + Cur.UpperBinIndex + "," + Cur.PairCount + "," + Cur.Mean.ToString("F8") + "," + Cur.StdDev.ToString("F8")
                                 + "," + Cur.DistancePeakTypeList[ListIndex].ToString() + ',' + Cur.FormulaList[ListIndex] + "," + Cur.FormulaDistanceList[ListIndex].ToString("F8")
                                 + "," + Cur.ChainCount + "," + Cur.ChainMean + "," + Cur.ChainStdDev.ToString("F8"));
                     }
-                    else if (((CurDistancePeakType == DistancePeakType.Isotope) || (CurDistancePeakType == DistancePeakType.MIsotope)))
+                    else if (CurDistancePeakType == DistancePeakType.Isotope || CurDistancePeakType == DistancePeakType.MIsotope)
                     {
                         IsotopeText.Append("\r\n" + Cur.LowBinIndex + "," + Cur.UpperBinIndex + "," + Cur.PairCount + "," + Cur.Mean.ToString("F8") + "," + Cur.StdDev.ToString("F8")
                                 + "," + Cur.DistancePeakTypeList[ListIndex].ToString() + ',' + Cur.FormulaList[ListIndex] + "," + Cur.FormulaDistanceList[ListIndex].ToString("F8")
                                 + "," + Cur.ChainCount + "," + Cur.ChainMean + "," + Cur.ChainStdDev.ToString("F8"));
                     }
-                    else if (((CurDistancePeakType == DistancePeakType.UChain) || (CurDistancePeakType == DistancePeakType.MUChain)))
+                    else if (CurDistancePeakType == DistancePeakType.UChain || CurDistancePeakType == DistancePeakType.MUChain)
                     {
                         if (UChainIndex >= UnknownCount) { continue; }
                         UChainIndex++;
@@ -1893,7 +1893,7 @@ namespace Support
                                 + "," + Cur.DistancePeakTypeList[ListIndex].ToString() + ',' + Cur.FormulaList[ListIndex] + "," + Cur.FormulaDistanceList[ListIndex].ToString("F8")
                                 + "," + Cur.ChainCount + "," + Cur.ChainMean + "," + Cur.ChainStdDev.ToString("F8"));
                     }
-                    else if (((CurDistancePeakType == DistancePeakType.Pair) || (CurDistancePeakType == DistancePeakType.MPair)))
+                    else if (CurDistancePeakType == DistancePeakType.Pair || CurDistancePeakType == DistancePeakType.MPair)
                     {
                         if (UPairIndex >= UnknownCount) { continue; }
                         UPairIndex++;

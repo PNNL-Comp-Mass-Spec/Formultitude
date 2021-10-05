@@ -44,11 +44,11 @@ namespace Support
             var FirstMassPpmError = CalculateAbsRangePpmError(ReferenceMass, FirstMass);
             var SecondMassPpmError = CalculateAbsRangePpmError(ReferenceMass, SecondMass);
 
-            if ((FirstMassPpmError <= SecondMassPpmError) && (FirstMassPpmError <= MaxPpmError))
+            if (FirstMassPpmError <= SecondMassPpmError && FirstMassPpmError <= MaxPpmError)
             {
                 return EMassArgument.First;
             }
-            else if ((FirstMassPpmError > SecondMassPpmError) && (SecondMassPpmError <= MaxPpmError))
+            else if (FirstMassPpmError > SecondMassPpmError && SecondMassPpmError <= MaxPpmError)
             {
                 return EMassArgument.Second;
             }
