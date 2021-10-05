@@ -10,24 +10,24 @@ namespace Support
 {
     public class CChainBlocks
     {
-        public string[] ElementNames = new[] {
+        public string[] ElementNames = {
                 "H", "C", "N", "O", "Na",
                 "P", "S", "Cl", "K", "Br",
                 "I"
         };
-        public double[] ElementMasses = new[] {
+        public double[] ElementMasses = {
                 CElements.H, CElements.C, 14.0030740052, CElements.O, 22.98976967,
                 30.97376151, 31.97207069, 34.96885271, 38.9637069, 78.9183376,
                 126.904473
         };
 
-        public string[] Known4BlockNames = new[] {
+        public string[] Known4BlockNames = {
                 "H2",
                 "C",
                 "CH2",
                 "O"
         };
-        public double[] Known4BlockMasses = new[] {
+        public double[] Known4BlockMasses = {
                 CElements.H *2,
                 CElements.C,
                 CElements.C + 2 * CElements.H,
@@ -55,7 +55,7 @@ namespace Support
             Array.Sort(ElementNames, ElementMasses);
         }
 
-        private static readonly char[] WordSeparators = new[] { '\t', ',', ' ' };
+        private static readonly char[] WordSeparators = { '\t', ',', ' ' };
         public void KnownMassBlocksFromFile(string Filename)
         {
             //Chain block formula is first word in line

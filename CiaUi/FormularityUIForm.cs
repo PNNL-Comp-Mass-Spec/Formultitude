@@ -21,7 +21,7 @@ namespace CiaUi
 
         private readonly CiaAdvancedForm oCiaAdvancedForm;
         //System.Windows.Forms.CheckBox [] GoldenRuleFilterUsage;
-        private readonly string[] DBPeaksTableHeaders = new[] { "Index", "Neutral mass", "Formula", "Error, ppm" };
+        private readonly string[] DBPeaksTableHeaders = { "Index", "Neutral mass", "Formula", "Error, ppm" };
         public enum EPlotType { ErrorVsNeutralMass, ErrorVs };
         public FormularityUIForm()
         {
@@ -1300,7 +1300,7 @@ namespace CiaUi
             }
         }
 
-        private readonly string[] DBCompositions = new[]{
+        private readonly string[] DBCompositions = {
                 "C", "H", "N", "O", "P", "S", "CH", "CN", "CO", "CP",
                 "CS", "HN", "HO", "HP", "HS", "NO", "NP", "NS", "OP", "OS",
                 "PS", "CHN", "CHO", "CHP", "CHS", "CNO", "CNP", "CNS", "COP", "COS",
