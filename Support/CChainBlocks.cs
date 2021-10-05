@@ -422,7 +422,7 @@ namespace Support
 
             for (var Index = 0; Index < PpmErrors.Length; Index++)
             {
-                if ((PpmErrors[Index] >= LowPpmError) & (PpmErrors[Index] <= UpperPpmError))
+                if ((PpmErrors[Index] >= LowPpmError) && (PpmErrors[Index] <= UpperPpmError))
                 {
                     RealErrorList.Add(PpmErrors[Index]);
                     RealBlockMasses.Add(Masses[ChildPeaks[Index]] - Masses[ParentPeaks[Index]]);
@@ -530,7 +530,7 @@ namespace Support
 
                 for (var Index = 0; Index < RangePeakCount; Index++)
                 {
-                    if ((PpmErrors[LowerIndex + Index] >= LowPpmError) & (PpmErrors[LowerIndex + Index] <= UpperPpmError))
+                    if ((PpmErrors[LowerIndex + Index] >= LowPpmError) && (PpmErrors[LowerIndex + Index] <= UpperPpmError))
                     {
                         RealErrorList.Add(PpmErrors[LowerIndex + Index]);
                         RealBlockList.Add(PeakBlockMasses[LowerIndex + Index]);

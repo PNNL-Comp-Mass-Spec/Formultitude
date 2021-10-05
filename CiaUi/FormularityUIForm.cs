@@ -356,12 +356,12 @@ namespace CiaUi
         private void CheckToProcess()
         {
             var CalibrationReady = (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none)
-                                    | (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none) & (textBoxRefPeakFilename.TextLength > 0)));
+                                    || (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none) && (textBoxRefPeakFilename.TextLength > 0)));
 
-            var CIAReady = (oCCia.GetCiaDBFilename().Length > 0) & CalibrationReady;
+            var CIAReady = (oCCia.GetCiaDBFilename().Length > 0) && CalibrationReady;
             checkBoxCIA.Enabled = CIAReady;
 
-            var IpaReady = oCCia.Ipa.IPDB_Ready & CalibrationReady;
+            var IpaReady = oCCia.Ipa.IPDB_Ready && CalibrationReady;
             checkBoxIpa.Enabled = IpaReady;
 
             if (CIAReady && checkBoxCIA.Checked
@@ -377,7 +377,7 @@ namespace CiaUi
             }
 
             var ChainCalibrationReady = ((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none)
-                                        & (textBoxRefPeakFilename.TextLength > 0);
+                                        && (textBoxRefPeakFilename.TextLength > 0);
 
             if (ChainCalibrationReady)
             {
@@ -1417,7 +1417,7 @@ namespace CiaUi
                     continue;
                 }
 
-                var bC = (CurFormula[(int)CCia.EElemIndex.C] > 0) | (CurFormula[(int)CCia.EElemIndex.C13] > 0);
+                var bC = (CurFormula[(int)CCia.EElemIndex.C] > 0) || (CurFormula[(int)CCia.EElemIndex.C13] > 0);
                 var bH = CurFormula[(int)CCia.EElemIndex.H] > 0;
                 var bO = CurFormula[(int)CCia.EElemIndex.O] > 0;
                 var bN = CurFormula[(int)CCia.EElemIndex.N] > 0;

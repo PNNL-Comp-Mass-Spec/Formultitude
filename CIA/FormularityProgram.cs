@@ -2309,8 +2309,8 @@ namespace CIA
                     else if (NewSPSum == SPSum)
                     {
                         //then only consider formulas with P <= 1 or S <= 3
-                        var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) & (Formula[(int)EElemIndex.P] <= 1);
-                        var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) & (NewFormula[(int)EElemIndex.P] <= 1);
+                        var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) && (Formula[(int)EElemIndex.P] <= 1);
+                        var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) && (NewFormula[(int)EElemIndex.P] <= 1);
 
                         if ((!Sle3AndPle1) && NewSle3AndPle1)
                         {
@@ -2341,8 +2341,8 @@ namespace CIA
                     else if (NSPSum == NewNSPSum)
                     {
                         //then only consider formulas with P <= 1 or S <= 3
-                        var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) & (Formula[(int)EElemIndex.P] <= 1);
-                        var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) & (NewFormula[(int)EElemIndex.P] <= 1);
+                        var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) && (Formula[(int)EElemIndex.P] <= 1);
+                        var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) && (NewFormula[(int)EElemIndex.P] <= 1);
 
                         if ((!Sle3AndPle1) && NewSle3AndPle1)
                         {
@@ -2366,8 +2366,8 @@ namespace CIA
                     else if (ONSPSum == NewONSPSum)
                     {
                         //then only consider formulas with P <= 1 or S <= 3
-                        var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) & (Formula[(int)EElemIndex.P] <= 1);
-                        var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) & (NewFormula[(int)EElemIndex.P] <= 1);
+                        var Sle3AndPle1 = (Formula[(int)EElemIndex.S] <= 3) && (Formula[(int)EElemIndex.P] <= 1);
+                        var NewSle3AndPle1 = (NewFormula[(int)EElemIndex.S] <= 3) && (NewFormula[(int)EElemIndex.P] <= 1);
 
                         if ((!Sle3AndPle1) && NewSle3AndPle1)
                         {
@@ -3148,11 +3148,11 @@ namespace CIA
                     UpLimitFormula = UpLimit_1000Formula;
                 }
                 var result = (Formula[(int)EElemIndex.C] + Formula[(int)EElemIndex.C13] < UpLimitFormula[(int)EElemIndex.C])
-                             & (Formula[(int)EElemIndex.H] < UpLimitFormula[(int)EElemIndex.H])
-                             & (Formula[(int)EElemIndex.O] < UpLimitFormula[(int)EElemIndex.O])
-                             & (Formula[(int)EElemIndex.N] < UpLimitFormula[(int)EElemIndex.N])
-                             & (Formula[(int)EElemIndex.S] < UpLimitFormula[(int)EElemIndex.S])
-                             & (Formula[(int)EElemIndex.P] < UpLimitFormula[(int)EElemIndex.P]);
+                             && (Formula[(int)EElemIndex.H] < UpLimitFormula[(int)EElemIndex.H])
+                             && (Formula[(int)EElemIndex.O] < UpLimitFormula[(int)EElemIndex.O])
+                             && (Formula[(int)EElemIndex.N] < UpLimitFormula[(int)EElemIndex.N])
+                             && (Formula[(int)EElemIndex.S] < UpLimitFormula[(int)EElemIndex.S])
+                             && (Formula[(int)EElemIndex.P] < UpLimitFormula[(int)EElemIndex.P]);
 
                 if (!result) { return false; }
             }
@@ -3212,7 +3212,7 @@ namespace CIA
                 var OC = 1.0 * Formula[(int)EElemIndex.O] / TotalC;
                 var PC = 1.0 * Formula[(int)EElemIndex.P] / TotalC;
                 var SC = 1.0 * Formula[(int)EElemIndex.S] / TotalC;
-                var GoldenRule3 = (HC >= 0.2) & (HC <= 3.1) & (NC >= 0) & (NC <= 1.3) & (OC >= 0) & (OC <= 1.2) & (PC >= 0) & (PC <= 0.3) & (SC >= 0) & (SC <= 0.8);
+                var GoldenRule3 = (HC >= 0.2) && (HC <= 3.1) && (NC >= 0) && (NC <= 1.3) && (OC >= 0) && (OC <= 1.2) && (PC >= 0) && (PC <= 0.3) && (SC >= 0) && (SC <= 0.8);
 
                 if (!GoldenRule3)
                 {
@@ -3223,8 +3223,8 @@ namespace CIA
             if (GoldenRuleFilters[4])
             {
                 //manuscript has "<" instead of "<=" for ***Min calculation
-                var checkNOPSMin = (Formula[(int)EElemIndex.O] > 1) & (Formula[(int)EElemIndex.N] > 1) & (Formula[(int)EElemIndex.S] > 1) & (Formula[(int)EElemIndex.P] > 1);
-                var checkNOPSMax = (Formula[(int)EElemIndex.O] < 20) & (Formula[(int)EElemIndex.N] < 10) & (Formula[(int)EElemIndex.S] < 3) & (Formula[(int)EElemIndex.P] < 4);
+                var checkNOPSMin = (Formula[(int)EElemIndex.O] > 1) && (Formula[(int)EElemIndex.N] > 1) && (Formula[(int)EElemIndex.S] > 1) && (Formula[(int)EElemIndex.P] > 1);
+                var checkNOPSMax = (Formula[(int)EElemIndex.O] < 20) && (Formula[(int)EElemIndex.N] < 10) && (Formula[(int)EElemIndex.S] < 3) && (Formula[(int)EElemIndex.P] < 4);
 
                 if (checkNOPSMin && !checkNOPSMax)
                 {
@@ -3233,8 +3233,8 @@ namespace CIA
 
                 //bool checkNOPMin = ( Formula [ ( int ) EElemNumber.O ] > 3 ) & ( Formula [ ( int ) EElemNumber.N ] > 3 ) & ( Formula [ ( int ) EElemNumber.S ] == 0 ) & ( Formula [ ( int ) EElemNumber.P ] >= 3 );
                 //manuscript doesn't use "S == 0"
-                var checkNOPMin = (Formula[(int)EElemIndex.O] > 3) & (Formula[(int)EElemIndex.N] > 3) & (Formula[(int)EElemIndex.P] > 3);
-                var checkNOPMax = (Formula[(int)EElemIndex.O] < 22) & (Formula[(int)EElemIndex.N] < 11) & (Formula[(int)EElemIndex.P] < 6);
+                var checkNOPMin = (Formula[(int)EElemIndex.O] > 3) && (Formula[(int)EElemIndex.N] > 3) && (Formula[(int)EElemIndex.P] > 3);
+                var checkNOPMax = (Formula[(int)EElemIndex.O] < 22) && (Formula[(int)EElemIndex.N] < 11) && (Formula[(int)EElemIndex.P] < 6);
 
                 if (checkNOPMin && !checkNOPMax)
                 {
@@ -3243,8 +3243,8 @@ namespace CIA
 
                 //bool checkOPSMin = ( Formula [ ( int ) EElemNumber.O ] >= 1 ) & ( Formula [ ( int ) EElemNumber.N ] == 0 ) & ( Formula [ ( int ) EElemNumber.S ] >= 1 ) & ( Formula [ ( int ) EElemNumber.P ] >= 1 );
                 //manuscript doesn't use "N == 0"
-                var checkOPSMin = (Formula[(int)EElemIndex.O] > 1) & (Formula[(int)EElemIndex.S] > 1) & (Formula[(int)EElemIndex.P] > 1);
-                var checkOPSMax = (Formula[(int)EElemIndex.O] < 14) & (Formula[(int)EElemIndex.S] < 3) & (Formula[(int)EElemIndex.P] < 3);
+                var checkOPSMin = (Formula[(int)EElemIndex.O] > 1) && (Formula[(int)EElemIndex.S] > 1) && (Formula[(int)EElemIndex.P] > 1);
+                var checkOPSMax = (Formula[(int)EElemIndex.O] < 14) && (Formula[(int)EElemIndex.S] < 3) && (Formula[(int)EElemIndex.P] < 3);
 
                 if (checkOPSMin && !checkOPSMax)
                 {
@@ -3253,8 +3253,8 @@ namespace CIA
 
                 //bool checkNPSMin = ( Formula [ ( int ) EElemNumber.O ] == 0 ) & ( Formula [ ( int ) EElemNumber.N ] >= 1 ) & ( Formula [ ( int ) EElemNumber.S ] >= 1 ) & ( Formula [ ( int ) EElemNumber.P ] >= 1 );
                 //manuscript doesn't use "O == 0"
-                var checkNPSMin = (Formula[(int)EElemIndex.N] > 1) & (Formula[(int)EElemIndex.S] > 1) & (Formula[(int)EElemIndex.P] > 1);
-                var checkNPSMax = (Formula[(int)EElemIndex.N] < 4) & (Formula[(int)EElemIndex.S] < 3) & (Formula[(int)EElemIndex.P] < 3);
+                var checkNPSMin = (Formula[(int)EElemIndex.N] > 1) && (Formula[(int)EElemIndex.S] > 1) && (Formula[(int)EElemIndex.P] > 1);
+                var checkNPSMax = (Formula[(int)EElemIndex.N] < 4) && (Formula[(int)EElemIndex.S] < 3) && (Formula[(int)EElemIndex.P] < 3);
 
                 if (checkNPSMin && !checkNPSMax)
                 {
@@ -3263,8 +3263,8 @@ namespace CIA
 
                 //bool checkNOSMin = ( Formula [ ( int ) EElemNumber.O ] >= 6 ) & ( Formula [ ( int ) EElemNumber.N ] >= 6 ) & ( Formula [ ( int ) EElemNumber.S ] >= 6 ) & ( Formula [ ( int ) EElemNumber.P ] == 0 );
                 //manuscript doesn't use "P == 0"
-                var checkNOSMin = (Formula[(int)EElemIndex.O] > 6) & (Formula[(int)EElemIndex.N] > 6) & (Formula[(int)EElemIndex.S] > 6);
-                var checkNOSMax = (Formula[(int)EElemIndex.O] < 14) & (Formula[(int)EElemIndex.N] < 19) & (Formula[(int)EElemIndex.S] < 8);
+                var checkNOSMin = (Formula[(int)EElemIndex.O] > 6) && (Formula[(int)EElemIndex.N] > 6) && (Formula[(int)EElemIndex.S] > 6);
+                var checkNOSMax = (Formula[(int)EElemIndex.O] < 14) && (Formula[(int)EElemIndex.N] < 19) && (Formula[(int)EElemIndex.S] < 8);
 
                 if (checkNOSMin && !checkNOSMax)
                 {
