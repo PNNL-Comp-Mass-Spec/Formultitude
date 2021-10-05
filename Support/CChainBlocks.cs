@@ -54,7 +54,8 @@ namespace Support
         {
             Array.Sort(ElementNames, ElementMasses);
         }
-        static char[] WordSeparators = new char[] { '\t', ',', ' ' };
+
+        private static char[] WordSeparators = new char[] { '\t', ',', ' ' };
         public void KnownMassBlocksFromFile(string Filename)
         {
             //Chain block formula is first word in line
@@ -87,7 +88,8 @@ namespace Support
             Filename = Filename.Substring(0, Filename.Length - FileExtensionLength) + "Real.csv";
             //File.WriteAllLines( Filename, Lines );
         }
-        double CalculateFormulaMass(string Formula)
+
+        private double CalculateFormulaMass(string Formula)
         {
             //formula example N1H_3O
             double Mass = 0;
@@ -346,7 +348,7 @@ namespace Support
         }
 
         //StdDev error
-        const int UniquePeaksInRange = 200;
+        private const int UniquePeaksInRange = 200;
         //return Tuple where
         //  Item1 is array of parent peak indexes
         //  Item2 is array of child peak indexes
@@ -509,8 +511,8 @@ namespace Support
             Data.ErrDisPairCount = Pairs;
         }
         //isotopic peaks
-        const double IsotopicPeakGain = 5;
-        const double Charge1Distance = CElements.C13 - CElements.C;
+        private const double IsotopicPeakGain = 5;
+        private const double Charge1Distance = CElements.C13 - CElements.C;
         public void FindIsotopicPeaks(Support.InputData Data)
         {
             //clean

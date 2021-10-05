@@ -6,7 +6,7 @@ using System.IO;
 
 namespace FindChainsTest
 {
-    class FindChainsTestProgram
+    internal class FindChainsTestProgram
     {
         /*
         class Bin {
@@ -40,7 +40,7 @@ namespace FindChainsTest
             public double ChainStdDev;
         }
          * */
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Support.InputData InputData;
             var ChainBlocks = new CChainBlocks();

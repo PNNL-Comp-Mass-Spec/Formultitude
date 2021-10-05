@@ -2,9 +2,9 @@
 
 namespace TestSupport
 {
-    class TestSupportProgram
+    internal class TestSupportProgram
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             //double CalculateAbsRangePpmError( double ReferenceMass, double Mass )
             var PpmError1 = CPpmError.CalculateAbsRangePpmError(100, 99);

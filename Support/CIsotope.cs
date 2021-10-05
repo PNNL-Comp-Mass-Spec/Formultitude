@@ -6,9 +6,9 @@ namespace Support
 {
     public class CIsotope
     {
-        static string[] Names = null;
+        private static string[] Names = null;
         public static string[] GetNames() { return Names; }
-        static double[] Distances = null;
+        private static double[] Distances = null;
         public static double[] GetDistances() { return Distances; }
 
         //public static Tuple<string[],double[]> ConvertIsotopeFileIntoIsotopeDistanceFile( string IsotopeFilename) {

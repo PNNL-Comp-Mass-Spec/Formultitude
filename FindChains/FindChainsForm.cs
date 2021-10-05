@@ -18,27 +18,28 @@ namespace FindChains
             numericUpDownFrequencyError.Enabled = checkBoxFrequency.Checked;
             oCChainBlocks = new CChainBlocks();
         }
-        CChainBlocks oCChainBlocks;
+
+        private CChainBlocks oCChainBlocks;
 
         //PeakIndex
-        double[] Masses;
-        double[] Abundances;
-        double[] S2Ns;
-        double[] Resolutions;
-        double[] RelAbundances;
+        private double[] Masses;
+        private double[] Abundances;
+        private double[] S2Ns;
+        private double[] Resolutions;
+        private double[] RelAbundances;
 
-        class PeakLink
+        private class PeakLink
         {
             public int BinIndex;
             public int PairIndex;
         }
         //BinIndex + PairIndex + LinkIndex
-        List<int>[] BinLeftPeaks;
-        List<int>[] BinRightPeaks;
-        List<PeakLink>[][] BinLeftLinks;
-        List<PeakLink>[][] BinRightLinks;
+        private List<int>[] BinLeftPeaks;
+        private List<int>[] BinRightPeaks;
+        private List<PeakLink>[][] BinLeftLinks;
+        private List<PeakLink>[][] BinRightLinks;
 
-        List<int> CreateChain(PeakLink oPeakLink)
+        private List<int> CreateChain(PeakLink oPeakLink)
         {
             var BinIndex = oPeakLink.BinIndex;
             var PairIndex = oPeakLink.PairIndex;
@@ -57,7 +58,8 @@ namespace FindChains
         {
             numericUpDownFrequencyError.Enabled = checkBoxFrequency.Checked;
         }
-        class PeakMzError
+
+        private class PeakMzError
         {
             public int PeakIndex;
             public double Mz;

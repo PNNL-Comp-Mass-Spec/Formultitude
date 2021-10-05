@@ -10,9 +10,9 @@ using Support;
 
 namespace CIA
 {
-    class FormularityProgram
+    internal class FormularityProgram
     {
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
             try
             {
@@ -255,7 +255,8 @@ namespace CIA
                 return -1;
             }
         }
-        static void PrintHelp()
+
+        private static void PrintHelp()
         {
             System.Console.WriteLine("Help:");
             System.Console.WriteLine("Command line: cia.exe arg1 arg2 arg3 arg4 arg5");
@@ -297,7 +298,8 @@ namespace CIA
             }
         }
     }
-    class Data
+
+    internal class Data
     {
         //arrays per file
         //raw
@@ -331,11 +333,12 @@ namespace CIA
         //Elements
         public const int ElementCount = 8;
         public enum EElemIndex { C = 0, H, O, N, C13, S, P, Na };
-        double[] ElementMasses = new double[ElementCount] { CElements.C, CElements.H, CElements.O, CElements.N, CElements.C13, CElements.S, CElements.P, CElements.Na };
-        short[] ElemValences = { 4, 1, 2, 3, 4, 2, 3, 1 };
+
+        private double[] ElementMasses = new double[ElementCount] { CElements.C, CElements.H, CElements.O, CElements.N, CElements.C13, CElements.S, CElements.P, CElements.Na };
+        private short[] ElemValences = { 4, 1, 2, 3, 4, 2, 3, 1 };
 
         //Formula
-        short[] NullFormula = new short[ElementCount];
+        private short[] NullFormula = new short[ElementCount];
         public double FormulaToNeutralMass(short[] Formula)
         {
             if (Formula == null)
@@ -358,7 +361,8 @@ namespace CIA
             foreach (var Element in Formula) { if (Element > 0) { return true; } }
             return false;
         }
-        bool AreFormulasEqual(short[] Formula1, short[] Formula2)
+
+        private bool AreFormulasEqual(short[] Formula1, short[] Formula2)
         {
             if (Formula1.Length != Formula2.Length) { return false; }
             for (var Element = 0; Element < Formula1.Length; Element++)
@@ -468,13 +472,14 @@ namespace CIA
         public bool Alignment = true;
         public bool GetAlignment() { return Alignment; }
         public void SetAlignment(bool Alignment) { this.Alignment = Alignment; }
-        double AlignmentPPMTolerance = 1;//default
+        private double AlignmentPPMTolerance = 1;//default
         public double GetAlignmentPpmTolerance() { return AlignmentPPMTolerance; }
         public void SetAlignmentPpmTolerance(double PPMTolerance)
         {
             AlignmentPPMTolerance = PPMTolerance;
         }
-        void AlignmentByPeak()
+
+        private void AlignmentByPeak()
         {
             //Group near peaks as one peak.
             //Peak from the same file can't be grouped
@@ -682,13 +687,13 @@ namespace CIA
         //Formula finding
         //******************************************************************************************
         //Formula error
-        bool StaticDynamicPpmError = false;
+        private bool StaticDynamicPpmError = false;
         public bool GetStaticDynamicPpmError() { return StaticDynamicPpmError; }
         public void SetStaticDynamicPpmError(bool StaticDynamicPpmError) { this.StaticDynamicPpmError = StaticDynamicPpmError; }
-        double FormulaPPMTolerance = 1;//default
+        private double FormulaPPMTolerance = 1;//default
         public double GetFormulaPPMTolerance() { return FormulaPPMTolerance; }
         public void SetFormulaPPMTolerance(double PPMTolerance) { FormulaPPMTolerance = PPMTolerance; }
-        double StdDevErrorGain = 1;
+        private double StdDevErrorGain = 1;
         public double GetStdDevErrorGain() { return StdDevErrorGain; }
         public void SetStdDevErrorGain(double StdDevErrorGain)
         {
@@ -707,26 +712,27 @@ namespace CIA
         }
         public Support.InputData InputData;
         public void SetInputData(Support.InputData InputData) { this.InputData = InputData; }
-        CChainBlocks oCChainBlocks;
+        private CChainBlocks oCChainBlocks;
         public void SetChainBlocks(CChainBlocks oCChainBlocks) { this.oCChainBlocks = oCChainBlocks; }
-        double[] BlockMasses;
+        private double[] BlockMasses;
         public void SetBlockMasses(double[] BlockMasses) { this.BlockMasses = BlockMasses; }
 
         //Relations
-        bool UseRelation = true;//default
+        private bool UseRelation = true;//default
         public bool GetUseRelation() { return UseRelation; }
         public void SetUseRelation(bool UseRelation) { this.UseRelation = UseRelation; }
-        int MaxRelationGaps = 5;//default
+        private int MaxRelationGaps = 5;//default
         public int GetMaxRelationGaps() { return MaxRelationGaps; }
         public void SetMaxRelationGaps(int MaxRelationGaps) { this.MaxRelationGaps = MaxRelationGaps; }
         public enum RelationErrorType { AMU, PPM, GapPPM, DynamicPPM };
-        RelationErrorType oRelationErrorType = RelationErrorType.AMU;
+
+        private RelationErrorType oRelationErrorType = RelationErrorType.AMU;
         public RelationErrorType GetRelationErrorType() { return oRelationErrorType; }
         public void SetRelationErrorType(RelationErrorType oRelationErrorType) { this.oRelationErrorType = oRelationErrorType; }
-        double RelationErrorAMU = 0.00002;//default
+        private double RelationErrorAMU = 0.00002;//default
         public double GetRelationErrorAMU() { return RelationErrorAMU; }
         public void SetRelationErrorAMU(double ErrorAMU) { RelationErrorAMU = ErrorAMU; }
-        bool UseBackward = true;
+        private bool UseBackward = true;
         public bool GetUseBackward() { return UseBackward; }
         public void SetUseBackward(bool UseBackward) { this.UseBackward = UseBackward; }
 
@@ -743,7 +749,8 @@ namespace CIA
                 //new short [] { 0, 0, 3, 0, 0, 0, 1, 0 }//O3P
                 new short [] { 1, 2, 1, 0, 0, 0, 0, 0 }//CH2O
         };
-        bool[] ActiveRelationBuildingBlocks = new bool[] { true, false, true, false, false, false, true, false, false };
+
+        private bool[] ActiveRelationBuildingBlocks = new bool[] { true, false, true, false, false, false, true, false, false };
         public bool[] GetActiveRelationFormulaBuildingBlocks() { return ActiveRelationBuildingBlocks; }
         public void SetActiveRelationFormulaBuildingBlocks(bool[] ActiveBlocks)
         {
@@ -764,9 +771,10 @@ namespace CIA
             ActiveRelationFormulaBuildingBlockMasses = ActiveRelationFormulaBuildingBlockMassesList.ToArray();
             ActiveRelationBuildingBlocks = (bool[])ActiveBlocks.Clone();
         }
-        List<short[]> ListActiveRelationFormulaBuildingBlocks;
+
+        private List<short[]> ListActiveRelationFormulaBuildingBlocks;
         //public short [] [] GetActiveRelationFormulaBuildingBlocks() { return ListActiveRelationFormulaBuildingBlocks.ToArray(); }
-        double[] ActiveRelationFormulaBuildingBlockMasses;
+        private double[] ActiveRelationFormulaBuildingBlockMasses;
         /*
         public void SetRelationFormulaBuildingBlocks( short [][] ActiveBlocks ) {
             ListActiveRelationFormulaBuildingBlocks = new List<short []>( ActiveBlocks );
@@ -781,16 +789,16 @@ namespace CIA
         }
         */
         //Mass limit to search in DB
-        double MassLimit = 500;
+        private double MassLimit = 500;
         public double GetMassLimit() { return MassLimit; }
         public void SetMassLimit(double MassLimit) { this.MassLimit = MassLimit; }
 
         //formula score
-        bool UseCIAFormulaScore = false;
+        private bool UseCIAFormulaScore = false;
         public bool GetUseCIAFormulaScore() { return UseCIAFormulaScore; }
         public void SetUseCIAFormulaScore(bool UseCIAFormulaScore) { this.UseCIAFormulaScore = UseCIAFormulaScore; }
 
-        string[] FormulaScoreNames = new string[]{
+        private string[] FormulaScoreNames = new string[]{
                 "min(S+P) & The lowest error",
                 "The lowest error",
                 "min(N+S+P) & The lowest error",
@@ -804,11 +812,11 @@ namespace CIA
         public void SetFormulaScore(EFormulaScore FormulaScore) { this.FormulaScore = FormulaScore; }
 
         //User-defined score
-        System.Data.DataTable UserDefinedScoreTable;
-        string UserDefinedScore = "";
+        private System.Data.DataTable UserDefinedScoreTable;
+        private string UserDefinedScore = "";
         public string GetUserDefinedScore() { return UserDefinedScore; }
-        string PrefixFirst = "First";
-        string PrefixSecond = "Second";
+        private string PrefixFirst = "First";
+        private string PrefixSecond = "Second";
         public void SetUserDefinedScore(string UserDefinedScore)
         {
             if (UserDefinedScore.Length == 0)
@@ -838,15 +846,15 @@ namespace CIA
         }
 
         //Kendrick
-        bool UseKendrick = true;
+        private bool UseKendrick = true;
         public bool GetUseKendrick() { return UseKendrick; }
         public void SetUseKendrick(bool UseKendrick) { this.UseKendrick = UseKendrick; }
 
         //C13
-        bool UseC13 = true;
+        private bool UseC13 = true;
         public bool GetUseC13() { return UseC13; }
         public void SetUseC13(bool UseC13) { this.UseC13 = UseC13; }
-        double C13Tolerance = 0;
+        private double C13Tolerance = 0;
         public double GetC13Tolerance() { return C13Tolerance; }
         public void SetC13Tolerance(double C13Tolerance) { this.C13Tolerance = C13Tolerance; }
         public double GetRealC13Tolerance(double PeakMass)
@@ -868,7 +876,7 @@ namespace CIA
                 "Integer DBE"
         };
         public string[] GetGoldenRuleFilterNames() { return GoldenRuleFilterNames; }
-        bool[] GoldenRuleFilters = new bool[] { true, true, true, true, true, true };
+        private bool[] GoldenRuleFilters = new bool[] { true, true, true, true, true, true };
         public bool[] GetGoldenRuleFilterUsage() { return GoldenRuleFilters; }
         public void SetGoldenRuleFilterUsage(bool[] GoldenRuleFilters)
         {
@@ -880,10 +888,12 @@ namespace CIA
             }
         }
         //Special filters
-        System.Data.DataTable DataTableSpecialFilter;
+        private System.Data.DataTable DataTableSpecialFilter;
         public enum ESpecialFilters { None, Air, Water, Earth };
-        ESpecialFilters oESpecialFilter = ESpecialFilters.None;
-        string[] SpecialFilterRules = new string[]{
+
+        private ESpecialFilters oESpecialFilter = ESpecialFilters.None;
+
+        private string[] SpecialFilterRules = new string[]{
                 "",
                 "O>0 AND N<=2 AND S<=1 AND P=0 AND 3*(S+N)<=O",
                 "O>0 AND N<=3 AND S<=2 AND P<=2",
@@ -906,8 +916,8 @@ namespace CIA
             DataTableSpecialFilter.Rows.Add(DataTableSpecialFilter.NewRow());
         }
         //User-defined filters
-        System.Data.DataTable UserDefinedFilterTable;
-        string UserDefinedFilter = "";
+        private System.Data.DataTable UserDefinedFilterTable;
+        private string UserDefinedFilter = "";
         public string GetUserDefinedFilter() { return UserDefinedFilter; }
         public void SetUserDefinedFilter(string UserDefinedFilter)
         {
@@ -927,22 +937,23 @@ namespace CIA
             this.UserDefinedFilter = UserDefinedFilter;
         }
 
-        bool UseFormulaFilters = true;
+        private bool UseFormulaFilters = true;
         public bool GetUseFormulaFilter() { return UseFormulaFilters; }
         public void SetUseFormulaFilter(bool UseFormulaFilters) { this.UseFormulaFilters = UseFormulaFilters; }
 
         //Output error type
         public enum EErrorType { CIA, Signed };
-        EErrorType oEErrorType = EErrorType.CIA;
+
+        private EErrorType oEErrorType = EErrorType.CIA;
         public EErrorType GetErrorType() { return oEErrorType; }
         public void SetErrorType(EErrorType oEErrorType) { this.oEErrorType = oEErrorType; }
 
         //Reports
-        bool GenerateReports = false;
+        private bool GenerateReports = false;
         public bool GetGenerateReports() { return GenerateReports; }
         public void SetGenerateReports(bool GenerateReports) { this.GenerateReports = GenerateReports; }
 
-        int MinPeaksPerChain = 5;
+        private int MinPeaksPerChain = 5;
         public int GetMinPeaksPerChain() { return MinPeaksPerChain; }
         public void SetMinPeaksPerChain(int MinPeaksPerChain) { this.MinPeaksPerChain = MinPeaksPerChain; }
 
@@ -959,7 +970,7 @@ namespace CIA
         */
 
         //Output file delimiter
-        string OutputFileDelimiter = ",";
+        private string OutputFileDelimiter = ",";
         /*public enum EDelimiters { Comma, Tab, Space};
         EDelimiters oEOutputFileDelimiter = EDelimiters.Comma;
         public static string OutputFileDelimiterToString( EDelimiters oo){
@@ -985,7 +996,7 @@ namespace CIA
             OutputFileDelimiter = OutputFileDelimiterToString( Delimiter );
         }
         */
-        Data oData = new Data();//log file
+        private Data oData = new Data();//log file
         public AlignData oAlignData = new AlignData();
         public TotalIPDBSearch Ipa;
         public CCia()
@@ -995,10 +1006,11 @@ namespace CIA
             //SetRelationFormulaBuildingBlocks( RelationBuildingBlockFormulas );
         }
         public enum ProcessType { Cia, Ipa, CiaIpa };
-        ProcessType oProcessType = ProcessType.Cia;
+
+        private ProcessType oProcessType = ProcessType.Cia;
         public ProcessType GetProcessType() { return oProcessType; }
         public void SetProcessType(ProcessType oProcessType) { this.oProcessType = oProcessType; }
-        string OutputSubfolder = "";
+        private string OutputSubfolder = "";
         public void Process(string[] Filenames)
         {
             //create subfolder
@@ -1488,7 +1500,8 @@ namespace CIA
                 }
             }
         }
-        string GetFormulaElementComposition(short[] Formula)
+
+        private string GetFormulaElementComposition(short[] Formula)
         {
             var Answer = string.Empty;
             if (Formula[(int)EElemIndex.C] > 0)
@@ -1517,7 +1530,8 @@ namespace CIA
             }
             return Answer;
         }
-        string GetFormulaClass(short[] Formula)
+
+        private string GetFormulaClass(short[] Formula)
         {
             //class	        O:C(low)	O:C(high)	H:C(low)	H:C(high)
             //lipid 	    >=0	        <0.3	    >=1.5	    <2.5
@@ -1586,12 +1600,14 @@ namespace CIA
                 o = null;
             }
         }
-        class CGrpdiffK
+
+        private class CGrpdiffK
         {
             public bool IsEmpty;
             public List<int>[] Indexes;
         };
-        bool CheckPeakMassByEvenOdd(double[] Masses)
+
+        private bool CheckPeakMassByEvenOdd(double[] Masses)
         {
             var Even = 0;
             var Odd = 0;
@@ -1629,7 +1645,7 @@ namespace CIA
         }
 
         //void FindFormulas( double [] NeutralMasses, short [][] Formulas, double [] PPMErrors, short [] Candidates, double FormulaErrorPPM, double RelationErrorAMU, double MassLimit ) {
-        void FindFormulas(double[] NeutralMasses, short[][] Formulas, double[] PPMErrors, short[] Candidates, double RelationErrorAMU, double MassLimit)
+        private void FindFormulas(double[] NeutralMasses, short[][] Formulas, double[] PPMErrors, short[] Candidates, double RelationErrorAMU, double MassLimit)
         {
             //DIFFERENCE FROM NON-MODIFIED VERSION IS WHICH FUNCTIONAL GROUPS ARE PROPAGATED (SEE relations) AND DECISION TREE WHEN MULTIPLE FORMULAS ARE
             //FOUND; IDEA IS THAT MODIFIED VERSION SHOULD BE USED WHEN EXPERIMENTING REDUCING THE RISK OF CHANGING ORIGINAL FUNCTION OR CONFUSION WHICH VERSION IS USED
@@ -2060,7 +2076,7 @@ namespace CIA
             }
         }
 
-        short[] PickDBFormula(double peak_mass, out short Candidates)
+        private short[] PickDBFormula(double peak_mass, out short Candidates)
         {//useMATfile_KL4
             Candidates = 0;
             var BestFormula = (short[])NullFormula.Clone();
@@ -2864,7 +2880,7 @@ namespace CIA
             KL modify 9/18/08 to go back to presenting good and goodformula
             KL 1/8/09 - adding a check to make sure all the elements are positive avoid having negative number of elements
         */
-        bool CheckFormulaByFilters(short[] Formula, double Mass)
+        private bool CheckFormulaByFilters(short[] Formula, double Mass)
         {
             if (Formula == null) { return false; }
             if (UseFormulaFilters == false) { return true; }
@@ -3054,7 +3070,8 @@ namespace CIA
             }
             return true;
         }
-        void ProcessC13(double[] NeutralMasses, short[][] Formulas, double[] PPMErrors)
+
+        private void ProcessC13(double[] NeutralMasses, short[][] Formulas, double[] PPMErrors)
         {
             if (UseC13 == false) { return; }
             var CDiff = CElements.C13 - CElements.C;
@@ -3106,7 +3123,8 @@ namespace CIA
                 }
             }
         }
-        int FindC13ParentPeak(short[][] Formulas, int C13Peak)
+
+        private int FindC13ParentPeak(short[][] Formulas, int C13Peak)
         {
             var ParentFormula = (short[])Formulas[C13Peak].Clone();
             ParentFormula[(int)EElemIndex.C13] = (short)(ParentFormula[(int)EElemIndex.C13] - 1);
@@ -3124,7 +3142,7 @@ namespace CIA
         //DB
         //*******************************************************************
         //List<string> DBFilenames = new List<string>();
-        string CiaDBFilename = "";
+        private string CiaDBFilename = "";
         public string GetCiaDBFilename() { return CiaDBFilename; }
         public void SetCiaDBFilename(string CiaDBFilename) { this.CiaDBFilename = CiaDBFilename; }
         public double[] DBMasses = null;
@@ -3132,9 +3150,9 @@ namespace CIA
         public short[][] DBFormulas = null;
         public short[] GetDBFormula(int Index) { return DBFormulas[Index]; }
         public string GetDBFormulaName(int Index) { return FormulaToName(DBFormulas[Index]); }
-        static int DBBytesPerRecord = sizeof(double) + ElementCount * sizeof(short);
-        static int DBRecordPerBlock = 1000;
-        int DBBlockBytes = DBRecordPerBlock * DBBytesPerRecord;
+        private static int DBBytesPerRecord = sizeof(double) + ElementCount * sizeof(short);
+        private static int DBRecordPerBlock = 1000;
+        private int DBBlockBytes = DBRecordPerBlock * DBBytesPerRecord;
         [StructLayout(LayoutKind.Explicit)]
         public struct DoubleAndBytes
         {
@@ -3159,8 +3177,10 @@ namespace CIA
             [FieldOffset(8)]
             public byte Byte8;
         }
-        DoubleAndBytes oDoubleLongUnion = new DoubleAndBytes();
-        double BytesToDouble(byte[] Bytes, long StartIndex)
+
+        private DoubleAndBytes oDoubleLongUnion = new DoubleAndBytes();
+
+        private double BytesToDouble(byte[] Bytes, long StartIndex)
         {
             oDoubleLongUnion.Byte0 = Bytes[StartIndex];
             oDoubleLongUnion.Byte1 = Bytes[StartIndex + 1];
@@ -3172,7 +3192,8 @@ namespace CIA
             oDoubleLongUnion.Byte7 = Bytes[StartIndex + 7];
             return oDoubleLongUnion.Double;
         }
-        void DoubleToBytes(double dd, byte[] Bytes, long StartIndex)
+
+        private void DoubleToBytes(double dd, byte[] Bytes, long StartIndex)
         {
             oDoubleLongUnion.Double = dd;
             Bytes[StartIndex] = oDoubleLongUnion.Byte0;
@@ -3184,16 +3205,19 @@ namespace CIA
             Bytes[StartIndex + 6] = oDoubleLongUnion.Byte6;
             Bytes[StartIndex + 7] = oDoubleLongUnion.Byte7;
         }
-        void ShortToBytes(short ss, byte[] Bytes, long StartIndex)
+
+        private void ShortToBytes(short ss, byte[] Bytes, long StartIndex)
         {
             Bytes[StartIndex] = (byte)ss;
             Bytes[StartIndex + 1] = (byte)(ss >> 8);
         }
-        short BytesToShort(byte[] Bytes, long StartIndex)
+
+        private short BytesToShort(byte[] Bytes, long StartIndex)
         {
             return (short)((Bytes[StartIndex + 1] << 8) + Bytes[StartIndex]);
         }
-        short[] FormulaCovertFromBinary(byte[] TempBytes, int ArrayPointer)
+
+        private short[] FormulaCovertFromBinary(byte[] TempBytes, int ArrayPointer)
         {
             var Formula = new short[ElementCount];
             for (var Element = 0; Element < ElementCount; Element++)
@@ -3218,8 +3242,9 @@ namespace CIA
             if (DBMasses == null) { return 0; }
             return DBMasses[DBMasses.Length - 1];
         }
-        double DBMinError;
-        double DBMaxError;
+
+        private double DBMinError;
+        private double DBMaxError;
         public double GetDBMinError() { return DBMinError; }
         public double GetDBMaxError() { return DBMaxError; }
         public bool GetDBLimitIndexes(double Mass, out int LowerIndex, out int UpperIndex)
@@ -3321,7 +3346,8 @@ namespace CIA
             DBMassError(DBMasses, DBFormulas, ref DBMinError, ref DBMaxError);
             return true;
         }
-        void DBSortAndClean(ref double[] Masses, ref short[][] Formulas)
+
+        private void DBSortAndClean(ref double[] Masses, ref short[][] Formulas)
         {
             Array.Sort(Masses, Formulas);
             var RemovedFormulas = 0;
@@ -3368,7 +3394,8 @@ namespace CIA
             TempDBFormulas = null;
             GC.Collect();
         }
-        void DBMassError(double[] Masses, short[][] Formulas, ref double MinError, ref double MaxError)
+
+        private void DBMassError(double[] Masses, short[][] Formulas, ref double MinError, ref double MaxError)
         {
             MinError = 0;
             MaxError = 0;
@@ -3380,20 +3407,21 @@ namespace CIA
             }
         }
         public char[] WordSeparators = new char[] { '\t', ',', ' ' };
-        char[] LineSeparators = new char[] { '\r', '\n' };
-        bool DBCalculateMassFromFormula = true;
+        private char[] LineSeparators = new char[] { '\r', '\n' };
+        private bool DBCalculateMassFromFormula = true;
         public bool GetDBCalculateMassFromFormula() { return DBCalculateMassFromFormula; }
         public void SetDBCalculateMassFromFormula(bool DBCalculateMassFromFormula) { this.DBCalculateMassFromFormula = DBCalculateMassFromFormula; }
-        bool DBSort = true;
+        private bool DBSort = true;
         public bool GetDBSort() { return DBSort; }
         public void SetDBSort(bool DBSort) { this.DBSort = DBSort; }
-        bool DBMassRangePerCsvFile = false;
+        private bool DBMassRangePerCsvFile = false;
         public bool GetDBMassRangePerCsvFile() { return DBMassRangePerCsvFile; }
         public void SetDBMassRangePerCsvFile(bool DBMassRangePerCsvFile) { this.DBMassRangePerCsvFile = DBMassRangePerCsvFile; }
-        double DBMassRange = 100;
+        private double DBMassRange = 100;
         public double GetDBMassRange() { return DBMassRange; }
         public void SetDBMassRange(double DBMassRange) { this.DBMassRange = DBMassRange; }
-        void ReadDBAsciiFile(string Filename, out double[] Masses, out short[][] Formulas)
+
+        private void ReadDBAsciiFile(string Filename, out double[] Masses, out short[][] Formulas)
         {
             //file types: csv, txt, xls, xlsx
             //first line/row could have headers
@@ -3630,7 +3658,7 @@ namespace CIA
             oBinaryReader.Close();
         }
 
-        string IpaDBFilename = "";
+        private string IpaDBFilename = "";
         public string GetIpaDBFilename() { return IpaDBFilename; }
         public void SetIpaDBFilename(string IpaDBFilename) { this.IpaDBFilename = IpaDBFilename; }
         public void LoadIpaDB()

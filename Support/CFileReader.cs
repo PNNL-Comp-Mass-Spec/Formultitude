@@ -278,7 +278,7 @@ namespace Support
     };
     public static class CFileReader
     {
-        static char[] WordSeparators = new char[] { '\t', ',', ' ' };
+        private static char[] WordSeparators = new char[] { '\t', ',', ' ' };
         public static void ReadFile(string Filename, out double[] Masses, out double[] Abundances, out double[] S2Ns, out double[] Resolutions, out double[] RelAbundances)
         {
             var Peak = -1;
@@ -584,7 +584,8 @@ namespace Support
                 }
             }
         }
-        static void CleanComObject(object o)
+
+        private static void CleanComObject(object o)
         {
             try
             {

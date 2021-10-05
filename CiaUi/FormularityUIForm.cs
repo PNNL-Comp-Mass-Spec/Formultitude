@@ -18,9 +18,10 @@ namespace CiaUi
     public partial class FormularityUIForm : Form
     {
         public CCia oCCia = new CCia();
-        CiaAdvancedForm oCiaAdvancedForm;
+
+        private CiaAdvancedForm oCiaAdvancedForm;
         //System.Windows.Forms.CheckBox [] GoldenRuleFilterUsage;
-        string[] DBPeaksTableHeaders = new string[] { "Index", "Neutral mass", "Formula", "Error, ppm" };
+        private string[] DBPeaksTableHeaders = new string[] { "Index", "Neutral mass", "Formula", "Error, ppm" };
         public enum EPlotType { ErrorVsNeutralMass, ErrorVs };
         public FormularityUIForm()
         {
@@ -340,7 +341,8 @@ namespace CiaUi
             textBoxResult.Text = oCCia.Ipa.ChargedMassFormula_Descriptive;
             //numericUpDownDBMass_ValueChanged( sender, e );//to update DB instector tab
         }
-        void CheckToProcess()
+
+        private void CheckToProcess()
         {
             var CalibrationReady = (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue == TotalCalibration.ttlRegressionType.none)
                                     | (((TotalCalibration.ttlRegressionType)comboBoxCalRegressionModel.SelectedValue != TotalCalibration.ttlRegressionType.none) & (textBoxRefPeakFilename.TextLength > 0)));
@@ -806,8 +808,8 @@ namespace CiaUi
         }
 
         //Error plot tab
-        List<double> XData = new List<double>();
-        List<double> YData = new List<double>();
+        private List<double> XData = new List<double>();
+        private List<double> YData = new List<double>();
         private void chartError_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
@@ -994,8 +996,9 @@ namespace CiaUi
         }
         */
         //File convertor tab
-        string[] InputFileTextFormats = { ".txt", ".csv", ".xls", ".xlsx" };
-        string[] DBActionMenu = {
+        private string[] InputFileTextFormats = { ".txt", ".csv", ".xls", ".xlsx" };
+
+        private string[] DBActionMenu = {
             "One ASCII -> one binary",
             "Many ASCIIs -> one binary",
             "Binary -> CSV"};
@@ -1095,7 +1098,8 @@ namespace CiaUi
             var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
             CompareReports(Filenames);
         }
-        void CompareReports(string[] Filenames)
+
+        private void CompareReports(string[] Filenames)
         {
             var TotalSamples = 0;
             var SampleNames = new List<string>();
@@ -1295,7 +1299,8 @@ namespace CiaUi
                 textBoxFilterResult.Text = "Error: " + ex.Message;
             }
         }
-        string[] DBCompositions = new string[]{
+
+        private string[] DBCompositions = new string[]{
                 "C", "H", "N", "O", "P", "S", "CH", "CN", "CO", "CP",
                 "CS", "HN", "HO", "HP", "HS", "NO", "NP", "NS", "OP", "OS",
                 "PS", "CHN", "CHO", "CHP", "CHS", "CNO", "CNP", "CNS", "COP", "COS",
@@ -1578,7 +1583,8 @@ namespace CiaUi
             }
         }
     }
-    class ReportData
+
+    internal class ReportData
     {
         public short[] Formula;
         public double[] Abundances;

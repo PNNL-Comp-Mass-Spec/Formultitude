@@ -5,7 +5,7 @@ namespace Support
 {
     public class CPpmError
     {
-        const double PPM = 1000000.0;//parts per million
+        private const double PPM = 1000000.0;//parts per million
 
         public static double PpmToError(double Mass, double PpmError) { return Mass * PpmError / PPM; }
         public static double ErrorToPpm(double Mass, double Error) { return Error * PPM / Mass; }

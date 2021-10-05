@@ -3,13 +3,13 @@ using System.Windows.Forms;
 
 namespace CiaUi
 {
-    static class FormularityUIProgram
+    internal static class FormularityUIProgram
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             try
             {
