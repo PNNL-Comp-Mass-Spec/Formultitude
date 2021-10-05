@@ -130,7 +130,7 @@ namespace Support
                         {
                             //Check second small letter
                             ElementName += Formula[SymbolIndex + 1];
-                            SymbolIndex += 1;
+                            SymbolIndex++;
                         }
                         if (SymbolIndex + 1 >= Formula.Length)
                         {
@@ -144,7 +144,7 @@ namespace Support
                             if (Formula[SymbolIndex + 1] == '_')
                             {
                                 NegPos = -1;
-                                SymbolIndex += 1;
+                                SymbolIndex++;
                             }
                             //Check atom number
                             if (SymbolIndex + 1 >= Formula.Length)
@@ -154,7 +154,7 @@ namespace Support
                             else if (char.IsDigit(Formula[SymbolIndex + 1]))
                             {
                                 var Number = Formula[SymbolIndex + 1].ToString();
-                                SymbolIndex += 1;
+                                SymbolIndex++;
 
                                 for (; SymbolIndex + 1 < Formula.Length;)
                                 {

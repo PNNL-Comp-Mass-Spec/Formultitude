@@ -450,13 +450,13 @@ namespace CIA
                     if (FormulaName[CurrentSymbol] == '-')
                     {
                         Negative = true;
-                        CurrentSymbol += 1;
+                        CurrentSymbol++;
                     }
                 }
                 var DigitCount = 0;
                 while (FormulaName.Length > CurrentSymbol + DigitCount && Char.IsDigit(FormulaName[CurrentSymbol + DigitCount]))
                 {
-                    DigitCount += 1;
+                    DigitCount++;
                 }
                 short ElementNumber = 1;
 
@@ -577,11 +577,11 @@ namespace CIA
                     NextIndexes[oData.FileCount] += CurrentIndexes[oData.FileCount];//for weight
                     MassesL.RemoveAt(Peak);//remove current peak
                     IndexesL.RemoveAt(Peak);
-                    TotalPeakCount -= 1;
+                    TotalPeakCount--;
                 }
                 else
                 {
-                    Peak += 1;
+                    Peak++;
                 }
             }
             //align peaks
@@ -625,12 +625,12 @@ namespace CIA
                     LeftIndexes[oData.FileCount] += CurrentIndexes[oData.FileCount];//for weight
                     MassesL.RemoveAt(Peak);//remove current peak
                     IndexesL.RemoveAt(Peak);
-                    TotalPeakCount -= 1;
+                    TotalPeakCount--;
                     continue;
                 }
 
                 //right peak
-                if (RightDistance >= PeakError) { Peak += 1; continue; }
+                if (RightDistance >= PeakError) { Peak++; continue; }
                 var IsRightPeakUnique = false;
                 var RightIndexes = IndexesL[Peak + 1];
 
@@ -645,7 +645,7 @@ namespace CIA
 
                 if (IsRightPeakUnique)
                 {
-                    Peak += 1;
+                    Peak++;
                     continue;
                 }
                 else
@@ -662,7 +662,7 @@ namespace CIA
                     RightIndexes[oData.FileCount] += CurrentIndexes[oData.FileCount];//for weight
                     MassesL.RemoveAt(Peak);
                     IndexesL.RemoveAt(Peak);
-                    TotalPeakCount -= 1;
+                    TotalPeakCount--;
                     continue;
                 }
             }
@@ -1760,11 +1760,11 @@ namespace CIA
             {
                 if (Math.Round(Mass) % 2 == 0)
                 {
-                    Even += 1;
+                    Even++;
                 }
                 else
                 {
-                    Odd += 1;
+                    Odd++;
                 }
             }
 
@@ -3533,7 +3533,7 @@ namespace CIA
             }
             else
             {
-                LowerIndex += 1;//must be more
+                LowerIndex++;//must be more
             }
 
             if (LowerIndex >= DBMasses.Length)
@@ -3548,7 +3548,7 @@ namespace CIA
             {
                 UpperIndex = ~UpperIndex;
             }
-            UpperIndex -= 1;//must be less
+            UpperIndex--;//must be less
 
             if (UpperIndex >= DBMasses.Length)
             {
@@ -3612,7 +3612,7 @@ namespace CIA
                     DBMasses[NextRecord] = BytesToDouble(TempBytes, ArrayShift);
                     ArrayShift += sizeof(double);
                     DBFormulas[NextRecord] = FormulaCovertFromBinary(TempBytes, ArrayShift);
-                    NextRecord += 1;
+                    NextRecord++;
                 }
             } while (RealBytes == DBBlockBytes);
             oBinaryReader.Close();
@@ -3654,7 +3654,7 @@ namespace CIA
                     if (AreFormulasEqual(Formulas[Record], Formulas[TempRecord]))
                     {
                         Masses[TempRecord] = -1;
-                        RemovedFormulas += 1;
+                        RemovedFormulas++;
                     }
                 }
             }
@@ -3671,7 +3671,7 @@ namespace CIA
                 {
                     TempDBMasses[RealRecord] = Masses[Record];
                     TempDBFormulas[RealRecord] = Formulas[Record];
-                    RealRecord += 1;
+                    RealRecord++;
                 }
             }
             Masses = TempDBMasses;

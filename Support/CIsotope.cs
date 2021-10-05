@@ -64,7 +64,7 @@ Mame,Distance
                     if (AtomicNumber != IsotopeAtomicNumber)
                     {
                         //new element
-                        LineIndex -= 1;
+                        LineIndex--;
                         break;
                     }
                     var IsotopeName = IsotopeFileLines[LineIndex].Split(new[] { '=' })[1];
