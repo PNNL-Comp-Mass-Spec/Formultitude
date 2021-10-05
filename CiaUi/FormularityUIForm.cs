@@ -21,7 +21,7 @@ namespace CiaUi
 
         private readonly CiaAdvancedForm oCiaAdvancedForm;
         //System.Windows.Forms.CheckBox [] GoldenRuleFilterUsage;
-        private readonly string[] DBPeaksTableHeaders = new string[] { "Index", "Neutral mass", "Formula", "Error, ppm" };
+        private readonly string[] DBPeaksTableHeaders = new[] { "Index", "Neutral mass", "Formula", "Error, ppm" };
         public enum EPlotType { ErrorVsNeutralMass, ErrorVs };
         public FormularityUIForm()
         {
@@ -175,7 +175,7 @@ namespace CiaUi
                 tableLayoutPanelChains.AutoScroll = true;
                 tableLayoutPanelChains.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
                 tableLayoutPanelChains.ColumnStyles.Clear();
-                var ChainColumnNames = new string[] { "Types", "PairCount", "PairDistance", "Formula", "FormulaDistance", "ChainCount" };
+                var ChainColumnNames = new[] { "Types", "PairCount", "PairDistance", "Formula", "FormulaDistance", "ChainCount" };
                 tableLayoutPanelChains.ColumnCount = ChainColumnNames.Length;//PairCount,PairDistance,Formula,FormulaDistance,ChainCount
                 for (var iColumn = 0; iColumn < tableLayoutPanelChains.ColumnCount; iColumn++)
                 {
@@ -513,7 +513,7 @@ namespace CiaUi
                     }
                     oCCia.SetGoldenRuleFilterUsage(GoldenFilters);
 
-                    oCCia.SetSpecialFilter((CCia.ESpecialFilters)Enum.Parse(typeof(CCia.ESpecialFilters), comboBoxSpecialFilters.Text.Split(new char[] { ':' })[0]));
+                    oCCia.SetSpecialFilter((CCia.ESpecialFilters)Enum.Parse(typeof(CCia.ESpecialFilters), comboBoxSpecialFilters.Text.Split(new[] { ':' })[0]));
                     oCCia.SetUserDefinedFilter(textBoxUserDefinedFilter.Text);
                     //Relationships
                     oCCia.SetUseRelation(checkBoxUseRelation.Checked);
@@ -822,7 +822,7 @@ namespace CiaUi
             var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
             var Lines = File.ReadAllLines(Filenames[0]);
             var FileName = Path.GetFileNameWithoutExtension(Filenames[0]);
-            var Headers = Lines[0].Split(new char[] { ',' });
+            var Headers = Lines[0].Split(new[] { ',' });
             var XAxisColumnIndex = -1;
             var YAxisColumnIndex = -1;
             for (var Column = 0; Column < Headers.Length; Column++)
@@ -847,7 +847,7 @@ namespace CiaUi
 
             for (var Line = 1; Line < Lines.Length; Line++)
             {
-                var Words = Lines[Line].Split(new char[] { ',' });
+                var Words = Lines[Line].Split(new[] { ',' });
                 if (Words[YAxisColumnIndex] == "0") { continue; }
                 XData.Add(double.Parse(Words[XAxisColumnIndex]));
                 YData.Add(double.Parse(Words[YAxisColumnIndex]));
@@ -1300,7 +1300,7 @@ namespace CiaUi
             }
         }
 
-        private readonly string[] DBCompositions = new string[]{
+        private readonly string[] DBCompositions = new[]{
                 "C", "H", "N", "O", "P", "S", "CH", "CN", "CO", "CP",
                 "CS", "HN", "HO", "HP", "HS", "NO", "NP", "NS", "OP", "OS",
                 "PS", "CHN", "CHO", "CHP", "CHS", "CNO", "CNP", "CNS", "COP", "COS",

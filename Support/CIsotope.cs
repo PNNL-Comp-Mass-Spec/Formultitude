@@ -45,7 +45,7 @@ Mame,Distance
                 double AtomicMass = 0;
                 try
                 {
-                    AtomicMass = double.Parse(IsotopeFileLines[LineIndex + 4].Split(new char[] { '=' })[1].Split(new char[] { '(' })[0]);
+                    AtomicMass = double.Parse(IsotopeFileLines[LineIndex + 4].Split(new[] { '=' })[1].Split(new[] { '(' })[0]);
                 }
                 catch
                 {
@@ -63,10 +63,10 @@ Mame,Distance
                         LineIndex = LineIndex - 1;
                         break;
                     }
-                    var IsotopeName = IsotopeFileLines[LineIndex].Split(new char[] { '=' })[1];
+                    var IsotopeName = IsotopeFileLines[LineIndex].Split(new[] { '=' })[1];
                     IsotopeNameList.Add(IsotopeName);
                     //Relative Atomic Mass
-                    var IsotopeAtomicMass = double.Parse(IsotopeFileLines[LineIndex + 4].Split(new char[] { '=' })[1].Split(new char[] { '(' })[0]);
+                    var IsotopeAtomicMass = double.Parse(IsotopeFileLines[LineIndex + 4].Split(new[] { '=' })[1].Split(new[] { '(' })[0]);
                     IsotopeDistanceList.Add(IsotopeAtomicMass - AtomicMass);
                 }
             }

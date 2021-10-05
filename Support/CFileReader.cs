@@ -278,7 +278,7 @@ namespace Support
     };
     public static class CFileReader
     {
-        private static readonly char[] WordSeparators = new char[] { '\t', ',', ' ' };
+        private static readonly char[] WordSeparators = new[] { '\t', ',', ' ' };
         public static void ReadFile(string Filename, out double[] Masses, out double[] Abundances, out double[] S2Ns, out double[] Resolutions, out double[] RelAbundances)
         {
             var Peak = -1;

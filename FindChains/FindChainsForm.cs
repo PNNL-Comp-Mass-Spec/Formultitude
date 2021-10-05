@@ -843,9 +843,9 @@ namespace FindChains
                 for (var LineIndex = 0; LineIndex < Lines.Length; LineIndex++)
                 {
                     if (Lines[LineIndex].StartsWith(StartFile) == false) { continue; }
-                    var HeaderParts = Lines[LineIndex].Split(new char[] { ' ' });
+                    var HeaderParts = Lines[LineIndex].Split(new[] { ' ' });
                     Text = Text + "\r\n" + HeaderParts[2];
-                    var MatchedPeaksParts = Lines[LineIndex + 2].Split(new char[] { ' ', '(' });
+                    var MatchedPeaksParts = Lines[LineIndex + 2].Split(new[] { ' ', '(' });
                     Text = Text + ',' + MatchedPeaksParts[5];
                     LineIndex = LineIndex + 12;
                     var ErrorsBeforeCal = new List<double>();
@@ -853,7 +853,7 @@ namespace FindChains
                     for (; LineIndex < Lines.Length; LineIndex++)
                     {
                         if (Lines[LineIndex].StartsWith("quadratic_calibration") == true) { break; }
-                        var CalibrantParts = Lines[LineIndex].Split(new char[] { '\t' });
+                        var CalibrantParts = Lines[LineIndex].Split(new[] { '\t' });
                         ErrorsBeforeCal.Add(double.Parse(CalibrantParts[3]));
                         ErrorsAfterCal.Add(double.Parse(CalibrantParts[5]));
                     }

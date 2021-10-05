@@ -334,7 +334,7 @@ namespace CIA
         public const int ElementCount = 8;
         public enum EElemIndex { C = 0, H, O, N, C13, S, P, Na };
 
-        private readonly double[] ElementMasses = new double[ElementCount] { CElements.C, CElements.H, CElements.O, CElements.N, CElements.C13, CElements.S, CElements.P, CElements.Na };
+        private readonly double[] ElementMasses = new[] { CElements.C, CElements.H, CElements.O, CElements.N, CElements.C13, CElements.S, CElements.P, CElements.Na };
         private readonly short[] ElemValences = { 4, 1, 2, 3, 4, 2, 3, 1 };
 
         //Formula
@@ -750,7 +750,7 @@ namespace CIA
                 new short [] { 1, 2, 1, 0, 0, 0, 0, 0 }//CH2O
         };
 
-        private bool[] ActiveRelationBuildingBlocks = new bool[] { true, false, true, false, false, false, true, false, false };
+        private bool[] ActiveRelationBuildingBlocks = new[] { true, false, true, false, false, false, true, false, false };
         public bool[] GetActiveRelationFormulaBuildingBlocks() { return ActiveRelationBuildingBlocks; }
         public void SetActiveRelationFormulaBuildingBlocks(bool[] ActiveBlocks)
         {
@@ -798,7 +798,7 @@ namespace CIA
         public bool GetUseCIAFormulaScore() { return UseCIAFormulaScore; }
         public void SetUseCIAFormulaScore(bool UseCIAFormulaScore) { this.UseCIAFormulaScore = UseCIAFormulaScore; }
 
-        private readonly string[] FormulaScoreNames = new string[]{
+        private readonly string[] FormulaScoreNames = new[]{
                 "min(S+P) & The lowest error",
                 "The lowest error",
                 "min(N+S+P) & The lowest error",
@@ -867,7 +867,7 @@ namespace CIA
         }
 
         //Golden rule filters
-        public string[] GoldenRuleFilterNames = new string[]{
+        public string[] GoldenRuleFilterNames = new[]{
                 "Elemental counts",
                 "Valence rules",
                 "Elemental ratios",
@@ -876,7 +876,7 @@ namespace CIA
                 "Integer DBE"
         };
         public string[] GetGoldenRuleFilterNames() { return GoldenRuleFilterNames; }
-        private readonly bool[] GoldenRuleFilters = new bool[] { true, true, true, true, true, true };
+        private readonly bool[] GoldenRuleFilters = new[] { true, true, true, true, true, true };
         public bool[] GetGoldenRuleFilterUsage() { return GoldenRuleFilters; }
         public void SetGoldenRuleFilterUsage(bool[] GoldenRuleFilters)
         {
@@ -893,7 +893,7 @@ namespace CIA
 
         private ESpecialFilters oESpecialFilter = ESpecialFilters.None;
 
-        private readonly string[] SpecialFilterRules = new string[]{
+        private readonly string[] SpecialFilterRules = new[]{
                 "",
                 "O>0 AND N<=2 AND S<=1 AND P=0 AND 3*(S+N)<=O",
                 "O>0 AND N<=3 AND S<=2 AND P<=2",
@@ -1030,8 +1030,8 @@ namespace CIA
             var RelAbundances = new double[FileCount][];
             InputData = new InputData();
             var ChainBlocks = new CChainBlocks();
-            var StandardBlockNames = new string[] { "H2", "C", "CH2", "O" };
-            var StandardBlockMasses = new double[] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
+            var StandardBlockNames = new[] { "H2", "C", "CH2", "O" };
+            var StandardBlockMasses = new[] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
 
             var MaxAbundances = new double[FileCount];
             var CalMasses = new double[FileCount][];
@@ -3406,8 +3406,8 @@ namespace CIA
                 else if (MaxError < DBError) { MaxError = DBError; }
             }
         }
-        public char[] WordSeparators = new char[] { '\t', ',', ' ' };
-        private char[] LineSeparators = new char[] { '\r', '\n' };
+        public char[] WordSeparators = new[] { '\t', ',', ' ' };
+        private char[] LineSeparators = new[] { '\r', '\n' };
         private bool DBCalculateMassFromFormula = true;
         public bool GetDBCalculateMassFromFormula() { return DBCalculateMassFromFormula; }
         public void SetDBCalculateMassFromFormula(bool DBCalculateMassFromFormula) { this.DBCalculateMassFromFormula = DBCalculateMassFromFormula; }

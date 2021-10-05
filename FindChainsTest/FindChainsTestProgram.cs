@@ -75,7 +75,7 @@ namespace FindChainsTest
             {
                 //test sn vs peak pair error
                 var SNs = new double[] { 1, 2, 3, 5, 10, 15, 20 };
-                var BlockMasses1 = new double[] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
+                var BlockMasses1 = new[] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
                 var Text = "";
                 foreach (var SN in SNs)
                 {
@@ -115,7 +115,7 @@ namespace FindChainsTest
                 }
                 DistanceList.Sort();
 
-                ChainBlocks.CalculateErrorDistribution(InputData, MaxOffsetPpmError, new double[] { 12.00 });
+                ChainBlocks.CalculateErrorDistribution(InputData, MaxOffsetPpmError, new[] { 12.00 });
                 var BinSize = CPpmError.PpmToError(InputData.ErrDisMassMedians[0], InputData.ErrDisStdDevs[0]) * 3;
                 var BinCount = (int)Math.Ceiling(MaxDistanceMass / BinSize) + 1;
                 var BinCounts = new int[BinCount];
@@ -174,27 +174,27 @@ namespace FindChainsTest
                 //special test C13 error, CH4O-1 error
                 //string [] Names = new string [] { "C13", "H2", "C", "CH2", "O" };
                 //double [] Sizes = new double [] { CElements.C13 - CElements.C, 2* CElements.H, CElements.C, 2* CElements.H + CElements.C, CElements.O };
-                var Names = new string[] { "CH4O-1" };
-                var Sizes = new double[] { 2 * CElements.H, CElements.C + 4 * CElements.H - CElements.O };
+                var Names = new[] { "CH4O-1" };
+                var Sizes = new[] { 2 * CElements.H, CElements.C + 4 * CElements.H - CElements.O };
                 var BlockMassData = new Tuple<int[], int[], double[]>[Sizes.Length];
 
                 InputData.MaxPpmErrorGain = 1;
-                ChainBlocks.CalculateErrorDistribution(InputData, MaxOffsetPpmError, new double[] { 2 * CElements.H });
+                ChainBlocks.CalculateErrorDistribution(InputData, MaxOffsetPpmError, new[] { 2 * CElements.H });
                 File.WriteAllText(Filename + "ErrorDistributionH2.csv", InputData.ErrorDistributionToString());
-                ChainBlocks.FindChains1(InputData, 5, InputData.Masses.Last() + 1, new double[] { 2 * CElements.H });
+                ChainBlocks.FindChains1(InputData, 5, InputData.Masses.Last() + 1, new[] { 2 * CElements.H });
                 File.WriteAllText(Filename + "ChainsH2.csv", InputData.ChainsToString());
 
-                ChainBlocks.CalculateErrorDistribution(InputData, MaxOffsetPpmError, new double[] { CElements.C + 4 * CElements.H - CElements.O });
+                ChainBlocks.CalculateErrorDistribution(InputData, MaxOffsetPpmError, new[] { CElements.C + 4 * CElements.H - CElements.O });
                 File.WriteAllText(Filename + "ErrorDistributionCH4O_.csv", InputData.ErrorDistributionToString());
-                ChainBlocks.FindChains1(InputData, 5, InputData.Masses.Last() + 1, new double[] { CElements.C + 4 * CElements.H - CElements.O });
+                ChainBlocks.FindChains1(InputData, 5, InputData.Masses.Last() + 1, new[] { CElements.C + 4 * CElements.H - CElements.O });
                 File.WriteAllText(Filename + "ChainsCH4O_.csv", InputData.ChainsToString());
 
             }
 
             //string [] BlockNames = new string [] { "H2", "C", "CH2", "O", "NH" };
             //double [] BlockMasses = new double [] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O, CElements.H + CElements.N };
-            var BlockNames = new string[] { "H2", "C", "CH2", "O" };
-            var BlockMasses = new double[] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
+            var BlockNames = new[] { "H2", "C", "CH2", "O" };
+            var BlockMasses = new[] { 2 * CElements.H, CElements.C, 2 * CElements.H + CElements.C, CElements.O };
 
             ChainBlocks.CalculateErrorDistribution(InputData, MaxOffsetPpmError, BlockMasses);
             File.WriteAllText(Filename + "ErrorDistribution.csv", InputData.ErrorDistributionToString(true));

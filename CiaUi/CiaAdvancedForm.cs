@@ -216,7 +216,7 @@ namespace CiaUi
                 }
                 oCCia.SetGoldenRuleFilterUsage(GoldenFilters);
 
-                oCCia.SetSpecialFilter((CCia.ESpecialFilters)Enum.Parse(typeof(CCia.ESpecialFilters), comboBoxSpecialFilters.Text.Split(new char[] { ':' })[0]));
+                oCCia.SetSpecialFilter((CCia.ESpecialFilters)Enum.Parse(typeof(CCia.ESpecialFilters), comboBoxSpecialFilters.Text.Split(new[] { ':' })[0]));
                 oCCia.SetUserDefinedFilter(textBoxUserDefinedFilter.Text);
                 //Relationships
                 oCCia.SetUseRelation(checkBoxUseRelation.Checked);
