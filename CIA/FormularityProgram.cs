@@ -3986,7 +3986,7 @@ namespace CIA
 
         public void LoadIpaDB()
         {
-            if (IpaDBFilename.Length <= 0) { return; }
+            if (IpaDBFilename.Length == 0) { return; }
             if (!File.Exists(IpaDBFilename)) { return; }
             Ipa.LoadTabulatedDB(IpaDBFilename);
         }

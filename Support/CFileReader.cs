@@ -502,7 +502,7 @@ namespace Support
         };
         public static void CutData(InputData Data, out InputData OutData, CutSettings[] CutSettings)
         {
-            if (Data.Masses.Length <= 0) { throw new Exception("Input data is not correct"); }
+            if (Data.Masses.Length == 0) { throw new Exception("Input data is not correct"); }
             CutSettings MZCutSettings = null;
             CutSettings AbundanceCutSettings = null;
             CutSettings S2NCutSettings = null;

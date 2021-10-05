@@ -6,7 +6,7 @@ namespace Support
     {
         public static double Max(double[] Data)
         {
-            if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
+            if (Data == null || Data.Length == 0) { throw new Exception("Array is empty"); }
             var Max = Data[0];
 
             foreach (var Value in Data)
@@ -18,7 +18,7 @@ namespace Support
 
         public static int Max(int[] Data)
         {
-            if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
+            if (Data == null || Data.Length == 0) { throw new Exception("Array is empty"); }
             var Max = Data[0];
 
             foreach (var Value in Data)
@@ -30,7 +30,7 @@ namespace Support
 
         public static double Mean(double[] Data)
         {
-            if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
+            if (Data == null || Data.Length == 0) { throw new Exception("Array is empty"); }
             double Sum = 0;
 
             foreach (var Value in Data)
@@ -42,7 +42,7 @@ namespace Support
 
         public static double AbsMean(double[] Data)
         {
-            if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
+            if (Data == null || Data.Length == 0) { throw new Exception("Array is empty"); }
             double Sum = 0;
 
             foreach (var Value in Data)
@@ -54,7 +54,7 @@ namespace Support
 
         public static double StandardDeviation(double[] Data, double Mean)
         {
-            if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
+            if (Data == null || Data.Length == 0) { throw new Exception("Array is empty"); }
             double Sum = 0;
 
             foreach (var Value in Data)
@@ -66,7 +66,7 @@ namespace Support
 
         public static double AbsStandardDeviation(double[] Data, double Mean)
         {
-            if (Data == null || Data.Length <= 0) { throw new Exception("Array is empty"); }
+            if (Data == null || Data.Length == 0) { throw new Exception("Array is empty"); }
             double Sum = 0;
 
             foreach (var Value in Data)
