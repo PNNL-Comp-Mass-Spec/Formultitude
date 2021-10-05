@@ -1,5 +1,7 @@
-﻿namespace Support {
-    public static class CElements{
+﻿namespace Support
+{
+    public static class CElements
+    {
         public const double elec = 0.00054857990945;
         public const double proton = 1.00727646688;
         public const double H = 1.0078250321;//0.999885%
