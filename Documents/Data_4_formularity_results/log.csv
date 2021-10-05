@@ -1,0 +1,41 @@
+
+
+Dataset: data_4_formularity.txt
+
+Pre-alignment:
+
+Start ppm error: 2.50000000
+
+Error StdDev distribution along mass:
+
+MassMedian,LowError,HighError,ErrorMean,ErrorStdDev,Count
+213.56035350,-0.403238862759454,0.372676973166994,-0.01679820,0.13285100,716
+277.56750700,-0.399422060101731,0.383116736031262,-0.01040624,0.14502126,705
+305.07000350,-0.429211174701815,0.438923921776876,-0.00059474,0.15294235,709
+327.57905450,-0.456440048891707,0.467395140159401,0.00081652,0.16677886,703
+347.53421450,-0.465731367023888,0.455838480500622,-0.00515562,0.16683618,708
+365.54710500,-0.586455537091933,0.560828966667819,-0.01195258,0.20733334,710
+382.57928250,-0.526645897540923,0.561133922714042,0.00930302,0.19624462,714
+399.58204250,-0.556176385240772,0.56348115136674,0.00448441,0.20534509,728
+416.12924650,-0.534613678197546,0.619050127193858,0.04197656,0.20819205,718
+432.61616000,-0.730900964986192,0.62193040902453,-0.05312359,0.23239310,717
+449.56829150,-0.746341344399954,0.770715954469332,0.00378380,0.28017288,734
+466.60207100,-0.797100245719739,0.724729765964965,-0.02951045,0.28469764,727
+485.62774450,-0.802758617226724,0.884740051423366,0.03586262,0.31044151,736
+507.62256550,-0.931581799551956,0.93086988003436,-0.00639880,0.32124697,728
+533.18794350,-1.08075539983504,1.05278821242415,-0.01121607,0.39212898,715
+561.69861800,-1.32764986757073,1.32705566336562,0.00369842,0.46191343,698
+591.67283550,-1.57641148422093,1.46336196506807,-0.05897849,0.51147351,708
+625.69876650,-1.51324503468735,1.60676072817189,0.05537269,0.53860309,706
+664.69479600,-1.88353007606356,1.74942023797199,-0.06136472,0.66619730,735
+755.22138150,-2.25582663133579,2.47514188874889,0.08113134,0.86668046,741
+Calibration: no
+
+Processed files:
+
+data_4_formularity.txt
+
+Parameters:
+
+<DefaultParameters><InputFilesTab><Adduct></Adduct><Ionization>proton_detachment</Ionization><Charge>1</Charge><UsePreAlignment>True</UsePreAlignment><Calibration><RefPeakFileName></RefPeakFileName><Regression>none</Regression><RelFactor>1000000</RelFactor><StartTolerance>5</StartTolerance><EndTolerance>0.5</EndTolerance><PeakFilters><MinSToN>0</MinSToN><MinRelAbun>0</MinRelAbun><MaxRelAbun>1</MaxRelAbun></PeakFilters></Calibration></InputFilesTab><CiaTab><UseAlignment>False</UseAlignment><AlignmentTolerance>0.5</AlignmentTolerance><CiaDBFilename>..\Data\CIA_DB\WHOI_CIA_DB_2016_11_21.bin</CiaDBFilename><StaticPpmDynamicStdDevError>True</StaticPpmDynamicStdDevError><StdDevErrorGain>3</StdDevErrorGain><FormulaTolerance>0.5</FormulaTolerance><DBMassLimit>500</DBMassLimit><FormulaScore>MinNSPAndError</FormulaScore><UseKendrick>True</UseKendrick><UseC13>True</UseC13><C13Tolerance>0.5</C13Tolerance><UseFormulaFilters>True</UseFormulaFilters><ElementalCounts>True</ElementalCounts><ValenceRules>True</ValenceRules><ElementalRatios>True</ElementalRatios><HeteroatomCounts>True</HeteroatomCounts><PositiveAtoms>True</PositiveAtoms><IntegerDBE>False</IntegerDBE><SpecialFilter>None</SpecialFilter><UserDefinedFilter>O&gt;0 AND N&lt;4 AND S&lt;3 AND P&lt;2</UserDefinedFilter><UseRelation>True</UseRelation><MaxRelationGaps>5</MaxRelationGaps><UseBackward>False</UseBackward><RelationErrorType>DynamicPPM</RelationErrorType><RelationError>2E-05</RelationError><FormulaBuildingBlocks><CH2>True</CH2><CH4O-1>False</CH4O-1><H2>True</H2><C2H4O>False</C2H4O><CO2>False</CO2><C2H2O>False</C2H2O><O>True</O><HN>False</HN><CH2O>False</CH2O></FormulaBuildingBlocks><Output><GenerateReports>True</GenerateReports><Error>Signed</Error></Output></CiaTab><IpaTab><IpaDBFilename></IpaDBFilename><MassTol>1</MassTol><MajorPeaksMinSToN>1</MajorPeaksMinSToN><MinorPeaksMinSToN>1</MinorPeaksMinSToN><MatchedPeakReport>True</MatchedPeakReport><MinPeakProbabilityToScore>0.001</MinPeakProbabilityToScore><DbFilter></DbFilter></IpaTab></DefaultParameters>
+
