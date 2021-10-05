@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Support {
+﻿namespace Support {
     public static class CElements{
         public const double elec = 0.00054857990945;
         public const double proton = 1.00727646688;

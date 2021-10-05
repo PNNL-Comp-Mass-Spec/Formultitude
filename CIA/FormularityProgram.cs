@@ -1,22 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using System.IO;
-using System.Collections;
-
-using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Data;
 using System.Runtime.InteropServices;
-//using Microsoft.Office.Interop.Excel;
 using System.Xml;
-using System.Globalization;
 
 using TestFSDBSearch;
-using FindChains;
 using Support;
 
 namespace CIA {

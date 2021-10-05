@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using FindChains;
 using Support;
 using System.IO;
-using MathNet.Numerics;
 
 namespace FindChainsTest {
     class FindChainsTestProgram {

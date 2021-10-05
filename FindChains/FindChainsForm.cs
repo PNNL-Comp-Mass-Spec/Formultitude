@@ -1,22 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 using System.IO;
-using System.Collections;
 
-using System.Collections.Concurrent;
-//using System.Threading;
-//using System.Threading.Tasks;
-//using System.Data;
-using System.Runtime.InteropServices;
-//using Microsoft.Office.Interop.Excel;
-using System.Xml;
 using Support;
 
 namespace FindChains {

@@ -1,23 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 using System.IO;
 using System.Xml;
-using System.Runtime.InteropServices;
-using Microsoft.Office.Interop.Excel;
 using System.Threading;
 using System.Globalization;
 
 using Support;
 using TestFSDBSearch;
 using CIA;
-using FindChains;
 
 namespace CiaUi {
     public partial class FormularityUIForm : Form {
