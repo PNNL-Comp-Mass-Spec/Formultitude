@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Support
 {
-    public class CPpmError
+    public static class CPpmError
     {
         private const double PPM = 1000000.0;//parts per million
 

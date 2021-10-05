@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Support
 {
-    public class CIsotope
+    public static class CIsotope
     {
         private static string[] Names = null;
         public static string[] GetNames() { return Names; }

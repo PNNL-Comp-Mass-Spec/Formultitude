@@ -2,7 +2,7 @@
 
 namespace Support
 {
-    public class CArrayMath
+    public static class CArrayMath
     {
         public static double Max(double[] Data)
         {

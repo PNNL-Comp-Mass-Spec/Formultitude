@@ -2,7 +2,7 @@
 
 namespace TestSupport
 {
-    internal class TestSupportProgram
+    internal static class TestSupportProgram
     {
         private static void Main(string[] args)
         {

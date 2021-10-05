@@ -6,7 +6,7 @@ using System.IO;
 
 namespace FindChainsTest
 {
-    internal class FindChainsTestProgram
+    internal static class FindChainsTestProgram
     {
         /*
         class Bin {

@@ -10,7 +10,7 @@ using Support;
 
 namespace CIA
 {
-    internal class FormularityProgram
+    internal static class FormularityProgram
     {
         private static int Main(string[] args)
         {
