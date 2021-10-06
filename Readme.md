@@ -12,8 +12,8 @@ Supporting databases and test files are provided together with software executab
 Related Publication(s): 
 * Formularity: Software for Automated Formula Assignment of Natural and Derived Organic Matter from Ultra-High Resolution Mass Spectra
   * N Tolić, Y Liu, A Liyu, Y Shen, MM Tfaily, EB Kujawinski, K Longnecker, LJ Kuo, EW Robinson, L Paša-Tolić, and NJ Hess. Analytical Chemistry. 2017 Dec 5; 89(23), 12659-12665. [PMID 29120613](https://pubmed.ncbi.nlm.nih.gov/29120613/)
-* Automated analysis of electrospray ionization Fourier transform ion cyclotron resonance mass spectra of natural organic matter. [PMID 16808443](https://pubmed.ncbi.nlm.nih.gov/16808443/)
-  * EB Kujawinski and MD Behn. Analytical Chemistry. 2006 Jul 1; 78(13), 4363-4373.
+* Automated analysis of electrospray ionization Fourier transform ion cyclotron resonance mass spectra of natural organic matter.
+  * EB Kujawinski and MD Behn. Analytical Chemistry. 2006 Jul 1; 78(13), 4363-4373. [PMID 16808443](https://pubmed.ncbi.nlm.nih.gov/16808443/)
 
 ## Downloads and Instructions
 
