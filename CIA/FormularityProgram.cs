@@ -151,12 +151,26 @@ namespace CIA
                 {
                     throw new Exception("Argument 3 XML parameter file " + args[2] + " does not exist");
                 }
-                else if (Path.GetExtension(args[2]) != ".xml")
+
+                if (Path.GetExtension(args[2]) != ".xml")
                 {
                     throw new Exception("Argument 3 XML parameter file " + args[2] + " doesn't have XML files");
                 }
-                oCCia.LoadParameters(args[2]);
-                System.Console.WriteLine("Loaded parameters.");
+                oCCia.LoadParameters(args[2], out var warnings);
+
+                if (warnings.Count == 0)
+                {
+                    Console.WriteLine("Loaded parameters.");
+                }
+                else
+                {
+                    // Parameter file parse errors
+                    Console.WriteLine("Parameter file parse {0}:", warnings.Count == 1 ? "error" : "errors");
+                    foreach (var warning in warnings)
+                    {
+                        Console.WriteLine(warning);
+                    }
+                }
 
                 if (!CiaOrIpa)
                 {
@@ -2758,8 +2772,10 @@ namespace CIA
             return XmlDoc.InnerXml;
         }
 
-        public void LoadParameters(string Filename)
+        public void LoadParameters(string Filename, out List<string> warnings)
         {
+            warnings = new List<string>();
+
             var XmlDoc = new XmlDocument();
             XmlDoc.Load(Filename);
 
@@ -2773,7 +2789,16 @@ namespace CIA
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Ionization");
             if (XmlNode != null)
             {
-                Ipa.Ionization = (TestFSDBSearch.TotalSupport.IonizationMethod)Enum.Parse(typeof(TestFSDBSearch.TotalSupport.IonizationMethod), XmlNode.InnerText);
+                if (Enum.TryParse(XmlNode.InnerText, out TestFSDBSearch.TotalSupport.IonizationMethod ionizationMode))
+                {
+                    Ipa.Ionization = ionizationMode;
+                }
+                else
+                {
+                    warnings.Add(string.Format(
+                        "Unrecognized value for Ionization: '{0}'; will instead use the current setting: '{1}'",
+                        XmlNode.InnerText, Ipa.Ionization));
+                }
             }
 
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Charge");
@@ -2797,7 +2822,16 @@ namespace CIA
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/Regression");
             if (XmlNode != null)
             {
-                oTotalCalibration.ttl_cal_regression = (TestFSDBSearch.TotalCalibration.ttlRegressionType)Enum.Parse(typeof(TestFSDBSearch.TotalCalibration.ttlRegressionType), XmlNode.InnerText);
+                if (Enum.TryParse(XmlNode.InnerText, out TestFSDBSearch.TotalCalibration.ttlRegressionType calibrationRegressionMode))
+                {
+                    oTotalCalibration.ttl_cal_regression = calibrationRegressionMode;
+                }
+                else
+                {
+                    warnings.Add(string.Format(
+                        "Unrecognized value for Calibration->Regression: '{0}'; will instead use the current setting: '{1}'",
+                        XmlNode.InnerText, oTotalCalibration.ttl_cal_regression));
+                }
             }
 
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/RelFactor");
@@ -2891,7 +2925,16 @@ namespace CIA
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaScore");
             if (XmlNode != null)
             {
-                SetFormulaScore((CCia.EFormulaScore)Enum.Parse(typeof(CCia.EFormulaScore), XmlNode.InnerText));
+                if (Enum.TryParse(XmlNode.InnerText, out CCia.EFormulaScore formulaScore))
+                {
+                    SetFormulaScore(formulaScore);
+                }
+                else
+                {
+                    warnings.Add(string.Format(
+                        "Unrecognized value for FormulaScore: '{0}'; will instead use the current setting: '{1}' (allowed values are MinSPAndError, lowestError, MinNSPAndError, MinONSPAndError, or UserDefined)",
+                        XmlNode.InnerText, FormulaScore));
+                }
             }
 
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseKendrick");
@@ -2959,7 +3002,16 @@ namespace CIA
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/SpecialFilter");
             if (XmlNode != null)
             {
-                SetSpecialFilter((CCia.ESpecialFilters)Enum.Parse(typeof(CCia.ESpecialFilters), XmlNode.InnerText));
+                if (Enum.TryParse(XmlNode.InnerText, out CCia.ESpecialFilters specialFilter))
+                {
+                    SetSpecialFilter(specialFilter);
+                }
+                else
+                {
+                    warnings.Add(string.Format(
+                        "Unrecognized value for SpecialFilter: '{0}'; will instead use the current setting: '{1}'",
+                        XmlNode.InnerText, oESpecialFilter));
+                }
             }
 
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UserDefinedFilter");
@@ -2989,7 +3041,16 @@ namespace CIA
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/RelationErrorType");
             if (XmlNode != null)
             {
-                SetRelationErrorType((CCia.RelationErrorType)Enum.Parse(typeof(CCia.RelationErrorType), XmlNode.InnerText));
+                if (Enum.TryParse(XmlNode.InnerText, out CCia.RelationErrorType relationErrorType))
+                {
+                    SetRelationErrorType(relationErrorType);
+                }
+                else
+                {
+                    warnings.Add(string.Format(
+                        "Unrecognized value for RelationErrorType: '{0}'; will instead use the current setting: '{1}'",
+                        XmlNode.InnerText, this.oRelationErrorType));
+                }
             }
 
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/RelationError");
@@ -3066,7 +3127,16 @@ namespace CIA
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/Output/Error");
             if (XmlNode != null)
             {
-                SetErrorType((CCia.EErrorType)Enum.Parse(typeof(CCia.EErrorType), XmlNode.InnerText));
+                if (Enum.TryParse(XmlNode.InnerText, out CCia.EErrorType outputErrorType))
+                {
+                    SetErrorType(outputErrorType);
+                }
+                else
+                {
+                    warnings.Add(string.Format(
+                        "Unrecognized value for Output->Error type: '{0}'; will instead use the current setting: '{1}'",
+                        XmlNode.InnerText, this.oEErrorType));
+                }
             }
 
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/IpaDBFilename");

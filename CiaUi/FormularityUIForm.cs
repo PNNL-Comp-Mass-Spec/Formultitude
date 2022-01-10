@@ -65,11 +65,11 @@ namespace CiaUi
                 //============
                 buttonIpaMergeWithCIA.Visible = false;
 
-                var DefaultParametersFile = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\DefaultParameters.xml";
+                var defaultParametersFile = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\DefaultParameters.xml";
 
-                if (File.Exists(DefaultParametersFile))
+                if (File.Exists(defaultParametersFile))
                 {
-                    oCCia.LoadParameters(DefaultParametersFile);
+                    LoadParameterFile(defaultParametersFile);
                 }
 
                 //===============
@@ -1671,21 +1671,38 @@ namespace CiaUi
             try
             {
                 var Filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
-                var ParameterFilename = Filenames[0];
-                textBoxParameterFile.Text = "Parameter file:" + ParameterFilename;
+                var parameterFilePath = Filenames[0];
+                textBoxParameterFile.Text = "Parameter file:" + parameterFilePath;
 
-                if (Path.GetExtension(ParameterFilename) != ".xml")
+                var fileExtension = Path.GetExtension(parameterFilePath);
+
+                if (!string.Equals(fileExtension, ".xml", StringComparison.OrdinalIgnoreCase))
                 {
-                    MessageBox.Show("Parameter file must have xml extension");
+                    MessageBox.Show("Parameter file must have extension xml, not {0}", fileExtension);
                     return;
                 }
-                oCCia.LoadParameters(ParameterFilename);
+
+                LoadParameterFile(parameterFilePath);
+
                 UpdateCiaAndIpaDialogs();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Parameters weren't loaded correctly. Error - " + ex.Message);
             }
+        }
+
+        private void LoadParameterFile(string parameterFilePath)
+        {
+            oCCia.LoadParameters(parameterFilePath, out var warnings);
+
+            if (warnings.Count == 0)
+                return;
+
+            if (warnings.Count == 1)
+                MessageBox.Show(string.Format("Parameter file parse error: {0}", warnings[0]));
+            else
+                MessageBox.Show(string.Format("Parameter file parse errors: {0}", string.Join("\n", warnings)));
         }
     }
 
