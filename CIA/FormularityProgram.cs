@@ -441,7 +441,9 @@ namespace CIA
                 {
                     ElementName = FormulaName.Substring(CurrentSymbol, 1);
                 }
+
                 CurrentSymbol += ElementName.Length;
+
                 //Element's atoms
                 var Negative = false;
 
@@ -453,6 +455,7 @@ namespace CIA
                         CurrentSymbol++;
                     }
                 }
+
                 var DigitCount = 0;
                 while (FormulaName.Length > CurrentSymbol + DigitCount && Char.IsDigit(FormulaName[CurrentSymbol + DigitCount]))
                 {
@@ -2759,193 +2762,194 @@ namespace CIA
         {
             var XmlDoc = new XmlDocument();
             XmlDoc.Load(Filename);
+
             XmlNode XmlDocRoot = XmlDoc.DocumentElement;
             var XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Adduct");
-
             if (XmlNode != null)
             {
                 Ipa.Adduct = XmlNode.InnerText;
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Ionization");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Ionization");
             if (XmlNode != null)
             {
                 Ipa.Ionization = (TestFSDBSearch.TotalSupport.IonizationMethod)Enum.Parse(typeof(TestFSDBSearch.TotalSupport.IonizationMethod), XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Charge");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Charge");
             if (XmlNode != null)
             {
                 Ipa.CS = int.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/UsePreAlignment");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/UsePreAlignment");
             if (XmlNode != null)
             {
                 SetPreAlignment(bool.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/RefPeakFileName");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/RefPeakFileName");
             if (XmlNode != null)
             {
                 RefPeakFilename = XmlNode.InnerText.Replace("\u0020", " ");
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/Regression");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/Regression");
             if (XmlNode != null)
             {
                 oTotalCalibration.ttl_cal_regression = (TestFSDBSearch.TotalCalibration.ttlRegressionType)Enum.Parse(typeof(TestFSDBSearch.TotalCalibration.ttlRegressionType), XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/RelFactor");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/RelFactor");
             if (XmlNode != null)
             {
                 oTotalCalibration.ttl_cal_rf = double.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/StartTolerance");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/StartTolerance");
             if (XmlNode != null)
             {
                 oTotalCalibration.ttl_cal_start_ppm = double.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/EndTolerance");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/EndTolerance");
             if (XmlNode != null)
             {
                 oTotalCalibration.ttl_cal_target_ppm = double.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/PeakFilters/MinSToN");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/PeakFilters/MinSToN");
             if (XmlNode != null)
             {
                 oTotalCalibration.ttl_cal_min_sn = double.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/PeakFilters/MinRelAbun");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/PeakFilters/MinRelAbun");
             if (XmlNode != null)
             {
                 oTotalCalibration.ttl_cal_min_abu_pct = double.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/PeakFilters/MaxRelAbun");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/InputFilesTab/Calibration/PeakFilters/MaxRelAbun");
             if (XmlNode != null)
             {
                 oTotalCalibration.ttl_cal_max_abu_pct = double.Parse(XmlNode.InnerText);
             }
 
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseAlignment");
-
             if (XmlNode != null)
             {
                 SetAlignment(bool.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/AlignmentTolerance");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/AlignmentTolerance");
             if (XmlNode != null)
             {
                 SetAlignmentPpmTolerance(double.Parse(XmlNode.InnerText));
             }
+
             //XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/AddChains" );
             //if ( XmlNode != null ) {
             //    SetAddChains( bool.Parse( XmlNode.InnerText ) );
             //}
+
             //XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/MinPeaksPerChain" );
             //if ( XmlNode != null ) {
             //    SetMinPeaksPerChain( int.Parse( XmlNode.InnerText ) );
             //}
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/CiaDBFilename");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/CiaDBFilename");
             if (XmlNode != null)
             {
                 SetCiaDBFilename(XmlNode.InnerText.Replace("\u0020", " "));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/StaticPpmDynamicStdDevError");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/StaticPpmDynamicStdDevError");
             if (XmlNode != null)
             {
                 SetStaticDynamicPpmError(bool.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/StdDevErrorGain");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/StdDevErrorGain");
             if (XmlNode != null)
             {
                 SetStdDevErrorGain(double.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaTolerance");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaTolerance");
             if (XmlNode != null)
             {
                 SetFormulaPPMTolerance(double.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/DBMassLimit");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/DBMassLimit");
             if (XmlNode != null)
             {
                 SetMassLimit(double.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaScore");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaScore");
             if (XmlNode != null)
             {
                 SetFormulaScore((CCia.EFormulaScore)Enum.Parse(typeof(CCia.EFormulaScore), XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseKendrick");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseKendrick");
             if (XmlNode != null)
             {
                 SetUseKendrick(bool.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseC13");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseC13");
             if (XmlNode != null)
             {
                 SetUseC13(bool.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/C13Tolerance");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/C13Tolerance");
             if (XmlNode != null)
             {
                 SetC13Tolerance(double.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseFormulaFilters");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseFormulaFilters");
             if (XmlNode != null)
             {
                 SetUseFormulaFilter(bool.Parse(XmlNode.InnerText));
             }
+
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/ElementalCounts");
             var GoldenRules = new bool[6];
-
             if (XmlNode != null)
             {
                 GoldenRules[0] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/ValenceRules");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/ValenceRules");
             if (XmlNode != null)
             {
                 GoldenRules[1] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/ElementalRatios");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/ElementalRatios");
             if (XmlNode != null)
             {
                 GoldenRules[2] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/HeteroatomCounts");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/HeteroatomCounts");
             if (XmlNode != null)
             {
                 GoldenRules[3] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/PositiveAtoms");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/PositiveAtoms");
             if (XmlNode != null)
             {
                 GoldenRules[4] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/IntegerDBE");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/IntegerDBE");
             if (XmlNode != null)
             {
                 GoldenRules[5] = bool.Parse(XmlNode.InnerText);
@@ -2953,156 +2957,155 @@ namespace CIA
             SetGoldenRuleFilterUsage(GoldenRules);
 
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/SpecialFilter");
-
             if (XmlNode != null)
             {
                 SetSpecialFilter((CCia.ESpecialFilters)Enum.Parse(typeof(CCia.ESpecialFilters), XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UserDefinedFilter");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UserDefinedFilter");
             if (XmlNode != null)
             {
                 SetUserDefinedFilter(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseRelation");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseRelation");
             if (XmlNode != null)
             {
                 SetUseRelation(bool.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseBackward");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/UseBackward");
             if (XmlNode != null)
             {
                 SetUseBackward(bool.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/MaxRelationGaps");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/MaxRelationGaps");
             if (XmlNode != null)
             {
                 SetMaxRelationGaps(int.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/RelationErrorType");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/RelationErrorType");
             if (XmlNode != null)
             {
                 SetRelationErrorType((CCia.RelationErrorType)Enum.Parse(typeof(CCia.RelationErrorType), XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/RelationError");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/RelationError");
             if (XmlNode != null)
             {
                 SetRelationErrorAMU(double.Parse(XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH2");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH2");
             if (XmlNode != null)
             {
                 ActiveRelationBuildingBlocks[0] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH4O-1");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH4O-1");
             if (XmlNode != null)
             {
                 ActiveRelationBuildingBlocks[1] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/H2");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/H2");
             if (XmlNode != null)
             {
                 ActiveRelationBuildingBlocks[2] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/C2H4O");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/C2H4O");
             if (XmlNode != null)
             {
                 ActiveRelationBuildingBlocks[3] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/CO2");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/CO2");
             if (XmlNode != null)
             {
                 ActiveRelationBuildingBlocks[4] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/C2H2O");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/C2H2O");
             if (XmlNode != null)
             {
                 ActiveRelationBuildingBlocks[5] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/O");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/O");
             if (XmlNode != null)
             {
                 ActiveRelationBuildingBlocks[6] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/HN");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/HN");
             if (XmlNode != null)
             {
                 ActiveRelationBuildingBlocks[8] = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH2O");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/FormulaBuildingBlocks/CH2O");
             if (XmlNode != null)
             {
                 ActiveRelationBuildingBlocks[8] = bool.Parse(XmlNode.InnerText);
             }
             SetActiveRelationFormulaBuildingBlocks(ActiveRelationBuildingBlocks);
             XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/Output/GenerateReports");
-
             if (XmlNode != null)
             {
                 SetGenerateReports(bool.Parse(XmlNode.InnerText));
             }
+
             //XmlNode = XmlDocRoot.SelectSingleNode( "//DefaultParameters/CiaTab/Output/Delimiters" );
             //if ( XmlNode != null ) {
             //    SetOutputFileDelimiterType( OutputFileDelimiterToEnum( XmlNode.InnerText ) );
             //}
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/Output/Error");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/CiaTab/Output/Error");
             if (XmlNode != null)
             {
                 SetErrorType((CCia.EErrorType)Enum.Parse(typeof(CCia.EErrorType), XmlNode.InnerText));
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/IpaDBFilename");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/IpaDBFilename");
             if (XmlNode != null)
             {
                 IpaDBFilename = XmlNode.InnerText.Replace("\u0020", " ");
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/MassTol");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/MassTol");
             if (XmlNode != null)
             {
                 Ipa.m_ppm_tol = double.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/MajorPeaksMinSToN");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/MajorPeaksMinSToN");
             if (XmlNode != null)
             {
                 Ipa.m_min_major_sn = double.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/MinorPeaksMinSToN");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/MinorPeaksMinSToN");
             if (XmlNode != null)
             {
                 Ipa.m_min_minor_sn = double.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/MatchedPeakReport");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/MatchedPeakReport");
             if (XmlNode != null)
             {
                 Ipa.m_matched_peaks_report = bool.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/MinPeakProbabilityToScore");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/MinPeakProbabilityToScore");
             if (XmlNode != null)
             {
                 Ipa.m_min_p_to_score = double.Parse(XmlNode.InnerText);
             }
-            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/DbFilter");
 
+            XmlNode = XmlDocRoot.SelectSingleNode("//DefaultParameters/IpaTab/DbFilter");
             if (XmlNode != null)
             {
                 Ipa.m_IPDB_ec_filter = XmlNode.InnerText;
