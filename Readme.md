@@ -28,7 +28,7 @@ The test database is available as a separate download.
 ### Analysis Steps
 
 1) Select tab "CIA formula finding"
-* Drag & drop CIA database (file CIA_DB_2016_11_21.bin) to the database box (labeled "Drop DB files")
+* Drag & drop the CIA database (file WHOI_CIA_DB_2016_11_21.bin) to the database box (labeled "Drop DB files")
 * Database load time will take 30 to 60 seconds
 
 2) Select tab "IPA formula finding"
