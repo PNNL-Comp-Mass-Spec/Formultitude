@@ -437,7 +437,8 @@ namespace CIA
 
                 if (!char.IsLetter(FormulaName[CurrentSymbol]))
                 {
-                    throw new Exception("Formula name (" + FormulaName + "is wrong");
+                    throw new Exception(string.Format(
+                        "Formula name '{0}' is wrong; '{1}' is not a letter", FormulaName, FormulaName[CurrentSymbol]));
                 }
 
                 if (FormulaName.Length > CurrentSymbol + 1 && char.IsLetter(FormulaName[CurrentSymbol + 1]))
@@ -486,7 +487,15 @@ namespace CIA
                 {
                     ElementNumber = (short)-ElementNumber;
                 }
-                Formula[(int)Enum.Parse(typeof(EElemIndex), ElementName)] = ElementNumber;
+
+                if (!Enum.TryParse(ElementName, out EElemIndex element))
+                {
+                    throw new Exception(string.Format(
+                        "Formula name '{0}' is wrong; '{1}' is not a recognized element (C, H, O, N, C13, S, P, or Na)", FormulaName, ElementName));
+                }
+
+                Formula[(int)element] = ElementNumber;
+
                 CurrentSymbol += DigitCount;
             }
             return Formula;
