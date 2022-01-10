@@ -1822,7 +1822,7 @@
             this.label63.Name = "label63";
             this.label63.Size = new System.Drawing.Size(96, 13);
             this.label63.TabIndex = 58;
-            this.label63.Text = "Drop ref peal file ->";
+            this.label63.Text = "Drop ref peaks file ->";
             // 
             // label35
             // 
