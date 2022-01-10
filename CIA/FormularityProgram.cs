@@ -435,12 +435,12 @@ namespace CIA
                 //Element
                 string ElementName;
 
-                if (!Char.IsLetter(FormulaName[CurrentSymbol]))
+                if (!char.IsLetter(FormulaName[CurrentSymbol]))
                 {
                     throw new Exception("Formula name (" + FormulaName + "is wrong");
                 }
 
-                if (FormulaName.Length > CurrentSymbol + 1 && Char.IsLetter(FormulaName[CurrentSymbol + 1]))
+                if (FormulaName.Length > CurrentSymbol + 1 && char.IsLetter(FormulaName[CurrentSymbol + 1]))
                 {
                     //Maybe Element name consists of 2 letters
                     ElementName = FormulaName.Substring(CurrentSymbol, 2);
@@ -479,7 +479,7 @@ namespace CIA
 
                 if (DigitCount > 0)
                 {
-                    ElementNumber = Int16.Parse(FormulaName.Substring(CurrentSymbol, DigitCount));
+                    ElementNumber = short.Parse(FormulaName.Substring(CurrentSymbol, DigitCount));
                 }
 
                 if (Negative)
@@ -3845,7 +3845,7 @@ namespace CIA
 
                         for (var Element = 0; Element < ElementCount; Element++)
                         {
-                            Formula[Element] = Int16.Parse(Words[Element + 2]);
+                            Formula[Element] = short.Parse(Words[Element + 2]);
                         }
                         ListFormulas.Add(Formula);
                     }
