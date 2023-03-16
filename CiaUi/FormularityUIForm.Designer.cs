@@ -34,7 +34,7 @@
             this.numericUpDownRelationErrorValue = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownDBMassLimit = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
-            this.numericUpDownMaxRelationGaps = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownMaxRelationshipGaps = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.checkBoxUseRelation = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -46,26 +46,19 @@
             this.labelPositiveAdduct = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.checkBoxGenerateReports = new System.Windows.Forms.CheckBox();
             this.checkBoxCIAUseDefault = new System.Windows.Forms.CheckBox();
             this.buttonSwitchToAdvanced = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label64 = new System.Windows.Forms.Label();
-            this.checkBoxStaticDynamicFormulaTolerance = new System.Windows.Forms.CheckBox();
-            this.labelFormulaScoreUserDefined = new System.Windows.Forms.Label();
-            this.numericUpDownFormulaToleranceStdDevGain = new System.Windows.Forms.NumericUpDown();
-            this.textBoxFormulaScoreUserDefined = new System.Windows.Forms.TextBox();
-            this.comboBoxRelationErrorType = new System.Windows.Forms.ComboBox();
+            this.comboBoxRelationshipErrorType = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.checkBoxAlignment = new System.Windows.Forms.CheckBox();
             this.numericUpDownAlignmentTolerance = new System.Windows.Forms.NumericUpDown();
             this.label18 = new System.Windows.Forms.Label();
-            this.textBoxCiaDBFilename = new System.Windows.Forms.TextBox();
+            this.textBoxDropDB = new System.Windows.Forms.TextBox();
             this.textBoxUserDefinedFilter = new System.Windows.Forms.TextBox();
             this.label29 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.label69 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.numericUpDownIpaMinPeakProbabilityToScore = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownIpaMinMajorPeaksToAbsToReport = new System.Windows.Forms.NumericUpDown();
@@ -78,10 +71,10 @@
             this.checkBoxIpaMatchedPeakReport = new System.Windows.Forms.CheckBox();
             this.label54 = new System.Windows.Forms.Label();
             this.label55 = new System.Windows.Forms.Label();
-            this.buttonIpaMergeWithCIA = new System.Windows.Forms.Button();
+            this.cmdIpaMergeWithCIA = new System.Windows.Forms.Button();
             this.label56 = new System.Windows.Forms.Label();
             this.label57 = new System.Windows.Forms.Label();
-            this.textBoxIpaDBFilename = new System.Windows.Forms.TextBox();
+            this.textBoxIpaDropDBFile = new System.Windows.Forms.TextBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.comboBoxPlotType = new System.Windows.Forms.ComboBox();
             this.label49 = new System.Windows.Forms.Label();
@@ -111,7 +104,7 @@
             this.label11 = new System.Windows.Forms.Label();
             this.tableLayoutPanelDBPeaks = new System.Windows.Forms.TableLayoutPanel();
             this.label10 = new System.Windows.Forms.Label();
-            this.numericUpDownDBMass = new System.Windows.Forms.NumericUpDown();
+            this.numericDBUpDownMass = new System.Windows.Forms.NumericUpDown();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.label17 = new System.Windows.Forms.Label();
@@ -135,10 +128,9 @@
             this.label16 = new System.Windows.Forms.Label();
             this.numericUpDownDBMassRange = new System.Windows.Forms.NumericUpDown();
             this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.buttonFilterCheckDB = new System.Windows.Forms.Button();
             this.textBoxFilterResult = new System.Windows.Forms.TextBox();
             this.label46 = new System.Windows.Forms.Label();
-            this.buttonFilterCheckFormula = new System.Windows.Forms.Button();
+            this.buttonFilterCheck = new System.Windows.Forms.Button();
             this.textBoxFilter = new System.Windows.Forms.TextBox();
             this.label45 = new System.Windows.Forms.Label();
             this.textBoxNeutralMass = new System.Windows.Forms.TextBox();
@@ -159,13 +151,10 @@
             this.label19 = new System.Windows.Forms.Label();
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.richTextBoxAbout = new System.Windows.Forms.RichTextBox();
-            this.tabPage8 = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanelChains = new System.Windows.Forms.TableLayoutPanel();
-            this.textBoxChainDropSpectraFile = new System.Windows.Forms.TextBox();
             this.buttonLoadCiaParameters = new System.Windows.Forms.Button();
+            this.buttonLoadParameters = new System.Windows.Forms.Button();
             this.buttonSaveParameters = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label63 = new System.Windows.Forms.Label();
             this.label35 = new System.Windows.Forms.Label();
             this.numericUpDownCalRelFactor = new System.Windows.Forms.NumericUpDown();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
@@ -181,8 +170,7 @@
             this.label25 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.numericUpDownCalStartTolerance = new System.Windows.Forms.NumericUpDown();
-            this.textBoxRefPeakFilename = new System.Windows.Forms.TextBox();
-            this.checkBoxPreAlignment = new System.Windows.Forms.CheckBox();
+            this.textBoxCalFile = new System.Windows.Forms.TextBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.textBoxResult = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -193,15 +181,13 @@
             this.label51 = new System.Windows.Forms.Label();
             this.comboBoxIonization = new System.Windows.Forms.ComboBox();
             this.label50 = new System.Windows.Forms.Label();
-            this.textBoxParameterFile = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFormulaTolerance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRelationErrorValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDBMassLimit)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationGaps)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationshipGaps)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFormulaToleranceStdDevGain)).BeginInit();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAlignmentTolerance)).BeginInit();
             this.tabPage6.SuspendLayout();
@@ -213,7 +199,7 @@
             this.tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartError)).BeginInit();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDBMass)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDBUpDownMass)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -228,7 +214,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHAtoms)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCAtoms)).BeginInit();
             this.tabPage7.SuspendLayout();
-            this.tabPage8.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCalRelFactor)).BeginInit();
             this.groupBox8.SuspendLayout();
@@ -261,7 +246,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 124);
+            this.label2.Location = new System.Drawing.Point(12, 103);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(117, 13);
             this.label2.TabIndex = 5;
@@ -270,7 +255,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(283, 87);
+            this.label3.Location = new System.Drawing.Point(283, 90);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 13);
             this.label3.TabIndex = 7;
@@ -279,7 +264,7 @@
             // numericUpDownFormulaTolerance
             // 
             this.numericUpDownFormulaTolerance.DecimalPlaces = 6;
-            this.numericUpDownFormulaTolerance.Location = new System.Drawing.Point(140, 122);
+            this.numericUpDownFormulaTolerance.Location = new System.Drawing.Point(140, 101);
             this.numericUpDownFormulaTolerance.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -293,7 +278,7 @@
             0,
             0,
             0});
-            this.numericUpDownFormulaTolerance.ValueChanged += new System.EventHandler(this.numericUpDownnumericUpDownFormulaTolerance_ValueChanged);
+            this.numericUpDownFormulaTolerance.ValueChanged += new System.EventHandler(this.numericUpDownFormulaError_ValueChanged);
             // 
             // numericUpDownRelationErrorValue
             // 
@@ -306,7 +291,7 @@
             // numericUpDownDBMassLimit
             // 
             this.numericUpDownDBMassLimit.DecimalPlaces = 3;
-            this.numericUpDownDBMassLimit.Location = new System.Drawing.Point(86, 146);
+            this.numericUpDownDBMassLimit.Location = new System.Drawing.Point(87, 126);
             this.numericUpDownDBMassLimit.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -319,23 +304,23 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(11, 148);
+            this.label4.Location = new System.Drawing.Point(12, 128);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(69, 13);
             this.label4.TabIndex = 10;
             this.label4.Text = "DB mass limit";
             // 
-            // numericUpDownMaxRelationGaps
+            // numericUpDownMaxRelationshipGaps
             // 
-            this.numericUpDownMaxRelationGaps.Location = new System.Drawing.Point(411, 63);
-            this.numericUpDownMaxRelationGaps.Name = "numericUpDownMaxRelationGaps";
-            this.numericUpDownMaxRelationGaps.Size = new System.Drawing.Size(120, 20);
-            this.numericUpDownMaxRelationGaps.TabIndex = 13;
+            this.numericUpDownMaxRelationshipGaps.Location = new System.Drawing.Point(411, 63);
+            this.numericUpDownMaxRelationshipGaps.Name = "numericUpDownMaxRelationshipGaps";
+            this.numericUpDownMaxRelationshipGaps.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDownMaxRelationshipGaps.TabIndex = 13;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(283, 66);
+            this.label5.Location = new System.Drawing.Point(283, 70);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(109, 13);
             this.label5.TabIndex = 12;
@@ -344,7 +329,7 @@
             // checkBoxUseRelation
             // 
             this.checkBoxUseRelation.AutoSize = true;
-            this.checkBoxUseRelation.Location = new System.Drawing.Point(282, 48);
+            this.checkBoxUseRelation.Location = new System.Drawing.Point(282, 50);
             this.checkBoxUseRelation.Name = "checkBoxUseRelation";
             this.checkBoxUseRelation.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBoxUseRelation.Size = new System.Drawing.Size(101, 17);
@@ -356,7 +341,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(13, 171);
+            this.label6.Location = new System.Drawing.Point(12, 151);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(73, 13);
             this.label6.TabIndex = 29;
@@ -366,16 +351,15 @@
             // 
             this.comboBoxFormulaScore.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxFormulaScore.FormattingEnabled = true;
-            this.comboBoxFormulaScore.Location = new System.Drawing.Point(88, 168);
+            this.comboBoxFormulaScore.Location = new System.Drawing.Point(87, 148);
             this.comboBoxFormulaScore.Name = "comboBoxFormulaScore";
             this.comboBoxFormulaScore.Size = new System.Drawing.Size(174, 21);
             this.comboBoxFormulaScore.TabIndex = 30;
-            this.comboBoxFormulaScore.SelectedIndexChanged += new System.EventHandler(this.comboBoxFormulaScore_SelectedIndexChanged);
             // 
             // checkBoxUseFormulaFilters
             // 
             this.checkBoxUseFormulaFilters.AutoSize = true;
-            this.checkBoxUseFormulaFilters.Location = new System.Drawing.Point(16, 273);
+            this.checkBoxUseFormulaFilters.Location = new System.Drawing.Point(12, 213);
             this.checkBoxUseFormulaFilters.Name = "checkBoxUseFormulaFilters";
             this.checkBoxUseFormulaFilters.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBoxUseFormulaFilters.Size = new System.Drawing.Size(109, 17);
@@ -389,7 +373,7 @@
             this.checkedListBoxRelations.FormattingEnabled = true;
             this.checkedListBoxRelations.Location = new System.Drawing.Point(287, 125);
             this.checkedListBoxRelations.Name = "checkedListBoxRelations";
-            this.checkedListBoxRelations.Size = new System.Drawing.Size(244, 154);
+            this.checkedListBoxRelations.Size = new System.Drawing.Size(244, 109);
             this.checkedListBoxRelations.TabIndex = 32;
             // 
             // label7
@@ -428,7 +412,6 @@
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage7);
-            this.tabControl1.Controls.Add(this.tabPage8);
             this.tabControl1.Location = new System.Drawing.Point(31, 192);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -438,7 +421,6 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.checkBoxGenerateReports);
             this.tabPage1.Controls.Add(this.checkBoxCIAUseDefault);
             this.tabPage1.Controls.Add(this.buttonSwitchToAdvanced);
             this.tabPage1.Controls.Add(this.groupBox5);
@@ -449,17 +431,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "CIA formula finding";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxGenerateReports
-            // 
-            this.checkBoxGenerateReports.AutoSize = true;
-            this.checkBoxGenerateReports.Location = new System.Drawing.Point(398, 386);
-            this.checkBoxGenerateReports.Name = "checkBoxGenerateReports";
-            this.checkBoxGenerateReports.Size = new System.Drawing.Size(105, 17);
-            this.checkBoxGenerateReports.TabIndex = 59;
-            this.checkBoxGenerateReports.TabStop = false;
-            this.checkBoxGenerateReports.Text = "Generate reports";
-            this.checkBoxGenerateReports.UseVisualStyleBackColor = true;
             // 
             // checkBoxCIAUseDefault
             // 
@@ -488,14 +459,9 @@
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.label64);
-            this.groupBox5.Controls.Add(this.checkBoxStaticDynamicFormulaTolerance);
-            this.groupBox5.Controls.Add(this.labelFormulaScoreUserDefined);
-            this.groupBox5.Controls.Add(this.numericUpDownFormulaToleranceStdDevGain);
-            this.groupBox5.Controls.Add(this.textBoxFormulaScoreUserDefined);
-            this.groupBox5.Controls.Add(this.comboBoxRelationErrorType);
+            this.groupBox5.Controls.Add(this.comboBoxRelationshipErrorType);
             this.groupBox5.Controls.Add(this.groupBox4);
-            this.groupBox5.Controls.Add(this.textBoxCiaDBFilename);
+            this.groupBox5.Controls.Add(this.textBoxDropDB);
             this.groupBox5.Controls.Add(this.label2);
             this.groupBox5.Controls.Add(this.numericUpDownFormulaTolerance);
             this.groupBox5.Controls.Add(this.textBoxUserDefinedFilter);
@@ -512,7 +478,7 @@
             this.groupBox5.Controls.Add(this.label6);
             this.groupBox5.Controls.Add(this.numericUpDownDBMassLimit);
             this.groupBox5.Controls.Add(this.label5);
-            this.groupBox5.Controls.Add(this.numericUpDownMaxRelationGaps);
+            this.groupBox5.Controls.Add(this.numericUpDownMaxRelationshipGaps);
             this.groupBox5.Controls.Add(this.checkBoxUseRelation);
             this.groupBox5.Location = new System.Drawing.Point(20, 14);
             this.groupBox5.Name = "groupBox5";
@@ -521,71 +487,14 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Formula assignment";
             // 
-            // label64
+            // comboBoxRelationshipErrorType
             // 
-            this.label64.AutoSize = true;
-            this.label64.Location = new System.Drawing.Point(18, 57);
-            this.label64.Name = "label64";
-            this.label64.Size = new System.Drawing.Size(76, 13);
-            this.label64.TabIndex = 62;
-            this.label64.Text = "Drop DB file ->";
-            // 
-            // checkBoxStaticDynamicFormulaTolerance
-            // 
-            this.checkBoxStaticDynamicFormulaTolerance.AutoSize = true;
-            this.checkBoxStaticDynamicFormulaTolerance.Location = new System.Drawing.Point(16, 104);
-            this.checkBoxStaticDynamicFormulaTolerance.Name = "checkBoxStaticDynamicFormulaTolerance";
-            this.checkBoxStaticDynamicFormulaTolerance.Size = new System.Drawing.Size(193, 17);
-            this.checkBoxStaticDynamicFormulaTolerance.TabIndex = 59;
-            this.checkBoxStaticDynamicFormulaTolerance.TabStop = false;
-            this.checkBoxStaticDynamicFormulaTolerance.Text = "Dynamic formula tolerance, StdDev";
-            this.checkBoxStaticDynamicFormulaTolerance.UseVisualStyleBackColor = true;
-            this.checkBoxStaticDynamicFormulaTolerance.CheckedChanged += new System.EventHandler(this.checkBoxStaticDynamicFormulaTolerance_CheckedChanged);
-            // 
-            // labelFormulaScoreUserDefined
-            // 
-            this.labelFormulaScoreUserDefined.AutoSize = true;
-            this.labelFormulaScoreUserDefined.Location = new System.Drawing.Point(14, 213);
-            this.labelFormulaScoreUserDefined.Name = "labelFormulaScoreUserDefined";
-            this.labelFormulaScoreUserDefined.Size = new System.Drawing.Size(67, 13);
-            this.labelFormulaScoreUserDefined.TabIndex = 54;
-            this.labelFormulaScoreUserDefined.Text = "User-defined";
-            // 
-            // numericUpDownFormulaToleranceStdDevGain
-            // 
-            this.numericUpDownFormulaToleranceStdDevGain.DecimalPlaces = 6;
-            this.numericUpDownFormulaToleranceStdDevGain.Location = new System.Drawing.Point(206, 102);
-            this.numericUpDownFormulaToleranceStdDevGain.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.numericUpDownFormulaToleranceStdDevGain.Name = "numericUpDownFormulaToleranceStdDevGain";
-            this.numericUpDownFormulaToleranceStdDevGain.Size = new System.Drawing.Size(53, 20);
-            this.numericUpDownFormulaToleranceStdDevGain.TabIndex = 61;
-            this.numericUpDownFormulaToleranceStdDevGain.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // textBoxFormulaScoreUserDefined
-            // 
-            this.textBoxFormulaScoreUserDefined.Location = new System.Drawing.Point(88, 193);
-            this.textBoxFormulaScoreUserDefined.Multiline = true;
-            this.textBoxFormulaScoreUserDefined.Name = "textBoxFormulaScoreUserDefined";
-            this.textBoxFormulaScoreUserDefined.Size = new System.Drawing.Size(172, 74);
-            this.textBoxFormulaScoreUserDefined.TabIndex = 53;
-            // 
-            // comboBoxRelationErrorType
-            // 
-            this.comboBoxRelationErrorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxRelationErrorType.FormattingEnabled = true;
-            this.comboBoxRelationErrorType.Location = new System.Drawing.Point(314, 84);
-            this.comboBoxRelationErrorType.Name = "comboBoxRelationErrorType";
-            this.comboBoxRelationErrorType.Size = new System.Drawing.Size(91, 21);
-            this.comboBoxRelationErrorType.TabIndex = 52;
-            this.comboBoxRelationErrorType.SelectedIndexChanged += new System.EventHandler(this.comboBoxRelationErrorType_SelectedIndexChanged);
+            this.comboBoxRelationshipErrorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxRelationshipErrorType.FormattingEnabled = true;
+            this.comboBoxRelationshipErrorType.Location = new System.Drawing.Point(332, 84);
+            this.comboBoxRelationshipErrorType.Name = "comboBoxRelationshipErrorType";
+            this.comboBoxRelationshipErrorType.Size = new System.Drawing.Size(73, 21);
+            this.comboBoxRelationshipErrorType.TabIndex = 52;
             // 
             // groupBox4
             // 
@@ -593,7 +502,7 @@
             this.groupBox4.Controls.Add(this.numericUpDownAlignmentTolerance);
             this.groupBox4.Controls.Add(this.label18);
             this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox4.Location = new System.Drawing.Point(16, 15);
+            this.groupBox4.Location = new System.Drawing.Point(15, 15);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(339, 34);
             this.groupBox4.TabIndex = 47;
@@ -629,17 +538,19 @@
             this.label18.TabIndex = 41;
             this.label18.Text = "Alignment tolerance, ppm";
             // 
-            // textBoxCiaDBFilename
+            // textBoxDropDB
             // 
-            this.textBoxCiaDBFilename.AllowDrop = true;
-            this.textBoxCiaDBFilename.Location = new System.Drawing.Point(17, 78);
-            this.textBoxCiaDBFilename.Name = "textBoxCiaDBFilename";
-            this.textBoxCiaDBFilename.ReadOnly = true;
-            this.textBoxCiaDBFilename.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxCiaDBFilename.Size = new System.Drawing.Size(245, 20);
-            this.textBoxCiaDBFilename.TabIndex = 39;
-            this.textBoxCiaDBFilename.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxCiaDBFilename_DragDrop);
-            this.textBoxCiaDBFilename.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxCiaDBFilename_DragEnter);
+            this.textBoxDropDB.AllowDrop = true;
+            this.textBoxDropDB.Location = new System.Drawing.Point(15, 57);
+            this.textBoxDropDB.Multiline = true;
+            this.textBoxDropDB.Name = "textBoxDropDB";
+            this.textBoxDropDB.ReadOnly = true;
+            this.textBoxDropDB.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxDropDB.Size = new System.Drawing.Size(245, 40);
+            this.textBoxDropDB.TabIndex = 39;
+            this.textBoxDropDB.Text = "Drop DB files";
+            this.textBoxDropDB.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxDropDB_DragDrop);
+            this.textBoxDropDB.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxDropDB_DragEnter);
             // 
             // textBoxUserDefinedFilter
             // 
@@ -668,7 +579,6 @@
             // 
             // tabPage6
             // 
-            this.tabPage6.Controls.Add(this.label69);
             this.tabPage6.Controls.Add(this.textBox1);
             this.tabPage6.Controls.Add(this.numericUpDownIpaMinPeakProbabilityToScore);
             this.tabPage6.Controls.Add(this.numericUpDownIpaMinMajorPeaksToAbsToReport);
@@ -681,10 +591,10 @@
             this.tabPage6.Controls.Add(this.checkBoxIpaMatchedPeakReport);
             this.tabPage6.Controls.Add(this.label54);
             this.tabPage6.Controls.Add(this.label55);
-            this.tabPage6.Controls.Add(this.buttonIpaMergeWithCIA);
+            this.tabPage6.Controls.Add(this.cmdIpaMergeWithCIA);
             this.tabPage6.Controls.Add(this.label56);
             this.tabPage6.Controls.Add(this.label57);
-            this.tabPage6.Controls.Add(this.textBoxIpaDBFilename);
+            this.tabPage6.Controls.Add(this.textBoxIpaDropDBFile);
             this.tabPage6.Location = new System.Drawing.Point(4, 22);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
@@ -692,15 +602,6 @@
             this.tabPage6.TabIndex = 5;
             this.tabPage6.Text = "IPA formula finding";
             this.tabPage6.UseVisualStyleBackColor = true;
-            // 
-            // label69
-            // 
-            this.label69.AutoSize = true;
-            this.label69.Location = new System.Drawing.Point(428, 101);
-            this.label69.Name = "label69";
-            this.label69.Size = new System.Drawing.Size(76, 13);
-            this.label69.TabIndex = 69;
-            this.label69.Text = "Drop DB file ->";
             // 
             // textBox1
             // 
@@ -863,14 +764,14 @@
             this.label55.TabIndex = 53;
             this.label55.Text = "Min p/a to report";
             // 
-            // buttonIpaMergeWithCIA
+            // cmdIpaMergeWithCIA
             // 
-            this.buttonIpaMergeWithCIA.Location = new System.Drawing.Point(286, 389);
-            this.buttonIpaMergeWithCIA.Name = "buttonIpaMergeWithCIA";
-            this.buttonIpaMergeWithCIA.Size = new System.Drawing.Size(99, 30);
-            this.buttonIpaMergeWithCIA.TabIndex = 52;
-            this.buttonIpaMergeWithCIA.Text = "merge with CIA";
-            this.buttonIpaMergeWithCIA.UseVisualStyleBackColor = true;
+            this.cmdIpaMergeWithCIA.Location = new System.Drawing.Point(286, 389);
+            this.cmdIpaMergeWithCIA.Name = "cmdIpaMergeWithCIA";
+            this.cmdIpaMergeWithCIA.Size = new System.Drawing.Size(99, 30);
+            this.cmdIpaMergeWithCIA.TabIndex = 52;
+            this.cmdIpaMergeWithCIA.Text = "merge with CIA";
+            this.cmdIpaMergeWithCIA.UseVisualStyleBackColor = true;
             // 
             // label56
             // 
@@ -890,17 +791,18 @@
             this.label57.TabIndex = 48;
             this.label57.Text = "Major peaks min s/n";
             // 
-            // textBoxIpaDBFilename
+            // textBoxIpaDropDBFile
             // 
-            this.textBoxIpaDBFilename.AllowDrop = true;
-            this.textBoxIpaDBFilename.Location = new System.Drawing.Point(357, 123);
-            this.textBoxIpaDBFilename.Multiline = true;
-            this.textBoxIpaDBFilename.Name = "textBoxIpaDBFilename";
-            this.textBoxIpaDBFilename.Size = new System.Drawing.Size(219, 88);
-            this.textBoxIpaDBFilename.TabIndex = 46;
-            this.textBoxIpaDBFilename.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBoxIpaDBFilename.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxIpaDBFilename_DragDrop);
-            this.textBoxIpaDBFilename.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxIpaDBFilename_DragEnter);
+            this.textBoxIpaDropDBFile.AllowDrop = true;
+            this.textBoxIpaDropDBFile.Location = new System.Drawing.Point(357, 123);
+            this.textBoxIpaDropDBFile.Multiline = true;
+            this.textBoxIpaDropDBFile.Name = "textBoxIpaDropDBFile";
+            this.textBoxIpaDropDBFile.Size = new System.Drawing.Size(219, 88);
+            this.textBoxIpaDropDBFile.TabIndex = 46;
+            this.textBoxIpaDropDBFile.Text = "Drop DB file";
+            this.textBoxIpaDropDBFile.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBoxIpaDropDBFile.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxIpaDropDBFile_DragDrop);
+            this.textBoxIpaDropDBFile.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxIpaDropDBFile_DragEnter);
             // 
             // tabPage4
             // 
@@ -1016,7 +918,7 @@
             this.tabPage2.Controls.Add(this.label11);
             this.tabPage2.Controls.Add(this.tableLayoutPanelDBPeaks);
             this.tabPage2.Controls.Add(this.label10);
-            this.tabPage2.Controls.Add(this.numericUpDownDBMass);
+            this.tabPage2.Controls.Add(this.numericDBUpDownMass);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -1204,29 +1106,29 @@
             this.label10.TabIndex = 9;
             this.label10.Text = "Mass";
             // 
-            // numericUpDownDBMass
+            // numericDBUpDownMass
             // 
-            this.numericUpDownDBMass.DecimalPlaces = 6;
-            this.numericUpDownDBMass.Location = new System.Drawing.Point(63, 59);
-            this.numericUpDownDBMass.Maximum = new decimal(new int[] {
+            this.numericDBUpDownMass.DecimalPlaces = 6;
+            this.numericDBUpDownMass.Location = new System.Drawing.Point(63, 59);
+            this.numericDBUpDownMass.Maximum = new decimal(new int[] {
             10000000,
             0,
             0,
             0});
-            this.numericUpDownDBMass.Minimum = new decimal(new int[] {
+            this.numericDBUpDownMass.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             -2147483648});
-            this.numericUpDownDBMass.Name = "numericUpDownDBMass";
-            this.numericUpDownDBMass.Size = new System.Drawing.Size(120, 20);
-            this.numericUpDownDBMass.TabIndex = 10;
-            this.numericUpDownDBMass.Value = new decimal(new int[] {
+            this.numericDBUpDownMass.Name = "numericDBUpDownMass";
+            this.numericDBUpDownMass.Size = new System.Drawing.Size(120, 20);
+            this.numericDBUpDownMass.TabIndex = 10;
+            this.numericDBUpDownMass.Value = new decimal(new int[] {
             1,
             0,
             0,
             -2147483648});
-            this.numericUpDownDBMass.ValueChanged += new System.EventHandler(this.numericUpDownDBMass_ValueChanged);
+            this.numericDBUpDownMass.ValueChanged += new System.EventHandler(this.numericUpDownMass_ValueChanged);
             // 
             // tabPage3
             // 
@@ -1489,10 +1391,9 @@
             // 
             // tabPage5
             // 
-            this.tabPage5.Controls.Add(this.buttonFilterCheckDB);
             this.tabPage5.Controls.Add(this.textBoxFilterResult);
             this.tabPage5.Controls.Add(this.label46);
-            this.tabPage5.Controls.Add(this.buttonFilterCheckFormula);
+            this.tabPage5.Controls.Add(this.buttonFilterCheck);
             this.tabPage5.Controls.Add(this.textBoxFilter);
             this.tabPage5.Controls.Add(this.label45);
             this.tabPage5.Controls.Add(this.textBoxNeutralMass);
@@ -1519,58 +1420,48 @@
             this.tabPage5.Text = "CIA filter inspector";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
-            // buttonFilterCheckDB
-            // 
-            this.buttonFilterCheckDB.Location = new System.Drawing.Point(120, 308);
-            this.buttonFilterCheckDB.Name = "buttonFilterCheckDB";
-            this.buttonFilterCheckDB.Size = new System.Drawing.Size(384, 59);
-            this.buttonFilterCheckDB.TabIndex = 21;
-            this.buttonFilterCheckDB.Text = "Check DB\r\n(DBFilteredCompositions.csv file in Application folder)\r\n\r\n";
-            this.buttonFilterCheckDB.UseVisualStyleBackColor = true;
-            this.buttonFilterCheckDB.Click += new System.EventHandler(this.buttonFilterCheckDB_Click);
-            // 
             // textBoxFilterResult
             // 
-            this.textBoxFilterResult.Location = new System.Drawing.Point(104, 225);
+            this.textBoxFilterResult.Location = new System.Drawing.Point(148, 388);
             this.textBoxFilterResult.Multiline = true;
             this.textBoxFilterResult.Name = "textBoxFilterResult";
             this.textBoxFilterResult.ReadOnly = true;
             this.textBoxFilterResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxFilterResult.Size = new System.Drawing.Size(462, 33);
+            this.textBoxFilterResult.Size = new System.Drawing.Size(401, 33);
             this.textBoxFilterResult.TabIndex = 20;
             // 
             // label46
             // 
             this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(36, 228);
+            this.label46.Location = new System.Drawing.Point(65, 391);
             this.label46.Name = "label46";
             this.label46.Size = new System.Drawing.Size(37, 13);
             this.label46.TabIndex = 19;
             this.label46.Text = "Result";
             // 
-            // buttonFilterCheckFormula
+            // buttonFilterCheck
             // 
-            this.buttonFilterCheckFormula.Location = new System.Drawing.Point(471, 112);
-            this.buttonFilterCheckFormula.Name = "buttonFilterCheckFormula";
-            this.buttonFilterCheckFormula.Size = new System.Drawing.Size(95, 94);
-            this.buttonFilterCheckFormula.TabIndex = 18;
-            this.buttonFilterCheckFormula.Text = "Check formula";
-            this.buttonFilterCheckFormula.UseVisualStyleBackColor = true;
-            this.buttonFilterCheckFormula.Click += new System.EventHandler(this.buttonFilterCheckFormula_Click);
+            this.buttonFilterCheck.Location = new System.Drawing.Point(332, 122);
+            this.buttonFilterCheck.Name = "buttonFilterCheck";
+            this.buttonFilterCheck.Size = new System.Drawing.Size(191, 51);
+            this.buttonFilterCheck.TabIndex = 18;
+            this.buttonFilterCheck.Text = "Check";
+            this.buttonFilterCheck.UseVisualStyleBackColor = true;
+            this.buttonFilterCheck.Click += new System.EventHandler(this.buttonFilterCheck_Click);
             // 
             // textBoxFilter
             // 
-            this.textBoxFilter.Location = new System.Drawing.Point(103, 28);
+            this.textBoxFilter.Location = new System.Drawing.Point(148, 263);
             this.textBoxFilter.Multiline = true;
             this.textBoxFilter.Name = "textBoxFilter";
             this.textBoxFilter.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxFilter.Size = new System.Drawing.Size(457, 43);
+            this.textBoxFilter.Size = new System.Drawing.Size(401, 119);
             this.textBoxFilter.TabIndex = 17;
             // 
             // label45
             // 
             this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(36, 41);
+            this.label45.Location = new System.Drawing.Point(65, 322);
             this.label45.Name = "label45";
             this.label45.Size = new System.Drawing.Size(29, 13);
             this.label45.TabIndex = 16;
@@ -1578,7 +1469,7 @@
             // 
             // textBoxNeutralMass
             // 
-            this.textBoxNeutralMass.Location = new System.Drawing.Point(337, 190);
+            this.textBoxNeutralMass.Location = new System.Drawing.Point(148, 232);
             this.textBoxNeutralMass.Name = "textBoxNeutralMass";
             this.textBoxNeutralMass.ReadOnly = true;
             this.textBoxNeutralMass.Size = new System.Drawing.Size(124, 20);
@@ -1587,7 +1478,7 @@
             // label44
             // 
             this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(254, 193);
+            this.label44.Location = new System.Drawing.Point(65, 235);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(68, 13);
             this.label44.TabIndex = 14;
@@ -1595,7 +1486,7 @@
             // 
             // numericUpDownNaAtoms
             // 
-            this.numericUpDownNaAtoms.Location = new System.Drawing.Point(337, 163);
+            this.numericUpDownNaAtoms.Location = new System.Drawing.Point(148, 205);
             this.numericUpDownNaAtoms.Name = "numericUpDownNaAtoms";
             this.numericUpDownNaAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownNaAtoms.TabIndex = 13;
@@ -1603,7 +1494,7 @@
             // label43
             // 
             this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(254, 165);
+            this.label43.Location = new System.Drawing.Point(65, 207);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(52, 13);
             this.label43.TabIndex = 12;
@@ -1611,7 +1502,7 @@
             // 
             // numericUpDownPAtoms
             // 
-            this.numericUpDownPAtoms.Location = new System.Drawing.Point(337, 137);
+            this.numericUpDownPAtoms.Location = new System.Drawing.Point(148, 179);
             this.numericUpDownPAtoms.Name = "numericUpDownPAtoms";
             this.numericUpDownPAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownPAtoms.TabIndex = 11;
@@ -1619,7 +1510,7 @@
             // label42
             // 
             this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(254, 139);
+            this.label42.Location = new System.Drawing.Point(65, 181);
             this.label42.Name = "label42";
             this.label42.Size = new System.Drawing.Size(45, 13);
             this.label42.TabIndex = 10;
@@ -1627,7 +1518,7 @@
             // 
             // numericUpDownSAtoms
             // 
-            this.numericUpDownSAtoms.Location = new System.Drawing.Point(337, 111);
+            this.numericUpDownSAtoms.Location = new System.Drawing.Point(148, 153);
             this.numericUpDownSAtoms.Name = "numericUpDownSAtoms";
             this.numericUpDownSAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownSAtoms.TabIndex = 9;
@@ -1635,7 +1526,7 @@
             // label41
             // 
             this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(254, 113);
+            this.label41.Location = new System.Drawing.Point(65, 155);
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(45, 13);
             this.label41.TabIndex = 8;
@@ -1643,7 +1534,7 @@
             // 
             // numericUpDownNAtoms
             // 
-            this.numericUpDownNAtoms.Location = new System.Drawing.Point(103, 189);
+            this.numericUpDownNAtoms.Location = new System.Drawing.Point(148, 127);
             this.numericUpDownNAtoms.Name = "numericUpDownNAtoms";
             this.numericUpDownNAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownNAtoms.TabIndex = 7;
@@ -1651,7 +1542,7 @@
             // label40
             // 
             this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(35, 191);
+            this.label40.Location = new System.Drawing.Point(65, 129);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(46, 13);
             this.label40.TabIndex = 6;
@@ -1659,7 +1550,7 @@
             // 
             // numericUpDownOAtoms
             // 
-            this.numericUpDownOAtoms.Location = new System.Drawing.Point(103, 163);
+            this.numericUpDownOAtoms.Location = new System.Drawing.Point(148, 101);
             this.numericUpDownOAtoms.Name = "numericUpDownOAtoms";
             this.numericUpDownOAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownOAtoms.TabIndex = 5;
@@ -1667,7 +1558,7 @@
             // label39
             // 
             this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(35, 165);
+            this.label39.Location = new System.Drawing.Point(65, 103);
             this.label39.Name = "label39";
             this.label39.Size = new System.Drawing.Size(46, 13);
             this.label39.TabIndex = 4;
@@ -1675,7 +1566,7 @@
             // 
             // numericUpDownHAtoms
             // 
-            this.numericUpDownHAtoms.Location = new System.Drawing.Point(103, 137);
+            this.numericUpDownHAtoms.Location = new System.Drawing.Point(148, 75);
             this.numericUpDownHAtoms.Name = "numericUpDownHAtoms";
             this.numericUpDownHAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownHAtoms.TabIndex = 3;
@@ -1683,7 +1574,7 @@
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(35, 139);
+            this.label27.Location = new System.Drawing.Point(65, 77);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(46, 13);
             this.label27.TabIndex = 2;
@@ -1691,7 +1582,7 @@
             // 
             // numericUpDownCAtoms
             // 
-            this.numericUpDownCAtoms.Location = new System.Drawing.Point(103, 111);
+            this.numericUpDownCAtoms.Location = new System.Drawing.Point(148, 49);
             this.numericUpDownCAtoms.Name = "numericUpDownCAtoms";
             this.numericUpDownCAtoms.Size = new System.Drawing.Size(124, 20);
             this.numericUpDownCAtoms.TabIndex = 1;
@@ -1699,7 +1590,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(35, 113);
+            this.label19.Location = new System.Drawing.Point(65, 51);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(45, 13);
             this.label19.TabIndex = 0;
@@ -1724,71 +1615,34 @@
             this.richTextBoxAbout.TabIndex = 2;
             this.richTextBoxAbout.Text = "";
             // 
-            // tabPage8
-            // 
-            this.tabPage8.Controls.Add(this.tableLayoutPanelChains);
-            this.tabPage8.Controls.Add(this.textBoxChainDropSpectraFile);
-            this.tabPage8.Location = new System.Drawing.Point(4, 22);
-            this.tabPage8.Name = "tabPage8";
-            this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage8.Size = new System.Drawing.Size(607, 450);
-            this.tabPage8.TabIndex = 7;
-            this.tabPage8.Text = "Chain";
-            this.tabPage8.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanelChains
-            // 
-            this.tableLayoutPanelChains.AutoScroll = true;
-            this.tableLayoutPanelChains.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-            this.tableLayoutPanelChains.ColumnCount = 6;
-            this.tableLayoutPanelChains.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelChains.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelChains.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelChains.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelChains.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelChains.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanelChains.Location = new System.Drawing.Point(31, 29);
-            this.tableLayoutPanelChains.Name = "tableLayoutPanelChains";
-            this.tableLayoutPanelChains.RowCount = 2;
-            this.tableLayoutPanelChains.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanelChains.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanelChains.Size = new System.Drawing.Size(543, 400);
-            this.tableLayoutPanelChains.TabIndex = 0;
-            // 
-            // textBoxChainDropSpectraFile
-            // 
-            this.textBoxChainDropSpectraFile.AllowDrop = true;
-            this.textBoxChainDropSpectraFile.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.textBoxChainDropSpectraFile.Enabled = false;
-            this.textBoxChainDropSpectraFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxChainDropSpectraFile.Location = new System.Drawing.Point(424, 6);
-            this.textBoxChainDropSpectraFile.Multiline = true;
-            this.textBoxChainDropSpectraFile.Name = "textBoxChainDropSpectraFile";
-            this.textBoxChainDropSpectraFile.ReadOnly = true;
-            this.textBoxChainDropSpectraFile.Size = new System.Drawing.Size(116, 17);
-            this.textBoxChainDropSpectraFile.TabIndex = 1;
-            this.textBoxChainDropSpectraFile.Text = "Drop Spectra File";
-            this.textBoxChainDropSpectraFile.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBoxChainDropSpectraFile.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxDropSpectraFile_DragDrop);
-            this.textBoxChainDropSpectraFile.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxDropSpectraFile_DragEnter);
-            // 
             // buttonLoadCiaParameters
             // 
             this.buttonLoadCiaParameters.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonLoadCiaParameters.Location = new System.Drawing.Point(530, 674);
+            this.buttonLoadCiaParameters.Location = new System.Drawing.Point(482, 674);
             this.buttonLoadCiaParameters.Name = "buttonLoadCiaParameters";
-            this.buttonLoadCiaParameters.Size = new System.Drawing.Size(116, 23);
+            this.buttonLoadCiaParameters.Size = new System.Drawing.Size(164, 23);
             this.buttonLoadCiaParameters.TabIndex = 52;
             this.buttonLoadCiaParameters.Text = "Load CIA parameters";
             this.buttonLoadCiaParameters.UseVisualStyleBackColor = true;
             this.buttonLoadCiaParameters.Click += new System.EventHandler(this.buttonLoadCiaParameters_Click);
             // 
+            // buttonLoadParameters
+            // 
+            this.buttonLoadParameters.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonLoadParameters.Location = new System.Drawing.Point(259, 674);
+            this.buttonLoadParameters.Name = "buttonLoadParameters";
+            this.buttonLoadParameters.Size = new System.Drawing.Size(164, 23);
+            this.buttonLoadParameters.TabIndex = 54;
+            this.buttonLoadParameters.Text = "Load parameters";
+            this.buttonLoadParameters.UseVisualStyleBackColor = true;
+            this.buttonLoadParameters.Click += new System.EventHandler(this.buttonLoadParameters_Click);
+            // 
             // buttonSaveParameters
             // 
             this.buttonSaveParameters.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSaveParameters.Location = new System.Drawing.Point(415, 674);
+            this.buttonSaveParameters.Location = new System.Drawing.Point(31, 674);
             this.buttonSaveParameters.Name = "buttonSaveParameters";
-            this.buttonSaveParameters.Size = new System.Drawing.Size(109, 23);
+            this.buttonSaveParameters.Size = new System.Drawing.Size(164, 23);
             this.buttonSaveParameters.TabIndex = 53;
             this.buttonSaveParameters.Text = "Save parameters";
             this.buttonSaveParameters.UseVisualStyleBackColor = true;
@@ -1796,7 +1650,6 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.label63);
             this.groupBox3.Controls.Add(this.label35);
             this.groupBox3.Controls.Add(this.numericUpDownCalRelFactor);
             this.groupBox3.Controls.Add(this.groupBox8);
@@ -1806,7 +1659,7 @@
             this.groupBox3.Controls.Add(this.label25);
             this.groupBox3.Controls.Add(this.label24);
             this.groupBox3.Controls.Add(this.numericUpDownCalStartTolerance);
-            this.groupBox3.Controls.Add(this.textBoxRefPeakFilename);
+            this.groupBox3.Controls.Add(this.textBoxCalFile);
             this.groupBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox3.Location = new System.Drawing.Point(18, 61);
             this.groupBox3.Name = "groupBox3";
@@ -1814,15 +1667,6 @@
             this.groupBox3.TabIndex = 46;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Calibration";
-            // 
-            // label63
-            // 
-            this.label63.AutoSize = true;
-            this.label63.Location = new System.Drawing.Point(11, 22);
-            this.label63.Name = "label63";
-            this.label63.Size = new System.Drawing.Size(96, 13);
-            this.label63.TabIndex = 58;
-            this.label63.Text = "Drop ref peaks file ->";
             // 
             // label35
             // 
@@ -1990,34 +1834,23 @@
             this.numericUpDownCalStartTolerance.Size = new System.Drawing.Size(89, 20);
             this.numericUpDownCalStartTolerance.TabIndex = 50;
             // 
-            // textBoxRefPeakFilename
+            // textBoxCalFile
             // 
-            this.textBoxRefPeakFilename.AllowDrop = true;
-            this.textBoxRefPeakFilename.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxRefPeakFilename.Location = new System.Drawing.Point(130, 19);
-            this.textBoxRefPeakFilename.Multiline = true;
-            this.textBoxRefPeakFilename.Name = "textBoxRefPeakFilename";
-            this.textBoxRefPeakFilename.ReadOnly = true;
-            this.textBoxRefPeakFilename.Size = new System.Drawing.Size(231, 22);
-            this.textBoxRefPeakFilename.TabIndex = 48;
-            this.textBoxRefPeakFilename.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxRefPeakFilename_DragDrop);
-            this.textBoxRefPeakFilename.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxRefPeakFilename_DragEnter);
-            // 
-            // checkBoxPreAlignment
-            // 
-            this.checkBoxPreAlignment.AutoSize = true;
-            this.checkBoxPreAlignment.Location = new System.Drawing.Point(385, 17);
-            this.checkBoxPreAlignment.Name = "checkBoxPreAlignment";
-            this.checkBoxPreAlignment.Size = new System.Drawing.Size(90, 17);
-            this.checkBoxPreAlignment.TabIndex = 58;
-            this.checkBoxPreAlignment.TabStop = false;
-            this.checkBoxPreAlignment.Text = "Pre-alignment";
-            this.checkBoxPreAlignment.UseVisualStyleBackColor = true;
+            this.textBoxCalFile.AllowDrop = true;
+            this.textBoxCalFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxCalFile.Location = new System.Drawing.Point(13, 19);
+            this.textBoxCalFile.Multiline = true;
+            this.textBoxCalFile.Name = "textBoxCalFile";
+            this.textBoxCalFile.ReadOnly = true;
+            this.textBoxCalFile.Size = new System.Drawing.Size(348, 22);
+            this.textBoxCalFile.TabIndex = 48;
+            this.textBoxCalFile.Text = "Drop calibration file:";
+            this.textBoxCalFile.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxCalFile_DragDrop);
+            this.textBoxCalFile.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxCalFile_DragEnter);
             // 
             // groupBox9
             // 
             this.groupBox9.Controls.Add(this.textBoxResult);
-            this.groupBox9.Controls.Add(this.checkBoxPreAlignment);
             this.groupBox9.Controls.Add(this.label1);
             this.groupBox9.Controls.Add(this.textBoxAdduct);
             this.groupBox9.Controls.Add(this.numericUpDownCharge);
@@ -2081,7 +1914,7 @@
             // 
             this.checkBoxIpa.AutoSize = true;
             this.checkBoxIpa.Enabled = false;
-            this.checkBoxIpa.Location = new System.Drawing.Point(435, 39);
+            this.checkBoxIpa.Location = new System.Drawing.Point(388, 39);
             this.checkBoxIpa.Name = "checkBoxIpa";
             this.checkBoxIpa.Size = new System.Drawing.Size(43, 17);
             this.checkBoxIpa.TabIndex = 52;
@@ -2094,7 +1927,7 @@
             // 
             this.checkBoxCIA.AutoSize = true;
             this.checkBoxCIA.Enabled = false;
-            this.checkBoxCIA.Location = new System.Drawing.Point(384, 38);
+            this.checkBoxCIA.Location = new System.Drawing.Point(388, 17);
             this.checkBoxCIA.Name = "checkBoxCIA";
             this.checkBoxCIA.Size = new System.Drawing.Size(43, 17);
             this.checkBoxCIA.TabIndex = 51;
@@ -2130,28 +1963,14 @@
             this.label50.TabIndex = 48;
             this.label50.Text = "Ionization";
             // 
-            // textBoxParameterFile
-            // 
-            this.textBoxParameterFile.AllowDrop = true;
-            this.textBoxParameterFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxParameterFile.Location = new System.Drawing.Point(31, 675);
-            this.textBoxParameterFile.Multiline = true;
-            this.textBoxParameterFile.Name = "textBoxParameterFile";
-            this.textBoxParameterFile.ReadOnly = true;
-            this.textBoxParameterFile.Size = new System.Drawing.Size(378, 22);
-            this.textBoxParameterFile.TabIndex = 55;
-            this.textBoxParameterFile.Text = "Drop parameter file:";
-            this.textBoxParameterFile.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxParameterFile_DragDrop);
-            this.textBoxParameterFile.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxParameterFile_DragEnter);
-            // 
             // FormularityUIForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(676, 724);
-            this.Controls.Add(this.textBoxParameterFile);
+            this.ClientSize = new System.Drawing.Size(680, 724);
             this.Controls.Add(this.buttonLoadCiaParameters);
+            this.Controls.Add(this.buttonLoadParameters);
             this.Controls.Add(this.groupBox9);
             this.Controls.Add(this.buttonSaveParameters);
             this.Controls.Add(this.tabControl1);
@@ -2162,13 +1981,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFormulaTolerance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRelationErrorValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDBMassLimit)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationGaps)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationshipGaps)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFormulaToleranceStdDevGain)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAlignmentTolerance)).EndInit();
@@ -2184,7 +2002,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chartError)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDBMass)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericDBUpDownMass)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
@@ -2203,8 +2021,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHAtoms)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCAtoms)).EndInit();
             this.tabPage7.ResumeLayout(false);
-            this.tabPage8.ResumeLayout(false);
-            this.tabPage8.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCalRelFactor)).EndInit();
@@ -2219,7 +2035,6 @@
             this.groupBox9.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCharge)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -2232,7 +2047,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDownRelationErrorValue;
         private System.Windows.Forms.NumericUpDown numericUpDownDBMassLimit;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.NumericUpDown numericUpDownMaxRelationGaps;
+        private System.Windows.Forms.NumericUpDown numericUpDownMaxRelationshipGaps;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox checkBoxUseRelation;
         private System.Windows.Forms.Label label6;
@@ -2246,7 +2061,7 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.NumericUpDown numericUpDownDBMass;
+        private System.Windows.Forms.NumericUpDown numericDBUpDownMass;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelDBPeaks;
         private System.Windows.Forms.TextBox textBoxDBMaxMass;
         private System.Windows.Forms.Label label13;
@@ -2254,7 +2069,7 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox textBoxDBRecords;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox textBoxCiaDBFilename;
+        private System.Windows.Forms.TextBox textBoxDropDB;
         private System.Windows.Forms.TextBox textBoxDBRecordsInErrorRange;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox textBoxConvertDBs;
@@ -2279,7 +2094,7 @@
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TextBox textBoxRefPeakFilename;
+        private System.Windows.Forms.TextBox textBoxCalFile;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.NumericUpDown numericUpDownCalStartTolerance;
         private System.Windows.Forms.GroupBox groupBox5;
@@ -2306,6 +2121,7 @@
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.NumericUpDown numericUpDownCalMinSN;
         private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.Button buttonLoadParameters;
         private System.Windows.Forms.Button buttonSaveParameters;
         private System.Windows.Forms.CheckBox checkBoxDBMassRangePerCsvFile;
         private System.Windows.Forms.CheckBox checkBoxDBSortByMass;
@@ -2335,7 +2151,7 @@
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox textBoxFilterResult;
         private System.Windows.Forms.Label label46;
-        private System.Windows.Forms.Button buttonFilterCheckFormula;
+        private System.Windows.Forms.Button buttonFilterCheck;
         private System.Windows.Forms.TextBox textBoxFilter;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.TextBox textBoxNeutralMass;
@@ -2357,10 +2173,10 @@
         public System.Windows.Forms.CheckBox checkBoxIpaMatchedPeakReport;
         public System.Windows.Forms.Label label54;
         public System.Windows.Forms.Label label55;
-        public System.Windows.Forms.Button buttonIpaMergeWithCIA;
+        public System.Windows.Forms.Button cmdIpaMergeWithCIA;
         public System.Windows.Forms.Label label56;
         public System.Windows.Forms.Label label57;
-        public System.Windows.Forms.TextBox textBoxIpaDBFilename;
+        public System.Windows.Forms.TextBox textBoxIpaDropDBFile;
         private System.Windows.Forms.CheckBox checkBoxIpa;
         private System.Windows.Forms.CheckBox checkBoxCIA;
         private System.Windows.Forms.NumericUpDown numericUpDownCharge;
@@ -2374,24 +2190,10 @@
         private System.Windows.Forms.TabPage tabPage7;
         private System.Windows.Forms.TextBox textBoxResult;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBoxRelationErrorType;
+        private System.Windows.Forms.ComboBox comboBoxRelationshipErrorType;
         private System.Windows.Forms.Button buttonSwitchToAdvanced;
         private System.Windows.Forms.CheckBox checkBoxCIAUseDefault;
         private System.Windows.Forms.RichTextBox richTextBoxAbout;
-        private System.Windows.Forms.TabPage tabPage8;
-        private System.Windows.Forms.TextBox textBoxChainDropSpectraFile;
-        private System.Windows.Forms.Button buttonFilterCheckDB;
-        private System.Windows.Forms.CheckBox checkBoxPreAlignment;
-        private System.Windows.Forms.CheckBox checkBoxGenerateReports;
-        private System.Windows.Forms.Label labelFormulaScoreUserDefined;
-        private System.Windows.Forms.TextBox textBoxFormulaScoreUserDefined;
-        private System.Windows.Forms.CheckBox checkBoxStaticDynamicFormulaTolerance;
-        private System.Windows.Forms.NumericUpDown numericUpDownFormulaToleranceStdDevGain;
-        private System.Windows.Forms.TextBox textBoxParameterFile;
-        private System.Windows.Forms.Label label64;
-        private System.Windows.Forms.Label label69;
-        private System.Windows.Forms.Label label63;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelChains;
     }
 }
 

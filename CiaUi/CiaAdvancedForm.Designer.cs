@@ -56,24 +56,24 @@
             this.comboBoxShowProgress = new System.Windows.Forms.ComboBox();
             this.label28 = new System.Windows.Forms.Label();
             this.comboBoxErrorType = new System.Windows.Forms.ComboBox();
+            this.checkBoxChainReport = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.checkBoxGenerateReports = new System.Windows.Forms.CheckBox();
-            this.checkBoxCIAAdvAddChains = new System.Windows.Forms.CheckBox();
+            this.checkBoxIndividualFileReport = new System.Windows.Forms.CheckBox();
+            this.comboBoxOutputFileDelimiter = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.checkBoxCIAAdvBackward = new System.Windows.Forms.CheckBox();
-            this.comboBoxRelationErrorType = new System.Windows.Forms.ComboBox();
+            this.checkBoxCIABackward = new System.Windows.Forms.CheckBox();
+            this.comboBoxRelationshipErrorType = new System.Windows.Forms.ComboBox();
             this.label58 = new System.Windows.Forms.Label();
-            this.numericUpDownCIAAdvC13Tolerance = new System.Windows.Forms.NumericUpDown();
-            this.checkBoxCIAAdvUseC13 = new System.Windows.Forms.CheckBox();
+            this.numericUpDownCIAC13Tolerance = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxCIAUseC13 = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label10 = new System.Windows.Forms.Label();
             this.checkBoxAlignment = new System.Windows.Forms.CheckBox();
-            this.numericUpDownCIAAdvMinPeaksPerChain = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownAlignmentTolerance = new System.Windows.Forms.NumericUpDown();
             this.label18 = new System.Windows.Forms.Label();
             this.textBoxDropDB = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.checkBoxCIAAdvUseKendrick = new System.Windows.Forms.CheckBox();
+            this.checkBoxCIAUseKendrick = new System.Windows.Forms.CheckBox();
             this.numericUpDownFormulaTolerance = new System.Windows.Forms.NumericUpDown();
             this.textBoxUserDefinedFilter = new System.Windows.Forms.TextBox();
             this.label29 = new System.Windows.Forms.Label();
@@ -96,7 +96,7 @@
             this.checkBoxGoldenRule3 = new System.Windows.Forms.CheckBox();
             this.checkBoxGoldenRule2 = new System.Windows.Forms.CheckBox();
             this.checkBoxGoldenRule1 = new System.Windows.Forms.CheckBox();
-            this.numericUpDownMaxRelationGaps = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownMaxRelationshipGaps = new System.Windows.Forms.NumericUpDown();
             this.checkBoxUseRelation = new System.Windows.Forms.CheckBox();
             this.buttonSwitchToSimple = new System.Windows.Forms.Button();
             this.buttonSetAdvancedDefault = new System.Windows.Forms.Button();
@@ -112,15 +112,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCalStartTolerance)).BeginInit();
             this.groupBox6.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCIAAdvC13Tolerance)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCIAC13Tolerance)).BeginInit();
             this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCIAAdvMinPeaksPerChain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAlignmentTolerance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFormulaTolerance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRelationErrorValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDBMassLimit)).BeginInit();
             this.groupBoxGoldenRuleFilters.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationGaps)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationshipGaps)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox9
@@ -443,8 +442,11 @@
             this.groupBox6.Controls.Add(this.comboBoxShowProgress);
             this.groupBox6.Controls.Add(this.label28);
             this.groupBox6.Controls.Add(this.comboBoxErrorType);
+            this.groupBox6.Controls.Add(this.checkBoxChainReport);
             this.groupBox6.Controls.Add(this.label9);
-            this.groupBox6.Controls.Add(this.checkBoxGenerateReports);
+            this.groupBox6.Controls.Add(this.checkBoxIndividualFileReport);
+            this.groupBox6.Controls.Add(this.comboBoxOutputFileDelimiter);
+            this.groupBox6.Controls.Add(this.label8);
             this.groupBox6.Location = new System.Drawing.Point(30, 552);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(560, 69);
@@ -498,6 +500,19 @@
             this.comboBoxErrorType.Size = new System.Drawing.Size(75, 21);
             this.comboBoxErrorType.TabIndex = 34;
             // 
+            // checkBoxChainReport
+            // 
+            this.checkBoxChainReport.AutoSize = true;
+            this.checkBoxChainReport.BackColor = System.Drawing.Color.Gold;
+            this.checkBoxChainReport.Enabled = false;
+            this.checkBoxChainReport.Location = new System.Drawing.Point(189, 41);
+            this.checkBoxChainReport.Name = "checkBoxChainReport";
+            this.checkBoxChainReport.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxChainReport.Size = new System.Drawing.Size(83, 17);
+            this.checkBoxChainReport.TabIndex = 51;
+            this.checkBoxChainReport.Text = "Chain report";
+            this.checkBoxChainReport.UseVisualStyleBackColor = false;
+            // 
             // label9
             // 
             this.label9.AutoSize = true;
@@ -508,41 +523,50 @@
             this.label9.TabIndex = 33;
             this.label9.Text = "Error";
             // 
-            // checkBoxGenerateReports
+            // checkBoxIndividualFileReport
             // 
-            this.checkBoxGenerateReports.AutoSize = true;
-            this.checkBoxGenerateReports.BackColor = System.Drawing.Color.Gold;
-            this.checkBoxGenerateReports.Location = new System.Drawing.Point(19, 17);
-            this.checkBoxGenerateReports.Name = "checkBoxGenerateReports";
-            this.checkBoxGenerateReports.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxGenerateReports.Size = new System.Drawing.Size(105, 17);
-            this.checkBoxGenerateReports.TabIndex = 50;
-            this.checkBoxGenerateReports.Text = "Generate reports";
-            this.checkBoxGenerateReports.UseVisualStyleBackColor = false;
+            this.checkBoxIndividualFileReport.AutoSize = true;
+            this.checkBoxIndividualFileReport.BackColor = System.Drawing.Color.Gold;
+            this.checkBoxIndividualFileReport.Location = new System.Drawing.Point(19, 17);
+            this.checkBoxIndividualFileReport.Name = "checkBoxIndividualFileReport";
+            this.checkBoxIndividualFileReport.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxIndividualFileReport.Size = new System.Drawing.Size(122, 17);
+            this.checkBoxIndividualFileReport.TabIndex = 50;
+            this.checkBoxIndividualFileReport.Text = "Individual file reports";
+            this.checkBoxIndividualFileReport.UseVisualStyleBackColor = false;
             // 
-            // checkBoxCIAAdvAddChains
+            // comboBoxOutputFileDelimiter
             // 
-            this.checkBoxCIAAdvAddChains.AutoSize = true;
-            this.checkBoxCIAAdvAddChains.BackColor = System.Drawing.Color.Gold;
-            this.checkBoxCIAAdvAddChains.Location = new System.Drawing.Point(313, 11);
-            this.checkBoxCIAAdvAddChains.Name = "checkBoxCIAAdvAddChains";
-            this.checkBoxCIAAdvAddChains.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxCIAAdvAddChains.Size = new System.Drawing.Size(83, 17);
-            this.checkBoxCIAAdvAddChains.TabIndex = 51;
-            this.checkBoxCIAAdvAddChains.Text = "Chain report";
-            this.checkBoxCIAAdvAddChains.UseVisualStyleBackColor = false;
+            this.comboBoxOutputFileDelimiter.BackColor = System.Drawing.Color.Gold;
+            this.comboBoxOutputFileDelimiter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxOutputFileDelimiter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboBoxOutputFileDelimiter.FormattingEnabled = true;
+            this.comboBoxOutputFileDelimiter.Location = new System.Drawing.Point(264, 15);
+            this.comboBoxOutputFileDelimiter.Name = "comboBoxOutputFileDelimiter";
+            this.comboBoxOutputFileDelimiter.Size = new System.Drawing.Size(75, 21);
+            this.comboBoxOutputFileDelimiter.TabIndex = 32;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.BackColor = System.Drawing.Color.Gold;
+            this.label8.Location = new System.Drawing.Point(186, 18);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(47, 13);
+            this.label8.TabIndex = 31;
+            this.label8.Text = "Delimiter";
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.checkBoxCIAAdvBackward);
-            this.groupBox5.Controls.Add(this.comboBoxRelationErrorType);
+            this.groupBox5.Controls.Add(this.checkBoxCIABackward);
+            this.groupBox5.Controls.Add(this.comboBoxRelationshipErrorType);
             this.groupBox5.Controls.Add(this.label58);
-            this.groupBox5.Controls.Add(this.numericUpDownCIAAdvC13Tolerance);
-            this.groupBox5.Controls.Add(this.checkBoxCIAAdvUseC13);
+            this.groupBox5.Controls.Add(this.numericUpDownCIAC13Tolerance);
+            this.groupBox5.Controls.Add(this.checkBoxCIAUseC13);
             this.groupBox5.Controls.Add(this.groupBox4);
             this.groupBox5.Controls.Add(this.textBoxDropDB);
             this.groupBox5.Controls.Add(this.label2);
-            this.groupBox5.Controls.Add(this.checkBoxCIAAdvUseKendrick);
+            this.groupBox5.Controls.Add(this.checkBoxCIAUseKendrick);
             this.groupBox5.Controls.Add(this.numericUpDownFormulaTolerance);
             this.groupBox5.Controls.Add(this.textBoxUserDefinedFilter);
             this.groupBox5.Controls.Add(this.label29);
@@ -559,7 +583,7 @@
             this.groupBox5.Controls.Add(this.numericUpDownDBMassLimit);
             this.groupBox5.Controls.Add(this.label5);
             this.groupBox5.Controls.Add(this.groupBoxGoldenRuleFilters);
-            this.groupBox5.Controls.Add(this.numericUpDownMaxRelationGaps);
+            this.groupBox5.Controls.Add(this.numericUpDownMaxRelationshipGaps);
             this.groupBox5.Controls.Add(this.checkBoxUseRelation);
             this.groupBox5.Location = new System.Drawing.Point(30, 196);
             this.groupBox5.Name = "groupBox5";
@@ -568,26 +592,26 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Formula assignment";
             // 
-            // checkBoxCIAAdvBackward
+            // checkBoxCIABackward
             // 
-            this.checkBoxCIAAdvBackward.AutoSize = true;
-            this.checkBoxCIAAdvBackward.BackColor = System.Drawing.Color.Gold;
-            this.checkBoxCIAAdvBackward.Location = new System.Drawing.Point(414, 47);
-            this.checkBoxCIAAdvBackward.Name = "checkBoxCIAAdvBackward";
-            this.checkBoxCIAAdvBackward.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxCIAAdvBackward.Size = new System.Drawing.Size(95, 17);
-            this.checkBoxCIAAdvBackward.TabIndex = 53;
-            this.checkBoxCIAAdvBackward.Text = "Use backward";
-            this.checkBoxCIAAdvBackward.UseVisualStyleBackColor = false;
+            this.checkBoxCIABackward.AutoSize = true;
+            this.checkBoxCIABackward.BackColor = System.Drawing.Color.Gold;
+            this.checkBoxCIABackward.Location = new System.Drawing.Point(414, 43);
+            this.checkBoxCIABackward.Name = "checkBoxCIABackward";
+            this.checkBoxCIABackward.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxCIABackward.Size = new System.Drawing.Size(95, 17);
+            this.checkBoxCIABackward.TabIndex = 53;
+            this.checkBoxCIABackward.Text = "Use backward";
+            this.checkBoxCIABackward.UseVisualStyleBackColor = false;
             // 
             // comboBoxRelationshipErrorType
             // 
-            this.comboBoxRelationErrorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxRelationErrorType.FormattingEnabled = true;
-            this.comboBoxRelationErrorType.Location = new System.Drawing.Point(332, 84);
-            this.comboBoxRelationErrorType.Name = "comboBoxRelationErrorType";
-            this.comboBoxRelationErrorType.Size = new System.Drawing.Size(73, 21);
-            this.comboBoxRelationErrorType.TabIndex = 52;
+            this.comboBoxRelationshipErrorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxRelationshipErrorType.FormattingEnabled = true;
+            this.comboBoxRelationshipErrorType.Location = new System.Drawing.Point(332, 84);
+            this.comboBoxRelationshipErrorType.Name = "comboBoxRelationshipErrorType";
+            this.comboBoxRelationshipErrorType.Size = new System.Drawing.Size(73, 21);
+            this.comboBoxRelationshipErrorType.TabIndex = 52;
             // 
             // label58
             // 
@@ -599,53 +623,40 @@
             this.label58.TabIndex = 51;
             this.label58.Text = "C13 tolerance, ppm";
             // 
-            // numericUpDownCIAAdvC13Tolerance
+            // numericUpDownCIAC13Tolerance
             // 
-            this.numericUpDownCIAAdvC13Tolerance.BackColor = System.Drawing.Color.Gold;
-            this.numericUpDownCIAAdvC13Tolerance.DecimalPlaces = 3;
-            this.numericUpDownCIAAdvC13Tolerance.Location = new System.Drawing.Point(190, 190);
-            this.numericUpDownCIAAdvC13Tolerance.Name = "numericUpDownCIAAdvC13Tolerance";
-            this.numericUpDownCIAAdvC13Tolerance.Size = new System.Drawing.Size(71, 20);
-            this.numericUpDownCIAAdvC13Tolerance.TabIndex = 50;
+            this.numericUpDownCIAC13Tolerance.BackColor = System.Drawing.Color.Gold;
+            this.numericUpDownCIAC13Tolerance.DecimalPlaces = 3;
+            this.numericUpDownCIAC13Tolerance.Location = new System.Drawing.Point(190, 190);
+            this.numericUpDownCIAC13Tolerance.Name = "numericUpDownCIAC13Tolerance";
+            this.numericUpDownCIAC13Tolerance.Size = new System.Drawing.Size(71, 20);
+            this.numericUpDownCIAC13Tolerance.TabIndex = 50;
             // 
-            // checkBoxCIAAdvUseC13
+            // checkBoxCIAUseC13
             // 
-            this.checkBoxCIAAdvUseC13.AutoSize = true;
-            this.checkBoxCIAAdvUseC13.BackColor = System.Drawing.Color.Gold;
-            this.checkBoxCIAAdvUseC13.Location = new System.Drawing.Point(9, 193);
-            this.checkBoxCIAAdvUseC13.Name = "checkBoxCIAAdvUseC13";
-            this.checkBoxCIAAdvUseC13.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxCIAAdvUseC13.Size = new System.Drawing.Size(67, 17);
-            this.checkBoxCIAAdvUseC13.TabIndex = 49;
-            this.checkBoxCIAAdvUseC13.Text = "Use C13";
-            this.checkBoxCIAAdvUseC13.UseVisualStyleBackColor = false;
-            this.checkBoxCIAAdvUseC13.CheckedChanged += new System.EventHandler(this.checkBoxCIAUseC13_CheckedChanged);
+            this.checkBoxCIAUseC13.AutoSize = true;
+            this.checkBoxCIAUseC13.BackColor = System.Drawing.Color.Gold;
+            this.checkBoxCIAUseC13.Location = new System.Drawing.Point(9, 193);
+            this.checkBoxCIAUseC13.Name = "checkBoxCIAUseC13";
+            this.checkBoxCIAUseC13.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxCIAUseC13.Size = new System.Drawing.Size(67, 17);
+            this.checkBoxCIAUseC13.TabIndex = 49;
+            this.checkBoxCIAUseC13.Text = "Use C13";
+            this.checkBoxCIAUseC13.UseVisualStyleBackColor = false;
+            this.checkBoxCIAUseC13.CheckedChanged += new System.EventHandler(this.checkBoxCIAUseC13_CheckedChanged);
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.label10);
             this.groupBox4.Controls.Add(this.checkBoxAlignment);
-            this.groupBox4.Controls.Add(this.numericUpDownCIAAdvMinPeaksPerChain);
             this.groupBox4.Controls.Add(this.numericUpDownAlignmentTolerance);
             this.groupBox4.Controls.Add(this.label18);
-            this.groupBox4.Controls.Add(this.checkBoxCIAAdvAddChains);
             this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox4.Location = new System.Drawing.Point(15, 15);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(516, 34);
+            this.groupBox4.Size = new System.Drawing.Size(339, 34);
             this.groupBox4.TabIndex = 47;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Alignment";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.BackColor = System.Drawing.Color.Gold;
-            this.label10.Location = new System.Drawing.Point(408, 12);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(56, 13);
-            this.label10.TabIndex = 54;
-            this.label10.Text = "Min peaks";
             // 
             // checkBoxAlignment
             // 
@@ -659,20 +670,12 @@
             this.checkBoxAlignment.UseVisualStyleBackColor = true;
             this.checkBoxAlignment.CheckedChanged += new System.EventHandler(this.checkBoxAlignment_CheckedChanged);
             // 
-            // numericUpDownCIAAdvMinPeaksPerChain
-            // 
-            this.numericUpDownCIAAdvMinPeaksPerChain.BackColor = System.Drawing.Color.Gold;
-            this.numericUpDownCIAAdvMinPeaksPerChain.Location = new System.Drawing.Point(470, 8);
-            this.numericUpDownCIAAdvMinPeaksPerChain.Name = "numericUpDownCIAAdvMinPeaksPerChain";
-            this.numericUpDownCIAAdvMinPeaksPerChain.Size = new System.Drawing.Size(37, 20);
-            this.numericUpDownCIAAdvMinPeaksPerChain.TabIndex = 55;
-            // 
             // numericUpDownAlignmentTolerance
             // 
             this.numericUpDownAlignmentTolerance.DecimalPlaces = 3;
             this.numericUpDownAlignmentTolerance.Location = new System.Drawing.Point(240, 11);
             this.numericUpDownAlignmentTolerance.Name = "numericUpDownAlignmentTolerance";
-            this.numericUpDownAlignmentTolerance.Size = new System.Drawing.Size(67, 20);
+            this.numericUpDownAlignmentTolerance.Size = new System.Drawing.Size(82, 20);
             this.numericUpDownAlignmentTolerance.TabIndex = 42;
             // 
             // label18
@@ -707,17 +710,17 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Formula tolerance, ppm";
             // 
-            // checkBoxCIAAdvUseKendrick
+            // checkBoxCIAUseKendrick
             // 
-            this.checkBoxCIAAdvUseKendrick.AutoSize = true;
-            this.checkBoxCIAAdvUseKendrick.BackColor = System.Drawing.Color.Gold;
-            this.checkBoxCIAAdvUseKendrick.Location = new System.Drawing.Point(9, 172);
-            this.checkBoxCIAAdvUseKendrick.Name = "checkBoxCIAAdvUseKendrick";
-            this.checkBoxCIAAdvUseKendrick.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxCIAAdvUseKendrick.Size = new System.Drawing.Size(90, 17);
-            this.checkBoxCIAAdvUseKendrick.TabIndex = 44;
-            this.checkBoxCIAAdvUseKendrick.Text = "Use Kendrick";
-            this.checkBoxCIAAdvUseKendrick.UseVisualStyleBackColor = false;
+            this.checkBoxCIAUseKendrick.AutoSize = true;
+            this.checkBoxCIAUseKendrick.BackColor = System.Drawing.Color.Gold;
+            this.checkBoxCIAUseKendrick.Location = new System.Drawing.Point(9, 172);
+            this.checkBoxCIAUseKendrick.Name = "checkBoxCIAUseKendrick";
+            this.checkBoxCIAUseKendrick.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxCIAUseKendrick.Size = new System.Drawing.Size(90, 17);
+            this.checkBoxCIAUseKendrick.TabIndex = 44;
+            this.checkBoxCIAUseKendrick.Text = "Use Kendrick";
+            this.checkBoxCIAUseKendrick.UseVisualStyleBackColor = false;
             // 
             // numericUpDownFormulaTolerance
             // 
@@ -811,7 +814,7 @@
             // numericUpDownRelationErrorValue
             // 
             this.numericUpDownRelationErrorValue.DecimalPlaces = 8;
-            this.numericUpDownRelationErrorValue.Location = new System.Drawing.Point(411, 85);
+            this.numericUpDownRelationErrorValue.Location = new System.Drawing.Point(411, 83);
             this.numericUpDownRelationErrorValue.Name = "numericUpDownRelationErrorValue";
             this.numericUpDownRelationErrorValue.Size = new System.Drawing.Size(120, 20);
             this.numericUpDownRelationErrorValue.TabIndex = 9;
@@ -863,7 +866,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(109, 13);
             this.label5.TabIndex = 12;
-            this.label5.Text = "Max relation gaps";
+            this.label5.Text = "Max relationship gaps";
             // 
             // groupBoxGoldenRuleFilters
             // 
@@ -948,10 +951,10 @@
             // 
             // numericUpDownMaxRelationshipGaps
             // 
-            this.numericUpDownMaxRelationGaps.Location = new System.Drawing.Point(411, 65);
-            this.numericUpDownMaxRelationGaps.Name = "numericUpDownMaxRelationshipGaps";
-            this.numericUpDownMaxRelationGaps.Size = new System.Drawing.Size(120, 20);
-            this.numericUpDownMaxRelationGaps.TabIndex = 13;
+            this.numericUpDownMaxRelationshipGaps.Location = new System.Drawing.Point(411, 63);
+            this.numericUpDownMaxRelationshipGaps.Name = "numericUpDownMaxRelationshipGaps";
+            this.numericUpDownMaxRelationshipGaps.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDownMaxRelationshipGaps.TabIndex = 13;
             // 
             // checkBoxUseRelation
             // 
@@ -984,7 +987,7 @@
             this.buttonSetAdvancedDefault.Name = "buttonSetAdvancedDefault";
             this.buttonSetAdvancedDefault.Size = new System.Drawing.Size(164, 23);
             this.buttonSetAdvancedDefault.TabIndex = 58;
-            this.buttonSetAdvancedDefault.Text = "Set advanced default";
+            this.buttonSetAdvancedDefault.Text = "Set advaced default";
             this.buttonSetAdvancedDefault.UseVisualStyleBackColor = false;
             this.buttonSetAdvancedDefault.Click += new System.EventHandler(this.buttonSetAdvancedDefault_Click);
             // 
@@ -1018,17 +1021,16 @@
             this.groupBox6.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCIAAdvC13Tolerance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCIAC13Tolerance)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCIAAdvMinPeaksPerChain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAlignmentTolerance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFormulaTolerance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRelationErrorValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDBMassLimit)).EndInit();
             this.groupBoxGoldenRuleFilters.ResumeLayout(false);
             this.groupBoxGoldenRuleFilters.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationGaps)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxRelationshipGaps)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1054,6 +1056,7 @@
         private System.Windows.Forms.ComboBox comboBoxShowProgress;
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label label58;
         private System.Windows.Forms.GroupBox groupBox4;
@@ -1068,13 +1071,14 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox groupBoxGoldenRuleFilters;
         private System.Windows.Forms.Button buttonSwitchToSimple;
-        public System.Windows.Forms.CheckBox checkBoxCIAAdvBackward;
-        public System.Windows.Forms.NumericUpDown numericUpDownCIAAdvC13Tolerance;
-        public System.Windows.Forms.CheckBox checkBoxCIAAdvUseC13;
+        public System.Windows.Forms.CheckBox checkBoxCIABackward;
+        public System.Windows.Forms.NumericUpDown numericUpDownCIAC13Tolerance;
+        public System.Windows.Forms.CheckBox checkBoxCIAUseC13;
         public System.Windows.Forms.CheckBox checkBoxLogReport;
-        public System.Windows.Forms.CheckBox checkBoxCIAAdvAddChains;
+        public System.Windows.Forms.CheckBox checkBoxChainReport;
+        public System.Windows.Forms.ComboBox comboBoxOutputFileDelimiter;
         public System.Windows.Forms.ComboBox comboBoxErrorType;
-        public System.Windows.Forms.CheckBox checkBoxGenerateReports;
+        public System.Windows.Forms.CheckBox checkBoxIndividualFileReport;
         public System.Windows.Forms.NumericUpDown numericUpDownCharge;
         public System.Windows.Forms.TextBox textBoxAdduct;
         public System.Windows.Forms.ComboBox comboBoxIonization;
@@ -1095,8 +1099,8 @@
         public System.Windows.Forms.ComboBox comboBoxFormulaScore;
         public System.Windows.Forms.CheckBox checkBoxUseFormulaFilters;
         public System.Windows.Forms.CheckBox checkBoxUseRelation;
-        public System.Windows.Forms.NumericUpDown numericUpDownMaxRelationGaps;
-        public System.Windows.Forms.ComboBox comboBoxRelationErrorType;
+        public System.Windows.Forms.NumericUpDown numericUpDownMaxRelationshipGaps;
+        public System.Windows.Forms.ComboBox comboBoxRelationshipErrorType;
         public System.Windows.Forms.NumericUpDown numericUpDownRelationErrorValue;
         public System.Windows.Forms.CheckedListBox checkedListBoxRelations;
         public System.Windows.Forms.CheckBox checkBoxGoldenRule6;
@@ -1107,9 +1111,7 @@
         public System.Windows.Forms.CheckBox checkBoxGoldenRule1;
         public System.Windows.Forms.ComboBox comboBoxSpecialFilters;
         public System.Windows.Forms.TextBox textBoxUserDefinedFilter;
-        public System.Windows.Forms.CheckBox checkBoxCIAAdvUseKendrick;
+        public System.Windows.Forms.CheckBox checkBoxCIAUseKendrick;
         private System.Windows.Forms.Button buttonSetAdvancedDefault;
-        private System.Windows.Forms.Label label10;
-        public System.Windows.Forms.NumericUpDown numericUpDownCIAAdvMinPeaksPerChain;
     }
 }

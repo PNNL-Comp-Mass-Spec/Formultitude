@@ -1,25 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
-namespace CiaUi
-{
-    internal static class FormularityUIProgram
-    {
+namespace CiaUi {
+    static class FormularityUIProgram {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        private static void Main()
-        {
-            try
-            {
+        static void Main() {
+            try {
                 Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new FormularityUIForm());
-            }
-            catch (Exception ex)
-            {
-                var sss = ex.Message;
+                Application.SetCompatibleTextRenderingDefault( false );
+                Application.Run( new FormularityUIForm() );
+            } catch( Exception ex ) {
+                string sss = ex.Message;
             }
         }
     }
