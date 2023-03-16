@@ -18,26 +18,26 @@ Related Publication(s):
 ## Downloads and Instructions
 
 Formularity runs on 64-bit version of Windows; no installer is provided.
-Extract the contents of Formularity.zip, then run Formularity.exe
+Extract the contents of `Formularity.zip`, then run `Formularity.exe`
 Documentation is in file `UserManual.pdf` in the Documents folder [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/tree/master/Documents)
 
 To test the program, use the provided test files in the Documents folder.
-The test database is available as a separate download.  
+The test database is available as a separate download.
 * See file `CIA_DB_2016_11_21_Database.zip` [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/releases/tag/v1.0.7947)
 
 ### Analysis Steps
 
 1) Select tab "CIA formula finding"
-* Drag & drop the CIA database (file WHOI_CIA_DB_2016_11_21.bin) to the database box (labeled "Drop DB files")
+* Drag & drop the CIA database (file `WHOI_CIA_DB_2016_11_21.bin`) to the database box (labeled "Drop DB files")
 * Database load time will take 30 to 60 seconds
 
 2) Select tab "IPA formula finding"
-* Drag & drop IPA database (IPA_DB_MTW_Cl_8_3.txt) to database box (labeled "Drop DB file")
+* Drag & drop IPA database (`IPA_DB_MTW_Cl_8_3.txt`) to database box (labeled "Drop DB file")
 
-3) Use "Load parameters" at the bottom to load test_parameters.xml
+3) Use "Load parameters" at the bottom to load `test_parameters.xml`
 
 4) To use internal calibration, select regression model (auto, linear, or quadratic) then 
-   drag/drop the calibration peaks file (Neg_ESI_CalibrationPeaks.ref) to the 
+   drag/drop the calibration peaks file (`Neg_ESI_CalibrationPeaks.ref`) to the 
    calibration box (labeled "Drop calibration file"). If used, both search functions use calibrated peaks.
 
 5) Check one or both of CIA and IPA check boxes for desired search. 
@@ -49,7 +49,7 @@ The test database is available as a separate download.
 CIA search will produce a Report file with details of internal calibration in a time-stamped log file (example name, `Report20170530151031.log`).
 
 IPA search will produce two files per spectrum: `s_input_file_name` and `p_input_file_name`
-For example: s_ipdbtest_peaks.csv and p_ipdbtest_peaks.csv
+For example: `s_ipdbtest_peaks.csv` and `p_ipdbtest_peaks.csv`
 
 ## Contact Info
 
@@ -63,7 +63,7 @@ Pacific Northwest National Laboratory (PNNL).
 The CIA algorithm was developed by Elizabeth Kujawinski and Krista Longnecker 
 at the Woods Hole Oceanographic Institution (WHOI).
 
-All publications that utilize this software should provide appropriate acknowledgement to PNNL and Formularity's GitHub website.
+All publications that utilize this software should provide appropriate acknowledgment to PNNL and Formularity's GitHub website.
 
 ## Disclaimer
 
