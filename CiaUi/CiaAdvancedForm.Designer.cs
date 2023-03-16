@@ -987,7 +987,7 @@
             this.buttonSetAdvancedDefault.Name = "buttonSetAdvancedDefault";
             this.buttonSetAdvancedDefault.Size = new System.Drawing.Size(164, 23);
             this.buttonSetAdvancedDefault.TabIndex = 58;
-            this.buttonSetAdvancedDefault.Text = "Set advaced default";
+            this.buttonSetAdvancedDefault.Text = "Set advanced default";
             this.buttonSetAdvancedDefault.UseVisualStyleBackColor = false;
             this.buttonSetAdvancedDefault.Click += new System.EventHandler(this.buttonSetAdvancedDefault_Click);
             // 
