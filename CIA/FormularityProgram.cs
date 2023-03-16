@@ -1749,7 +1749,8 @@ namespace CIA {
                 Microsoft.Office.Interop.Excel.Application MyApp = new Microsoft.Office.Interop.Excel.Application();
                 MyApp.Visible = false;
                 Microsoft.Office.Interop.Excel.Workbook MyBook = MyApp.Workbooks.Open( Filename );
-                Microsoft.Office.Interop.Excel.Worksheet MySheet = MyBook.Sheets [ 1 ];
+                // Microsoft.Office.Interop.Excel.Worksheet MySheet = MyBook.Sheets [ 1 ];
+                Microsoft.Office.Interop.Excel.Worksheet MySheet = (Worksheet)MyBook.Worksheets[1];
                 Microsoft.Office.Interop.Excel.Range MyRange = MySheet.UsedRange;
                 int FormulaCount = MyRange.Rows.Count;
                 int Columns = MyRange.Columns.Count;
