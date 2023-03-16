@@ -1213,7 +1213,7 @@
             this.textBoxConverFiles.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBoxConverFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxConverFiles_DragDrop);
             this.textBoxConverFiles.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxConverFiles_DragEnter);
-            // 
+            this.textBoxConverFiles.Visible = false;
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.textBoxCompareReports);
@@ -2038,7 +2038,7 @@
 
         }
 
-        #endregion
+#endregion
 
         private System.Windows.Forms.TextBox textBoxDropSpectraFiles;
         private System.Windows.Forms.Label label2;
