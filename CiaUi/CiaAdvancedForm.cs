@@ -35,7 +35,7 @@ namespace CiaUi {
             comboBoxFormulaScore.DataSource = oCCia.GetFormulaScoreNames();
             comboBoxRelationshipErrorType.DataSource = Enum.GetNames( typeof( CCia.RelationshipErrorType ) );
 
-            //Formula assignment     
+            //Formula assignment
             short [] [] DftRelationFormulas = oCCia.GetRelationFormulaBuildingBlocks();
             for( int Relation = 0; Relation < DftRelationFormulas.Length; Relation++ ) {
                 bool bb = false;
@@ -132,7 +132,7 @@ namespace CiaUi {
                 double [] [] SNs = new double [ FileCount ] [];
                 double [] [] Resolutions = new double [ FileCount ] [];
                 double [] [] RelAbundances = new double [ FileCount ] [];
-                //Read files & Calibration 
+                //Read files & Calibration
                 oCCia.Ipa.Adduct = textBoxAdduct.Text;
                 oCCia.Ipa.Ionization = ( TestFSDBSearch.TotalSupport.IonizationMethod ) Enum.Parse( typeof( TestFSDBSearch.TotalSupport.IonizationMethod ), comboBoxIonization.Text );
                 oCCia.Ipa.CS = ( int ) Math.Abs( numericUpDownCharge.Value );
@@ -214,7 +214,7 @@ namespace CiaUi {
 
                 //oCCia.SetLogReportStatus( checkBoxLogReport.Checked );
 
-                //Process                    
+                //Process
                 oCCia.Process( Filenames, Masses, Abundances, SNs, Resolutions, RelAbundances, CalMasses, oStreamLogWriter );
 
                 //change textbox
