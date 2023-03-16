@@ -79,8 +79,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="TestFSDBSearch, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <ExecutableExtension>.exe</ExecutableExtension>
-      <HintPath>\\picfs\research\Projects\TolicNikola\AFAI_Manuscript\For_Andrey\TestFSDBSearch\TestFSDBSearch\bin\x64\Debug\TestFSDBSearch.exe</HintPath>
+      <HintPath>..\Lib\TestFSDBSearch.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
