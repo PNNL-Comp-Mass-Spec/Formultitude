@@ -1,0 +1,5 @@
+Zip file Databases_CIA_DB_WHOI_2016_and_IPQ_DB_LQ_v5.zip
+at https://github.com/PNNL-Comp-Mass-Spec/Formularity/releases/tag/v1.0.8475
+has two database files:
+* ciadb_WHOI_2016_11_21.bin  (692 MB)
+* ipadb_LQ_v5_80384_12_4.txt (47 MB)
