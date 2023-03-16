@@ -21,18 +21,18 @@ Formularity runs on 64-bit version of Windows; no installer is provided.
 Extract the contents of `Formularity.zip`, then run `Formularity.exe`
 Documentation is in file `UserManual.pdf` in the Documents folder [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/tree/master/Documents)
 
-To test the program, use the provided test files in the Documents folder.
-The test database is available as a separate download.
-* See file `CIA_DB_2016_11_21_Database.zip` [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/releases/tag/v1.0.7947)
+To test the program, use the provided test files in the Documents folder
+* The CIA and IPA databases are available as a separate download
+* See file `Databases_CIA_DB_WHOI_2016_and_IPQ_DB_LQ_v5.zip` [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/releases/tag/v1.0.8475)
 
 ### Analysis Steps
 
 1) Select tab "CIA formula finding"
-* Drag & drop the CIA database (file `WHOI_CIA_DB_2016_11_21.bin`) to the database box (labeled "Drop DB files")
+* Drag & drop the CIA database (file `ciadb_WHOI_2016_11_21.bin`) to the database box (labeled "Drop DB files")
 * Database load time will take 30 to 60 seconds
 
 2) Select tab "IPA formula finding"
-* Drag & drop IPA database (`IPA_DB_MTW_Cl_8_3.txt`) to database box (labeled "Drop DB file")
+* Drag & drop IPA database (`ipadb_LQ_v5_80384_12_4.txt`) to database box (labeled "Drop DB file")
 
 3) Use "Load parameters" at the bottom to load `test_parameters.xml`
 
