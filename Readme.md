@@ -1,29 +1,30 @@
-## Formularity Overview
+﻿## Formularity Overview
 
-Formularity is software for assignment of low weight molecular formulas from high-resolution mass spectra. 
-It includes graphical user interface with two search functions: 
+Formularity is software for assignment of low weight molecular formulas to peaks in high-resolution mass spectra.
+It includes a graphical user interface with two search functions: 
 * Compound Identification Algorithm (CIA)
 * Isotopic Pattern Algorithm (IPA),
 
-It also includes supporting calibration, alignment and inspection functions. 
-
-Supporting databases and test files are provided together with software executable and source files. 
+It also includes calibration, alignment and inspection functions.
 
 Related Publication(s): 
 * Formularity: Software for Automated Formula Assignment of Natural and Derived Organic Matter from Ultra-High Resolution Mass Spectra
-  * N Tolic, Y Liu, A Liyu, Y Shen, MM Tfaily, EB Kujawinski, K Longnecker, LJ Kuo, EW Robinson, L Pa�a-Tolic, and NJ Hess. Analytical Chemistry. 2017 Dec 5; 89(23), 12659-12665. [PMID 29120613](https://pubmed.ncbi.nlm.nih.gov/29120613/)
-* Automated analysis of electrospray ionization Fourier transform ion cyclotron resonance mass spectra of natural organic matter.
+  * N Tolić, Y Liu, A Liyu, Y Shen, MM Tfaily, EB Kujawinski, K Longnecker, LJ Kuo, EW Robinson, L Paša-Tolić, and NJ Hess. Analytical Chemistry. 2017 Dec 5; 89(23), 12659-12665. [PMID 29120613](https://pubmed.ncbi.nlm.nih.gov/29120613/)
+* Automated analysis of electrospray ionization Fourier transform ion cyclotron resonance mass spectra of natural organic matter
   * EB Kujawinski and MD Behn. Analytical Chemistry. 2006 Jul 1; 78(13), 4363-4373. [PMID 16808443](https://pubmed.ncbi.nlm.nih.gov/16808443/)
 
 ## Downloads and Instructions
 
-Formularity runs on 64-bit version of Windows; no installer is provided.
-Extract the contents of `Formularity.zip`, then run `Formularity.exe`
-Documentation is in file `UserManual.pdf` in the Documents folder [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/tree/master/Documents)
+Formularity runs on 64-bit Windows 10 or newer; no installer is provided
+* It requires [.NET Framework 4.8](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48)
+* Extract the contents of `Formularity.zip`, then run `Formularity.exe`
+* Documentation is in file `UserManual.pdf` in the Documents folder [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/tree/master/Documents)
 
-To test the program, use the provided test files in the Documents folder
+To test the program, use the provided test files in the `Documents\TestData_FTICR` folder
 * The CIA and IPA databases are available as a separate download
-* See file `Databases_CIA_DB_WHOI_2016_and_IPQ_DB_LQ_v5.zip` [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/releases/tag/v1.0.8475)
+* See file `Databases_CIA_DB_WHOI_2016_and_IPQ_DB_LQ_v5.zip` [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/releases/tag/v1.0.8475), which has two files:
+  * `ciadb_WHOI_2016_11_21.bin`
+  * `ipadb_LQ_v5_80384_12_4.txt`
 
 ### Analysis Steps
 
@@ -31,39 +32,41 @@ To test the program, use the provided test files in the Documents folder
 * Drag & drop the CIA database (file `ciadb_WHOI_2016_11_21.bin`) to the database box (labeled "Drop DB files")
 * Database load time will take 30 to 60 seconds
 
-2) Select tab "IPA formula finding"
-* Drag & drop IPA database (`ipadb_LQ_v5_80384_12_4.txt`) to database box (labeled "Drop DB file")
+2) Optional (since IPA formula finding is an independent function): Select tab "IPA formula finding"
+* Drag & drop IPA database (`ipadb_LQ_v5_80384_12_4.txt`) to the database box (labeled "Drop DB file")
 
 3) Use "Load parameters" at the bottom to load `test_parameters.xml`
 
-4) To use internal calibration, select regression model (auto, linear, or quadratic) then 
-   drag/drop the calibration peaks file (`Neg_ESI_CalibrationPeaks.ref`) to the 
-   calibration box (labeled "Drop calibration file"). If used, both search functions use calibrated peaks.
+4) To use internal calibration, select the regression model (none, linear, or quadratic) then 
+drag/drop the calibration peaks file (`neg_ESI_NOM_calibration_peaks.ref`) to the 
+calibration box (labeled "Drop calibration file")
+* If used, both search functions will use calibrated peaks
 
-5) Check one or both of CIA and IPA check boxes for desired search. 
-* The "Drop Spectra Files" area will turn green. 
+5) Enable either or both of the CIA and IPA check boxes for the desired search
+* The "Drop Spectra Files" area will turn green
 
-6) Drag/drop file test_peaks.txt to the "Drop Spectra Files" area at the upper right of the window.
-* The area will turn red while it is processing, then green when the search is complete.
+6) Drag/drop files `data_fticr_neg_esi_1.txt` and `data_fticr_neg_esi_2.txt` to the "Drop Spectra Files" area at the upper right of the window
+* The area will turn red while it is processing, then green when the search is complete
 
-CIA search will produce a Report file with details of internal calibration in a time-stamped log file (example name, `Report20170530151031.log`).
+CIA search will produce a Report file with details of internal calibration in a time-stamped log file
+* Example name, `Report20230317111902.log`
 
 IPA search will produce two files per spectrum: `s_input_file_name` and `p_input_file_name`
-For example: `s_ipdbtest_peaks.csv` and `p_ipdbtest_peaks.csv`
+* For example: `s_ipdbdata_fticr_neg_esi_1.csv` and `p_ipdbdata_fticr_neg_esi_1.csv`
 
 ## Contact Info
 
-E-mail any questions, comments, or bug reports to proteomics@pnnl.gov
+E-mail any questions or comments to proteomics@pnnl.gov
 
 ## Acknowledgments
 
-Formularity was developed by Andrey Liyu and Nikola Tolic at 
-Pacific Northwest National Laboratory (PNNL).
+Formularity was developed by Andrey Liyu and Nikola Tolić at 
+Pacific Northwest National Laboratory (PNNL)
 
 The CIA algorithm was developed by Elizabeth Kujawinski and Krista Longnecker 
-at the Woods Hole Oceanographic Institution (WHOI).
+at the Woods Hole Oceanographic Institution (WHOI)
 
-All publications that utilize this software should provide appropriate acknowledgment to PNNL and Formularity's GitHub website.
+All publications that utilize this software should provide appropriate acknowledgment to PNNL and Formularity's GitHub website
 
 ## Disclaimer
 
