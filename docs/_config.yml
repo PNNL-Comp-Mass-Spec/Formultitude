@@ -1,6 +1,6 @@
 # Jekyll configuration
 name: Formultitude
-description: VIPER (Visual Inspection of Peak/Elution Relationships) can be used to visualize and characterize the features detected during LC-MS analyses.
+description: Formultitude is software for assignment of low weight molecular formula from high-resolution mass spectra.
 url: https://pnnl-comp-mass-spec.github.io/Formultitude/
 
 # Google Analytics
