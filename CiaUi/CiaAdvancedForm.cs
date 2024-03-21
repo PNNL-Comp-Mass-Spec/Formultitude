@@ -21,13 +21,13 @@ namespace CiaUi {
         public CiaAdvancedForm() {
             InitializeComponent();
         }
-        FormularityUIForm oFormularityUIForm;
+        FormultitudeUIForm oFormultitudeUIForm;
         CCia oCCia;
         System.Windows.Forms.CheckBox [] GoldenRuleFilterUsage;
-        public CiaAdvancedForm( FormularityUIForm oFormularityUIForm ) {
+        public CiaAdvancedForm( FormultitudeUIForm oFormultitudeUIForm ) {
             InitializeComponent();
-            this.oFormularityUIForm = oFormularityUIForm;
-            this.oCCia = oFormularityUIForm.oCCia;
+            this.oFormultitudeUIForm = oFormultitudeUIForm;
+            this.oCCia = oFormultitudeUIForm.oCCia;
             this.SuspendLayout();
 
             comboBoxIonization.DataSource = Enum.GetValues( typeof( TestFSDBSearch.TotalSupport.IonizationMethod ) );

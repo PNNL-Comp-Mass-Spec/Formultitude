@@ -19,7 +19,7 @@ using TestFSDBSearch;
 using FileReader;
 
 namespace CIA {
-    class FormularityProgram {
+    class FormultitudeProgram {
         static void Main( string [] args ) {
             //CCia oCCia = new CCia( null);
             //string [] Files = Directory.GetFiles( "C:\\Nikola\\DOM_Working_Individual_Spectra_Analysis" );

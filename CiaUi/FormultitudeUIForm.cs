@@ -19,13 +19,13 @@ using TestFSDBSearch;
 using CIA;
 
 namespace CiaUi {
-    public partial class FormularityUIForm : Form {
+    public partial class FormultitudeUIForm : Form {
         public CCia oCCia = new CCia();
         CiaAdvancedForm oCiaAdvancedForm;
         //System.Windows.Forms.CheckBox [] GoldenRuleFilterUsage;
         string [] DBPeaksTableHeaders = new string [] { "Index", "Neutral mass", "Formula", "Error, ppm" };
         public enum EPlotType{ ErrorVsNeutralMass, ErrorVs};
-        public FormularityUIForm() {
+        public FormultitudeUIForm() {
             InitializeComponent();
             oCiaAdvancedForm = new CiaAdvancedForm( this);
             this.SuspendLayout();

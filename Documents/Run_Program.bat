@@ -14,7 +14,7 @@ echo.
 echo Procesing with %ExePath%
 echo.
 
-%ExePath% cia data_4_formularity.txt param_4_formularity.xml ..\Data\CIA_DB\WHOI_CIA_DB_2016_11_21.bin
+%ExePath% cia data_4_formultitude.txt param_4_formultitude.xml ..\Data\CIA_DB\WHOI_CIA_DB_2016_11_21.bin
 
 :Done
 

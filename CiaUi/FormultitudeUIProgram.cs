@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 
 namespace CiaUi {
-    static class FormularityUIProgram {
+    static class FormultitudeUIProgram {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -13,7 +13,7 @@ namespace CiaUi {
             try {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault( false );
-                Application.Run( new FormularityUIForm() );
+                Application.Run( new FormultitudeUIForm() );
             } catch( Exception ex ) {
                 string sss = ex.Message;
             }

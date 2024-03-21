@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CiaUi</RootNamespace>
-    <AssemblyName>Formularity</AssemblyName>
+    <AssemblyName>Formultitude</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -89,19 +89,19 @@
     <Compile Include="CiaAdvancedForm.Designer.cs">
       <DependentUpon>CiaAdvancedForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormularityUIForm.cs">
+    <Compile Include="FormultitudeUIForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormularityUIForm.Designer.cs">
-      <DependentUpon>FormularityUIForm.cs</DependentUpon>
+    <Compile Include="FormultitudeUIForm.Designer.cs">
+      <DependentUpon>FormultitudeUIForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormularityUIProgram.cs" />
+    <Compile Include="FormultitudeUIProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="CiaAdvancedForm.resx">
       <DependentUpon>CiaAdvancedForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormularityUIForm.resx">
-      <DependentUpon>FormularityUIForm.cs</DependentUpon>
+    <EmbeddedResource Include="FormultitudeUIForm.resx">
+      <DependentUpon>FormultitudeUIForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -125,9 +125,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CIA\Formularity.csproj">
+    <ProjectReference Include="..\CIA\Formultitude.csproj">
       <Project>{1A6F50EE-62C2-4C53-B311-7F5AE6908687}</Project>
-      <Name>Formularity</Name>
+      <Name>Formultitude</Name>
     </ProjectReference>
     <ProjectReference Include="..\FileReader\FileReader.csproj">
       <Project>{B53ECC28-7E9B-4B9A-82B0-786F246C5C0F}</Project>

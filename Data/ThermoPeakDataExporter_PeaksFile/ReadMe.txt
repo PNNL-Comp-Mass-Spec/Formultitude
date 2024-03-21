@@ -12,4 +12,4 @@ SignalToNoise
 RelativeIntensity
 
 
-Formularity uses Mass, Intensity, Resolution, SignalToNoise, and RelativeIntensity
+Formultitude uses Mass, Intensity, Resolution, SignalToNoise, and RelativeIntensity

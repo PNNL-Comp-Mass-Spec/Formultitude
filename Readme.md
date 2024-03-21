@@ -1,6 +1,6 @@
-﻿## Formularity Overview
+﻿## Formultitude Overview
 
-Formularity is software for assignment of low weight molecular formulas to peaks in high-resolution mass spectra.
+Formultitude is software for assignment of low weight molecular formulas to peaks in high-resolution mass spectra.
 It includes a graphical user interface with two search functions: 
 * Compound Identification Algorithm (CIA)
 * Isotopic Pattern Algorithm (IPA),
@@ -15,14 +15,14 @@ Related Publication(s):
 
 ## Downloads and Instructions
 
-Formularity runs on 64-bit Windows 10 or newer; no installer is provided
+Formultitude runs on 64-bit Windows 10 or newer; no installer is provided
 * It requires [.NET Framework 4.8](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48)
-* Extract the contents of `Formularity.zip`, then run `Formularity.exe`
-* Documentation is in file `UserManual.pdf` in the Documents folder [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/tree/master/Documents)
+* Extract the contents of `Formultitude.zip`, then run `Formultitude.exe`
+* Documentation is in file `UserManual.pdf` in the Documents folder [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formultitude/tree/master/Documents)
 
 To test the program, use the provided test files in the `Documents\TestData_FTICR` folder
 * The CIA and IPA databases are available as a separate download
-* See file `Databases_CIA_DB_WHOI_2016_and_IPQ_DB_LQ_v5.zip` [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity/releases/tag/v1.0.8475), which has two files:
+* See file `Databases_CIA_DB_WHOI_2016_and_IPQ_DB_LQ_v5.zip` [on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formultitude/releases/tag/v1.0.8475), which has two files:
   * `ciadb_WHOI_2016_11_21.bin`
   * `ipadb_LQ_v5_80384_12_4.txt`
 
@@ -60,13 +60,13 @@ E-mail any questions or comments to proteomics@pnnl.gov
 
 ## Acknowledgments
 
-Formularity was developed by Andrey Liyu and Nikola Tolić at 
+Formultitude was developed by Andrey Liyu and Nikola Tolić at 
 Pacific Northwest National Laboratory (PNNL)
 
 The CIA algorithm was developed by Elizabeth Kujawinski and Krista Longnecker 
 at the Woods Hole Oceanographic Institution (WHOI)
 
-All publications that utilize this software should provide appropriate acknowledgment to PNNL and Formularity's GitHub website
+All publications that utilize this software should provide appropriate acknowledgment to PNNL and Formultitude's GitHub website
 
 ## Disclaimer
 

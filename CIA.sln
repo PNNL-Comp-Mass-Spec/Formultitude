@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Formularity", "CIA\Formularity.csproj", "{1A6F50EE-62C2-4C53-B311-7F5AE6908687}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Formultitude", "CIA\Formultitude.csproj", "{1A6F50EE-62C2-4C53-B311-7F5AE6908687}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormularityUi", "CiaUi\FormularityUi.csproj", "{4D710796-2709-44F7-8D58-96BD69746D6A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormultitudeUi", "CiaUi\FormultitudeUi.csproj", "{4D710796-2709-44F7-8D58-96BD69746D6A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileReader", "FileReader\FileReader.csproj", "{B53ECC28-7E9B-4B9A-82B0-786F246C5C0F}"
 EndProject

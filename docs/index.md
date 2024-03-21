@@ -1,25 +1,25 @@
-# __<span style="color:#D57500">Formularity</span>__
-Formularity is software for assignment of low weight molecular formula from high-resolution mass spectra.
+# __<span style="color:#D57500">Formultitude</span>__
+Formultitude is software for assignment of low weight molecular formula from high-resolution mass spectra.
 
 ### Description
-Formularity includes graphical user interface for two search functions - Compound Identification Algorithm (CIA) and Isotopic Pattern Algorithm (IPA) as well as supporting calibration, alignment and inspection functions. Supporting databases and test files are provided together with software excecutable and source files.
+Formultitude includes graphical user interface for two search functions - Compound Identification Algorithm (CIA) and Isotopic Pattern Algorithm (IPA) as well as supporting calibration, alignment and inspection functions. Supporting databases and test files are provided together with software excecutable and source files.
 
-Formularity is developed by Andrey Liyu and Nikola Tolic at Pacific Northwest National Laboratory (PNNL) and is described in manuscript "[Formularity: Software for Automated Formula Assignment of Natural and Other Organic Matter from Ultrahigh-Resolution Mass Spectra](https://pubmed.ncbi.nlm.nih.gov/29120613/)". CIA algorithm was developed by Elizabeth Kujawinski and Krista Longnecker at Woods Hole Oceanographic Institution (WHOI).
+Formultitude is developed by Andrey Liyu and Nikola Tolic at Pacific Northwest National Laboratory (PNNL) and is described in manuscript "[Formularity: Software for Automated Formula Assignment of Natural and Other Organic Matter from Ultrahigh-Resolution Mass Spectra](https://pubmed.ncbi.nlm.nih.gov/29120613/)". CIA algorithm was developed by Elizabeth Kujawinski and Krista Longnecker at Woods Hole Oceanographic Institution (WHOI).
 
 ### Related Publications
 * [Formularity: Software for Automated Formula Assignment of Natural and Other Organic Matter from Ultrahigh-Resolution Mass Spectra](https://pubmed.ncbi.nlm.nih.gov/29120613/)
 * [Kujawinski, E. B., & Behn, M. D. (2006). Automated analysis of electrospray ionization Fourier transform ion cyclotron resonance mass spectra of natural organic matter. Analytical chemistry, 78(13), 4363-4373.](https://pubmed.ncbi.nlm.nih.gov/16808443/)
 
 ### Downloads
-* [Latest version](https://github.com/PNNL-Comp-Mass-Spec/Formularity/releases/latest)
-* [Source code on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formularity)
-* [CIA_DB_2016_11_21.bin database](https://github.com/PNNL-Comp-Mass-Spec/Formularity/releases/download/v1.0.7947/CIA_DB_2016_11_21_Database.zip)
+* [Latest version](https://github.com/PNNL-Comp-Mass-Spec/Formultitude/releases/latest)
+* [Source code on GitHub](https://github.com/PNNL-Comp-Mass-Spec/Formultitude)
+* [CIA_DB_2016_11_21.bin database](https://github.com/PNNL-Comp-Mass-Spec/Formultitude/releases/download/v1.0.7947/CIA_DB_2016_11_21_Database.zip)
 
 #### Software Instructions
-Formularity folder contains source files and executable Formularity.exe. <br>
+Formultitude folder contains source files and executable Formultitude.exe. <br>
 Attachments folder contain databases, test files and user manual.
 
-Formularity runs on 64-bit version of Windows; no installer is provided; copy entire Formularity folder on desired location; program executable is Formularity.exe in subfolder \CiaUi\bin\x64\Debug\.
+Formultitude runs on 64-bit version of Windows; no installer is provided; copy entire Formultitude folder on desired location; program executable is Formultitude.exe in subfolder \CiaUi\bin\x64\Debug\.
 
 To test program use provided "test" files and databases
 
@@ -36,7 +36,7 @@ Additional details are available in UserManual.doc document; please let us know 
 
 ### Acknowledgment
 
-All publications that utilize this software should provide appropriate acknowledgement to PNNL and the Formularity publication. However, if the software is extended or modified, then any subsequent publications should include a more extensive statement, as shown in the Readme file for the given application or on the website that more fully describes the application.
+All publications that utilize this software should provide appropriate acknowledgement to PNNL and the Formultitude publication. However, if the software is extended or modified, then any subsequent publications should include a more extensive statement, as shown in the Readme file for the given application or on the website that more fully describes the application.
 
 ### Disclaimer
 

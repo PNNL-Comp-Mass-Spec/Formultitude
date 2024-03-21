@@ -9,7 +9,7 @@ signal_noise
 MSFeatureID
 
 
-Formularity uses mz, intensity, fwhm, and signal_noise	
+Formultitude uses mz, intensity, fwhm, and signal_noise	
 
 It computes Resolution using formula:
 peak_resolution=mz/fwhm

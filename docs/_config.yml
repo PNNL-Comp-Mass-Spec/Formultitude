@@ -1,7 +1,7 @@
 # Jekyll configuration
-name: Formularity
+name: Formultitude
 description: VIPER (Visual Inspection of Peak/Elution Relationships) can be used to visualize and characterize the features detected during LC-MS analyses.
-url: https://pnnl-comp-mass-spec.github.io/Formularity/
+url: https://pnnl-comp-mass-spec.github.io/Formultitude/
 
 # Google Analytics
 google_analytics: G-LXXKP1N66C
