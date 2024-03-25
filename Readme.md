@@ -1,6 +1,6 @@
 ﻿## Formultitude Overview
 
-Formultitude is software for assignment of low weight molecular formulas to peaks in high-resolution mass spectra.
+Formultitude (previously named Formularity) is software for assignment of low weight molecular formulas to peaks in high-resolution mass spectra.
 It includes a graphical user interface with two search functions: 
 * Compound Identification Algorithm (CIA)
 * Isotopic Pattern Algorithm (IPA),
